@@ -18,6 +18,7 @@ defmodule PersonalFinanceWeb.Router do
     pipe_through :browser
 
     get "/", PageController, :home
+    live "/transactions", TransactionLive.Index, :index
   end
 
   # Other scopes may use custom stacks.

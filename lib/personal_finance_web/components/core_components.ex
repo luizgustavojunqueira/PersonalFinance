@@ -104,7 +104,13 @@ defmodule PersonalFinanceWeb.CoreComponents do
       """
     else
       ~H"""
-      <button class={["btn", @class]} {@rest}>
+      <button
+        class={[
+          "btn bg-blue-600 p-2 px-4 rounded-lg my-1 hover:bg-blue-400 transition-colors text-white",
+          @class
+        ]}
+        {@rest}
+      >
         {render_slot(@inner_block)}
       </button>
       """
@@ -206,7 +212,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
         <select
           id={@id}
           name={@name}
-          class={["w-full select", @errors != [] && "select-error"]}
+          class={[
+            "w-full  bg-slate-200 text-black p-2 rounded-lg mt-2 border-slate-400 border-1 focus:outline- :",
+            @errors != [] && "select-error"
+          ]}
           multiple={@multiple}
           {@rest}
         >
@@ -247,7 +256,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
-          class={["w-full input", @errors != [] && "input-error"]}
+          class={[
+            "w-full  bg-slate-200 text-black p-2 rounded-lg mt-2 border-slate-400 border-1 focus:outline- :",
+            @errors != [] && "input-error"
+          ]}
           {@rest}
         />
       </label>
