@@ -14,10 +14,50 @@
 @custom-variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
 @custom-variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
 @custom-variant phx-change-loading ([".phx-change-loading&", ".phx-change-loading &"]);
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-root-id] {
     display: contents;
 }
 
-/* This file is for your main application CSS */
+@theme {
+    /* Fundos do Light Mode */
+    --color-bg-lightmode-dark: #f8fafc; /* Fundo principal (Slate 50) */
+    --color-bg-lightmode-medium: #e2e8f0; /* Fundo de cards/modais (Slate 200) */
+    --color-bg-lightmode-light: #f1f5f9; /* Fundo de itens de lista/bordas (Slate 300) */
+
+    /* Textos do Light Mode */
+    --color-text-lightmode-dark: #1e293b; /* Texto de destaque/títulos (Slate 800) */
+    --color-text-lightmode-medium: #334155; /* Texto normal/parágrafo (Slate 700) */
+    --color-text-lightmode-light: #64748b; /* Texto sutil/secundário (Slate 500) */
+
+    /* Fundos do Dark Mode */
+    --color-bg-darkmode-dark: #0f172a; /* Fundo principal (Slate 900) */
+    --color-bg-darkmode-medium: #1e293b; /* Fundo de cards/modais (Slate 800) */
+    --color-bg-darkmode-light: #334155; /* Fundo de itens de lista/bordas (Slate 700) */
+
+    /* Textos do Dark Mode */
+    --color-text-darkmode-dark: #d3dbe6;
+    --color-text-darkmode-medium: #e2e8f0; /* Texto normal/parágrafo (Slate 200) */
+    --color-text-darkmode-light: #f8fafc; /* Texto de destaque/títulos (Slate 50) */
+}
+
+@layer components {
+    /* Estilos globais */
+    body {
+        @apply bg-bg-lightmode-dark dark:bg-bg-darkmode-dark text-text-lightmode-medium dark:text-text-darkmode-medium;
+    }
+
+    .dark {
+        @apply bg-bg-lightmode-dark dark:bg-bg-darkmode-dark text-text-lightmode-light dark:text-text-darkmode-light;
+    }
+
+    .medium {
+        @apply bg-bg-lightmode-medium dark:bg-bg-darkmode-medium text-text-lightmode-medium dark:text-text-darkmode-dark;
+    }
+
+    .light {
+        @apply bg-bg-lightmode-light dark:bg-bg-darkmode-light text-text-lightmode-light dark:text-text-darkmode-medium;
+    }
+}

@@ -213,7 +213,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           id={@id}
           name={@name}
           class={[
-            "w-full  bg-slate-200 text-black p-2 rounded-lg mt-2 border-slate-400 border-1 focus:outline- :",
+            "w-full medium  p-2 rounded-lg mt-2 border-bg-lightmode-dark dark:border-bg-darkmode-dark border-1 focus:outline- :",
             @errors != [] && "select-error"
           ]}
           multiple={@multiple}
@@ -257,7 +257,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            "w-full  bg-slate-200 text-black p-2 rounded-lg mt-2 border-slate-400 border-1 focus:outline- :",
+            "w-full medium  p-2 rounded-lg mt-2 border-bg-lightmode-dark dark:border-bg-darkmode-dark border-1 focus:outline- :",
             @errors != [] && "input-error"
           ]}
           {@rest}

@@ -2,6 +2,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   use PersonalFinanceWeb, :live_view
   import Ecto.Query
 
+  @impl true
   def mount(_params, _session, socket) do
     transactions =
       from(t in PersonalFinance.Transaction, order_by: [desc: t.date])
@@ -9,38 +10,41 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
 
-    {:ok,
-     assign(socket,
-       transactions: transactions,
-       changeset: changeset,
-       selected_transaction: nil,
-       show_form: false
-     )}
+    socket =
+      socket
+      |> assign(
+        changeset: changeset,
+        selected_transaction: nil,
+        show_form: false
+      )
+      # Mantenha esta linha
+      |> stream(:transactions, transactions, id: & &1.id)
+
+    {:ok, socket}
   end
 
+  @impl true
   def handle_event("create_transaction", %{"transaction" => transaction_params}, socket) do
     value = Map.get(transaction_params, "value") |> parse_float()
     amount = Map.get(transaction_params, "amount") |> parse_float()
     total_value = value * amount
 
-    params = Map.put(transaction_params, :total_value, total_value)
+    params = Map.put(transaction_params, "total_value", total_value)
 
     changeset =
       PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, params)
 
     case PersonalFinance.Repo.insert(changeset) do
-      {:ok, _transaction} ->
-        transactions =
-          from(t in PersonalFinance.Transaction, order_by: [desc: t.date])
-          |> PersonalFinance.Repo.all()
-
+      {:ok, added} ->
         new_changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
 
         {:noreply,
-         assign(socket,
-           transactions: transactions,
+         socket
+         |> stream_insert(:transactions, added)
+         |> assign(
            changeset: new_changeset,
-           selected_transaction: nil
+           selected_transaction: nil,
+           show_form: false
          )}
 
       {:error, changeset} ->
@@ -61,30 +65,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       )
 
     {:noreply, assign(socket, changeset: changeset)}
-  end
-
-  def handle_event("delete_transaction", %{"id" => id}, socket) do
-    transaction = PersonalFinance.Repo.get(PersonalFinance.Transaction, String.to_integer(id))
-
-    case PersonalFinance.Repo.delete(transaction) do
-      {:ok, _transaction} ->
-        transactions =
-          from(t in PersonalFinance.Transaction, order_by: [desc: t.date])
-          |> PersonalFinance.Repo.all()
-
-        {:noreply, assign(socket, transactions: transactions)}
-
-      {:error, _changeset} ->
-        {:noreply, socket}
-    end
-  end
-
-  def handle_event("edit_transaction", %{"id" => id}, socket) do
-    transaction = PersonalFinance.Repo.get(PersonalFinance.Transaction, String.to_integer(id))
-    changeset = PersonalFinance.Transaction.changeset(transaction, %{})
-
-    {:noreply,
-     assign(socket, selected_transaction: transaction, show_form: true, changeset: changeset)}
   end
 
   def handle_event("open_form", _params, socket) do
@@ -108,16 +88,13 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       PersonalFinance.Transaction.changeset(t, params)
 
     case PersonalFinance.Repo.update(changeset) do
-      {:ok, _transaction} ->
-        transactions =
-          from(t in PersonalFinance.Transaction, order_by: [desc: t.date])
-          |> PersonalFinance.Repo.all()
-
+      {:ok, updated} ->
         new_changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
 
         {:noreply,
-         assign(socket,
-           transactions: transactions,
+         socket
+         |> stream_insert(:transactions, updated)
+         |> assign(
            changeset: new_changeset,
            selected_transaction: nil,
            show_form: false
@@ -128,23 +105,41 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     end
   end
 
-  def format_date(nil), do: "Data não disponível"
-  def format_date(%Date{} = date), do: Calendar.strftime(date, "%d/%m/%Y")
-  def format_date(%NaiveDateTime{} = dt), do: Calendar.strftime(dt, "%d/%m/%Y %H:%M")
-  def format_date(_), do: "Data inválida"
+  @impl true
+  def handle_info({:edit_transaction, id}, socket) do
+    transaction = PersonalFinance.Repo.get(PersonalFinance.Transaction, String.to_integer(id))
+    changeset = PersonalFinance.Transaction.changeset(transaction, %{})
 
-  defp parse_float(nil), do: 0.0
-  defp parse_float(""), do: 0.0
+    {:noreply,
+     assign(socket,
+       selected_transaction: transaction,
+       show_form: true,
+       changeset: changeset
+     )}
+  end
 
-  defp parse_float(val) when is_binary(val) do
-    val
-    |> String.replace(",", ".")
-    |> String.to_float()
-  rescue
-    _ -> 0.0
+  @impl true
+  def handle_info({:delete_transaction, id}, socket) do
+    transaction = PersonalFinance.Repo.get(PersonalFinance.Transaction, String.to_integer(id))
+
+    case PersonalFinance.Repo.delete(transaction) do
+      {:ok, deleted} ->
+        {:noreply, stream_delete(socket, :transactions, deleted)}
+
+      {:error, _changeset} ->
+        {:noreply, socket}
+    end
   end
 
   defp parse_float(val) when is_float(val), do: val
   defp parse_float(val) when is_integer(val), do: val * 1.0
+
+  defp parse_float(val) when is_binary(val) do
+    case Float.parse(val) do
+      {number, _} -> number
+      :error -> 0.0
+    end
+  end
+
   defp parse_float(_), do: 0.0
 end

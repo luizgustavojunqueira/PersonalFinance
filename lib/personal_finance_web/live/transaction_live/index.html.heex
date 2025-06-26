@@ -1,17 +1,24 @@
-<div class="container mx-auto p-4 bg-white">
+<div class="container mx-auto p-4 ">
   <header class="flex flex-row justify-between mb-5 items-center">
-    <h1 class="text-3xl font-bold mb-6 text-gray-800">Transações</h1>
+    <h1 class="text-3xl font-bold mb-6 ">Transações</h1>
 
     <.button phx-click="open_form">
       Adicionar Transação
     </.button>
+    <Layouts.theme_toggle />
   </header>
 
   <%= if @show_form do %>
-    <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/20">
-      <div class=" w-2/5 mb-8 p-6 bg-white rounded-lg shadow-md">
+    <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/30 ">
+      <div class=" w-2/5 mb-8 p-6 rounded-lg shadow-md dark ">
         <div class="flex flex-row justify-between mb-5 items-center">
-          <h2 class="text-2xl font-semibold mb-4 text-gray-700">Nova Transação</h2>
+          <h2 class="text-2xl font-semibold mb-4 ">
+            <%= if @selected_transaction do %>
+              Editar Transação
+            <% else %>
+              Nova Transação
+            <% end %>
+          </h2>
 
           <.link class="text-red-600 hover:text-red-800 hero-x-mark" phx-click="close_form">
           </.link>
@@ -23,7 +30,6 @@
           phx-change="validate_transaction"
         >
           <.input
-            class="bg-white"
             field={f[:description]}
             id="input-description"
             type="text"
@@ -32,7 +38,6 @@
           />
 
           <.input
-            class="bg-white"
             field={f[:category]}
             id="input-category"
             type="select"
@@ -41,7 +46,6 @@
           />
 
           <.input
-            class="bg-white"
             field={f[:type]}
             id="input-type"
             type="select"
@@ -53,7 +57,7 @@
             field={f[:amount]}
             id="input-amount"
             type="number"
-            step="0.01"
+            step="0.00000001"
             label="Quantidade"
             placeholder="Ex: 1"
           />
@@ -83,67 +87,33 @@
     </div>
   <% end %>
 
-  <div class="bg-white rounded-lg shadow-md p-6">
-    <h2 class="text-2xl font-semibold mb-4 text-gray-700">Minhas Transações</h2>
+  <div class="rounded-lg shadow-md p-6 medium ">
+    <h2 class="text-2xl font-semibold mb-4">Minhas Transações</h2>
     <section>
       <%!-- Transaction List Header --%>
       <div class="grid grid-cols-8 gap-4 mb-4">
-        <span class="font-medium text-gray-700">Data</span>
-        <span class="font-medium text-gray-700">Descrição</span>
-        <span class="font-medium text-gray-700">Categoria</span>
-        <span class="font-medium text-gray-700">Tipo</span>
-        <span class="font-medium text-gray-700">Quantidade</span>
-        <span class="font-medium text-gray-700">Valor Unitário</span>
-        <span class="font-medium text-gray-700">Valor Total</span>
+        <span class="font-medium">Data</span>
+        <span class="font-medium">Descrição</span>
+        <span class="font-medium ">Categoria</span>
+        <span class="font-medium">Tipo</span>
+        <span class="font-medium">Quantidade</span>
+        <span class="font-medium ">Valor Unitário</span>
+        <span class="font-medium ">Valor Total</span>
 
-        <span class="font-medium text-gray-700">Ações</span>
+        <span class="font-medium">Ações</span>
       </div>
     </section>
-    <ul class="space-y-3">
-      <%= if Enum.empty?(@transactions) do %>
-        <li class="text-gray-500 italic">Nenhuma transação registrada ainda.</li>
-      <% else %>
-        <%= for t <- @transactions do %>
-          <li class="grid grid-cols-8 gap-4 mb-4 bg-gray-50 p-3 rounded-md shadow-sm">
-            <span class="text-sm text-gray-500">
-              <%= if t.inserted_at do %>
-                {format_date(t.date)}
-              <% else %>
-                Data não disponível
-              <% end %>
-            </span>
-            <span class="font-medium text-gray-700">{t.description}</span>
-            <span class="font-medium text-gray-700">{t.category}</span>
-            <span class="font-medium text-gray-700">{t.type}</span>
-            <span class="font-medium text-gray-700">
-              {t.amount}
-            </span>
-
-            <span class="font-medium text-gray-700">
-              {t.value}
-            </span>
-
-            <span class="font-medium text-gray-700">
-              {t.total_value}
-            </span>
-            <span class="flex space-x-2">
-              <.link
-                class="text-blue-600 hover:text-blue-800 hero-pencil"
-                phx-click="edit_transaction"
-                phx-value-id={t.id}
-              >
-              </.link>
-              <.link
-                class="text-red-600 hover:text-red-800 hero-trash"
-                phx-click="delete_transaction"
-                phx-value-id={t.id}
-                data-confirm="Você tem certeza que deseja excluir esta transação?"
-              >
-              </.link>
-            </span>
-          </li>
-        <% end %>
-      <% end %>
+    <ul id="transactions" class="space-y-3" phx-update="stream">
+      <li id="transactions-empty" class="only:block hidden italic">
+        Nenhuma transação registrada ainda.
+      </li>
+      <.live_component
+        :for={{id, t} <- @streams.transactions}
+        module={PersonalFinanceWeb.TransactionLive.TransactionListItem}
+        id={id}
+        transaction={t}
+        parent_pid={self()}
+      />
     </ul>
   </div>
 </div>
