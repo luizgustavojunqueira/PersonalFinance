@@ -1,0 +1,14 @@
+<div class="p-4 w-full">
+  <header class="flex flex-row justify-between mb-5 items-center">
+    <h1 class="text-3xl font-bold mb-6 ">Seja Bem-Vindo {@current_user.name}!</h1>
+  </header>
+
+  <canvas
+    id="my-chart"
+    class="max-w-100 max-h-100"
+    phx-hook="ChartJS"
+    data-values={Jason.encode!(@values)}
+    data-labels={Jason.encode!(@labels)}
+  >
+  </canvas>
+</div>

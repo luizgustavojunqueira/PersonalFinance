@@ -16,15 +16,6 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Retorna a lista de categorias para um usuário.
-  """
-  def list_categories_for_user(user) do
-    Category
-    |> where([c], c.user_id == ^user.id)
-    |> Repo.all()
-  end
-
-  @doc """
   Retorna a lista de profiles para um usuário.
   """
   def list_profiles_for_user(user) do
@@ -87,9 +78,72 @@ defmodule PersonalFinance.Finance do
     |> Repo.preload([:category, :investment_type, :profile])
   end
 
-  # ... outras funções para Category, InvestmentType, Profile ...
+  @doc """
+  Retorna o valor total de transações por categoria.
+  """
+  def get_total_value_by_category(category_id, transactions) do
+    transactions
+    |> Enum.filter(fn t -> t.category_id == category_id end)
+    |> Enum.reduce(0, fn t, acc -> acc + t.total_value end)
+  end
 
-  # Helper para pré-carregar e publicar
+  @doc """
+  Returns the list of categories for a user.
+  """
+  def list_categories_for_user(user) do
+    Category
+    |> where([c], c.user_id == ^user.id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Creates a category.
+  """
+  def create_category(attrs) do
+    %Category{}
+    |> Category.changeset(attrs)
+    |> Repo.insert()
+    |> handle_category_change()
+  end
+
+  @doc """
+  Updates a category.
+  """
+  def update_category(%Category{} = category, attrs) do
+    category
+    |> Category.changeset(attrs)
+    |> Repo.update()
+    |> handle_category_change()
+  end
+
+  @doc """
+  Deletes a category.
+  """
+  def delete_category(%Category{} = category) do
+    Repo.delete(category)
+  end
+
+  @doc """
+  Returns a category by ID.
+  """
+  def get_category!(id) do
+    Category
+    |> Repo.get!(id)
+    |> Repo.preload(:user)
+  end
+
+  defp handle_category_change({:ok, %Category{} = category}) do
+    Phoenix.PubSub.broadcast(
+      PersonalFinance.PubSub,
+      "categories_updates:#{category.user_id}",
+      {:category_changed, category.user_id}
+    )
+
+    {:ok, category}
+  end
+
+  defp handle_category_change({:error, changeset}), do: {:error, changeset}
+
   defp handle_transaction_change({:ok, %Transaction{} = transaction}) do
     preloaded_transaction = Repo.preload(transaction, [:category, :investment_type, :profile])
 

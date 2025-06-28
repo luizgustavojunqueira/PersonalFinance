@@ -49,6 +49,8 @@ defmodule PersonalFinanceWeb.Router do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/transactions", TransactionLive.Index, :index
+      live "/categories", CategoryLive.Index, :index
+      live "/", HomeLive.Index, :index
     end
 
     post "/users/update-password", UserSessionController, :update_password

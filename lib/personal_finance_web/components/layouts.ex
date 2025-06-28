@@ -119,7 +119,7 @@ defmodule PersonalFinanceWeb.Layouts do
             class="flex items space-x-2 text-base-content hover:text-primary"
           >
             <.icon name="hero-clipboard-document-list" class="size-6" />
-            <span class="sidebar-text hidden md:inline">Transactions</span>
+            <span class="sidebar-text hidden md:inline">Transações</span>
           </.link>
         </li>
         <li class=" mb-4 ">
@@ -128,7 +128,7 @@ defmodule PersonalFinanceWeb.Layouts do
             class="flex items space-x-2 text-base-content hover:text-primary"
           >
             <.icon name="hero-users" class="size-6" />
-            <span class="sidebar-text hidden md:inline">Profiles</span>
+            <span class="sidebar-text hidden md:inline">Perfis</span>
           </.link>
         </li>
         <li class=" mb-4 ">
@@ -137,7 +137,7 @@ defmodule PersonalFinanceWeb.Layouts do
             class="flex items space-x-2 text-base-content hover:text-primary"
           >
             <.icon name="hero-tag" class="size-6" />
-            <span class="sidebar-text hidden md:inline">Categories</span>
+            <span class="sidebar-text hidden md:inline">Categorias</span>
           </.link>
         </li>
       </ul>
