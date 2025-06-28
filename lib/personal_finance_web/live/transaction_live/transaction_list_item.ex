@@ -13,7 +13,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionListItem do
         <% end %>
       </span>
       <span class="font-medium ">{@transaction.description}</span>
-      <span class="font-medium ">{@transaction.profile.name}</span>
+      <span class="font-medium ">{@transaction.profile && @transaction.profile.name}</span>
       <span class="font-medium ">{@transaction.category.name}</span>
       <span class="font-medium ">
         {@transaction.investment_type && @transaction.investment_type.name}

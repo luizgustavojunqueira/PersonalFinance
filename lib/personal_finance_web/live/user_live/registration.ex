@@ -21,6 +21,14 @@ defmodule PersonalFinanceWeb.UserLive.Registration do
 
         <.form for={@form} id="registration_form" phx-submit="save" phx-change="validate">
           <.input
+            field={@form[:name]}
+            type="text"
+            label="Name"
+            autocomplete="name"
+            required
+            phx-mounted={JS.focus()}
+          />
+          <.input
             field={@form[:email]}
             type="email"
             label="Email"

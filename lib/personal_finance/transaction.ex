@@ -11,6 +11,7 @@ defmodule PersonalFinance.Transaction do
     belongs_to :category, PersonalFinance.Category
     belongs_to :investment_type, PersonalFinance.InvestmentType
     belongs_to :profile, PersonalFinance.Profile
+    belongs_to :user, PersonalFinance.Accounts.User
 
     timestamps(type: :utc_datetime)
   end
@@ -26,7 +27,8 @@ defmodule PersonalFinance.Transaction do
       :date,
       :category_id,
       :investment_type_id,
-      :profile_id
+      :profile_id,
+      :user_id
     ])
     |> validate_required([
       :value,
@@ -35,7 +37,8 @@ defmodule PersonalFinance.Transaction do
       :description,
       :date,
       :category_id,
-      :profile_id
+      :profile_id,
+      :user_id
     ])
   end
 end

@@ -26,7 +26,7 @@ defmodule PersonalFinance.Accounts.User do
   """
   def email_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email])
+    |> cast(attrs, [:email, :name])
     |> validate_email(opts)
   end
 

@@ -49,7 +49,8 @@ investimentos_category =
   unless investimentos_category do
     case Repo.insert(%Category{
            name: "Investimentos",
-           description: "Transações relacionadas a investimentos"
+           description: "Transações relacionadas a investimentos",
+           user_id: test_user.id
          }) do
       {:ok, category} ->
         IO.puts("Criada categoria: #{category.name}")
@@ -67,7 +68,8 @@ prazeres_category =
   unless prazeres_category do
     case Repo.insert(%Category{
            name: "Prazeres",
-           description: "Despesas relacionadas à prazeres"
+           description: "Despesas relacionadas à prazeres",
+           user_id: test_user.id
          }) do
       {:ok, category} ->
         IO.puts("Criada categoria: #{category.name}")
@@ -158,7 +160,8 @@ unless Repo.get_by(Transaction, description: "Jantar Romântico", profile_id: eu
     description: "Jantar Romântico",
     date: ~D[2024-06-25],
     category_id: prazeres_category.id,
-    profile_id: eu_profile.id
+    profile_id: eu_profile.id,
+    user_id: test_user.id
   })
 
   IO.puts("  Criada transação: Jantar Romântico")
@@ -173,7 +176,8 @@ unless Repo.get_by(Transaction, description: "Ações", profile_id: eu_profile.i
     date: ~D[2024-06-25],
     investment_type_id: acoes_type.id,
     category_id: investimentos_category.id,
-    profile_id: eu_profile.id
+    profile_id: eu_profile.id,
+    user_id: test_user.id
   })
 
   IO.puts("  Criada transação: Jantar Romântico")

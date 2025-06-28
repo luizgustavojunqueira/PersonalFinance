@@ -1,15 +1,29 @@
 defmodule PersonalFinanceWeb.TransactionLive.Index do
+  alias PersonalFinance.Transaction
   use PersonalFinanceWeb, :live_view
   import Ecto.Query
 
   @impl true
   def mount(_params, _session, socket) do
+    current_user = socket.assigns.current_scope.user
+
+    if current_user do
+      Phoenix.PubSub.subscribe(
+        PersonalFinance.PubSub,
+        "transactions_updates:#{current_user.id}"
+      )
+    end
+
     transactions =
       from(t in PersonalFinance.Transaction, order_by: [desc: t.date])
+      |> where([t], t.user_id == ^current_user.id)
       |> Ecto.Query.preload([:category, :investment_type, :profile])
       |> PersonalFinance.Repo.all()
 
-    categories = PersonalFinance.Category |> PersonalFinance.Repo.all()
+    categories =
+      PersonalFinance.Category
+      |> where([c], c.user_id == ^current_user.id)
+      |> PersonalFinance.Repo.all()
 
     investment_category =
       PersonalFinance.Category
@@ -17,7 +31,10 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     investment_types = PersonalFinance.InvestmentType |> PersonalFinance.Repo.all()
 
-    profiles = PersonalFinance.Profile |> PersonalFinance.Repo.all()
+    profiles =
+      PersonalFinance.Profile
+      |> where([p], p.user_id == ^current_user.id)
+      |> PersonalFinance.Repo.all()
 
     changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
 
@@ -51,11 +68,14 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     case PersonalFinance.Repo.insert(changeset) do
       {:ok, added} ->
+        preloaded_added =
+          PersonalFinance.Repo.preload(added, [:category, :investment_type, :profile])
+
         new_changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
 
         {:noreply,
          socket
-         |> stream_insert(:transactions, added)
+         |> stream_insert(:transactions, preloaded_added)
          |> assign(
            changeset: new_changeset,
            selected_transaction: nil,
@@ -112,11 +132,16 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     case PersonalFinance.Repo.update(changeset) do
       {:ok, updated} ->
+        preloaded_updated =
+          PersonalFinance.Repo.preload(updated, [:category, :investment_type, :profile])
+
         new_changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
+
+        handle_transaction_change({:ok, preloaded_updated})
 
         {:noreply,
          socket
-         |> stream_insert(:transactions, updated)
+         |> stream_insert(:transactions, preloaded_updated)
          |> assign(
            changeset: new_changeset,
            selected_transaction: nil,
@@ -154,6 +179,29 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     end
   end
 
+  @impl true
+  def handle_info({:transaction_changed, user_id}, socket)
+      when socket.assigns.current_scope.user.id == user_id do
+    IO.puts(
+      "Recebida notificação de mudança de transação para o usuário #{user_id}. Recarregando dados..."
+    )
+
+    transactions =
+      from(t in PersonalFinance.Transaction,
+        order_by: [desc: t.date],
+        where: t.user_id == ^user_id
+      )
+      |> Ecto.Query.preload([:category, :investment_type, :profile])
+      |> PersonalFinance.Repo.all()
+
+    # Atualize o stream ou o assign de transações
+    socket =
+      socket
+      |> stream(:transactions, transactions)
+
+    {:noreply, socket}
+  end
+
   defp parse_float(val) when is_float(val), do: val
   defp parse_float(val) when is_integer(val), do: val * 1.0
 
@@ -165,4 +213,16 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   defp parse_float(_), do: 0.0
+
+  defp handle_transaction_change({:ok, %Transaction{} = transaction}) do
+    IO.puts("Transação #{transaction.id} foi alterada. Enviando notificação...")
+
+    Phoenix.PubSub.broadcast(
+      PersonalFinance.PubSub,
+      "transactions_updates:#{transaction.user_id}",
+      {:transaction_changed, transaction.user_id}
+    )
+
+    {:ok, transaction}
+  end
 end
