@@ -50,6 +50,7 @@ defmodule PersonalFinanceWeb.Router do
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/transactions", TransactionLive.Index, :index
       live "/categories", CategoryLive.Index, :index
+      live "/profiles", ProfileLive.Index, :index
       live "/", HomeLive.Index, :index
     end
 
