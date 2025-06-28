@@ -60,9 +60,9 @@ defmodule PersonalFinanceWeb.CoreComponents do
       {@rest}
     >
       <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap",
-        @kind == :info && "alert-info",
-        @kind == :error && "alert-error"
+        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap flex flex-row gap-2 items-center p-2 ml-4",
+        @kind == :info && "alert-info bg-green-100 dark:bg-green-800",
+        @kind == :error && "alert-error bg-red-200 dark:bg-red-800"
       ]}>
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="size-5 shrink-0" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="size-5 shrink-0" />

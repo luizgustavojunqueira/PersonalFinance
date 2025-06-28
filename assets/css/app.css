@@ -45,16 +45,21 @@
 
 @layer components {
     /* Estilos globais */
-    body {
-        @apply bg-bg-lightmode-dark dark:bg-bg-darkmode-dark text-text-lightmode-medium dark:text-text-darkmode-medium;
-    }
 
     .dark {
         @apply bg-bg-lightmode-dark dark:bg-bg-darkmode-dark text-text-lightmode-light dark:text-text-darkmode-light;
     }
 
+    .hover-dark {
+        @apply hover:bg-bg-lightmode-dark dark:hover:bg-bg-darkmode-dark hover:text-text-lightmode-light dark:hover:text-text-darkmode-light;
+    }
+
     .medium {
         @apply bg-bg-lightmode-medium dark:bg-bg-darkmode-medium text-text-lightmode-medium dark:text-text-darkmode-dark;
+    }
+
+    .hover-medium {
+        @apply hover:bg-bg-lightmode-medium dark:hover:bg-bg-darkmode-medium hover:text-text-lightmode-medium dark:hover:text-text-darkmode-dark;
     }
 
     .light {

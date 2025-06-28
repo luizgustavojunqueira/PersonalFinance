@@ -27,23 +27,26 @@
       })();
     </script>
   </head>
-  <body>
-    <ul class="menu menu-horizontal w-full relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 justify-end">
+  <body class="dark">
+    <ul class="menu menu-horizontal w-full relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 justify-end">
+      <li>
+        <Layouts.theme_toggle />
+      </li>
       <%= if @current_scope do %>
-        <li>
+        <li class="medium  rounded-full py-1 px-2">
           {@current_scope.user.email}
         </li>
-        <li>
+        <li class="light hover-medium rounded-full py-1 px-2">
           <.link href={~p"/users/settings"}>Settings</.link>
         </li>
-        <li>
+        <li class="light hover-medium rounded-full py-1 px-2">
           <.link href={~p"/users/log-out"} method="delete">Log out</.link>
         </li>
       <% else %>
-        <li>
+        <li class="light hover-medium rounded-full py-1 px-2">
           <.link href={~p"/users/register"}>Register</.link>
         </li>
-        <li>
+        <li class="light hover-medium rounded-full py-1 px-2">
           <.link href={~p"/users/log-in"}>Log in</.link>
         </li>
       <% end %>
