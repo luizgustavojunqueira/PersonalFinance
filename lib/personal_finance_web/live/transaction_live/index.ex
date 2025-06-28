@@ -184,16 +184,4 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   defp parse_float(_), do: 0.0
-
-  defp handle_transaction_change({:ok, %Transaction{} = transaction}) do
-    IO.puts("Transação #{transaction.id} foi alterada. Enviando notificação...")
-
-    Phoenix.PubSub.broadcast(
-      PubSub,
-      "transactions_updates:#{transaction.user_id}",
-      {:transaction_changed, transaction.user_id}
-    )
-
-    {:ok, transaction}
-  end
 end

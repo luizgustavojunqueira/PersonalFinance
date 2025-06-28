@@ -77,16 +77,70 @@ defmodule PersonalFinanceWeb.Layouts do
       <div class="absolute w-[33%] h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-[33%] [[data-theme=dark]_&]:left-[66%] transition-[left]" />
 
       <button phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "system"})} class="flex p-2">
-        <.icon name="hero-computer-desktop-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-computer-desktop-micro" class="size-6 opacity-75 hover:opacity-100" />
       </button>
 
       <button phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "light"})} class="flex p-2">
-        <.icon name="hero-sun-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-sun-micro" class="size-6 opacity-75 hover:opacity-100" />
       </button>
 
       <button phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "dark"})} class="flex p-2">
-        <.icon name="hero-moon-micro" class="size-4 opacity-75 hover:opacity-100" />
+        <.icon name="hero-moon-micro" class="size-6 opacity-75 hover:opacity-100" />
       </button>
+    </div>
+    """
+  end
+
+  def navigation_sidebar(assigns) do
+    ~H"""
+    <div>
+      <button
+        id="toggle-sidebar"
+        phx-hook="ToggleSidebar"
+        class="toggle-btn flex items-center p-2 w-full"
+      >
+        <.icon name="hero-bars-3" class="open-icon size-6 " />
+        <.icon name="hero-x-mark" class="close-icon size-6 hidden " />
+      </button>
+      <ul class="p-4 w-80 ">
+        <li class=" mb-4 ">
+          <.link
+            navigate={~p"/"}
+            class="flex items
+            space-x-2 text-base-content hover:text-primary"
+          >
+            <.icon name="hero-home" class="size-6" />
+            <span class="sidebar-text md:inline hidden">Home</span>
+          </.link>
+        </li>
+        <li class=" mb-4 ">
+          <.link
+            navigate={~p"/transactions"}
+            class="flex items space-x-2 text-base-content hover:text-primary"
+          >
+            <.icon name="hero-clipboard-document-list" class="size-6" />
+            <span class="sidebar-text hidden md:inline">Transactions</span>
+          </.link>
+        </li>
+        <li class=" mb-4 ">
+          <.link
+            navigate={~p"/profiles"}
+            class="flex items space-x-2 text-base-content hover:text-primary"
+          >
+            <.icon name="hero-users" class="size-6" />
+            <span class="sidebar-text hidden md:inline">Profiles</span>
+          </.link>
+        </li>
+        <li class=" mb-4 ">
+          <.link
+            navigate={~p"/categories"}
+            class="flex items space-x-2 text-base-content hover:text-primary"
+          >
+            <.icon name="hero-tag" class="size-6" />
+            <span class="sidebar-text hidden md:inline">Categories</span>
+          </.link>
+        </li>
+      </ul>
     </div>
     """
   end

@@ -1,7 +1,7 @@
 defmodule PersonalFinance.Finance.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
-  alias PersonalFinance.Finance.{Transaction, Category, InvestmentType, Profile}
+  alias PersonalFinance.Finance.{Category, InvestmentType, Profile}
 
   schema "transactions" do
     field :value, :float

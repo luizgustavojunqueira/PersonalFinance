@@ -10,6 +10,8 @@
     <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
     <script defer phx-track-static type="text/javascript" src={~p"/assets/js/app.js"}>
     </script>
+    <script src="https://unpkg.com/lucide@latest">
+    </script>
     <script>
       (() => {
         const setTheme = (theme) => {
@@ -27,30 +29,46 @@
       })();
     </script>
   </head>
-  <body class="dark">
-    <ul class="menu menu-horizontal w-full relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 justify-end">
-      <li>
-        <Layouts.theme_toggle />
-      </li>
-      <%= if @current_scope do %>
-        <li class="medium  rounded-full py-1 px-2">
-          {@current_scope.user.email}
+  <body class="dark max-h-screen h-screen flex flex-row ">
+    <%= if @current_scope do %>
+      <div id="sidebar" class="medium overflow-hidden transition-all duration-300 collapsed">
+        <.navigation_sidebar />
+      </div>
+    <% end %>
+    <main class="flex flex-col w-full">
+      <ul class="menu menu-horizontal w-full relative z-10 flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-2 sm:py-3 lg:py-4 justify-end">
+        <li>
+          <button
+            id="sidebar-toggle"
+            class="text-gray-600 focus:outline-none flex items-center justify-center"
+          >
+            <i class="lucide-menu text-2xl"></i>
+          </button>
         </li>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/settings"}>Settings</.link>
+        <li>
+          <Layouts.theme_toggle />
         </li>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/log-out"} method="delete">Log out</.link>
-        </li>
-      <% else %>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/register"}>Register</.link>
-        </li>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/log-in"}>Log in</.link>
-        </li>
-      <% end %>
-    </ul>
-    {@inner_content}
+        <%= if @current_scope do %>
+          <li class="medium  rounded-full py-1 px-2">
+            {@current_scope.user.email}
+          </li>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/settings"}>Settings</.link>
+          </li>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+          </li>
+        <% else %>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/register"}>Register</.link>
+          </li>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/log-in"}>Log in</.link>
+          </li>
+        <% end %>
+      </ul>
+
+      {@inner_content}
+    </main>
   </body>
 </html>

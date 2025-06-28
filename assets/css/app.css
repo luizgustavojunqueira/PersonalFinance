@@ -66,3 +66,25 @@
         @apply bg-bg-lightmode-light dark:bg-bg-darkmode-light text-text-lightmode-light dark:text-text-darkmode-medium;
     }
 }
+
+#sidebar {
+    width: 12rem;
+}
+#sidebar.collapsed {
+    width: 3.5rem;
+}
+#sidebar .sidebar-text {
+    opacity: 1;
+    transition: opacity 0.3s;
+}
+#sidebar.collapsed .sidebar-text {
+    opacity: 0;
+}
+
+#toggle-sidebar {
+    justify-content: center;
+}
+
+#toggle-sidebar.collapsed {
+    justify-content: flex-end;
+}
