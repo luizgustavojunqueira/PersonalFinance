@@ -1,6 +1,7 @@
-defmodule PersonalFinance.Transaction do
+defmodule PersonalFinance.Finance.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
+  alias PersonalFinance.Finance.{Transaction, Category, InvestmentType, Profile}
 
   schema "transactions" do
     field :value, :float
@@ -8,9 +9,9 @@ defmodule PersonalFinance.Transaction do
     field :amount, :float
     field :description, :string
     field :date, :date
-    belongs_to :category, PersonalFinance.Category
-    belongs_to :investment_type, PersonalFinance.InvestmentType
-    belongs_to :profile, PersonalFinance.Profile
+    belongs_to :category, Category
+    belongs_to :investment_type, InvestmentType
+    belongs_to :profile, Profile
     belongs_to :user, PersonalFinance.Accounts.User
 
     timestamps(type: :utc_datetime)

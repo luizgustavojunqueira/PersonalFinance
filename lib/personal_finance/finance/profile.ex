@@ -1,4 +1,4 @@
-defmodule PersonalFinance.Profile do
+defmodule PersonalFinance.Finance.Profile do
   use Ecto.Schema
   import Ecto.Changeset
 

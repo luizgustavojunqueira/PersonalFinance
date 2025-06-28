@@ -11,7 +11,7 @@
 # and so on) as they will fail if something goes wrong.
 
 alias PersonalFinance.Repo
-alias PersonalFinance.{Category, InvestmentType, Profile, Transaction}
+alias PersonalFinance.Finance.{Category, InvestmentType, Profile, Transaction}
 alias PersonalFinance.Accounts.User
 
 IO.puts("Iniciando seed do banco de dados...")

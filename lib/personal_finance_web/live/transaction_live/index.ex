@@ -1,7 +1,8 @@
 defmodule PersonalFinanceWeb.TransactionLive.Index do
-  alias PersonalFinance.Transaction
+  alias PersonalFinance.Finance.{Transaction}
+  alias PersonalFinance.PubSub
+  alias PersonalFinance.Finance
   use PersonalFinanceWeb, :live_view
-  import Ecto.Query
 
   @impl true
   def mount(_params, _session, socket) do
@@ -9,34 +10,22 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     if current_user do
       Phoenix.PubSub.subscribe(
-        PersonalFinance.PubSub,
+        PubSub,
         "transactions_updates:#{current_user.id}"
       )
     end
 
-    transactions =
-      from(t in PersonalFinance.Transaction, order_by: [desc: t.date])
-      |> where([t], t.user_id == ^current_user.id)
-      |> Ecto.Query.preload([:category, :investment_type, :profile])
-      |> PersonalFinance.Repo.all()
+    transactions = Finance.list_transactions_for_user(current_user)
 
-    categories =
-      PersonalFinance.Category
-      |> where([c], c.user_id == ^current_user.id)
-      |> PersonalFinance.Repo.all()
+    categories = Finance.list_categories_for_user(current_user)
 
-    investment_category =
-      PersonalFinance.Category
-      |> PersonalFinance.Repo.get_by(name: "Investimentos")
+    investment_category = Finance.get_category_by_name("Investimentos")
 
-    investment_types = PersonalFinance.InvestmentType |> PersonalFinance.Repo.all()
+    investment_types = Finance.list_investment_types()
 
-    profiles =
-      PersonalFinance.Profile
-      |> where([p], p.user_id == ^current_user.id)
-      |> PersonalFinance.Repo.all()
+    profiles = Finance.list_profiles_for_user(current_user)
 
-    changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
+    changeset = Transaction.changeset(%Transaction{}, %{})
 
     socket =
       socket
@@ -61,21 +50,17 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     amount = Map.get(transaction_params, "amount") |> parse_float()
     total_value = value * amount
 
-    params = Map.put(transaction_params, "total_value", total_value)
+    current_user = socket.assigns.current_scope.user
+    # Adiciona o user_id aos params antes de criar a transação
+    params_with_user = Map.put(transaction_params, "user_id", current_user.id)
 
-    changeset =
-      PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, params)
-
-    case PersonalFinance.Repo.insert(changeset) do
+    case Finance.create_transaction(Map.put(params_with_user, "total_value", total_value)) do
       {:ok, added} ->
-        preloaded_added =
-          PersonalFinance.Repo.preload(added, [:category, :investment_type, :profile])
-
-        new_changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
+        new_changeset = Transaction.changeset(%Transaction{}, %{})
 
         {:noreply,
          socket
-         |> stream_insert(:transactions, preloaded_added)
+         |> stream_insert(:transactions, added)
          |> assign(
            changeset: new_changeset,
            selected_transaction: nil,
@@ -97,8 +82,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       Map.get(transaction_params, "category_id") || socket.assigns.selected_category_id
 
     changeset =
-      PersonalFinance.Transaction.changeset(
-        socket.assigns.selected_transaction || %PersonalFinance.Transaction{},
+      Transaction.changeset(
+        socket.assigns.selected_transaction || %Transaction{},
         params
       )
 
@@ -127,21 +112,13 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     params = Map.put(transaction_params, "total_value", total_value)
 
-    changeset =
-      PersonalFinance.Transaction.changeset(t, params)
-
-    case PersonalFinance.Repo.update(changeset) do
+    case Finance.update_transaction(t, params) do
       {:ok, updated} ->
-        preloaded_updated =
-          PersonalFinance.Repo.preload(updated, [:category, :investment_type, :profile])
-
-        new_changeset = PersonalFinance.Transaction.changeset(%PersonalFinance.Transaction{}, %{})
-
-        handle_transaction_change({:ok, preloaded_updated})
+        new_changeset = Transaction.changeset(%Transaction{}, %{})
 
         {:noreply,
          socket
-         |> stream_insert(:transactions, preloaded_updated)
+         |> stream_insert(:transactions, updated)
          |> assign(
            changeset: new_changeset,
            selected_transaction: nil,
@@ -155,8 +132,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
   @impl true
   def handle_info({:edit_transaction, id}, socket) do
-    transaction = PersonalFinance.Repo.get(PersonalFinance.Transaction, String.to_integer(id))
-    changeset = PersonalFinance.Transaction.changeset(transaction, %{})
+    transaction = Finance.get_transaction!(String.to_integer(id))
+    changeset = Transaction.changeset(transaction, %{})
 
     {:noreply,
      assign(socket,
@@ -168,9 +145,9 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
   @impl true
   def handle_info({:delete_transaction, id}, socket) do
-    transaction = PersonalFinance.Repo.get(PersonalFinance.Transaction, String.to_integer(id))
+    transaction = Finance.get_transaction!(String.to_integer(id))
 
-    case PersonalFinance.Repo.delete(transaction) do
+    case Finance.delete_transaction(transaction) do
       {:ok, deleted} ->
         {:noreply, stream_delete(socket, :transactions, deleted)}
 
@@ -186,13 +163,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       "Recebida notificação de mudança de transação para o usuário #{user_id}. Recarregando dados..."
     )
 
-    transactions =
-      from(t in PersonalFinance.Transaction,
-        order_by: [desc: t.date],
-        where: t.user_id == ^user_id
-      )
-      |> Ecto.Query.preload([:category, :investment_type, :profile])
-      |> PersonalFinance.Repo.all()
+    transactions = Finance.list_transactions_for_user(socket.assigns.current_scope.user)
 
     # Atualize o stream ou o assign de transações
     socket =
@@ -218,7 +189,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     IO.puts("Transação #{transaction.id} foi alterada. Enviando notificação...")
 
     Phoenix.PubSub.broadcast(
-      PersonalFinance.PubSub,
+      PubSub,
       "transactions_updates:#{transaction.user_id}",
       {:transaction_changed, transaction.user_id}
     )
