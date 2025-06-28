@@ -5,6 +5,9 @@
     <.button phx-click="open_form">
       Adicionar Transação
     </.button>
+    <p>
+      {@current_scope.user.name}
+    </p>
     <Layouts.theme_toggle />
   </header>
 
@@ -35,23 +38,34 @@
             type="text"
             label="Descrição"
             placeholder="Ex: Monster"
+            required
           />
 
           <.input
-            field={f[:category]}
+            field={f[:profile_id]}
+            id="input-profile"
+            type="select"
+            options={["Selecione um perfil..." | @profiles]}
+            label="Perfil"
+          />
+
+          <.input
+            field={f[:category_id]}
             id="input-category"
             type="select"
-            options={["Investimento", "Prazeres", "Despesas", "Metas", "Conhecimento"]}
+            options={["Selecione uma categoria..." | @categories]}
             label="Categoria"
           />
 
-          <.input
-            field={f[:type]}
-            id="input-type"
-            type="select"
-            options={["Ação", "Fundo", "Cripto", "Gasto"]}
-            label="Tipo"
-          />
+          <%= if @selected_category_id && to_string(@selected_category_id) == to_string(@investment_category_id) do %>
+            <.input
+              field={f[:investment_type_id]}
+              id="input-investment-type"
+              type="select"
+              options={["Selecione um tipo de investimento..." | @investment_types]}
+              label="Tipo de Investimento"
+            />
+          <% end %>
 
           <.input
             field={f[:amount]}
@@ -91,9 +105,10 @@
     <h2 class="text-2xl font-semibold mb-4">Minhas Transações</h2>
     <section>
       <%!-- Transaction List Header --%>
-      <div class="grid grid-cols-8 gap-4 mb-4">
+      <div class="grid grid-cols-9 gap-4 mb-4">
         <span class="font-medium">Data</span>
         <span class="font-medium">Descrição</span>
+        <span class="font-medium">Perfil</span>
         <span class="font-medium ">Categoria</span>
         <span class="font-medium">Tipo</span>
         <span class="font-medium">Quantidade</span>

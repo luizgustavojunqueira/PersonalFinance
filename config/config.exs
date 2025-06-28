@@ -7,6 +7,19 @@
 # General application configuration
 import Config
 
+config :personal_finance, :scopes,
+  user: [
+    default: true,
+    module: PersonalFinance.Accounts.Scope,
+    assign_key: :current_scope,
+    access_path: [:user, :id],
+    schema_key: :user_id,
+    schema_type: :id,
+    schema_table: :users,
+    test_data_fixture: PersonalFinance.AccountsFixtures,
+    test_login_helper: :register_and_log_in_user
+  ]
+
 config :personal_finance,
   ecto_repos: [PersonalFinance.Repo],
   generators: [timestamp_type: :utc_datetime]

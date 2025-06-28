@@ -4,7 +4,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionListItem do
   @impl true
   def render(assigns) do
     ~H"""
-    <li class="grid grid-cols-8 gap-4 mb-4 p-3 rounded-md shadow-sm light" id={@id}>
+    <li class="grid grid-cols-9 gap-4 mb-4 p-3 rounded-md shadow-sm light" id={@id}>
       <span class="text-sm ">
         <%= if @transaction.inserted_at do %>
           {format_date(@transaction.date)}
@@ -13,10 +13,13 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionListItem do
         <% end %>
       </span>
       <span class="font-medium ">{@transaction.description}</span>
-      <span class="font-medium ">{@transaction.category}</span>
-      <span class="font-medium ">{@transaction.type}</span>
+      <span class="font-medium ">{@transaction.profile.name}</span>
+      <span class="font-medium ">{@transaction.category.name}</span>
       <span class="font-medium ">
-        {if @transaction.type == "Cripto",
+        {@transaction.investment_type && @transaction.investment_type.name}
+      </span>
+      <span class="font-medium ">
+        {if @transaction.investment_type && @transaction.investment_type.name == "Cripto",
           do: format_amount(@transaction.amount, true),
           else: format_amount(@transaction.amount, false)}
       </span>
