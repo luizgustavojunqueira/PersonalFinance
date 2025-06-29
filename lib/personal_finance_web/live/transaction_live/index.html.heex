@@ -35,14 +35,13 @@
               type="text"
               label="Descrição"
               placeholder="Ex: Monster"
-              required
             />
 
             <.input
               field={f[:profile_id]}
               id="input-profile"
               type="select"
-              options={["Selecione um perfil..." | @profiles]}
+              options={[{"Selecione um perfil", nil} | @profiles]}
               label="Perfil"
             />
 
@@ -50,7 +49,7 @@
               field={f[:category_id]}
               id="input-category"
               type="select"
-              options={["Selecione uma categoria..." | @categories]}
+              options={@categories}
               label="Categoria"
             />
 

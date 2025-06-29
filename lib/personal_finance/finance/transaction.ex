@@ -19,6 +19,12 @@ defmodule PersonalFinance.Finance.Transaction do
 
   @doc false
   def changeset(transaction, attrs) do
+    attrs =
+      Map.update(attrs, "profile_id", nil, fn
+        "" -> nil
+        other -> other
+      end)
+
     transaction
     |> cast(attrs, [
       :value,
@@ -31,14 +37,11 @@ defmodule PersonalFinance.Finance.Transaction do
       :profile_id,
       :user_id
     ])
-    |> validate_required([
-      :value,
-      :total_value,
-      :amount,
-      :description,
-      :date,
-      :profile_id,
-      :user_id
-    ])
+    |> validate_required([:value], message: "O valor da transação é obrigatório")
+    |> validate_required([:amount], message: "A quantidade é obrigatória")
+    |> validate_required([:description], message: "A descrição é obrigatória")
+    |> validate_required([:date], message: "A data é obrigatória")
+    |> validate_required([:profile_id], message: "Selecione um perfil")
+    |> validate_required([:user_id], message: "Usuário inválido")
   end
 end
