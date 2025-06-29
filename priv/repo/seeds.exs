@@ -43,6 +43,27 @@ test_user =
   end
 
 IO.puts("Populando categorias...")
+no_category = Repo.get_by(Category, name: "Sem Categoria")
+
+no_category =
+  unless no_category do
+    case Repo.insert(%Category{
+           name: "Sem Categoria",
+           description: "Transações sem categoria definida",
+           user_id: test_user.id,
+           is_default: true,
+           is_fixed: true
+         }) do
+      {:ok, category} ->
+        IO.puts("Criada categoria: #{category.name}")
+        category
+
+      {:error, changeset} ->
+        IO.puts("Erro ao criar categoria: #{inspect(changeset.errors)}")
+        System.halt(1)
+    end
+  end
+
 investimentos_category = Repo.get_by(Category, name: "Investimentos")
 
 investimentos_category =
@@ -50,7 +71,9 @@ investimentos_category =
     case Repo.insert(%Category{
            name: "Investimentos",
            description: "Transações relacionadas a investimentos",
-           user_id: test_user.id
+           user_id: test_user.id,
+           is_default: false,
+           is_fixed: true
          }) do
       {:ok, category} ->
         IO.puts("Criada categoria: #{category.name}")
@@ -69,7 +92,8 @@ prazeres_category =
     case Repo.insert(%Category{
            name: "Prazeres",
            description: "Despesas relacionadas à prazeres",
-           user_id: test_user.id
+           user_id: test_user.id,
+           is_default: false
          }) do
       {:ok, category} ->
         IO.puts("Criada categoria: #{category.name}")

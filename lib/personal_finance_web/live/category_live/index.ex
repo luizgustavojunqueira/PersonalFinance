@@ -86,7 +86,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
         {:noreply,
          socket
-         |> stream_insert(:categorys, updated)
+         |> stream_insert(:categories, updated)
          |> assign(
            changeset: new_changeset,
            selected_category: nil,

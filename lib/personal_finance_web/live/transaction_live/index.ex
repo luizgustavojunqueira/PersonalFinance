@@ -110,6 +110,15 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     amount = Map.get(transaction_params, "amount") |> parse_float()
     total_value = value * amount
 
+    # Se a categoria selecionada não for de investimentos, não deve ter tipo de investimento
+    transaction_params =
+      if String.to_integer(transaction_params["category_id"]) !=
+           socket.assigns.investment_category_id do
+        Map.put(transaction_params, "investment_type_id", nil)
+      else
+        transaction_params
+      end
+
     params = Map.put(transaction_params, "total_value", total_value)
 
     case Finance.update_transaction(t, params) do
@@ -135,11 +144,16 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     transaction = Finance.get_transaction!(String.to_integer(id))
     changeset = Transaction.changeset(transaction, %{})
 
+    selected_category_id =
+      transaction.category_id ||
+        socket.assigns.selected_category_id
+
     {:noreply,
      assign(socket,
        selected_transaction: transaction,
        show_form: true,
-       changeset: changeset
+       changeset: changeset,
+       selected_category_id: selected_category_id
      )}
   end
 

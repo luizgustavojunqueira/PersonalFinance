@@ -28,6 +28,20 @@ defmodule PersonalFinance.Finance do
   Cria uma transação.
   """
   def create_transaction(attrs) do
+    attrs =
+      if Map.get(attrs, :category_id) do
+        attrs
+      else
+        user_id = Map.get(attrs, "user_id")
+
+        default_category =
+          Category
+          |> where([c], c.is_default == true and c.user_id == ^user_id)
+          |> Repo.one()
+
+        Map.put(attrs, "category_id", default_category.id)
+      end
+
     %Transaction{}
     |> Transaction.changeset(attrs)
     |> Repo.insert()
@@ -117,9 +131,19 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Deletes a category.
+  Deletes a category and resets tranasctions to default category.
   """
   def delete_category(%Category{} = category) do
+    default_category =
+      Category
+      |> where([c], c.is_default == true and c.user_id == ^category.user_id)
+      |> Repo.one()
+
+    from(t in Transaction,
+      where: t.category_id == ^category.id and t.user_id == ^category.user_id
+    )
+    |> Repo.update_all(set: [category_id: default_category.id])
+
     Repo.delete(category)
   end
 

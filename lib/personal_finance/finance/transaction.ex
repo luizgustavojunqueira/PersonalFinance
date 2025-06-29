@@ -26,8 +26,8 @@ defmodule PersonalFinance.Finance.Transaction do
       :amount,
       :description,
       :date,
-      :category_id,
       :investment_type_id,
+      :category_id,
       :profile_id,
       :user_id
     ])
@@ -37,7 +37,6 @@ defmodule PersonalFinance.Finance.Transaction do
       :amount,
       :description,
       :date,
-      :category_id,
       :profile_id,
       :user_id
     ])

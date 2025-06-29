@@ -10,21 +10,25 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryListItem do
       <span class="font-medium ">{@category.percentage}</span>
 
       <span class="flex space-x-2">
-        <.link
-          class="text-blue-600 hover:text-blue-800 hero-pencil"
-          phx-click="edit_category"
-          phx-value-id={@category.id}
-          phx-target={@myself}
-        >
-        </.link>
-        <.link
-          class="text-red-600 hover:text-red-800 hero-trash"
-          phx-click="delete_category"
-          phx-value-id={@category.id}
-          phx-target={@myself}
-          data-confirm="Você tem certeza que deseja excluir esta transação?"
-        >
-        </.link>
+        <%= if !@category.is_default do %>
+          <.link
+            class="text-blue-600 hover:text-blue-800 hero-pencil"
+            phx-click="edit_category"
+            phx-value-id={@category.id}
+            phx-target={@myself}
+          >
+          </.link>
+        <% end %>
+        <%= if !@category.is_fixed do %>
+          <.link
+            class="text-red-600 hover:text-red-800 hero-trash"
+            phx-click="delete_category"
+            phx-value-id={@category.id}
+            phx-target={@myself}
+            data-confirm="Você tem certeza que deseja excluir esta transação?"
+          >
+          </.link>
+        <% end %>
       </span>
     </li>
     """
