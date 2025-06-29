@@ -13,13 +13,18 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <main class="px-4 py-20 sm:px-6 lg:px-8">
-      <div class="mx-auto max-w-2xl space-y-4">
-        {render_slot(@inner_block)}
-      </div>
-    </main>
-
-    <.flash_group flash={@flash} />
+    <div class="flex flex-col h-screen">
+      <.page_header current_scope={@current_scope} />
+      <main class="flex flex-row h-full w-full">
+        <%= if @show_sidebar do %>
+          <.navigation_sidebar />
+        <% end %>
+        <div class="h-full w-full px-4 py-2 ">
+          {render_slot(@inner_block)}
+        </div>
+        <.flash_group flash={@flash} />
+      </main>
+    </div>
     """
   end
 
@@ -35,7 +40,11 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def flash_group(assigns) do
     ~H"""
-    <div id={@id} aria-live="polite">
+    <div
+      id={@id}
+      aria-live="polite"
+      class="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center gap-2 p-4"
+    >
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />
 
@@ -93,7 +102,7 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def navigation_sidebar(assigns) do
     ~H"""
-    <div>
+    <div id="sidebar" class="medium overflow-hidden transition-all duration-300 collapsed">
       <button
         id="toggle-sidebar"
         phx-hook="ToggleSidebar"
@@ -142,6 +151,34 @@ defmodule PersonalFinanceWeb.Layouts do
         </li>
       </ul>
     </div>
+    """
+  end
+
+  def page_header(assigns) do
+    ~H"""
+    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end medium">
+      <li>
+        <Layouts.theme_toggle />
+      </li>
+      <%= if @current_scope do %>
+        <li class="medium  rounded-full py-1 px-2">
+          {@current_scope.user.email}
+        </li>
+        <li class="light hover-medium rounded-full py-1 px-2">
+          <.link href={~p"/users/settings"}>Settings</.link>
+        </li>
+        <li class="light hover-medium rounded-full py-1 px-2">
+          <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+        </li>
+      <% else %>
+        <li class="light hover-medium rounded-full py-1 px-2">
+          <.link href={~p"/users/register"}>Register</.link>
+        </li>
+        <li class="light hover-medium rounded-full py-1 px-2">
+          <.link href={~p"/users/log-in"}>Log in</.link>
+        </li>
+      <% end %>
+    </ul>
     """
   end
 end

@@ -5,7 +5,7 @@ defmodule PersonalFinanceWeb.UserLive.Confirmation do
 
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope}>
+    <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={false}>
       <div class="mx-auto max-w-sm">
         <.header class="text-center">Welcome {@user.email}</.header>
 

@@ -1,49 +1,51 @@
-<div class=" p-4 w-full ">
-  <header class="flex flex-row justify-between mb-5 items-center">
-    <h1 class="text-3xl font-bold mb-6 ">Perfis</h1>
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true}>
+  <div class="w-full m-0">
+    <header class="flex flex-row justify-between mb-5 items-center">
+      <h1 class="text-3xl font-bold mb-6 ">Perfis</h1>
 
-    <.button phx-click="open_form">
-      Adicionar Perfil
-    </.button>
-  </header>
+      <.button phx-click="open_form">
+        Adicionar Perfil
+      </.button>
+    </header>
 
-  <div class="rounded-lg shadow-md p-6 medium w-full ">
-    <h2 class="text-2xl font-semibold mb-4">Meus Perfis</h2>
-    <section>
-      <div class="grid grid-cols-3 gap-4 mb-4">
-        <span class="font-medium">Nome</span>
-        <span class="font-medium">Descrição</span>
+    <div class="rounded-lg shadow-md p-6 medium w-full ">
+      <h2 class="text-2xl font-semibold mb-4">Meus Perfis</h2>
+      <section>
+        <div class="grid grid-cols-3 gap-4 mb-4">
+          <span class="font-medium">Nome</span>
+          <span class="font-medium">Descrição</span>
 
-        <span class="font-medium">Ações</span>
-      </div>
-    </section>
-    <ul id="profiles" class="space-y-3">
-      <li id="profiles-empty" class="only:block hidden italic">
-        Nenhum perfil registrado ainda.
-      </li>
-      <%= for profile <- @profiles do %>
-        <li class="grid grid-cols-3 gap-4 mb-4 p-3 rounded-md shadow-sm light">
-          <span class="font-medium ">
-            {profile.name}
-          </span>
-          <span class="font-medium ">{profile.description}</span>
-          <span class="flex space-x-2">
-            <.link
-              class="text-blue-600 hover:text-blue-800 hero-pencil"
-              phx-click="edit_transaction"
-              phx-value-id={profile.id}
-            >
-            </.link>
-            <.link
-              class="text-red-600 hover:text-red-800 hero-trash"
-              phx-click="delete_transaction"
-              phx-value-id={profile.id}
-              data-confirm="Você tem certeza que deseja excluir este perfil?"
-            >
-            </.link>
-          </span>
+          <span class="font-medium">Ações</span>
+        </div>
+      </section>
+      <ul id="profiles" class="space-y-3">
+        <li id="profiles-empty" class="only:block hidden italic">
+          Nenhum perfil registrado ainda.
         </li>
-      <% end %>
-    </ul>
+        <%= for profile <- @profiles do %>
+          <li class="grid grid-cols-3 gap-4 mb-4 p-3 rounded-md shadow-sm light">
+            <span class="font-medium ">
+              {profile.name}
+            </span>
+            <span class="font-medium ">{profile.description}</span>
+            <span class="flex space-x-2">
+              <.link
+                class="text-blue-600 hover:text-blue-800 hero-pencil"
+                phx-click="edit_transaction"
+                phx-value-id={profile.id}
+              >
+              </.link>
+              <.link
+                class="text-red-600 hover:text-red-800 hero-trash"
+                phx-click="delete_transaction"
+                phx-value-id={profile.id}
+                data-confirm="Você tem certeza que deseja excluir este perfil?"
+              >
+              </.link>
+            </span>
+          </li>
+        <% end %>
+      </ul>
+    </div>
   </div>
-</div>
+</Layouts.app>
