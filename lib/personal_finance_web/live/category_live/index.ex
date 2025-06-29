@@ -8,14 +8,23 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_scope.user
 
+    user_budgets =
+      Finance.list_budgets_for_user(current_user)
+
+    current_budget =
+      case user_budgets do
+        [] -> nil
+        [first | _] -> first
+      end
+
     if current_user do
       Phoenix.PubSub.subscribe(
         PubSub,
-        "categories_updates:#{current_user.id}"
+        "categories_updates:#{current_budget.id}"
       )
     end
 
-    categories = Finance.list_categories_for_user(current_user)
+    categories = Finance.list_categories_for_budget(current_budget)
 
     changeset = Category.changeset(%Category{}, %{})
 
@@ -23,6 +32,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
       socket
       |> assign(
         changeset: changeset,
+        current_budget: current_budget,
         selected_category: nil,
         show_form: false
       )
@@ -33,9 +43,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
   @impl true
   def handle_event("create_category", %{"category" => category_params}, socket) do
-    current_user = socket.assigns.current_scope.user
-
-    params_with_user = Map.put(category_params, "user_id", current_user.id)
+    params_with_user = Map.put(category_params, "budget_id", socket.assigns.current_budget.id)
 
     case Finance.create_category(params_with_user) do
       {:ok, added} ->
@@ -125,9 +133,9 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   end
 
   @impl true
-  def handle_info({:category_changed, user_id}, socket)
-      when socket.assigns.current_scope.user.id == user_id do
-    categories = Finance.list_categories_for_user(socket.assigns.current_scope.user)
+  def handle_info({:category_changed, budget_id}, socket)
+      when budget_id == socket.assigns.current_budget.id do
+    categories = Finance.list_categories_for_budget(socket.assigns.current_budget)
 
     socket =
       socket

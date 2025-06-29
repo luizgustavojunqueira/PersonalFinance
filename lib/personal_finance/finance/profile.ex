@@ -5,7 +5,7 @@ defmodule PersonalFinance.Finance.Profile do
   schema "profiles" do
     field :name, :string
     field :description, :string, default: nil
-    belongs_to :user, PersonalFinance.Accounts.User
+    belongs_to :budget, PersonalFinance.Finance.Budget
 
     timestamps(type: :utc_datetime)
   end
@@ -13,8 +13,7 @@ defmodule PersonalFinance.Finance.Profile do
   @doc false
   def changeset(profile, attrs) do
     profile
-    |> cast(attrs, [:name, :description, :user_id])
-    |> validate_required([:name, :user_id, :description])
-    |> unique_constraint(:name, name: :profiles_name_user_id_index)
+    |> cast(attrs, [:name, :description, :budget_id])
+    |> validate_required([:name, :budget_id, :description])
   end
 end

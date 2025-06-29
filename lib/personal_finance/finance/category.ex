@@ -9,7 +9,7 @@ defmodule PersonalFinance.Finance.Category do
     field :percentage, :float, default: 0.0
     field :is_default, :boolean, default: false
     field :is_fixed, :boolean, default: false
-    belongs_to :user, PersonalFinance.Accounts.User, on_replace: :delete
+    belongs_to :budget, PersonalFinance.Finance.Budget
 
     timestamps(type: :utc_datetime)
   end
@@ -17,8 +17,8 @@ defmodule PersonalFinance.Finance.Category do
   @doc false
   def changeset(category, attrs) do
     category
-    |> cast(attrs, [:name, :description, :user_id, :percentage, :is_default, :is_fixed])
-    |> validate_required([:name, :user_id, :percentage, :is_default])
+    |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed, :budget_id])
+    |> validate_required([:name, :budget_id, :percentage, :is_default])
     |> validate_length(:name,
       min: 1,
       max: 100,
@@ -30,14 +30,14 @@ defmodule PersonalFinance.Finance.Category do
     )
     |> validate_inclusion(:is_default, [true, false])
     |> unique_constraint(:is_default,
-      name: :unique_default_category_per_user,
+      name: :unique_default_category_per_budget,
       where: "is_default = true"
     )
     |> unique_constraint(:name,
-      name: :categories_name_user_id_index,
+      name: :categories_name_budget_id_index,
       message: "Já existe uma categoria com esse nome para este usuário."
     )
-    |> foreign_key_constraint(:user_id, name: :categories_user_id_fkey)
+    |> foreign_key_constraint(:budget_id, name: :categories_budget_id_fkey)
     |> validate_number(:percentage,
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: 100,
@@ -47,15 +47,15 @@ defmodule PersonalFinance.Finance.Category do
   end
 
   def validate_total_percentage(changeset) do
-    user_id = get_change(changeset, :user_id) || get_field(changeset, :user_id)
+    budget_id = get_change(changeset, :budget_id) || get_field(changeset, :budget_id)
     current_percentage = get_change(changeset, :percentage)
 
-    if user_id && current_percentage do
+    if budget_id && current_percentage do
       category_id = changeset.data.id
 
       query =
         from(c in PersonalFinance.Finance.Category,
-          where: c.user_id == ^user_id,
+          where: c.budget_id == ^budget_id,
           select: c.percentage
         )
 

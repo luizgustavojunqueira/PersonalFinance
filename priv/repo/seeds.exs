@@ -11,7 +11,7 @@
 # and so on) as they will fail if something goes wrong.
 
 alias PersonalFinance.Repo
-alias PersonalFinance.Finance.{Category, InvestmentType, Profile, Transaction}
+alias PersonalFinance.Finance.{Category, InvestmentType, Profile, Transaction, Budget}
 alias PersonalFinance.Accounts.User
 
 IO.puts("Iniciando seed do banco de dados...")
@@ -42,6 +42,27 @@ test_user =
     end
   end
 
+IO.puts("Criando orçamento para o usuário #{test_user.email}...")
+
+budget = Repo.get_by(Budget, owner_id: test_user.id)
+
+budget =
+  unless budget do
+    case Repo.insert(%Budget{
+           name: "Famila #{test_user.name}",
+           description: "Orçamento familiar do usuário #{test_user.name}",
+           owner_id: test_user.id
+         }) do
+      {:ok, budget} ->
+        IO.puts("Orçamento criado: #{budget.name}")
+        budget
+
+      {:error, changeset} ->
+        IO.puts("Erro ao criar orçamento: #{inspect(changeset.errors)}")
+        System.halt(1)
+    end
+  end
+
 IO.puts("Populando categorias...")
 no_category = Repo.get_by(Category, name: "Sem Categoria")
 
@@ -50,7 +71,7 @@ no_category =
     case Repo.insert(%Category{
            name: "Sem Categoria",
            description: "Transações sem categoria definida",
-           user_id: test_user.id,
+           budget_id: budget.id,
            is_default: true,
            is_fixed: true
          }) do
@@ -71,7 +92,7 @@ investimentos_category =
     case Repo.insert(%Category{
            name: "Investimentos",
            description: "Transações relacionadas a investimentos",
-           user_id: test_user.id,
+           budget_id: budget.id,
            is_default: false,
            is_fixed: true
          }) do
@@ -92,7 +113,7 @@ prazeres_category =
     case Repo.insert(%Category{
            name: "Prazeres",
            description: "Despesas relacionadas à prazeres",
-           user_id: test_user.id,
+           budget_id: budget.id,
            is_default: false
          }) do
       {:ok, category} ->
@@ -143,11 +164,15 @@ fundo_imobiliario_type =
   end
 
 IO.puts("Populando perfis...")
-eu_profile = Repo.get_by(Profile, name: "Eu", user_id: test_user.id)
+eu_profile = Repo.get_by(Profile, name: "Eu", budget_id: test_user.id)
 
 eu_profile =
   unless eu_profile do
-    case Repo.insert(%Profile{name: "Eu", user_id: test_user.id}) do
+    case Repo.insert(%Profile{
+           name: "Eu",
+           description: "Perfil principal do usuario",
+           budget_id: budget.id
+         }) do
       {:ok, profile} ->
         IO.puts("  Criado profile: #{profile.name}")
         profile
@@ -158,11 +183,16 @@ eu_profile =
     end
   end
 
-conjuge_profile = Repo.get_by(Profile, name: "Cônjuge", user_id: test_user.id)
+conjuge_profile =
+  Repo.get_by(Profile, name: "Camila", budget_id: test_user.id)
 
 conjuge_profile =
   unless conjuge_profile do
-    case Repo.insert(%Profile{name: "Cônjuge", user_id: test_user.id}) do
+    case Repo.insert(%Profile{
+           name: "Cônjuge",
+           description: "Perfil da Camila",
+           budget_id: budget.id
+         }) do
       {:ok, profile} ->
         IO.puts("  Criado profile: #{profile.name}")
         profile
@@ -185,7 +215,7 @@ unless Repo.get_by(Transaction, description: "Jantar Romântico", profile_id: eu
     date: ~D[2024-06-25],
     category_id: prazeres_category.id,
     profile_id: eu_profile.id,
-    user_id: test_user.id
+    budget_id: budget.id
   })
 
   IO.puts("  Criada transação: Jantar Romântico")
@@ -201,7 +231,7 @@ unless Repo.get_by(Transaction, description: "Ações", profile_id: eu_profile.i
     investment_type_id: acoes_type.id,
     category_id: investimentos_category.id,
     profile_id: eu_profile.id,
-    user_id: test_user.id
+    budget_id: budget.id
   })
 
   IO.puts("  Criada transação: Jantar Romântico")

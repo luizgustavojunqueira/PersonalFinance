@@ -1,7 +1,7 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true}>
   <div class="w-full m-0">
     <header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">Transações</h1>
+      <h1 class="text-3xl font-bold mb-6 ">{@current_budget.name} - Transações</h1>
 
       <.button phx-click="open_form">
         Adicionar Transação

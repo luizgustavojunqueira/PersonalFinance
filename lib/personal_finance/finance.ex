@@ -1,26 +1,26 @@
 defmodule PersonalFinance.Finance do
   alias PersonalFinance.Repo
-  alias PersonalFinance.Finance.{Transaction, Category, InvestmentType, Profile}
+  alias PersonalFinance.Finance.{Transaction, Category, InvestmentType, Profile, Budget}
   import Ecto.Query
 
   @doc """
-  Retorna a lista de transações para um usuário.
+  Retorna a lista de transações para um orçamento
   """
-  def list_transactions_for_user(user) do
+  def list_transactions_for_budget(budget) do
     from(t in Transaction,
       order_by: [desc: t.date],
-      where: t.user_id == ^user.id
+      where: t.budget_id == ^budget.id
     )
     |> Ecto.Query.preload([:category, :investment_type, :profile])
     |> Repo.all()
   end
 
   @doc """
-  Retorna a lista de profiles para um usuário.
+  Retorna a lista de profiles para um orçamento
   """
-  def list_profiles_for_user(user) do
+  def list_profiles_for_budget(budget) do
     Profile
-    |> where([p], p.user_id == ^user.id)
+    |> where([p], p.budget_id == ^budget.id)
     |> Repo.all()
   end
 
@@ -32,11 +32,11 @@ defmodule PersonalFinance.Finance do
       if Map.get(attrs, :category_id) do
         attrs
       else
-        user_id = Map.get(attrs, "user_id")
+        budget_id = Map.get(attrs, "budget_id")
 
         default_category =
           Category
-          |> where([c], c.is_default == true and c.user_id == ^user_id)
+          |> where([c], c.is_default == true and c.budget_id == ^budget_id)
           |> Repo.one()
 
         Map.put(attrs, "category_id", default_category.id)
@@ -102,11 +102,11 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Returns the list of categories for a user.
+  Returns the list of categories for a budget.
   """
-  def list_categories_for_user(user) do
+  def list_categories_for_budget(budget) do
     Category
-    |> where([c], c.user_id == ^user.id)
+    |> where([c], c.budget_id == ^budget.id)
     |> Repo.all()
   end
 
@@ -131,16 +131,16 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Deletes a category and resets tranasctions to default category.
+  Deletes a category and resets transactions to default category.
   """
   def delete_category(%Category{} = category) do
     default_category =
       Category
-      |> where([c], c.is_default == true and c.user_id == ^category.user_id)
+      |> where([c], c.is_default == true and c.budget_id == ^category.budget_id)
       |> Repo.one()
 
     from(t in Transaction,
-      where: t.category_id == ^category.id and t.user_id == ^category.user_id
+      where: t.category_id == ^category.id and t.budget_id == ^category.budget_id
     )
     |> Repo.update_all(set: [category_id: default_category.id])
 
@@ -153,14 +153,25 @@ defmodule PersonalFinance.Finance do
   def get_category!(id) do
     Category
     |> Repo.get!(id)
-    |> Repo.preload(:user)
+    |> Repo.preload(:budget)
+  end
+
+  @doc """
+  Returns all budgets for a user.
+  """
+  def list_budgets_for_user(user) do
+    from(b in Budget,
+      where: b.owner_id == ^user.id,
+      distinct: true
+    )
+    |> Repo.all()
   end
 
   defp handle_category_change({:ok, %Category{} = category}) do
     Phoenix.PubSub.broadcast(
       PersonalFinance.PubSub,
-      "categories_updates:#{category.user_id}",
-      {:category_changed, category.user_id}
+      "categories_updates:#{category.budget_id}",
+      {:category_changed, category.budget_id}
     )
 
     {:ok, category}
@@ -173,8 +184,8 @@ defmodule PersonalFinance.Finance do
 
     Phoenix.PubSub.broadcast(
       PersonalFinance.PubSub,
-      "transactions_updates:#{preloaded_transaction.user_id}",
-      {:transaction_changed, preloaded_transaction.user_id}
+      "transactions_updates:#{preloaded_transaction.budget_id}",
+      {:transaction_changed, preloaded_transaction.budget_id}
     )
 
     {:ok, preloaded_transaction}

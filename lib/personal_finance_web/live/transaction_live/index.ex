@@ -8,22 +8,31 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   def mount(_params, _session, socket) do
     current_user = socket.assigns.current_scope.user
 
+    user_budgets =
+      Finance.list_budgets_for_user(current_user)
+
+    current_budget =
+      case user_budgets do
+        [] -> nil
+        [first | _] -> first
+      end
+
     if current_user do
       Phoenix.PubSub.subscribe(
         PubSub,
-        "transactions_updates:#{current_user.id}"
+        "transactions_updates:#{current_budget.id}"
       )
     end
 
-    transactions = Finance.list_transactions_for_user(current_user)
+    transactions = Finance.list_transactions_for_budget(current_budget)
 
-    categories = Finance.list_categories_for_user(current_user)
+    categories = Finance.list_categories_for_budget(current_budget)
 
     investment_category = Finance.get_category_by_name("Investimentos")
 
     investment_types = Finance.list_investment_types()
 
-    profiles = Finance.list_profiles_for_user(current_user)
+    profiles = Finance.list_profiles_for_budget(current_budget)
 
     changeset = Transaction.changeset(%Transaction{}, %{})
 
@@ -31,6 +40,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       socket
       |> assign(
         changeset: changeset,
+        current_budget: current_budget,
         selected_transaction: nil,
         show_form: false,
         categories: Enum.map(categories, fn category -> {category.name, category.id} end),
@@ -50,9 +60,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     amount = Map.get(transaction_params, "amount") |> parse_float()
     total_value = value * amount
 
-    current_user = socket.assigns.current_scope.user
-    # Adiciona o user_id aos params antes de criar a transação
-    params_with_user = Map.put(transaction_params, "user_id", current_user.id)
+    params_with_user = Map.put(transaction_params, "budget_id", socket.assigns.current_budget.id)
 
     case Finance.create_transaction(Map.put(params_with_user, "total_value", total_value)) do
       {:ok, added} ->
@@ -171,13 +179,11 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_info({:transaction_changed, user_id}, socket)
-      when socket.assigns.current_scope.user.id == user_id do
-    IO.puts(
-      "Recebida notificação de mudança de transação para o usuário #{user_id}. Recarregando dados..."
-    )
+  def handle_info({:transaction_changed, budget_id}, socket)
+      when budget_id == socket.assigns.current_budget.id do
+    IO.puts("Transaction changed for budget: #{budget_id}, updating transactions stream.")
 
-    transactions = Finance.list_transactions_for_user(socket.assigns.current_scope.user)
+    transactions = Finance.list_transactions_for_budget(socket.assigns.current_budget)
 
     # Atualize o stream ou o assign de transações
     socket =

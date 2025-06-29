@@ -12,7 +12,7 @@ defmodule PersonalFinance.Finance.Transaction do
     belongs_to :category, Category
     belongs_to :investment_type, InvestmentType
     belongs_to :profile, Profile
-    belongs_to :user, PersonalFinance.Accounts.User
+    belongs_to :budget, PersonalFinance.Finance.Budget
 
     timestamps(type: :utc_datetime)
   end
@@ -35,13 +35,13 @@ defmodule PersonalFinance.Finance.Transaction do
       :investment_type_id,
       :category_id,
       :profile_id,
-      :user_id
+      :budget_id
     ])
     |> validate_required([:value], message: "O valor da transação é obrigatório")
     |> validate_required([:amount], message: "A quantidade é obrigatória")
     |> validate_required([:description], message: "A descrição é obrigatória")
     |> validate_required([:date], message: "A data é obrigatória")
     |> validate_required([:profile_id], message: "Selecione um perfil")
-    |> validate_required([:user_id], message: "Usuário inválido")
+    |> validate_required([:budget_id], message: "Usuário inválido")
   end
 end
