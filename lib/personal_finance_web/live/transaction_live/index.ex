@@ -63,6 +63,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
         {:noreply,
          socket
+         |> put_flash(:info, "Transação adicionada com sucesso.")
          |> stream_insert(:transactions, added)
          |> assign(
            changeset: new_changeset,
@@ -138,6 +139,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
         {:noreply,
          socket
+         |> put_flash(:info, "Transação atualizada com sucesso.")
          |> stream_insert(:transactions, updated)
          |> assign(
            changeset: new_changeset,
@@ -174,7 +176,10 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     case Finance.delete_transaction(transaction) do
       {:ok, deleted} ->
-        {:noreply, stream_delete(socket, :transactions, deleted)}
+        {:noreply,
+         socket
+         |> put_flash(:info, "Transação removida com sucesso")
+         |> stream_delete(:transactions, deleted)}
 
       {:error, _changeset} ->
         {:noreply, socket}

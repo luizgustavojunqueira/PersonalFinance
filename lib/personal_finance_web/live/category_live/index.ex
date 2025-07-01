@@ -43,6 +43,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
         {:noreply,
          socket
+         |> put_flash(:info, "Categoria adicionada com sucesso.")
          |> stream_insert(:categories, added)
          |> assign(
            changeset: new_changeset,
@@ -86,6 +87,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
         {:noreply,
          socket
+         |> put_flash(:info, "Categoria atualizada com sucesso.")
          |> stream_insert(:categories, updated)
          |> assign(
            changeset: new_changeset,
@@ -117,7 +119,10 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
     case Finance.delete_category(category) do
       {:ok, deleted} ->
-        {:noreply, stream_delete(socket, :categories, deleted)}
+        {:noreply,
+         socket
+         |> put_flash(:info, "Categoria removida com sucesso")
+         |> stream_delete(:categories, deleted)}
 
       {:error, _changeset} ->
         {:noreply, socket}

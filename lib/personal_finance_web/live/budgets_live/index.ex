@@ -30,6 +30,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
 
         {:noreply,
          socket
+         |> put_flash(:info, "Orçamento adicionado com sucesso.")
          |> stream_insert(:budgets, added)
          |> assign(
            changeset: new_changeset,
@@ -84,6 +85,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
 
         {:noreply,
          socket
+         |> put_flash(:info, "Orçamento atualizado com sucesso.")
          |> stream_insert(:budgets, updated)
          |> assign(
            changeset: new_changeset,
@@ -115,7 +117,10 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
 
     case Finance.delete_budget(budget) do
       {:ok, deleted} ->
-        {:noreply, stream_delete(socket, :budgets, deleted)}
+        {:noreply,
+         socket
+         |> put_flash(:info, "Orçamento removido com sucesso")
+         |> stream_delete(:budgets, deleted)}
 
       {:error, _changeset} ->
         {:noreply, socket}
