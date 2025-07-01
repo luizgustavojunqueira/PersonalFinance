@@ -164,12 +164,89 @@ defmodule PersonalFinance.Finance do
       where: b.owner_id == ^user.id,
       distinct: true
     )
+    |> Ecto.Query.preload(:owner)
     |> Repo.all()
   end
 
+  @doc """
+  Returns a budget by ID.
+  """
   def get_budget_by_id(budget_id) do
     from(b in Budget, where: b.id == ^budget_id)
     |> Repo.one()
+  end
+
+  @doc """
+  Creates a budget.
+  """
+  def create_budget(attrs) do
+    Repo.transaction(fn ->
+      case %Budget{} |> Budget.changeset(attrs) |> Repo.insert() do
+        {:ok, budget} ->
+          default_categories_attrs = [
+            %{
+              "name" => "Sem Categoria",
+              "description" => "Transações sem categoria",
+              "is_default" => true,
+              "is_fixed" => true
+            },
+            %{
+              "name" => "Investimento",
+              "description" => "Transações de investimento",
+              "is_default" => false,
+              "is_fixed" => true
+            }
+          ]
+
+          results =
+            Enum.map(default_categories_attrs, fn category_attrs_map ->
+              category_attrs_map =
+                category_attrs_map
+                |> Map.put("budget_id", budget.id)
+
+              create_category(category_attrs_map)
+            end)
+
+          if Enum.all?(results, fn result ->
+               case result do
+                 {:ok, _category} -> true
+                 {:error, _changeset} -> false
+               end
+             end) do
+            budget
+          else
+            failed_results =
+              Enum.filter(results, fn result ->
+                case result do
+                  {:ok, _category} -> false
+                  {:error, _changeset} -> true
+                end
+              end)
+
+            raise Ecto.NoResultsError, message: "Failed to create all default categories"
+          end
+
+        {:error, budget_changeset} ->
+          # Budget creation failed, return its errors directly (transaction will rollback implicitly)
+          {:error, budget_changeset}
+      end
+    end)
+  end
+
+  @doc """
+  Updates a budget.
+  """
+  def update_budget(%Budget{} = budget, attrs) do
+    budget
+    |> Budget.changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a budget.
+  """
+  def delete_budget(%Budget{} = budget) do
+    Repo.delete(budget)
   end
 
   defp handle_category_change({:ok, %Category{} = category}) do

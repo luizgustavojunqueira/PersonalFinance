@@ -12,7 +12,13 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
 
     changeset = Profile.changeset(%Profile{}, %{})
 
-    socket = assign(socket, changeset: changeset, profiles: profiles, budget_id: budget_id)
+    socket =
+      assign(socket,
+        changeset: changeset,
+        profiles: profiles,
+        budget_id: budget_id,
+        current_budget: current_budget
+      )
 
     {:ok, socket}
   end

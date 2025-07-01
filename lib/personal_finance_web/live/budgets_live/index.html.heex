@@ -14,11 +14,56 @@
     </header>
   </div>
 
-  <div class="flex flex-row flex-wrap p-2 gap-5">
+  <%= if @show_form do %>
+    <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/30 ">
+      <div class=" w-2/5 mb-8 p-6 rounded-lg shadow-md dark ">
+        <div class="flex flex-row justify-between mb-5 items-center">
+          <h2 class="text-2xl font-semibold mb-4 ">
+            <%= if @selected_budget do %>
+              Editar Orçamento
+            <% else %>
+              Novo Orçamento
+            <% end %>
+          </h2>
+
+          <.link class="text-red-600 hover:text-red-800 hero-x-mark" phx-click="close_form">
+          </.link>
+        </div>
+        <.form
+          :let={f}
+          for={@changeset}
+          phx-submit={(@selected_budget && "update_budget") || "create_budget"}
+          phx-change="validate_budget"
+        >
+          <.input
+            field={f[:name]}
+            id="input-name"
+            type="text"
+            label="Nome"
+            placeholder="Ex: Orçamento familiar"
+          />
+
+          <.input
+            field={f[:description]}
+            id="input-description"
+            type="text"
+            label="Descrição"
+            placeholder="Ex: Orçamento familiar"
+          />
+
+          <.button type="submit" phx-disable-with="Salvando...">
+            {if @selected_budget, do: "Atualizar", else: "Cadastrar"}
+          </.button>
+        </.form>
+      </div>
+    </div>
+  <% end %>
+
+  <div id="budgets" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
     <.live_component
-      :for={{budget, index} <- Enum.with_index(@budgets)}
+      :for={{id, budget} <- @streams.budgets}
       module={PersonalFinanceWeb.BudgetsLive.BudgetCardItem}
-      id={"budget-#{budget.name}-#{index}"}
+      id={id}
       budget={budget}
       parent_pid={self()}
     />

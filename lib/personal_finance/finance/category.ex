@@ -18,7 +18,7 @@ defmodule PersonalFinance.Finance.Category do
   def changeset(category, attrs) do
     category
     |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed, :budget_id])
-    |> validate_required([:name, :budget_id, :percentage, :is_default])
+    |> validate_required([:name, :description, :budget_id, :percentage, :is_default])
     |> validate_length(:name,
       min: 1,
       max: 100,
@@ -44,6 +44,7 @@ defmodule PersonalFinance.Finance.Category do
       message: "A porcentagem deve ser um número entre 0 e 100."
     )
     |> validate_total_percentage()
+    |> apply_fixed_category_rules(category.id != nil)
   end
 
   def validate_total_percentage(changeset) do
@@ -80,6 +81,27 @@ defmodule PersonalFinance.Finance.Category do
       else
         changeset
       end
+    else
+      changeset
+    end
+  end
+
+  defp apply_fixed_category_rules(changeset, is_update) do
+    if is_update && get_field(changeset, :is_fixed) do
+      changeset
+      |> validate_fixed_field(:name, "O nome de categorias fixas não pode ser alterado.")
+      |> validate_fixed_field(
+        :description,
+        "A descrição de categorias fixas não pode ser alterada."
+      )
+    else
+      changeset
+    end
+  end
+
+  defp validate_fixed_field(changeset, field, message) do
+    if get_change(changeset, field) do
+      add_error(changeset, field, message)
     else
       changeset
     end
