@@ -4,22 +4,15 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
   use PersonalFinanceWeb, :live_view
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(%{"id" => budget_id}, _session, socket) do
     current_user = socket.assigns.current_scope.user
 
-    user_budgets =
-      Finance.list_budgets_for_user(current_user)
-
-    current_budget =
-      case user_budgets do
-        [] -> nil
-        [first | _] -> first
-      end
+    current_budget = Finance.get_budget_by_id(budget_id)
 
     if current_user do
       Phoenix.PubSub.subscribe(
         PubSub,
-        "transactions_updates:#{current_budget.id}"
+        "transactions_updates:#{budget_id}"
       )
     end
 
@@ -45,7 +38,8 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
         page_title: "Home",
         show_welcome_message: true,
         labels: labels,
-        values: values
+        values: values,
+        budget_id: budget_id
       )
 
     {:ok, socket}

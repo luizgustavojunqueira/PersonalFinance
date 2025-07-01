@@ -1,0 +1,26 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  show_sidebar={true}
+  budget_id={@budget_id}
+>
+  <div class="w-full m-0">
+    <header class="flex flex-row justify-between mb-5 items-center">
+      <h1 class="text-3xl font-bold mb-6 ">Orçamentos</h1>
+
+      <.button phx-click="open_form">
+        Adicionar Orçamento
+      </.button>
+    </header>
+  </div>
+
+  <div class="flex flex-row flex-wrap p-2 gap-5">
+    <.live_component
+      :for={{budget, index} <- Enum.with_index(@budgets)}
+      module={PersonalFinanceWeb.BudgetsLive.BudgetCardItem}
+      id={"budget-#{budget.name}-#{index}"}
+      budget={budget}
+      parent_pid={self()}
+    />
+  </div>
+</Layouts.app>

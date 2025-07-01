@@ -48,10 +48,11 @@ defmodule PersonalFinanceWeb.Router do
       on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
-      live "/transactions", TransactionLive.Index, :index
-      live "/categories", CategoryLive.Index, :index
-      live "/profiles", ProfileLive.Index, :index
-      live "/", HomeLive.Index, :index
+      live "/budgets", BudgetsLive.Index, :index
+      live "/budgets/:id", HomeLive.Index, :index
+      live "/budgets/:id/profiles", ProfileLive.Index, :index
+      live "/budgets/:id/transactions", TransactionLive.Index, :index
+      live "/budgets/:id/categories", CategoryLive.Index, :index
     end
 
     post "/users/update-password", UserSessionController, :update_password

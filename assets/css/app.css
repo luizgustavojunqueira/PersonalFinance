@@ -65,6 +65,10 @@
     .light {
         @apply bg-bg-lightmode-light dark:bg-bg-darkmode-light text-text-lightmode-light dark:text-text-darkmode-medium;
     }
+
+    .primary-button {
+        @apply bg-blue-600 text-white hover:bg-blue-500 transition-colors hover:cursor-pointer;
+    }
 }
 
 #sidebar {
@@ -81,10 +85,10 @@
     opacity: 0;
 }
 
-#toggle-sidebar {
+#toggle-sidebar.collapsed {
     justify-content: center;
 }
 
-#toggle-sidebar.collapsed {
+#toggle-sidebar {
     justify-content: flex-end;
 }

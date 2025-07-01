@@ -29,17 +29,34 @@ let Hooks = {};
 
 Hooks.ToggleSidebar = {
     mounted() {
-        this.el.addEventListener("click", () => {
-            const sb = document.getElementById("sidebar");
-            const openI = this.el.querySelector(".open-icon");
-            const closeI = this.el.querySelector(".close-icon");
-            const btn = document.getElementById("toggle-sidebar");
+        const sidebar = document.getElementById("sidebar");
+        const btn = document.getElementById("toggle-sidebar");
+        const openIcon = this.el.querySelector(".open-icon");
+        const closeIcon = this.el.querySelector(".close-icon");
 
-            sb.classList.toggle("collapsed");
-            openI.classList.toggle("hidden");
-            closeI.classList.toggle("hidden");
-            btn.classList.toggle("collapsed");
+        let isOpen = localStorage.getItem("sidebarOpen") === "true";
+
+        this.updateSidebarState(sidebar, openIcon, closeIcon, btn, isOpen);
+
+        this.el.addEventListener("click", () => {
+            isOpen = !isOpen;
+            localStorage.setItem("sidebarOpen", isOpen);
+            this.updateSidebarState(sidebar, openIcon, closeIcon, btn, isOpen);
         });
+    },
+
+    updateSidebarState(sidebar, openIcon, closeIcon, btn, isOpen) {
+        if (isOpen) {
+            sidebar.classList.remove("collapsed");
+            openIcon.classList.add("hidden");
+            closeIcon.classList.remove("hidden");
+            btn.classList.remove("collapsed");
+        } else {
+            sidebar.classList.add("collapsed");
+            openIcon.classList.remove("hidden");
+            closeIcon.classList.add("hidden");
+            btn.classList.add("collapsed");
+        }
     },
 };
 

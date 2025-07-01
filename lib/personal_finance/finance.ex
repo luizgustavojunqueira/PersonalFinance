@@ -29,7 +29,7 @@ defmodule PersonalFinance.Finance do
   """
   def create_transaction(attrs) do
     attrs =
-      if Map.get(attrs, :category_id) do
+      if Map.get(attrs, "category_id") do
         attrs
       else
         budget_id = Map.get(attrs, "budget_id")
@@ -165,6 +165,11 @@ defmodule PersonalFinance.Finance do
       distinct: true
     )
     |> Repo.all()
+  end
+
+  def get_budget_by_id(budget_id) do
+    from(b in Budget, where: b.id == ^budget_id)
+    |> Repo.one()
   end
 
   defp handle_category_change({:ok, %Category{} = category}) do

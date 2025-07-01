@@ -17,7 +17,7 @@ defmodule PersonalFinanceWeb.Layouts do
       <.page_header current_scope={@current_scope} />
       <main class="flex flex-row h-full w-full">
         <%= if @show_sidebar do %>
-          <.navigation_sidebar />
+          <.navigation_sidebar budget_id={@budget_id} />
         <% end %>
         <div class="h-full w-full px-4 py-2 ">
           {render_slot(@inner_block)}
@@ -114,41 +114,53 @@ defmodule PersonalFinanceWeb.Layouts do
       <ul class="p-4 w-80 ">
         <li class=" mb-4 ">
           <.link
-            navigate={~p"/"}
-            class="flex items
+            navigate={~p"/budgets"}
+            class="flex items space-x-2 text-base-content hover:text-primary"
+          >
+            <.icon name="hero-book-open" class="size-6" />
+
+            <span class="sidebar-text hidden md:inline">Orçamentos</span>
+          </.link>
+        </li>
+        <%= if @budget_id do %>
+          <li class=" mb-4 ">
+            <.link
+              navigate={~p"/budgets/#{@budget_id}"}
+              class="flex items
             space-x-2 text-base-content hover:text-primary"
-          >
-            <.icon name="hero-home" class="size-6" />
-            <span class="sidebar-text md:inline hidden">Home</span>
-          </.link>
-        </li>
-        <li class=" mb-4 ">
-          <.link
-            navigate={~p"/transactions"}
-            class="flex items space-x-2 text-base-content hover:text-primary"
-          >
-            <.icon name="hero-clipboard-document-list" class="size-6" />
-            <span class="sidebar-text hidden md:inline">Transações</span>
-          </.link>
-        </li>
-        <li class=" mb-4 ">
-          <.link
-            navigate={~p"/profiles"}
-            class="flex items space-x-2 text-base-content hover:text-primary"
-          >
-            <.icon name="hero-users" class="size-6" />
-            <span class="sidebar-text hidden md:inline">Perfis</span>
-          </.link>
-        </li>
-        <li class=" mb-4 ">
-          <.link
-            navigate={~p"/categories"}
-            class="flex items space-x-2 text-base-content hover:text-primary"
-          >
-            <.icon name="hero-tag" class="size-6" />
-            <span class="sidebar-text hidden md:inline">Categorias</span>
-          </.link>
-        </li>
+            >
+              <.icon name="hero-home" class="size-6" />
+              <span class="sidebar-text md:inline hidden">Home</span>
+            </.link>
+          </li>
+          <li class=" mb-4 ">
+            <.link
+              navigate={~p"/budgets/#{@budget_id}/transactions"}
+              class="flex items space-x-2 text-base-content hover:text-primary"
+            >
+              <.icon name="hero-clipboard-document-list" class="size-6" />
+              <span class="sidebar-text hidden md:inline">Transações</span>
+            </.link>
+          </li>
+          <li class=" mb-4 ">
+            <.link
+              navigate={~p"/budgets/#{@budget_id}/profiles"}
+              class="flex items space-x-2 text-base-content hover:text-primary"
+            >
+              <.icon name="hero-users" class="size-6" />
+              <span class="sidebar-text hidden md:inline">Perfis</span>
+            </.link>
+          </li>
+          <li class=" mb-4 ">
+            <.link
+              navigate={~p"/budgets/#{@budget_id}/categories"}
+              class="flex items space-x-2 text-base-content hover:text-primary"
+            >
+              <.icon name="hero-tag" class="size-6" />
+              <span class="sidebar-text hidden md:inline">Categorias</span>
+            </.link>
+          </li>
+        <% end %>
       </ul>
     </div>
     """

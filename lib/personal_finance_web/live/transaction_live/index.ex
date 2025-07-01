@@ -5,22 +5,15 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   use PersonalFinanceWeb, :live_view
 
   @impl true
-  def mount(_params, _session, socket) do
+  def mount(%{"id" => budget_id}, _session, socket) do
     current_user = socket.assigns.current_scope.user
 
-    user_budgets =
-      Finance.list_budgets_for_user(current_user)
-
-    current_budget =
-      case user_budgets do
-        [] -> nil
-        [first | _] -> first
-      end
+    current_budget = Finance.get_budget_by_id(budget_id)
 
     if current_user do
       Phoenix.PubSub.subscribe(
         PubSub,
-        "transactions_updates:#{current_budget.id}"
+        "transactions_updates:#{budget_id}"
       )
     end
 
@@ -47,7 +40,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
         selected_category_id: nil,
         investment_category_id: if(investment_category, do: investment_category.id, else: nil),
         investment_types: Enum.map(investment_types, fn type -> {type.name, type.id} end),
-        profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end)
+        profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
+        budget_id: budget_id
       )
       |> stream(:transactions, transactions, id: & &1.id)
 
@@ -104,7 +98,15 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   def handle_event("open_form", _params, socket) do
-    {:noreply, assign(socket, show_form: true, selected_transaction: nil)}
+    changeset = Transaction.changeset(%Transaction{}, %{})
+
+    {:noreply,
+     assign(socket,
+       show_form: true,
+       selected_transaction: nil,
+       changeset: changeset,
+       selected_category_id: nil
+     )}
   end
 
   def handle_event("close_form", _params, socket) do

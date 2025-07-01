@@ -1,0 +1,63 @@
+defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
+  use PersonalFinanceWeb, :live_component
+
+  @impl true
+  def mount(socket) do
+    {:ok, assign(socket, show_menu: false)}
+  end
+
+  @impl true
+  def render(assigns) do
+    ~H"""
+    <div
+      class="flex flex-col rounded-xl gap-4 light max-w-85 items-center p-0 relative shadow-md"
+      id={@id}
+    >
+      <div class="flex justify-between w-full rounded-t-xl text-center medium p-2">
+        <span class="">{@budget.name}</span>
+        <.link class="hero-ellipsis-vertical" phx-click="toggle_menu" phx-target={@myself}></.link>
+      </div>
+
+      <span class="w-full p-2 px-6 text-center">{@budget.description}</span>
+      <button
+        class="light p-2 rounded-b-xl w-full primary-button min-h-10"
+        phx-click="view_budget"
+        phx-value-budget-id={@budget.id}
+        phx-target={@myself}
+      >
+        Visualizar
+      </button>
+      <%= if @show_menu do %>
+        <div class="absolute right-5 top-5 dark p-2 flex flex-col gap-4 rounded-xl shadow-lg">
+          <span
+            phx-click="edit_budget"
+            class="flex items-center flex-row justify-start gap-2 text-blue-600 hover:text-blue-800 hover:cursor-pointer "
+          >
+            <.link class="hero-pencil"></.link>
+            <p>Editar</p>
+          </span>
+
+          <span
+            phx-click="delete_budget"
+            class="flex items-center flex-row justify-start gap-2 text-red-600 hover:text-red-800 hover:cursor-pointer "
+          >
+            <.link class="hero-trash"></.link>
+            <p>Apagar</p>
+          </span>
+        </div>
+      <% end %>
+    </div>
+    """
+  end
+
+  @impl true
+  def handle_event("view_budget", %{"budget-id" => budget_id}, socket) do
+    {:noreply, push_navigate(socket, to: "/budgets/#{budget_id}")}
+  end
+
+  @impl true
+  def handle_event("toggle_menu", _params, socket) do
+    current_state = socket.assigns.show_menu
+    {:noreply, assign(socket, show_menu: !current_state)}
+  end
+end
