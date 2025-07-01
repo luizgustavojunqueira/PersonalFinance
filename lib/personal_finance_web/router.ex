@@ -51,6 +51,8 @@ defmodule PersonalFinanceWeb.Router do
       live "/budgets", BudgetsLive.Index, :index
       live "/budgets/:id", HomeLive.Index, :index
       live "/budgets/:id/profiles", ProfileLive.Index, :index
+      live "/budgets/:id/profiles/new", ProfileLive.Form, :form
+      live "/budgets/:id/profiles/:profile_id/edit", ProfileLive.Form, :form
       live "/budgets/:id/transactions", TransactionLive.Index, :index
       live "/budgets/:id/categories", CategoryLive.Index, :index
     end

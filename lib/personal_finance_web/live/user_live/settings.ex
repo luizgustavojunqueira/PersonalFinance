@@ -7,7 +7,7 @@ defmodule PersonalFinanceWeb.UserLive.Settings do
 
   def render(assigns) do
     ~H"""
-    <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true}>
+    <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget_id={nil}>
       <.header class="text-center">
         Account Settings
         <:subtitle>Manage your account email address and password settings</:subtitle>

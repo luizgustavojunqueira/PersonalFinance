@@ -22,4 +22,23 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
 
     {:ok, socket}
   end
+
+  @impl true
+  def handle_event("delete_profile", %{"id" => id}, socket) do
+    case Finance.delete_profile_by_id(id) do
+      {:ok, _profile} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Profile deleted successfully.")
+         |> redirect(to: ~p"/budgets/#{socket.assigns.budget_id}/profiles")}
+
+      {:error, _changeset} ->
+        {:noreply, put_flash(socket, :error, "Failed to delete profile.")}
+    end
+  end
+
+  @impl true
+  def handle_event("edit_profile", %{"id" => id}, socket) do
+    {:noreply, redirect(socket, to: ~p"/budgets/#{socket.assigns.budget_id}/profiles/#{id}/edit")}
+  end
 end

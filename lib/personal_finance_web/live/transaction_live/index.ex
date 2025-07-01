@@ -21,7 +21,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     categories = Finance.list_categories_for_budget(current_budget)
 
-    investment_category = Finance.get_category_by_name("Investimentos")
+    investment_category = Finance.get_category_by_name("Investimento", budget_id)
 
     investment_types = Finance.list_investment_types()
 
@@ -54,9 +54,10 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     amount = Map.get(transaction_params, "amount") |> parse_float()
     total_value = value * amount
 
-    params_with_user = Map.put(transaction_params, "budget_id", socket.assigns.current_budget.id)
-
-    case Finance.create_transaction(Map.put(params_with_user, "total_value", total_value)) do
+    case Finance.create_transaction(
+           Map.put(transaction_params, "total_value", total_value),
+           socket.assigns.budget_id
+         ) do
       {:ok, added} ->
         new_changeset = Transaction.changeset(%Transaction{}, %{})
 

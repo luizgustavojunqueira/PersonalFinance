@@ -56,7 +56,7 @@ defmodule PersonalFinanceWeb.UserAuth do
     conn
     |> renew_session(nil)
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/")
+    |> redirect(to: ~p"/budgets")
   end
 
   @doc """
@@ -262,7 +262,7 @@ defmodule PersonalFinanceWeb.UserAuth do
     ~p"/users/settings"
   end
 
-  def signed_in_path(_), do: ~p"/"
+  def signed_in_path(_), do: ~p"/budgets"
 
   @doc """
   Plug for routes that require the user to be authenticated.

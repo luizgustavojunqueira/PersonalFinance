@@ -27,13 +27,18 @@ defmodule PersonalFinance.Finance do
   @doc """
   Cria uma transação.
   """
-  def create_transaction(attrs) do
+  def create_transaction(attrs, budget_id) do
+    attrs =
+      if Map.get(attrs, "budget_id") do
+        attrs
+      else
+        Map.put(attrs, "budget_id", budget_id)
+      end
+
     attrs =
       if Map.get(attrs, "category_id") do
         attrs
       else
-        budget_id = Map.get(attrs, "budget_id")
-
         default_category =
           Category
           |> where([c], c.is_default == true and c.budget_id == ^budget_id)
@@ -77,9 +82,9 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna categoria por nome
   """
-  def get_category_by_name(name) do
+  def get_category_by_name(name, budget_id) do
     Category
-    |> where([c], c.name == ^name)
+    |> where([c], c.name == ^name and c.budget_id == ^budget_id)
     |> Repo.one()
   end
 
@@ -113,7 +118,14 @@ defmodule PersonalFinance.Finance do
   @doc """
   Creates a category.
   """
-  def create_category(attrs) do
+  def create_category(attrs, budget_id) do
+    attrs =
+      if Map.get(attrs, "budget_id") do
+        attrs
+      else
+        Map.put(attrs, "budget_id", budget_id)
+      end
+
     %Category{}
     |> Category.changeset(attrs)
     |> Repo.insert()
@@ -134,17 +146,21 @@ defmodule PersonalFinance.Finance do
   Deletes a category and resets transactions to default category.
   """
   def delete_category(%Category{} = category) do
-    default_category =
-      Category
-      |> where([c], c.is_default == true and c.budget_id == ^category.budget_id)
-      |> Repo.one()
+    if category.is_default || category.is_fixed do
+      {:error, "Cannot delete default/fixed category"}
+    else
+      default_category =
+        Category
+        |> where([c], c.is_default == true and c.budget_id == ^category.budget_id)
+        |> Repo.one()
 
-    from(t in Transaction,
-      where: t.category_id == ^category.id and t.budget_id == ^category.budget_id
-    )
-    |> Repo.update_all(set: [category_id: default_category.id])
+      from(t in Transaction,
+        where: t.category_id == ^category.id and t.budget_id == ^category.budget_id
+      )
+      |> Repo.update_all(set: [category_id: default_category.id])
 
-    Repo.delete(category)
+      Repo.delete(category)
+    end
   end
 
   @doc """
@@ -198,13 +214,27 @@ defmodule PersonalFinance.Finance do
             }
           ]
 
+          default_profile_attrs = %{
+            "name" => "Eu",
+            "description" => "Perfil principal do usuário",
+            "is_default" => true,
+            "budget_id" => budget.id
+          }
+
+          # Create default profile
+          case create_profile(default_profile_attrs, budget.id) do
+            {:ok, _profile} ->
+              :ok
+
+            {:error, changeset} ->
+              IO.inspect(changeset, label: "Failed to create default profile")
+              raise Ecto.NoResultsError, message: "Failed to create default profile"
+          end
+
+          # Create default categories
           results =
             Enum.map(default_categories_attrs, fn category_attrs_map ->
-              category_attrs_map =
-                category_attrs_map
-                |> Map.put("budget_id", budget.id)
-
-              create_category(category_attrs_map)
+              create_category(category_attrs_map, budget.id)
             end)
 
           if Enum.all?(results, fn result ->
@@ -222,6 +252,8 @@ defmodule PersonalFinance.Finance do
                   {:error, _changeset} -> true
                 end
               end)
+
+            IO.inspect(failed_results, label: "Failed to create categories")
 
             raise Ecto.NoResultsError, message: "Failed to create all default categories"
           end
@@ -247,6 +279,71 @@ defmodule PersonalFinance.Finance do
   """
   def delete_budget(%Budget{} = budget) do
     Repo.delete(budget)
+  end
+
+  @doc """
+  Creates a profile for a budget.
+  """
+  def create_profile(attrs, budget_id) do
+    attrs =
+      if Map.get(attrs, "budget_id") do
+        attrs
+      else
+        Map.put(attrs, "budget_id", budget_id)
+      end
+
+    IO.inspect(attrs, label: "Creating profile with attrs")
+
+    %Profile{}
+    |> Profile.changeset(attrs)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Delete a profile by id
+  """
+  def delete_profile_by_id(id) do
+    profile = Repo.get!(Profile, id)
+
+    if profile.is_default do
+      {:error, "Cannot delete default profile"}
+    else
+      default_profile =
+        Profile
+        |> where([p], p.is_default == true and p.budget_id == ^profile.budget_id)
+        |> Repo.one()
+
+      from(t in Transaction,
+        where: t.profile_id == ^profile.id and t.budget_id == ^profile.budget_id
+      )
+      |> Repo.update_all(set: [profile_id: default_profile.id])
+
+      Repo.delete(profile)
+    end
+  end
+
+  @doc """
+  Returns a profile by ID.
+  """
+  def get_profile_by_id(id, budget_id) do
+    Profile
+    |> where([p], p.id == ^id and p.budget_id == ^budget_id)
+    |> Repo.one()
+  end
+
+  @doc """
+  Update a profile.
+  """
+  def update_profile_by_id(profile_id, attrs, budget_id) do
+    profile = get_profile_by_id(profile_id, budget_id)
+
+    if profile do
+      profile
+      |> Profile.changeset(attrs)
+      |> Repo.update()
+    else
+      {:error, "Profile not found"}
+    end
   end
 
   defp handle_category_change({:ok, %Category{} = category}) do

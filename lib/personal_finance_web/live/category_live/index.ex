@@ -37,9 +37,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
   @impl true
   def handle_event("create_category", %{"category" => category_params}, socket) do
-    params_with_user = Map.put(category_params, "budget_id", socket.assigns.current_budget.id)
-
-    case Finance.create_category(params_with_user) do
+    case Finance.create_category(category_params, socket.assigns.budget_id) do
       {:ok, added} ->
         new_changeset = Category.changeset(%Category{}, %{})
 

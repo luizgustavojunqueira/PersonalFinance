@@ -12,6 +12,7 @@
 
 alias PersonalFinance.Repo
 alias PersonalFinance.Finance.{Category, InvestmentType, Profile, Transaction, Budget}
+alias PersonalFinance.Finance
 alias PersonalFinance.Accounts.User
 
 IO.puts("Iniciando seed do banco de dados...")
@@ -48,7 +49,7 @@ budget = Repo.get_by(Budget, owner_id: test_user.id)
 
 budget =
   unless budget do
-    case Repo.insert(%Budget{
+    case Finance.create_budget(%{
            name: "Famila #{test_user.name}",
            description: "Orçamento familiar do usuário #{test_user.name}",
            owner_id: test_user.id
@@ -59,69 +60,6 @@ budget =
 
       {:error, changeset} ->
         IO.puts("Erro ao criar orçamento: #{inspect(changeset.errors)}")
-        System.halt(1)
-    end
-  end
-
-IO.puts("Populando categorias...")
-no_category = Repo.get_by(Category, name: "Sem Categoria")
-
-no_category =
-  unless no_category do
-    case Repo.insert(%Category{
-           name: "Sem Categoria",
-           description: "Transações sem categoria definida",
-           budget_id: budget.id,
-           is_default: true,
-           is_fixed: true
-         }) do
-      {:ok, category} ->
-        IO.puts("Criada categoria: #{category.name}")
-        category
-
-      {:error, changeset} ->
-        IO.puts("Erro ao criar categoria: #{inspect(changeset.errors)}")
-        System.halt(1)
-    end
-  end
-
-investimentos_category = Repo.get_by(Category, name: "Investimentos")
-
-investimentos_category =
-  unless investimentos_category do
-    case Repo.insert(%Category{
-           name: "Investimentos",
-           description: "Transações relacionadas a investimentos",
-           budget_id: budget.id,
-           is_default: false,
-           is_fixed: true
-         }) do
-      {:ok, category} ->
-        IO.puts("Criada categoria: #{category.name}")
-        category
-
-      {:error, changeset} ->
-        IO.puts("Erro ao criar categoria: #{inspect(changeset.errors)}")
-        System.halt(1)
-    end
-  end
-
-prazeres_category = Repo.get_by(Category, name: "Prazeres")
-
-prazeres_category =
-  unless prazeres_category do
-    case Repo.insert(%Category{
-           name: "Prazeres",
-           description: "Despesas relacionadas à prazeres",
-           budget_id: budget.id,
-           is_default: false
-         }) do
-      {:ok, category} ->
-        IO.puts("Criada categoria: #{category.name}")
-        category
-
-      {:error, changeset} ->
-        IO.puts("Erro ao criar categoria: #{inspect(changeset.errors)}")
         System.halt(1)
     end
   end
@@ -163,47 +101,10 @@ fundo_imobiliario_type =
     end
   end
 
-IO.puts("Populando perfis...")
-eu_profile = Repo.get_by(Profile, name: "Eu", budget_id: test_user.id)
-
-eu_profile =
-  unless eu_profile do
-    case Repo.insert(%Profile{
-           name: "Eu",
-           description: "Perfil principal do usuario",
-           budget_id: budget.id
-         }) do
-      {:ok, profile} ->
-        IO.puts("  Criado profile: #{profile.name}")
-        profile
-
-      {:error, changeset} ->
-        IO.puts("Erro ao criar profile: #{inspect(changeset.errors)}")
-        System.halt(1)
-    end
-  end
-
-conjuge_profile =
-  Repo.get_by(Profile, name: "Camila", budget_id: test_user.id)
-
-conjuge_profile =
-  unless conjuge_profile do
-    case Repo.insert(%Profile{
-           name: "Cônjuge",
-           description: "Perfil da Camila",
-           budget_id: budget.id
-         }) do
-      {:ok, profile} ->
-        IO.puts("  Criado profile: #{profile.name}")
-        profile
-
-      {:error, changeset} ->
-        IO.puts("Erro ao criar profile: #{inspect(changeset.errors)}")
-        System.halt(1)
-    end
-  end
-
 IO.puts("Populando transações...")
+
+no_category = Repo.get_by(Category, name: "Sem Categoria")
+eu_profile = Repo.get_by(Profile, name: "Eu")
 
 # Transação de prazer
 unless Repo.get_by(Transaction, description: "Jantar Romântico", profile_id: eu_profile.id) do
@@ -213,13 +114,15 @@ unless Repo.get_by(Transaction, description: "Jantar Romântico", profile_id: eu
     total_value: 120.0,
     description: "Jantar Romântico",
     date: ~D[2024-06-25],
-    category_id: prazeres_category.id,
+    category_id: no_category.id,
     profile_id: eu_profile.id,
     budget_id: budget.id
   })
 
   IO.puts("  Criada transação: Jantar Romântico")
 end
+
+investimentos_category = Repo.get_by(Category, name: "Investimento")
 
 unless Repo.get_by(Transaction, description: "Ações", profile_id: eu_profile.id) do
   Repo.insert!(%Transaction{

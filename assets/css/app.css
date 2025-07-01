@@ -69,6 +69,10 @@
     .primary-button {
         @apply bg-blue-600 text-white hover:bg-blue-500 transition-colors hover:cursor-pointer;
     }
+
+    .primary-button-a {
+        @apply bg-blue-600 text-white hover:bg-blue-500 transition-colors hover:cursor-pointer rounded-md p-2 px-4 my-1;
+    }
 }
 
 #sidebar {
