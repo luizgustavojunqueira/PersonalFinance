@@ -20,7 +20,9 @@ defmodule PersonalFinanceWeb.Layouts do
           <.navigation_sidebar budget_id={@budget_id} />
         <% end %>
         <div class="h-full w-full px-4 py-2 ">
-          {render_slot(@inner_block)}
+          <div class="w-full m-0">
+            {render_slot(@inner_block)}
+          </div>
         </div>
         <.flash_group flash={@flash} />
       </main>

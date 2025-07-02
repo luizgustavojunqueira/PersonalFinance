@@ -12,10 +12,9 @@ defmodule PersonalFinance.Finance.Profile do
   end
 
   @doc false
-  def changeset(profile, attrs) do
+  def changeset(profile, attrs, budget_id) do
     profile
-    |> cast(attrs, [:name, :description, :budget_id, :is_default])
-    |> validate_required([:budget_id], message: "Orçamento inválido.")
+    |> cast(attrs, [:name, :description, :is_default])
     |> validate_required([:name], message: "O nome é obrigatório.")
     |> validate_required([:description], message: "A descrição é obrigatória.")
     |> validate_inclusion(:is_default, [true, false],
@@ -32,5 +31,6 @@ defmodule PersonalFinance.Finance.Profile do
       where: "is_default = true",
       message: "Já existe um perfil padrão para este orçamento."
     )
+    |> put_change(:budget_id, budget_id)
   end
 end

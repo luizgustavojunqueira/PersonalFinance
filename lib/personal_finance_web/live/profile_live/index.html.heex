@@ -2,57 +2,39 @@
   flash={@flash}
   current_scope={@current_scope}
   show_sidebar={true}
-  budget_id={@budget_id}
+  budget_id={@budget.id}
 >
-  <div class="w-full m-0">
-    <header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">{@current_budget.name} - Perfis</h1>
+  <.header class="flex flex-row justify-between mb-5 items-center">
+    <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Perfis</h1>
 
-      <.link class="primary-button-a" navigate={~p"/budgets/#{@budget_id}/profiles/new"}>
-        Adicionar Perfil
+    <:actions>
+      <.link class="primary-button-a" navigate={~p"/budgets/#{@budget.id}/profiles/new"}>
+        <.icon name="hero-plus" /> Adicionar Perfil
       </.link>
-    </header>
+    </:actions>
+  </.header>
 
-    <div class="rounded-lg shadow-md p-6 medium w-full ">
-      <h2 class="text-2xl font-semibold mb-4">Meus Perfis</h2>
-      <section>
-        <div class="grid grid-cols-3 gap-4 mb-4">
-          <span class="font-medium">Nome</span>
-          <span class="font-medium">Descrição</span>
+  <div class="rounded-lg shadow-md p-6 medium w-full ">
+    <h2 class="text-2xl font-semibold mb-4">Meus Perfis</h2>
+    <.table id="profiles-table" rows={@streams.profile_collection}>
+      <:col :let={{_id, profile}} label="Nome">{profile.name}</:col>
+      <:col :let={{_id, profile}} label="Descrição">{profile.description}</:col>
 
-          <span class="font-medium">Ações</span>
-        </div>
-      </section>
-      <ul id="profiles" class="space-y-3">
-        <li id="profiles-empty" class="only:block hidden italic">
-          Nenhum perfil registrado ainda.
-        </li>
-        <%= for profile <- @profiles do %>
-          <li class="grid grid-cols-3 gap-4 mb-4 p-3 rounded-md shadow-sm light">
-            <span class="font-medium ">
-              {profile.name}
-            </span>
-            <span class="font-medium ">{profile.description}</span>
-            <span class="flex space-x-2">
-              <.link
-                class="text-blue-600 hover:text-blue-800 hero-pencil"
-                phx-click="edit_profile"
-                phx-value-id={profile.id}
-              >
-              </.link>
-              <%= if !profile.is_default do %>
-                <.link
-                  class="text-red-600 hover:text-red-800 hero-trash"
-                  phx-click="delete_profile"
-                  phx-value-id={profile.id}
-                  data-confirm="Você tem certeza que deseja excluir este perfil?"
-                >
-                </.link>
-              <% end %>
-            </span>
-          </li>
+      <:action :let={{_id, profile}}>
+        <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/edit"}>
+          <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+        </.link>
+      </:action>
+      <:action :let={{id, profile}}>
+        <%= if !profile.is_default do %>
+          <.link
+            phx-click={JS.push("delete", value: %{id: profile.id}) |> hide("##{id}")}
+            data-confirm="Você tem certeza que deseja excluir este perfil?"
+          >
+            <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
+          </.link>
         <% end %>
-      </ul>
-    </div>
+      </:action>
+    </.table>
   </div>
 </Layouts.app>

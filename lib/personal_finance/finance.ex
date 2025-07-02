@@ -1,5 +1,6 @@
 defmodule PersonalFinance.Finance do
   alias PersonalFinance.Repo
+  alias PersonalFinance.Accounts.Scope
   alias PersonalFinance.Finance.{Transaction, Category, InvestmentType, Profile, Budget}
   import Ecto.Query
 
@@ -371,4 +372,65 @@ defmodule PersonalFinance.Finance do
   end
 
   defp handle_transaction_change({:error, _} = error), do: error
+
+  def get_budget!(%Scope{} = scope, id) do
+    Budget
+    |> Ecto.Query.preload(:owner)
+    |> Repo.get_by!(id: id, owner_id: scope.user.id)
+  end
+
+  def get_profile!(%Scope{} = scope, budget_id, id) do
+    budget = get_budget!(scope, budget_id)
+
+    Profile
+    |> Ecto.Query.preload(:budget)
+    |> Repo.get_by!(id: id, budget_id: budget.id)
+  end
+
+  def change_profile(
+        %Scope{} = scope,
+        %Profile{} = profile,
+        %Budget{} = budget,
+        attrs \\ %{}
+      ) do
+    true = scope.user.id == budget.owner_id
+
+    Profile.changeset(profile, attrs, budget.id)
+  end
+
+  def update_profile(%Scope{} = scope, %Profile{} = profile, attrs) do
+    true = scope.user.id == profile.budget.owner_id
+
+    profile
+    |> Profile.changeset(attrs, profile.budget.id)
+    |> Repo.update()
+  end
+
+  def create_profile(%Scope{} = scope, attrs, budget_id) do
+    budget = get_budget!(scope, budget_id)
+
+    %Profile{}
+    |> Profile.changeset(attrs, budget.id)
+    |> Repo.insert()
+  end
+
+  def delete_profile(%Scope{} = scope, %Profile{} = profile) do
+    true = scope.user.id == profile.budget.owner_id
+
+    if profile.is_default do
+      {:error, "Cannot delete default profile"}
+    else
+      default_profile =
+        Profile
+        |> where([p], p.is_default == true and p.budget_id == ^profile.budget_id)
+        |> Repo.one()
+
+      from(t in Transaction,
+        where: t.profile_id == ^profile.id and t.budget_id == ^profile.budget_id
+      )
+      |> Repo.update_all(set: [profile_id: default_profile.id])
+
+      Repo.delete(profile)
+    end
+  end
 end

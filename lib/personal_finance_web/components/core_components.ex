@@ -335,21 +335,21 @@ defmodule PersonalFinanceWeb.CoreComponents do
       end
 
     ~H"""
-    <table class="table table-zebra">
-      <thead>
-        <tr>
-          <th :for={col <- @col}>{col[:label]}</th>
-          <th :if={@action != []}>
-            <span class="sr-only">{gettext("Actions")}</span>
+    <table class="light w-full p-2 ">
+      <thead class="p-2 medium">
+        <tr class="text-left">
+          <th :for={col <- @col} class="p-4 py-2">{col[:label]}</th>
+          <th :if={@action != []} class="p-4 py-2">
+            <span>Ações</span>
           </th>
         </tr>
       </thead>
       <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-        <tr :for={row <- @rows} id={@row_id && @row_id.(row)}>
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="light">
           <td
             :for={col <- @col}
             phx-click={@row_click && @row_click.(row)}
-            class={@row_click && "hover:cursor-pointer"}
+            class={"p-4 py-2 #{if @row_click, do: "hover:cursor-pointer"}"}
           >
             {render_slot(col, @row_item.(row))}
           </td>
