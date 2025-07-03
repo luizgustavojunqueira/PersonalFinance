@@ -7,7 +7,7 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna a lista de transações para um orçamento
   """
-  def list_transactions_for_budget(budget) do
+  def list_transactions(budget) do
     from(t in Transaction,
       order_by: [desc: t.date],
       where: t.budget_id == ^budget.id
@@ -19,7 +19,9 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna a lista de profiles para um orçamento
   """
-  def list_profiles_for_budget(budget) do
+  def list_profiles(scope, budget) do
+    true = scope.user.id == budget.owner_id
+
     Profile
     |> where([p], p.budget_id == ^budget.id)
     |> Repo.all()

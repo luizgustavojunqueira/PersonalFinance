@@ -14,6 +14,23 @@
     </:actions>
   </.header>
 
+  <%= if @show_form_modal do %>
+    <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 ">
+      <div class="w-2/5 mb-8 p-6 rounded-lg shadow-md dark">
+        <.live_component
+          module={PersonalFinanceWeb.ProfileLive.FormModal}
+          id="new-profile-form"
+          action={@form_action}
+          budget={@budget}
+          current_scope={@current_scope}
+          profile={@profile}
+          return_to={~p"/budgets/#{@budget.id}/profiles"}
+          parent_pid={self()}
+        />
+      </div>
+    </div>
+  <% end %>
+
   <div class="rounded-lg shadow-md p-6 medium w-full ">
     <h2 class="text-2xl font-semibold mb-4">Meus Perfis</h2>
     <.table id="profiles-table" rows={@streams.profile_collection}>

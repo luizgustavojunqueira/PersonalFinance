@@ -23,7 +23,7 @@ defmodule PersonalFinance.Finance.Profile do
     |> validate_length(:name, min: 1, max: 100)
     |> validate_length(:description, max: 255)
     |> unique_constraint(:name,
-      name: :unique_profile_name_per_budget,
+      name: :profiles_name_budget_id_index,
       message: "Já existe um perfil com este nome para este orçamento."
     )
     |> unique_constraint(:is_default,
