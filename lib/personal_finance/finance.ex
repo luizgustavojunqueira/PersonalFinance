@@ -7,7 +7,9 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna a lista de transações para um orçamento
   """
-  def list_transactions(budget) do
+  def list_transactions(%Scope{} = scope, budget) do
+    true = scope.user.id == budget.owner_id
+
     from(t in Transaction,
       order_by: [desc: t.date],
       where: t.budget_id == ^budget.id
@@ -19,7 +21,7 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna a lista de profiles para um orçamento
   """
-  def list_profiles(scope, budget) do
+  def list_profiles(%Scope{} = scope, budget) do
     true = scope.user.id == budget.owner_id
 
     Profile
@@ -30,13 +32,8 @@ defmodule PersonalFinance.Finance do
   @doc """
   Cria uma transação.
   """
-  def create_transaction(attrs, budget_id) do
-    attrs =
-      if Map.get(attrs, "budget_id") do
-        attrs
-      else
-        Map.put(attrs, "budget_id", budget_id)
-      end
+  def create_transaction(%Scope{} = scope, attrs, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
 
     attrs =
       if Map.get(attrs, "category_id") do
@@ -44,32 +41,56 @@ defmodule PersonalFinance.Finance do
       else
         default_category =
           Category
-          |> where([c], c.is_default == true and c.budget_id == ^budget_id)
+          |> where([c], c.is_default == true and c.budget_id == ^budget.id)
           |> Repo.one()
 
         Map.put(attrs, "category_id", default_category.id)
       end
 
-    %Transaction{}
-    |> Transaction.changeset(attrs)
-    |> Repo.insert()
-    |> handle_transaction_change()
+    changeset =
+      %Transaction{}
+      |> Transaction.changeset(attrs, budget.id)
+
+    case Repo.insert(changeset) do
+      {:ok, new_transaction} ->
+        # Carregue as associações aqui antes de retornar!
+        {:ok, Repo.preload(new_transaction, [:category, :investment_type, :profile])}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
   Atualiza uma transação.
   """
-  def update_transaction(%Transaction{} = transaction, attrs) do
-    transaction
-    |> Transaction.changeset(attrs)
-    |> Repo.update()
-    |> handle_transaction_change()
+  def update_transaction(%Scope{} = scope, %Transaction{} = transaction, attrs) do
+    true = scope.user.id == transaction.budget.owner_id
+
+    changeset =
+      transaction
+      |> Transaction.changeset(attrs, transaction.budget.id)
+
+    case Repo.update(changeset) do
+      {:ok, updated_transaction} ->
+        fully_loaded_transaction =
+          Transaction
+          |> Repo.get!(updated_transaction.id)
+          |> Repo.preload([:category, :investment_type, :profile])
+
+        {:ok, fully_loaded_transaction}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
   Deleta uma transação.
   """
-  def delete_transaction(%Transaction{} = transaction) do
+  def delete_transaction(%Scope{} = scope, %Transaction{} = transaction) do
+    true = scope.user.id == transaction.budget.owner_id
+
     Repo.delete(transaction)
     |> handle_transaction_change()
   end
@@ -85,19 +106,23 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna categoria por nome
   """
-  def get_category_by_name(name, budget_id) do
+  def get_category_by_name(name, %Scope{} = scope, budget) do
+    true = scope.user.id == budget.owner_id
+
     Category
-    |> where([c], c.name == ^name and c.budget_id == ^budget_id)
+    |> where([c], c.name == ^name and c.budget_id == ^budget.id)
     |> Repo.one()
   end
 
   @doc """
   Retorna transação por ID.
   """
-  def get_transaction!(id) do
+  def get_transaction!(%Scope{} = scope, id, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
+
     Transaction
-    |> Repo.get!(id)
-    |> Repo.preload([:category, :investment_type, :profile])
+    |> Repo.get_by!(id: id, budget_id: budget.id)
+    |> Repo.preload([:budget, :category, :investment_type, :profile])
   end
 
   @doc """
@@ -225,7 +250,7 @@ defmodule PersonalFinance.Finance do
           }
 
           # Create default profile
-          case create_profile(default_profile_attrs, budget.id) do
+          case create_profile(default_profile_attrs, budget) do
             {:ok, _profile} ->
               :ok
 
@@ -285,68 +310,12 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Creates a profile for a budget.
-  """
-  def create_profile(attrs, budget_id) do
-    attrs =
-      if Map.get(attrs, "budget_id") do
-        attrs
-      else
-        Map.put(attrs, "budget_id", budget_id)
-      end
-
-    IO.inspect(attrs, label: "Creating profile with attrs")
-
-    %Profile{}
-    |> Profile.changeset(attrs)
-    |> Repo.insert()
-  end
-
-  @doc """
-  Delete a profile by id
-  """
-  def delete_profile_by_id(id) do
-    profile = Repo.get!(Profile, id)
-
-    if profile.is_default do
-      {:error, "Cannot delete default profile"}
-    else
-      default_profile =
-        Profile
-        |> where([p], p.is_default == true and p.budget_id == ^profile.budget_id)
-        |> Repo.one()
-
-      from(t in Transaction,
-        where: t.profile_id == ^profile.id and t.budget_id == ^profile.budget_id
-      )
-      |> Repo.update_all(set: [profile_id: default_profile.id])
-
-      Repo.delete(profile)
-    end
-  end
-
-  @doc """
   Returns a profile by ID.
   """
   def get_profile_by_id(id, budget_id) do
     Profile
     |> where([p], p.id == ^id and p.budget_id == ^budget_id)
     |> Repo.one()
-  end
-
-  @doc """
-  Update a profile.
-  """
-  def update_profile_by_id(profile_id, attrs, budget_id) do
-    profile = get_profile_by_id(profile_id, budget_id)
-
-    if profile do
-      profile
-      |> Profile.changeset(attrs)
-      |> Repo.update()
-    else
-      {:error, "Profile not found"}
-    end
   end
 
   defp handle_category_change({:ok, %Category{} = category}) do
@@ -408,9 +377,7 @@ defmodule PersonalFinance.Finance do
     |> Repo.update()
   end
 
-  def create_profile(%Scope{} = scope, attrs, budget_id) do
-    budget = get_budget!(scope, budget_id)
-
+  def create_profile(attrs, budget) do
     %Profile{}
     |> Profile.changeset(attrs, budget.id)
     |> Repo.insert()
@@ -434,5 +401,16 @@ defmodule PersonalFinance.Finance do
 
       Repo.delete(profile)
     end
+  end
+
+  def change_transaction(
+        %Scope{} = scope,
+        %Transaction{} = transaction,
+        %Budget{} = budget,
+        attrs \\ %{}
+      ) do
+    true = scope.user.id == budget.owner_id
+
+    Transaction.changeset(transaction, attrs, budget.id)
   end
 end

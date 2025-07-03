@@ -17,62 +17,48 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
 
     {:ok,
      socket
-     |> apply_action(socket.assigns.live_action, params)}
+     |> assign(budget: budget)
+     |> apply_action(socket.assigns.live_action, params, budget)}
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    socket = socket |> apply_action(socket.assigns.live_action, params)
+    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.budget)
 
     {:noreply, socket}
   end
 
-  defp apply_action(socket, :index, %{"id" => budget_id}) do
-    current_budget = Finance.get_budget!(socket.assigns.current_scope, budget_id)
-
+  defp apply_action(socket, :index, _params, budget) do
     assign(socket,
-      page_title: "Perfis - #{current_budget.name}",
-      budget: current_budget,
+      page_title: "Perfis - #{budget.name}",
       profile: nil,
       show_form_modal: false,
       form_action: nil
     )
   end
 
-  defp apply_action(socket, :new, %{"id" => budget_id}) do
-    case Finance.get_budget!(socket.assigns.current_scope, budget_id) do
-      current_budget ->
-        profile = %Profile{budget_id: current_budget.id}
+  defp apply_action(socket, :new, _params, budget) do
+    profile = %Profile{budget_id: budget.id}
 
-        assign(socket,
-          page_title: "Novo Perfil",
-          budget: current_budget,
-          profile: profile,
-          form_action: :new,
-          show_form_modal: true,
-          form:
-            to_form(Finance.change_profile(socket.assigns.current_scope, profile, current_budget))
-        )
-    end
+    assign(socket,
+      page_title: "Novo Perfil",
+      profile: profile,
+      form_action: :new,
+      show_form_modal: true,
+      form: to_form(Finance.change_profile(socket.assigns.current_scope, profile, budget))
+    )
   end
 
-  defp apply_action(socket, :edit, %{"id" => budget_id, "profile_id" => profile_id}) do
-    case Finance.get_budget!(socket.assigns.current_scope, budget_id) do
-      current_budget ->
-        case Finance.get_profile!(socket.assigns.current_scope, budget_id, profile_id) do
-          profile ->
-            assign(socket,
-              page_title: "Edit Profile",
-              budget: current_budget,
-              profile: profile,
-              form_action: :edit,
-              show_form_modal: true,
-              form:
-                to_form(
-                  Finance.change_profile(socket.assigns.current_scope, profile, current_budget)
-                )
-            )
-        end
+  defp apply_action(socket, :edit, %{"profile_id" => profile_id}, budget) do
+    case Finance.get_profile!(socket.assigns.current_scope, budget.id, profile_id) do
+      profile ->
+        assign(socket,
+          page_title: "Edit Profile",
+          profile: profile,
+          form_action: :edit,
+          show_form_modal: true,
+          form: to_form(Finance.change_profile(socket.assigns.current_scope, profile, budget))
+        )
     end
   end
 

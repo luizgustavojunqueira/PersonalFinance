@@ -39,7 +39,7 @@ defmodule PersonalFinanceWeb.ProfileLive.FormModal do
 
       <.form
         for={@form}
-        id="profile_form"
+        id="profile-form"
         phx-change="validate"
         phx-submit="save"
         phx-target={@myself}
@@ -90,12 +90,9 @@ defmodule PersonalFinanceWeb.ProfileLive.FormModal do
   end
 
   defp save_profile(socket, :new, profile_params) do
-    budget_id = socket.assigns.budget.id
-
     case Finance.create_profile(
-           socket.assigns.current_scope,
            profile_params,
-           budget_id
+           socket.assigns.budget
          ) do
       {:ok, profile} ->
         send(socket.assigns.parent_pid, {:profile_saved, profile})

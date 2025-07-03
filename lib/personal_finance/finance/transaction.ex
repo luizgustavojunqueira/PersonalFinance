@@ -18,7 +18,7 @@ defmodule PersonalFinance.Finance.Transaction do
   end
 
   @doc false
-  def changeset(transaction, attrs) do
+  def changeset(transaction, attrs, budget_id) do
     transaction
     |> cast(attrs, [
       :value,
@@ -28,14 +28,13 @@ defmodule PersonalFinance.Finance.Transaction do
       :date,
       :investment_type_id,
       :category_id,
-      :profile_id,
-      :budget_id
+      :profile_id
     ])
     |> validate_required([:value], message: "O valor da transação é obrigatório")
     |> validate_required([:amount], message: "A quantidade é obrigatória")
     |> validate_required([:description], message: "A descrição é obrigatória")
     |> validate_required([:date], message: "A data é obrigatória")
     |> validate_required([:profile_id], message: "Selecione um perfil")
-    |> validate_required([:budget_id], message: "Orçamento inválido")
+    |> put_change(:budget_id, budget_id)
   end
 end
