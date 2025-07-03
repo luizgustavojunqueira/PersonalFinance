@@ -91,6 +91,7 @@ defmodule PersonalFinanceWeb.ProfileLive.FormModal do
 
   defp save_profile(socket, :new, profile_params) do
     case Finance.create_profile(
+           socket.assigns.current_scope,
            profile_params,
            socket.assigns.budget
          ) do

@@ -2,95 +2,61 @@
   flash={@flash}
   current_scope={@current_scope}
   show_sidebar={true}
-  budget_id={@budget_id}
+  budget_id={@budget.id}
 >
   <div class="w-full m-0">
-    <header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">{@current_budget.name} - Categorias</h1>
+    <.header class="flex flex-row justify-between mb-5 items-center">
+      <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Categorias</h1>
 
-      <.button phx-click="open_form">
-        Adicionar Categoria
-      </.button>
-    </header>
+      <:actions>
+        <.link class="primary-button-a" navigate={~p"/budgets/#{@budget.id}/categories/new"}>
+          <.icon name="hero-plus" /> Adicionar Categoria
+        </.link>
+      </:actions>
+    </.header>
 
-    <%= if @show_form do %>
-      <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/30 ">
-        <div class=" w-2/5 mb-8 p-6 rounded-lg shadow-md dark ">
-          <div class="flex flex-row justify-between mb-5 items-center">
-            <h2 class="text-2xl font-semibold mb-4 ">
-              <%= if @selected_category do %>
-                Editar Categoria
-              <% else %>
-                Nova Categoria
-              <% end %>
-            </h2>
-
-            <.link class="text-red-600 hover:text-red-800 hero-x-mark" phx-click="close_form">
-            </.link>
-          </div>
-          <.form
-            :let={f}
-            for={@changeset}
-            phx-submit={(@selected_category && "update_category") || "create_category"}
-            phx-change="validate_category"
-          >
-            <.input
-              field={f[:name]}
-              id="input-name"
-              type="text"
-              label="Nome"
-              placeholder="Ex: Alimentação"
-              required
-            />
-            <.input
-              field={f[:description]}
-              id="input-description"
-              type="text"
-              label="Descrição"
-              placeholder="Ex: Despesas com alimentação"
-              required
-            />
-
-            <.input
-              field={f[:percentage]}
-              id="input-percentage"
-              type="number"
-              step="0.01"
-              label="Porcentagem"
-              placeholder="Ex: 10.00"
-            />
-
-            <.button type="submit" phx-disable-with="Salvando...">
-              {if @selected_category, do: "Atualizar", else: "Cadastrar"}
-            </.button>
-          </.form>
+    <%= if @show_form_modal do %>
+      <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 ">
+        <div class="w-2/5 mb-8 p-6 rounded-lg shadow-md dark">
+          <.live_component
+            module={PersonalFinanceWeb.CategoryLive.FormModal}
+            id="category-form"
+            action={@form_action}
+            budget={@budget}
+            current_scope={@current_scope}
+            category={@category}
+            parent_pid={self()}
+          />
         </div>
       </div>
     <% end %>
 
     <div class="rounded-lg shadow-md p-6 medium w-full ">
       <h2 class="text-2xl font-semibold mb-4">Minhas Categorias</h2>
-      <section>
-        <%!-- category List Header --%>
-        <div class="grid grid-cols-4 gap-4 mb-4">
-          <span class="font-medium">Nome</span>
-          <span class="font-medium">Descrição</span>
-          <span class="font-medium ">Porcentagem</span>
-          <span class="font-medium">Ações</span>
-        </div>
-      </section>
-      <ul id="categories" class="space-y-3" phx-update="stream">
-        <li id="categories-empty" class="only:block hidden italic">
-          Nenhuma categoria registrada ainda.
-        </li>
-        <.live_component
-          :for={{id, t} <- @streams.categories}
-          module={PersonalFinanceWeb.CategoryLive.CategoryListItem}
-          id={id}
-          category={t}
-          parent_pid={self()}
-        />
-      </ul>
+      <.table id="categories_table" rows={@streams.category_collection}>
+        <:col :let={{_id, category}} label="Perfil">
+          {category.name}
+        </:col>
+        <:col :let={{_id, category}} label="Descrição">{category.description}</:col>
+        <:col :let={{_id, category}} label="Categoria">
+          {category.percentage}
+        </:col>
+
+        <:action :let={{_id, category}}>
+          <%= if !category.is_default do %>
+            <.link navigate={~p"/budgets/#{@budget.id}/categories/#{category.id}/edit"}>
+              <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+            </.link>
+          <% end %>
+        </:action>
+        <:action :let={{id, category}}>
+          <%= if !category.is_fixed do %>
+            <.link phx-click={JS.push("delete", value: %{id: category.id}) |> hide("##{id}")}>
+              <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
+            </.link>
+          <% end %>
+        </:action>
+      </.table>
     </div>
   </div>
 </Layouts.app>

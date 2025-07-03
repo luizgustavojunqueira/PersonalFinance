@@ -138,7 +138,7 @@ defmodule PersonalFinance.Finance do
   Returns the list of categories for a budget.
   """
   def list_categories(%Scope{} = scope, %Budget{} = budget) do
-    true == scope.user.id == budget.owner_id
+    true = scope.user.id == budget.owner_id
 
     Category
     |> where([c], c.budget_id == ^budget.id)
@@ -148,16 +148,11 @@ defmodule PersonalFinance.Finance do
   @doc """
   Creates a category.
   """
-  def create_category(attrs, budget_id) do
-    attrs =
-      if Map.get(attrs, "budget_id") do
-        attrs
-      else
-        Map.put(attrs, "budget_id", budget_id)
-      end
+  def create_category(%Scope{} = scope, attrs, budget) do
+    true = scope.user.id == budget.owner_id
 
     %Category{}
-    |> Category.changeset(attrs)
+    |> Category.changeset(attrs, budget.id)
     |> Repo.insert()
     |> handle_category_change()
   end
@@ -165,17 +160,29 @@ defmodule PersonalFinance.Finance do
   @doc """
   Updates a category.
   """
-  def update_category(%Category{} = category, attrs) do
-    category
-    |> Category.changeset(attrs)
-    |> Repo.update()
-    |> handle_category_change()
+  def update_category(%Scope{} = scope, %Category{} = category, attrs) do
+    true = scope.user.id == category.budget.owner_id
+    changeset = category |> Category.changeset(attrs, category.budget.id)
+
+    case Repo.update(changeset) do
+      {:ok, updated_category} ->
+        fully_loaded_category =
+          Category |> Repo.get!(updated_category.id) |> Repo.preload([:budget])
+
+        {:ok, fully_loaded_category}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
   Deletes a category and resets transactions to default category.
   """
-  def delete_category(%Category{} = category) do
+  def delete_category(%Scope{} = scope, %Category{} = category) do
+    IO.inspect(category)
+    true = scope.user.id == category.budget.owner_id
+
     if category.is_default || category.is_fixed do
       {:error, "Cannot delete default/fixed category"}
     else
@@ -196,7 +203,9 @@ defmodule PersonalFinance.Finance do
   @doc """
   Returns a category by ID.
   """
-  def get_category!(id) do
+  def get_category!(%Scope{} = scope, id, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
+
     Category
     |> Repo.get!(id)
     |> Repo.preload(:budget)
@@ -225,7 +234,7 @@ defmodule PersonalFinance.Finance do
   @doc """
   Creates a budget.
   """
-  def create_budget(attrs) do
+  def create_budget(%Scope{} = scope, attrs) do
     Repo.transaction(fn ->
       case %Budget{} |> Budget.changeset(attrs) |> Repo.insert() do
         {:ok, budget} ->
@@ -251,8 +260,7 @@ defmodule PersonalFinance.Finance do
             "budget_id" => budget.id
           }
 
-          # Create default profile
-          case create_profile(default_profile_attrs, budget) do
+          case create_profile(scope, default_profile_attrs, budget) do
             {:ok, _profile} ->
               :ok
 
@@ -264,7 +272,7 @@ defmodule PersonalFinance.Finance do
           # Create default categories
           results =
             Enum.map(default_categories_attrs, fn category_attrs_map ->
-              create_category(category_attrs_map, budget.id)
+              create_category(scope, category_attrs_map, budget)
             end)
 
           if Enum.all?(results, fn result ->
@@ -289,7 +297,6 @@ defmodule PersonalFinance.Finance do
           end
 
         {:error, budget_changeset} ->
-          # Budget creation failed, return its errors directly (transaction will rollback implicitly)
           {:error, budget_changeset}
       end
     end)
@@ -379,7 +386,9 @@ defmodule PersonalFinance.Finance do
     |> Repo.update()
   end
 
-  def create_profile(attrs, budget) do
+  def create_profile(%Scope{} = scope, attrs, budget) do
+    true = scope.user.id == budget.owner_id
+
     %Profile{}
     |> Profile.changeset(attrs, budget.id)
     |> Repo.insert()
@@ -414,5 +423,16 @@ defmodule PersonalFinance.Finance do
     true = scope.user.id == budget.owner_id
 
     Transaction.changeset(transaction, attrs, budget.id)
+  end
+
+  def change_category(
+        %Scope{} = scope,
+        %Category{} = category,
+        %Budget{} = budget,
+        attrs \\ %{}
+      ) do
+    true = scope.user.id == budget.owner_id
+
+    Category.changeset(category, attrs, budget.id)
   end
 end

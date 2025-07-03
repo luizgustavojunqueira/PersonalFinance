@@ -1,5 +1,4 @@
 defmodule PersonalFinanceWeb.HomeLive.Index do
-  alias PersonalFinance.PubSub
   alias PersonalFinance.Finance
   use PersonalFinanceWeb, :live_view
 

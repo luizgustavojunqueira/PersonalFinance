@@ -57,6 +57,8 @@ defmodule PersonalFinanceWeb.Router do
       live "/budgets/:id/transactions/new", TransactionLive.Index, :new
       live "/budgets/:id/transactions/:transaction_id/edit", TransactionLive.Index, :edit
       live "/budgets/:id/categories", CategoryLive.Index, :index
+      live "/budgets/:id/categories/new", CategoryLive.Index, :new
+      live "/budgets/:id/categories/:category_id/edit", CategoryLive.Index, :edit
     end
 
     post "/users/update-password", UserSessionController, :update_password

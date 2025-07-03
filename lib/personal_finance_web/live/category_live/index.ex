@@ -1,143 +1,112 @@
 defmodule PersonalFinanceWeb.CategoryLive.Index do
+  alias PersonalFinance.Finance.Budget
   alias PersonalFinance.Finance.Category
   alias PersonalFinance.Finance
-  alias PersonalFinance.PubSub
   use PersonalFinanceWeb, :live_view
 
   @impl true
-  def mount(%{"id" => budget_id}, _session, socket) do
-    current_user = socket.assigns.current_scope.user
+  def mount(params, _session, socket) do
+    current_scope = socket.assigns.current_scope
 
-    current_budget = Finance.get_budget_by_id(budget_id)
-
-    if current_user do
-      Phoenix.PubSub.subscribe(
-        PubSub,
-        "transactions_updates:#{budget_id}"
-      )
-    end
-
-    categories = Finance.list_categories_for_budget(current_budget)
-
-    changeset = Category.changeset(%Category{}, %{})
+    budget = Finance.get_budget!(current_scope, params["id"])
 
     socket =
       socket
-      |> assign(
-        changeset: changeset,
-        current_budget: current_budget,
-        selected_category: nil,
-        show_form: false,
-        budget_id: budget_id
-      )
-      |> stream(:categories, categories, id: & &1.id)
+      |> assign(budget: budget)
+      |> stream(:category_collection, Finance.list_categories(current_scope, budget))
 
-    {:ok, socket}
+    {:ok, socket |> apply_action(socket.assigns.live_action, params, budget)}
   end
 
   @impl true
-  def handle_event("create_category", %{"category" => category_params}, socket) do
-    case Finance.create_category(category_params, socket.assigns.budget_id) do
-      {:ok, added} ->
-        new_changeset = Category.changeset(%Category{}, %{})
+  def handle_params(params, _url, socket) do
+    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.budget)
 
-        {:noreply,
-         socket
-         |> put_flash(:info, "Categoria adicionada com sucesso.")
-         |> stream_insert(:categories, added)
-         |> assign(
-           changeset: new_changeset,
-           selected_category: nil,
-           show_form: false
-         )}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
-    end
+    {:noreply, socket}
   end
 
-  def handle_event("validate_category", %{"category" => category_params}, socket) do
-    changeset =
-      Category.changeset(
-        socket.assigns.selected_category || %Category{},
-        category_params
-      )
-
-    {:noreply,
-     assign(socket,
-       action: :validate,
-       changeset: changeset
-     )}
+  defp apply_action(socket, :index, _params, budget) do
+    assign(socket,
+      page_title: "Categorias - #{budget.name}",
+      budget: budget,
+      show_form_modal: false,
+      category: nil
+    )
   end
 
-  def handle_event("open_form", _params, socket) do
-    {:noreply, assign(socket, show_form: true, selected_category: nil)}
+  defp apply_action(socket, :new, _params, %Budget{} = budget) do
+    category = %Category{budget_id: budget.id}
+
+    assign(socket,
+      page_title: "Categorias - #{budget.name}",
+      budget: budget,
+      show_form_modal: true,
+      category: category,
+      form_action: :new,
+      form:
+        to_form(
+          Finance.change_category(
+            socket.assigns.current_scope,
+            category,
+            budget
+          )
+        )
+    )
   end
 
-  def handle_event("close_form", _params, socket) do
-    {:noreply, assign(socket, show_form: false, selected_category: nil)}
-  end
+  defp apply_action(socket, :edit, %{"category_id" => category_id}, %Budget{} = budget) do
+    category = Finance.get_category!(socket.assigns.current_scope, category_id, budget)
 
-  def handle_event("update_category", %{"category" => category_params}, socket) do
-    c = socket.assigns.selected_category
-
-    case Finance.update_category(c, category_params) do
-      {:ok, updated} ->
-        new_changeset = Category.changeset(%Category{}, %{})
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Categoria atualizada com sucesso.")
-         |> stream_insert(:categories, updated)
-         |> assign(
-           changeset: new_changeset,
-           selected_category: nil,
-           show_form: false
-         )}
-
-      {:error, changeset} ->
-        {:noreply, assign(socket, changeset: changeset)}
-    end
+    assign(socket,
+      page_title: "Categorias - #{budget.name}",
+      budget: budget,
+      show_form_modal: true,
+      category: category,
+      form_action: :edit,
+      form:
+        to_form(
+          Finance.change_category(
+            socket.assigns.current_scope,
+            category,
+            budget
+          )
+        )
+    )
   end
 
   @impl true
-  def handle_info({:edit_category, id}, socket) do
-    category = Finance.get_category!(String.to_integer(id))
-    changeset = Category.changeset(category, %{})
+  def handle_event("delete", %{"id" => id}, socket) do
+    current_scope = socket.assigns.current_scope
 
-    {:noreply,
-     assign(socket,
-       selected_category: category,
-       show_form: true,
-       changeset: changeset
-     )}
-  end
+    category = Finance.get_category!(current_scope, id, socket.assigns.budget)
 
-  @impl true
-  def handle_info({:delete_category, id}, socket) do
-    category = Finance.get_category!(String.to_integer(id))
-
-    case Finance.delete_category(category) do
+    case Finance.delete_category(current_scope, category) do
       {:ok, deleted} ->
         {:noreply,
          socket
          |> put_flash(:info, "Categoria removida com sucesso")
-         |> stream_delete(:categories, deleted)}
+         |> stream_delete(:category_collection, deleted)}
 
       {:error, _changeset} ->
-        {:noreply, socket}
+        {:noreply, put_flash(socket, :error, "Falha ao remover categoria.")}
     end
   end
 
   @impl true
-  def handle_info({:category_changed, budget_id}, socket)
-      when budget_id == socket.assigns.current_budget.id do
-    categories = Finance.list_categories_for_budget(socket.assigns.current_budget)
+  def handle_event("close_form", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(show_form_modal: false, category: nil, form_action: nil)
+     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
+  end
 
-    socket =
-      socket
-      |> stream(:categories, categories)
-
-    {:noreply, socket}
+  @impl true
+  def handle_info({:category_saved, category}, socket) do
+    {:noreply,
+     socket
+     |> put_flash(:info, "Categoria salva com sucesso.")
+     |> stream_insert(:category_collection, category)
+     |> assign(show_form_modal: false, category: nil, form_action: nil)
+     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
   end
 end

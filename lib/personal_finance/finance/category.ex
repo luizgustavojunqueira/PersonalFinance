@@ -15,10 +15,10 @@ defmodule PersonalFinance.Finance.Category do
   end
 
   @doc false
-  def changeset(category, attrs) do
+  def changeset(category, attrs, budget_id) do
     category
-    |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed, :budget_id])
-    |> validate_required([:name, :description, :budget_id, :percentage, :is_default])
+    |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed])
+    |> validate_required([:name, :description, :percentage, :is_default])
     |> validate_length(:name,
       min: 1,
       max: 100,
@@ -45,6 +45,7 @@ defmodule PersonalFinance.Finance.Category do
     )
     |> validate_total_percentage()
     |> apply_fixed_category_rules(category.id != nil)
+    |> put_change(:budget_id, budget_id)
   end
 
   def validate_total_percentage(changeset) do
