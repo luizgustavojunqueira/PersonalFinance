@@ -137,7 +137,9 @@ defmodule PersonalFinance.Finance do
   @doc """
   Returns the list of categories for a budget.
   """
-  def list_categories_for_budget(budget) do
+  def list_categories(%Scope{} = scope, %Budget{} = budget) do
+    true == scope.user.id == budget.owner_id
+
     Category
     |> where([c], c.budget_id == ^budget.id)
     |> Repo.all()

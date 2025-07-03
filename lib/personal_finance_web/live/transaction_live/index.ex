@@ -9,7 +9,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     budget = Finance.get_budget!(current_scope, params["id"])
 
-    categories = Finance.list_categories_for_budget(budget)
+    categories = Finance.list_categories(current_scope, budget)
 
     investment_category =
       Finance.get_category_by_name("Investimento", socket.assigns.current_scope, budget)
