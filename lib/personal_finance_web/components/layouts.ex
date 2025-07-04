@@ -127,7 +127,7 @@ defmodule PersonalFinanceWeb.Layouts do
         <%= if @budget_id do %>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget_id}"}
+              navigate={~p"/budgets/#{@budget_id}/home"}
               class="flex items
             space-x-2 text-base-content hover:text-primary"
             >

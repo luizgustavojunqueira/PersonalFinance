@@ -180,7 +180,6 @@ defmodule PersonalFinance.Finance do
   Deletes a category and resets transactions to default category.
   """
   def delete_category(%Scope{} = scope, %Category{} = category) do
-    IO.inspect(category)
     true = scope.user.id == category.budget.owner_id
 
     if category.is_default || category.is_fixed do
@@ -214,9 +213,9 @@ defmodule PersonalFinance.Finance do
   @doc """
   Returns all budgets for a user.
   """
-  def list_budgets_for_user(user) do
+  def list_budgets(%Scope{} = scope) do
     from(b in Budget,
-      where: b.owner_id == ^user.id,
+      where: b.owner_id == ^scope.user.id,
       distinct: true
     )
     |> Ecto.Query.preload(:owner)
@@ -235,86 +234,70 @@ defmodule PersonalFinance.Finance do
   Creates a budget.
   """
   def create_budget(%Scope{} = scope, attrs) do
-    Repo.transaction(fn ->
-      case %Budget{} |> Budget.changeset(attrs) |> Repo.insert() do
-        {:ok, budget} ->
-          default_categories_attrs = [
-            %{
-              "name" => "Sem Categoria",
-              "description" => "Transações sem categoria",
-              "is_default" => true,
-              "is_fixed" => true
-            },
-            %{
-              "name" => "Investimento",
-              "description" => "Transações de investimento",
-              "is_default" => false,
-              "is_fixed" => true
-            }
-          ]
+    %Budget{}
+    |> Budget.changeset(attrs, scope.user.id)
+    |> Repo.insert()
+  end
 
-          default_profile_attrs = %{
-            "name" => "Eu",
-            "description" => "Perfil principal do usuário",
-            "is_default" => true,
-            "budget_id" => budget.id
-          }
+  def create_default_profiles(%Scope{} = scope, %Budget{} = budget) do
+    default_profile_attrs = %{
+      "name" => "Eu",
+      "description" => "Perfil principal do usuário",
+      "is_default" => true,
+      "budget_id" => budget.id
+    }
 
-          case create_profile(scope, default_profile_attrs, budget) do
-            {:ok, _profile} ->
-              :ok
+    create_profile(scope, default_profile_attrs, budget)
+  end
 
-            {:error, changeset} ->
-              IO.inspect(changeset, label: "Failed to create default profile")
-              raise Ecto.NoResultsError, message: "Failed to create default profile"
-          end
+  def create_default_categories(%Scope{} = scope, %Budget{} = budget) do
+    default_categories_attrs = [
+      %{
+        "name" => "Sem Categoria",
+        "description" => "Transações sem categoria",
+        "is_default" => true,
+        "is_fixed" => true
+      },
+      %{
+        "name" => "Investimento",
+        "description" => "Transações de investimento",
+        "is_default" => false,
+        "is_fixed" => true
+      }
+    ]
 
-          # Create default categories
-          results =
-            Enum.map(default_categories_attrs, fn category_attrs_map ->
-              create_category(scope, category_attrs_map, budget)
-            end)
+    results =
+      Enum.map(default_categories_attrs, fn category_attrs_map ->
+        create_category(scope, category_attrs_map, budget)
+      end)
 
-          if Enum.all?(results, fn result ->
-               case result do
-                 {:ok, _category} -> true
-                 {:error, _changeset} -> false
-               end
-             end) do
-            budget
-          else
-            failed_results =
-              Enum.filter(results, fn result ->
-                case result do
-                  {:ok, _category} -> false
-                  {:error, _changeset} -> true
-                end
-              end)
+    failed_results =
+      Enum.filter(results, fn
+        {:ok, _} -> false
+        {:error, _} -> true
+      end)
 
-            IO.inspect(failed_results, label: "Failed to create categories")
-
-            raise Ecto.NoResultsError, message: "Failed to create all default categories"
-          end
-
-        {:error, budget_changeset} ->
-          {:error, budget_changeset}
-      end
-    end)
+    if Enum.empty?(failed_results) do
+      {:ok, "Default categories created successfully."}
+    else
+      {:error, failed_results}
+    end
   end
 
   @doc """
   Updates a budget.
   """
-  def update_budget(%Budget{} = budget, attrs) do
+  def update_budget(%Scope{} = scope, %Budget{} = budget, attrs) do
     budget
-    |> Budget.changeset(attrs)
+    |> Budget.changeset(attrs, scope.user.id)
     |> Repo.update()
   end
 
   @doc """
   Deletes a budget.
   """
-  def delete_budget(%Budget{} = budget) do
+  def delete_budget(%Scope{} = scope, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
     Repo.delete(budget)
   end
 
@@ -434,5 +417,9 @@ defmodule PersonalFinance.Finance do
     true = scope.user.id == budget.owner_id
 
     Category.changeset(category, attrs, budget.id)
+  end
+
+  def change_budget(%Scope{} = scope, %Budget{} = budget, attrs \\ %{}) do
+    Budget.changeset(budget, attrs, scope.user.id)
   end
 end

@@ -58,7 +58,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
 
   @impl true
   def handle_event("view_budget", %{"budget-id" => budget_id}, socket) do
-    {:noreply, push_navigate(socket, to: "/budgets/#{budget_id}")}
+    {:noreply, push_navigate(socket, to: "/budgets/#{budget_id}/home")}
   end
 
   @impl true
@@ -69,13 +69,22 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
 
   @impl true
   def handle_event("edit_budget", %{"id" => id}, socket) do
-    send(socket.assigns.parent_pid, {:edit_budget, id})
-    {:noreply, assign(socket, show_menu: false)}
+    {:noreply, push_navigate(socket, to: "/budgets/#{id}/edit")}
   end
 
   @impl true
   def handle_event("delete_budget", %{"id" => id}, socket) do
-    send(socket.assigns.parent_pid, {:delete_budget, id})
-    {:noreply, assign(socket, show_menu: false)}
+    current_scope = socket.assigns.current_scope
+
+    budget = PersonalFinance.Finance.get_budget!(current_scope, id)
+
+    case PersonalFinance.Finance.delete_budget(current_scope, budget) do
+      {:ok, deleted} ->
+        send(socket.assigns.parent_pid, {:budget_deleted, deleted})
+        {:noreply, socket}
+
+      {:error, _changeset} ->
+        {:noreply, assign(socket, show_menu: false)}
+    end
   end
 end

@@ -1,71 +1,39 @@
-<Layouts.app
-  flash={@flash}
-  current_scope={@current_scope}
-  show_sidebar={true}
-  budget_id={@budget_id}
->
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget_id={nil}>
   <div class="w-full m-0">
-    <header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">Orçamentos</h1>
+    <.header class="flex flex-row justify-between mb-5 items-center">
+      <h1 class="text-3xl font-bold mb-6 ">{@current_scope.user.name} - Orçamentos</h1>
 
-      <.button phx-click="open_form" class="btn-primary">
-        Adicionar Orçamento
-      </.button>
-    </header>
-  </div>
+      <:actions>
+        <.link class="primary-button-a" navigate={~p"/budgets/new"}>
+          <.icon name="hero-plus" /> Adicionar Orçamento
+        </.link>
+      </:actions>
+    </.header>
 
-  <%= if @show_form do %>
-    <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/30 ">
-      <div class=" w-2/5 mb-8 p-6 rounded-lg shadow-md dark ">
-        <div class="flex flex-row justify-between mb-5 items-center">
-          <h2 class="text-2xl font-semibold mb-4 ">
-            <%= if @selected_budget do %>
-              Editar Orçamento
-            <% else %>
-              Novo Orçamento
-            <% end %>
-          </h2>
-
-          <.link class="text-red-600 hover:text-red-800 hero-x-mark" phx-click="close_form">
-          </.link>
+    <%= if @show_form_modal do %>
+      <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 ">
+        <div class="w-2/5 mb-8 p-6 rounded-lg shadow-md dark">
+          <.live_component
+            module={PersonalFinanceWeb.BudgetLive.FormModal}
+            id="category-form"
+            action={@form_action}
+            budget={@budget}
+            current_scope={@current_scope}
+            parent_pid={self()}
+          />
         </div>
-        <.form
-          :let={f}
-          for={@changeset}
-          phx-submit={(@selected_budget && "update_budget") || "create_budget"}
-          phx-change="validate_budget"
-        >
-          <.input
-            field={f[:name]}
-            id="input-name"
-            type="text"
-            label="Nome"
-            placeholder="Ex: Orçamento familiar"
-          />
-
-          <.input
-            field={f[:description]}
-            id="input-description"
-            type="text"
-            label="Descrição"
-            placeholder="Ex: Orçamento familiar"
-          />
-
-          <.button type="submit" phx-disable-with="Salvando...">
-            {if @selected_budget, do: "Atualizar", else: "Cadastrar"}
-          </.button>
-        </.form>
       </div>
-    </div>
-  <% end %>
+    <% end %>
 
-  <div id="budgets" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
-    <.live_component
-      :for={{id, budget} <- @streams.budgets}
-      module={PersonalFinanceWeb.BudgetsLive.BudgetCardItem}
-      id={id}
-      budget={budget}
-      parent_pid={self()}
-    />
+    <div id="budgets" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
+      <.live_component
+        :for={{id, budget} <- @streams.budget_collection}
+        module={PersonalFinanceWeb.BudgetsLive.BudgetCardItem}
+        id={id}
+        budget={budget}
+        current_scope={@current_scope}
+        parent_pid={self()}
+      />
+    </div>
   </div>
 </Layouts.app>

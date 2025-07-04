@@ -44,10 +44,7 @@
       </:action>
       <:action :let={{id, profile}}>
         <%= if !profile.is_default do %>
-          <.link
-            phx-click={JS.push("delete", value: %{id: profile.id}) |> hide("##{id}")}
-            data-confirm="Você tem certeza que deseja excluir este perfil?"
-          >
+          <.link phx-click={JS.push("delete", value: %{id: profile.id}) |> hide("##{id}")}>
             <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
           </.link>
         <% end %>

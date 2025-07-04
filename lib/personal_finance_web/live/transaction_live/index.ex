@@ -59,15 +59,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       budget: budget,
       transaction: transaction,
       form_action: :new,
-      show_form_modal: true,
-      form:
-        to_form(
-          Finance.change_transaction(
-            socket.assigns.current_scope,
-            transaction,
-            budget
-          )
-        )
+      show_form_modal: true
     )
   end
 
@@ -85,15 +77,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       transaction: transaction,
       form_action: :edit,
       show_form_modal: true,
-      selected_category_id: selected_category_id,
-      form:
-        to_form(
-          Finance.change_transaction(
-            socket.assigns.current_scope,
-            transaction,
-            budget
-          )
-        )
+      selected_category_id: selected_category_id
     )
   end
 

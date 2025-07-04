@@ -49,7 +49,9 @@ defmodule PersonalFinanceWeb.Router do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/budgets", BudgetsLive.Index, :index
-      live "/budgets/:id", HomeLive.Index, :index
+      live "/budgets/new", BudgetsLive.Index, :new
+      live "/budgets/:id/edit", BudgetsLive.Index, :edit
+      live "/budgets/:id/home", HomeLive.Index, :index
       live "/budgets/:id/profiles", ProfileLive.Index, :index
       live "/budgets/:id/profiles/new", ProfileLive.Index, :new
       live "/budgets/:id/profiles/:profile_id/edit", ProfileLive.Index, :edit

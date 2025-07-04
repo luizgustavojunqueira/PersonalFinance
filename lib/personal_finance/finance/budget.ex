@@ -11,9 +11,14 @@ defmodule PersonalFinance.Finance.Budget do
   end
 
   @doc false
-  def changeset(budget, attrs) do
+  def changeset(budget, attrs, owner_id) do
     budget
-    |> cast(attrs, [:name, :description, :owner_id])
-    |> validate_required([:name, :owner_id])
+    |> cast(attrs, [:name, :description])
+    |> validate_required([:name])
+    |> put_change(:owner_id, owner_id)
+    |> unique_constraint(:name,
+      name: :budgets_name_owner_id_index,
+      message: "Já existe um orçamento com esse nome para este usuário."
+    )
   end
 end

@@ -44,8 +44,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
       page_title: "Novo Perfil",
       profile: profile,
       form_action: :new,
-      show_form_modal: true,
-      form: to_form(Finance.change_profile(socket.assigns.current_scope, profile, budget))
+      show_form_modal: true
     )
   end
 
@@ -56,8 +55,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
           page_title: "Edit Profile",
           profile: profile,
           form_action: :edit,
-          show_form_modal: true,
-          form: to_form(Finance.change_profile(socket.assigns.current_scope, profile, budget))
+          show_form_modal: true
         )
     end
   end

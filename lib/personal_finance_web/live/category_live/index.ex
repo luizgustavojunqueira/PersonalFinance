@@ -42,15 +42,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
       budget: budget,
       show_form_modal: true,
       category: category,
-      form_action: :new,
-      form:
-        to_form(
-          Finance.change_category(
-            socket.assigns.current_scope,
-            category,
-            budget
-          )
-        )
+      form_action: :new
     )
   end
 
@@ -62,15 +54,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
       budget: budget,
       show_form_modal: true,
       category: category,
-      form_action: :edit,
-      form:
-        to_form(
-          Finance.change_category(
-            socket.assigns.current_scope,
-            category,
-            budget
-          )
-        )
+      form_action: :edit
     )
   end
 

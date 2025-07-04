@@ -158,15 +158,12 @@ defmodule PersonalFinanceWeb.TransactionLive.FormModal do
 
     transaction_params = Map.put(transaction_params, "total_value", total_value)
 
-    IO.inspect(socket.assigns.transaction, label: "Transaction in Form Modal")
-
     case Finance.update_transaction(
            socket.assigns.current_scope,
            socket.assigns.transaction,
            transaction_params
          ) do
       {:ok, transaction} ->
-        IO.inspect(transaction, label: "Transaction Saved in Form Modal")
         send(socket.assigns.parent_pid, {:transaction_saved, transaction})
 
         {:noreply, socket}
@@ -180,8 +177,6 @@ defmodule PersonalFinanceWeb.TransactionLive.FormModal do
     value = Map.get(transaction_params, "value") |> parse_float()
     amount = Map.get(transaction_params, "amount") |> parse_float()
     total_value = value * amount
-
-    IO.inspect(socket.assigns.budget, label: "Budget in Form Modal")
 
     case Finance.create_transaction(
            socket.assigns.current_scope,
