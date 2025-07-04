@@ -76,7 +76,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
   def handle_event("delete_budget", %{"id" => id}, socket) do
     current_scope = socket.assigns.current_scope
 
-    budget = PersonalFinance.Finance.get_budget!(current_scope, id)
+    budget = PersonalFinance.Finance.get_budget(current_scope, id)
 
     case PersonalFinance.Finance.delete_budget(current_scope, budget) do
       {:ok, deleted} ->

@@ -117,11 +117,11 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna transação por ID.
   """
-  def get_transaction!(%Scope{} = scope, id, %Budget{} = budget) do
+  def get_transaction(%Scope{} = scope, id, %Budget{} = budget) do
     true = scope.user.id == budget.owner_id
 
     Transaction
-    |> Repo.get_by!(id: id, budget_id: budget.id)
+    |> Repo.get_by(id: id, budget_id: budget.id)
     |> Repo.preload([:budget, :category, :investment_type, :profile])
   end
 
@@ -202,11 +202,11 @@ defmodule PersonalFinance.Finance do
   @doc """
   Returns a category by ID.
   """
-  def get_category!(%Scope{} = scope, id, %Budget{} = budget) do
+  def get_category(%Scope{} = scope, id, %Budget{} = budget) do
     true = scope.user.id == budget.owner_id
 
     Category
-    |> Repo.get!(id)
+    |> Repo.get(id)
     |> Repo.preload(:budget)
   end
 
@@ -336,18 +336,22 @@ defmodule PersonalFinance.Finance do
 
   defp handle_transaction_change({:error, _} = error), do: error
 
-  def get_budget!(%Scope{} = scope, id) do
+  def get_budget(%Scope{} = scope, id) do
     Budget
     |> Ecto.Query.preload(:owner)
-    |> Repo.get_by!(id: id, owner_id: scope.user.id)
+    |> Repo.get_by(id: id, owner_id: scope.user.id)
   end
 
-  def get_profile!(%Scope{} = scope, budget_id, id) do
-    budget = get_budget!(scope, budget_id)
+  def get_profile(%Scope{} = scope, budget_id, id) do
+    budget = get_budget(scope, budget_id)
 
-    Profile
-    |> Ecto.Query.preload(:budget)
-    |> Repo.get_by!(id: id, budget_id: budget.id)
+    if budget == nil do
+      nil
+    else
+      Profile
+      |> Ecto.Query.preload(:budget)
+      |> Repo.get_by(id: id, budget_id: budget.id)
+    end
   end
 
   def change_profile(

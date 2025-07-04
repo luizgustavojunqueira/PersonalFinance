@@ -206,9 +206,9 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <fieldset class="fieldset mb-2">
+    <fieldset class="fieldset mb-2 w-full">
       <label>
-        <span :if={@label} class="fieldset-label mb-1">{@label}</span>
+        <span :if={@label} class="fieldset-label mb-1 text-nowrap">{@label}</span>
         <select
           id={@id}
           name={@name}
@@ -248,7 +248,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <fieldset class="fieldset mb-2">
+    <fieldset class="fieldset mb-2 w-full">
       <label>
         <span :if={@label} class="fieldset-label mb-1">{@label}</span>
         <input
@@ -257,7 +257,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            "w-full medium  p-2 rounded-lg mt-2 border-bg-lightmode-dark dark:border-bg-darkmode-dark border-1 focus:outline- :",
+            "w-full medium p-2 rounded-lg mt-2 border-bg-lightmode-dark dark:border-bg-darkmode-dark border-1 focus:outline- :",
             @errors != [] && "input-error"
           ]}
           {@rest}
@@ -303,6 +303,87 @@ defmodule PersonalFinanceWeb.CoreComponents do
     """
   end
 
+  @doc """
+  Render a form modal with a title, subtitle, inputs, and actions.
+  """
+  attr :title, :string, required: true, doc: "the title of the modal"
+  attr :subtitle, :string, default: nil, doc: "the subtitle of the modal"
+
+  attr :action, :atom,
+    default: :new,
+    values: [:new, :edit],
+    doc: "the action to perform, used to determine the form title"
+
+  attr :form, Phoenix.HTML.Form,
+    required: true,
+    doc: "the form to render, typically created with `to_form/1`"
+
+  attr :submit_event, :string,
+    default: "save",
+    doc: "the event to trigger when the form is submitted"
+
+  attr :submit_label, :string,
+    default: "Salvar",
+    doc: "the label for the submit button"
+
+  attr :validate_event, :string,
+    default: "validate",
+    doc: "the event to trigger when the form is validated"
+
+  attr :close_event, :string,
+    default: "close_form",
+    doc: "the event to trigger when the form is closed"
+
+  attr :parent_pid, :any,
+    default: self(),
+    doc: "the parent process pid to target for events"
+
+  attr :rest, :global,
+    include: ~w(id class phx-target phx-hook phx-click phx-submit phx-change),
+    doc: "the arbitrary HTML attributes to add to the form"
+
+  slot :inner_block, doc: "The content to render inside the form, typically inputs."
+
+  def form_modal(assigns) do
+    ~H"""
+    <div
+      class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/30 "
+      {@rest}
+    >
+      <div class="dark rounded-lg shadow-lg p-6 w-full max-w-2xl">
+        <div class="flex flex-row justify-between mb-5 items-center">
+          <div class="flex flex-col ">
+            <h2 class="text-2xl font-semibold  ">
+              {if @action == :edit, do: "Editar " <> @title, else: "Cadastrar " <> @title}
+            </h2>
+              <span :if={@subtitle} class="mt-1 text-sm text-base-content/70 text-text-lightmode-light/70 dark:text-text-darkmode-light/70">
+                {@subtitle}
+              </span>
+          </div>
+          <.link
+            class="text-red-600 hover:text-red-800 hero-x-mark"
+            phx-click={@close_event}
+            >
+          </.link>
+        </div>
+
+        <.form
+          for={@form}
+          phx-submit={@submit_event}
+          phx-change={@validate_event}
+          class="flex flex-col gap-4"
+        >
+          {render_slot(@inner_block, @form)}
+
+          <.button variant="primary" phx-disable-with="Salvando">
+            <.icon name="hero-check" /> {@submit_label}
+          </.button>
+        </.form>
+      </div>
+    </div>
+    """
+  end
+
   @doc ~S"""
   Renders a table with generic styling.
 
@@ -345,7 +426,9 @@ defmodule PersonalFinanceWeb.CoreComponents do
         </tr>
       </thead>
       <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="light">
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="light" 
+
+          >
           <td
             :for={col <- @col}
             phx-click={@row_click && @row_click.(row)}

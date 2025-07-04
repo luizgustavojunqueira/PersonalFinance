@@ -16,19 +16,17 @@
     </.header>
 
     <%= if @show_form_modal do %>
-      <div class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/50 ">
-        <div class="w-2/5 mb-8 p-6 rounded-lg shadow-md dark">
-          <.live_component
-            module={PersonalFinanceWeb.CategoryLive.FormModal}
-            id="category-form"
-            action={@form_action}
-            budget={@budget}
-            current_scope={@current_scope}
-            category={@category}
-            parent_pid={self()}
-          />
-        </div>
-      </div>
+      <.form_modal
+        title="Categoria"
+        subtitle="Preencha os detalhes da categoria"
+        action={@form_action}
+        form={@form}
+        submit_label="Salvar"
+      >
+        <.input field={@form[:name]} type="text" label="Nome" />
+        <.input field={@form[:description]} type="text" label="Descrição" />
+        <.input field={@form[:percentage]} type="number" label="Porcentagem" />
+      </.form_modal>
     <% end %>
 
     <div class="rounded-lg shadow-md p-6 medium w-full ">

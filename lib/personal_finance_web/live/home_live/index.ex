@@ -5,32 +5,40 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
   @impl true
   def mount(%{"id" => budget_id}, _session, socket) do
     current_scope = socket.assigns.current_scope
-    budget = Finance.get_budget!(current_scope, budget_id)
-    transactions = Finance.list_transactions(current_scope, budget)
+    budget = Finance.get_budget(current_scope, budget_id)
 
-    categories = Finance.list_categories(current_scope, budget)
+    if budget == nil do
+      {:ok,
+       socket
+       |> put_flash(:error, "Orçamento não encontrado.")
+       |> push_navigate(to: ~p"/budgets")}
+    else
+      transactions = Finance.list_transactions(current_scope, budget)
 
-    labels =
-      Enum.map(categories, fn category ->
-        category.name
-      end)
+      categories = Finance.list_categories(current_scope, budget)
 
-    values =
-      Enum.map(categories, fn category ->
-        Finance.get_total_value_by_category(category.id, transactions)
-      end)
+      labels =
+        Enum.map(categories, fn category ->
+          category.name
+        end)
 
-    socket =
-      socket
-      |> assign(
-        current_user: current_scope.user,
-        budget: budget,
-        page_title: "Home #{budget.name}",
-        show_welcome_message: true,
-        labels: labels,
-        values: values
-      )
+      values =
+        Enum.map(categories, fn category ->
+          Finance.get_total_value_by_category(category.id, transactions)
+        end)
 
-    {:ok, socket}
+      socket =
+        socket
+        |> assign(
+          current_user: current_scope.user,
+          budget: budget,
+          page_title: "Home #{budget.name}",
+          show_welcome_message: true,
+          labels: labels,
+          values: values
+        )
+
+      {:ok, socket}
+    end
   end
 end
