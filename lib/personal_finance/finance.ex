@@ -5,6 +5,148 @@ defmodule PersonalFinance.Finance do
   import Ecto.Query
 
   @doc """
+  Retorna tipos de investimento.
+  """
+  def list_investment_types do
+    InvestmentType
+    |> Repo.all()
+  end
+
+  @doc """
+  Returns the list of categories for a budget.
+  """
+  def list_categories(%Scope{} = scope, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
+
+    Category
+    |> where([c], c.budget_id == ^budget.id)
+    |> Repo.all()
+  end
+
+  @doc """
+  Create a category changeset for a budget and user.
+  """
+  def change_category(
+        %Scope{} = scope,
+        %Category{} = category,
+        %Budget{} = budget,
+        attrs \\ %{}
+      ) do
+    true = scope.user.id == budget.owner_id
+
+    Category.changeset(category, attrs, budget.id)
+  end
+
+  @doc """
+  Returns a category by ID.
+  """
+  def get_category(%Scope{} = scope, id, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
+
+    Category
+    |> Repo.get(id)
+    |> Repo.preload(:budget)
+  end
+
+  @doc """
+  Returns a category by name for a budget.
+  """
+  def get_category_by_name(name, %Scope{} = scope, budget) do
+    true = scope.user.id == budget.owner_id
+
+    Category
+    |> where([c], c.name == ^name and c.budget_id == ^budget.id)
+    |> Repo.one()
+  end
+
+  @doc """
+  Returns the total value of transactions for a specific category.
+  """
+  def get_total_value_by_category(category_id, transactions) do
+    transactions
+    |> Enum.filter(fn t -> t.category_id == category_id end)
+    |> Enum.reduce(0, fn t, acc -> acc + t.total_value end)
+  end
+
+  @doc """
+  Creates a category.
+  """
+  def create_category(%Scope{} = scope, attrs, budget) do
+    true = scope.user.id == budget.owner_id
+
+    %Category{}
+    |> Category.changeset(attrs, budget.id)
+    |> Repo.insert()
+  end
+
+  @doc """
+  Updates a category.
+  """
+  def update_category(%Scope{} = scope, %Category{} = category, attrs) do
+    true = scope.user.id == category.budget.owner_id
+    changeset = category |> Category.changeset(attrs, category.budget.id)
+
+    case Repo.update(changeset) do
+      {:ok, updated_category} ->
+        fully_loaded_category =
+          Category |> Repo.get!(updated_category.id) |> Repo.preload([:budget])
+
+        {:ok, fully_loaded_category}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  @doc """
+  Deletes a category and resets transactions to default category.
+  """
+  def delete_category(%Scope{} = scope, %Category{} = category) do
+    true = scope.user.id == category.budget.owner_id
+
+    if category.is_default || category.is_fixed do
+      {:error, "Cannot delete default/fixed category"}
+    else
+      default_category =
+        Category
+        |> where([c], c.is_default == true and c.budget_id == ^category.budget_id)
+        |> Repo.one()
+
+      from(t in Transaction,
+        where: t.category_id == ^category.id and t.budget_id == ^category.budget_id
+      )
+      |> Repo.update_all(set: [category_id: default_category.id])
+
+      Repo.delete(category)
+    end
+  end
+
+  @doc """
+  Create a transaction changeset for a budget and user.
+  """
+  def change_transaction(
+        %Scope{} = scope,
+        %Transaction{} = transaction,
+        %Budget{} = budget,
+        attrs \\ %{}
+      ) do
+    true = scope.user.id == budget.owner_id
+
+    Transaction.changeset(transaction, attrs, budget.id)
+  end
+
+  @doc """
+  Retorna transação por ID.
+  """
+  def get_transaction(%Scope{} = scope, id, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
+
+    Transaction
+    |> Repo.get_by(id: id, budget_id: budget.id)
+    |> Repo.preload([:budget, :category, :investment_type, :profile])
+  end
+
+  @doc """
   Retorna a lista de transações para um orçamento
   """
   def list_transactions(%Scope{} = scope, budget) do
@@ -15,17 +157,6 @@ defmodule PersonalFinance.Finance do
       where: t.budget_id == ^budget.id
     )
     |> Ecto.Query.preload([:category, :investment_type, :profile])
-    |> Repo.all()
-  end
-
-  @doc """
-  Retorna a lista de profiles para um orçamento
-  """
-  def list_profiles(%Scope{} = scope, budget) do
-    true = scope.user.id == budget.owner_id
-
-    Profile
-    |> where([p], p.budget_id == ^budget.id)
     |> Repo.all()
   end
 
@@ -92,122 +223,13 @@ defmodule PersonalFinance.Finance do
     true = scope.user.id == transaction.budget.owner_id
 
     Repo.delete(transaction)
-    |> handle_transaction_change()
   end
 
   @doc """
-  Retorna tipos de investimento.
+  Create a budget changeset for a user.
   """
-  def list_investment_types do
-    InvestmentType
-    |> Repo.all()
-  end
-
-  @doc """
-  Retorna categoria por nome
-  """
-  def get_category_by_name(name, %Scope{} = scope, budget) do
-    true = scope.user.id == budget.owner_id
-
-    Category
-    |> where([c], c.name == ^name and c.budget_id == ^budget.id)
-    |> Repo.one()
-  end
-
-  @doc """
-  Retorna transação por ID.
-  """
-  def get_transaction(%Scope{} = scope, id, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
-
-    Transaction
-    |> Repo.get_by(id: id, budget_id: budget.id)
-    |> Repo.preload([:budget, :category, :investment_type, :profile])
-  end
-
-  @doc """
-  Retorna o valor total de transações por categoria.
-  """
-  def get_total_value_by_category(category_id, transactions) do
-    transactions
-    |> Enum.filter(fn t -> t.category_id == category_id end)
-    |> Enum.reduce(0, fn t, acc -> acc + t.total_value end)
-  end
-
-  @doc """
-  Returns the list of categories for a budget.
-  """
-  def list_categories(%Scope{} = scope, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
-
-    Category
-    |> where([c], c.budget_id == ^budget.id)
-    |> Repo.all()
-  end
-
-  @doc """
-  Creates a category.
-  """
-  def create_category(%Scope{} = scope, attrs, budget) do
-    true = scope.user.id == budget.owner_id
-
-    %Category{}
-    |> Category.changeset(attrs, budget.id)
-    |> Repo.insert()
-    |> handle_category_change()
-  end
-
-  @doc """
-  Updates a category.
-  """
-  def update_category(%Scope{} = scope, %Category{} = category, attrs) do
-    true = scope.user.id == category.budget.owner_id
-    changeset = category |> Category.changeset(attrs, category.budget.id)
-
-    case Repo.update(changeset) do
-      {:ok, updated_category} ->
-        fully_loaded_category =
-          Category |> Repo.get!(updated_category.id) |> Repo.preload([:budget])
-
-        {:ok, fully_loaded_category}
-
-      {:error, changeset} ->
-        {:error, changeset}
-    end
-  end
-
-  @doc """
-  Deletes a category and resets transactions to default category.
-  """
-  def delete_category(%Scope{} = scope, %Category{} = category) do
-    true = scope.user.id == category.budget.owner_id
-
-    if category.is_default || category.is_fixed do
-      {:error, "Cannot delete default/fixed category"}
-    else
-      default_category =
-        Category
-        |> where([c], c.is_default == true and c.budget_id == ^category.budget_id)
-        |> Repo.one()
-
-      from(t in Transaction,
-        where: t.category_id == ^category.id and t.budget_id == ^category.budget_id
-      )
-      |> Repo.update_all(set: [category_id: default_category.id])
-
-      Repo.delete(category)
-    end
-  end
-
-  @doc """
-  Returns a category by ID.
-  """
-  def get_category(%Scope{} = scope, id, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
-
-    Category
-    |> Repo.get(id)
-    |> Repo.preload(:budget)
+  def change_budget(%Scope{} = scope, %Budget{} = budget, attrs \\ %{}) do
+    Budget.changeset(budget, attrs, scope.user.id)
   end
 
   @doc """
@@ -223,11 +245,29 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Returns a budget by ID.
+  Updates a budget.
   """
-  def get_budget_by_id(budget_id) do
-    from(b in Budget, where: b.id == ^budget_id)
-    |> Repo.one()
+  def update_budget(%Scope{} = scope, %Budget{} = budget, attrs) do
+    budget
+    |> Budget.changeset(attrs, scope.user.id)
+    |> Repo.update()
+  end
+
+  @doc """
+  Deletes a budget.
+  """
+  def delete_budget(%Scope{} = scope, %Budget{} = budget) do
+    true = scope.user.id == budget.owner_id
+    Repo.delete(budget)
+  end
+
+  @doc """
+  Returns a budget by ID for a user.
+  """
+  def get_budget(%Scope{} = scope, id) do
+    Budget
+    |> Ecto.Query.preload(:owner)
+    |> Repo.get_by(id: id, owner_id: scope.user.id)
   end
 
   @doc """
@@ -239,6 +279,9 @@ defmodule PersonalFinance.Finance do
     |> Repo.insert()
   end
 
+  @doc """
+  Creates default profiles for a budget.
+  """
   def create_default_profiles(%Scope{} = scope, %Budget{} = budget) do
     default_profile_attrs = %{
       "name" => "Eu",
@@ -250,6 +293,9 @@ defmodule PersonalFinance.Finance do
     create_profile(scope, default_profile_attrs, budget)
   end
 
+  @doc """
+  Creates default categories for a budget.
+  """
   def create_default_categories(%Scope{} = scope, %Budget{} = budget) do
     default_categories_attrs = [
       %{
@@ -285,63 +331,33 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Updates a budget.
+  Create a profile changeset for a budget and user.
   """
-  def update_budget(%Scope{} = scope, %Budget{} = budget, attrs) do
-    budget
-    |> Budget.changeset(attrs, scope.user.id)
-    |> Repo.update()
-  end
-
-  @doc """
-  Deletes a budget.
-  """
-  def delete_budget(%Scope{} = scope, %Budget{} = budget) do
+  def change_profile(
+        %Scope{} = scope,
+        %Profile{} = profile,
+        %Budget{} = budget,
+        attrs \\ %{}
+      ) do
     true = scope.user.id == budget.owner_id
-    Repo.delete(budget)
+
+    Profile.changeset(profile, attrs, budget.id)
   end
 
   @doc """
-  Returns a profile by ID.
+  Returns a list of profiles for a budget.
   """
-  def get_profile_by_id(id, budget_id) do
+  def list_profiles(%Scope{} = scope, budget) do
+    true = scope.user.id == budget.owner_id
+
     Profile
-    |> where([p], p.id == ^id and p.budget_id == ^budget_id)
-    |> Repo.one()
+    |> where([p], p.budget_id == ^budget.id)
+    |> Repo.all()
   end
 
-  defp handle_category_change({:ok, %Category{} = category}) do
-    Phoenix.PubSub.broadcast(
-      PersonalFinance.PubSub,
-      "categories_updates:#{category.budget_id}",
-      {:category_changed, category.budget_id}
-    )
-
-    {:ok, category}
-  end
-
-  defp handle_category_change({:error, changeset}), do: {:error, changeset}
-
-  defp handle_transaction_change({:ok, %Transaction{} = transaction}) do
-    preloaded_transaction = Repo.preload(transaction, [:category, :investment_type, :profile])
-
-    Phoenix.PubSub.broadcast(
-      PersonalFinance.PubSub,
-      "transactions_updates:#{preloaded_transaction.budget_id}",
-      {:transaction_changed, preloaded_transaction.budget_id}
-    )
-
-    {:ok, preloaded_transaction}
-  end
-
-  defp handle_transaction_change({:error, _} = error), do: error
-
-  def get_budget(%Scope{} = scope, id) do
-    Budget
-    |> Ecto.Query.preload(:owner)
-    |> Repo.get_by(id: id, owner_id: scope.user.id)
-  end
-
+  @doc """
+  Return a profile by ID for a budget.
+  """
   def get_profile(%Scope{} = scope, budget_id, id) do
     budget = get_budget(scope, budget_id)
 
@@ -354,17 +370,9 @@ defmodule PersonalFinance.Finance do
     end
   end
 
-  def change_profile(
-        %Scope{} = scope,
-        %Profile{} = profile,
-        %Budget{} = budget,
-        attrs \\ %{}
-      ) do
-    true = scope.user.id == budget.owner_id
-
-    Profile.changeset(profile, attrs, budget.id)
-  end
-
+  @doc """
+  Updates a profile.
+  """
   def update_profile(%Scope{} = scope, %Profile{} = profile, attrs) do
     true = scope.user.id == profile.budget.owner_id
 
@@ -373,6 +381,9 @@ defmodule PersonalFinance.Finance do
     |> Repo.update()
   end
 
+  @doc """
+  Creates a profile for a budget.
+  """
   def create_profile(%Scope{} = scope, attrs, budget) do
     true = scope.user.id == budget.owner_id
 
@@ -381,6 +392,9 @@ defmodule PersonalFinance.Finance do
     |> Repo.insert()
   end
 
+  @doc """
+  Deletes a profile and resets transactions to default profile.
+  """
   def delete_profile(%Scope{} = scope, %Profile{} = profile) do
     true = scope.user.id == profile.budget.owner_id
 
@@ -399,31 +413,5 @@ defmodule PersonalFinance.Finance do
 
       Repo.delete(profile)
     end
-  end
-
-  def change_transaction(
-        %Scope{} = scope,
-        %Transaction{} = transaction,
-        %Budget{} = budget,
-        attrs \\ %{}
-      ) do
-    true = scope.user.id == budget.owner_id
-
-    Transaction.changeset(transaction, attrs, budget.id)
-  end
-
-  def change_category(
-        %Scope{} = scope,
-        %Category{} = category,
-        %Budget{} = budget,
-        attrs \\ %{}
-      ) do
-    true = scope.user.id == budget.owner_id
-
-    Category.changeset(category, attrs, budget.id)
-  end
-
-  def change_budget(%Scope{} = scope, %Budget{} = budget, attrs \\ %{}) do
-    Budget.changeset(budget, attrs, scope.user.id)
   end
 end
