@@ -471,8 +471,8 @@ defmodule PersonalFinance.Finance do
   @doc """
   Decline a budget invite
   """
-  def decline_budget_invite(%Scope{} = scope, %BudgetInvite{} = invite) do
-    if invite.status == :pending && scope.user.email == invite.email &&
+  def decline_budget_invite(user, %BudgetInvite{} = invite) do
+    if invite.status == :pending && user.email == invite.email &&
          (is_nil(invite.expires_at) ||
             NaiveDateTime.compare(NaiveDateTime.utc_now(), invite.expires_at) == :lt) do
       invite
