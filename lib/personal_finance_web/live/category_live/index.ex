@@ -16,6 +16,8 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
        |> put_flash(:error, "Orçamento não encontrado.")
        |> push_navigate(to: ~p"/budgets")}
     else
+      Finance.subscribe_finance(:category, budget.id)
+
       socket =
         socket
         |> assign(budget: budget)
@@ -94,8 +96,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     category = Finance.get_category(current_scope, id, socket.assigns.budget)
 
     case Finance.delete_category(current_scope, category) do
-      {:ok, deleted} ->
-        send(self(), {:category_deleted, deleted})
+      {:ok, _deleted} ->
         {:noreply, socket}
 
       {:error, _changeset} ->
@@ -138,9 +139,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
            socket.assigns.category,
            category_params
          ) do
-      {:ok, category} ->
-        send(self(), {:category_saved, category})
-
+      {:ok, _category} ->
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -154,8 +153,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
            category_params,
            socket.assigns.budget
          ) do
-      {:ok, category} ->
-        send(self(), {:category_saved, category})
+      {:ok, _category} ->
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -165,20 +163,18 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   end
 
   @impl true
-  def handle_info({:category_saved, category}, socket) do
+  def handle_info({:saved, category}, socket) do
     {:noreply,
      socket
-     |> put_flash(:info, "Categoria salva com sucesso.")
      |> stream_insert(:category_collection, category)
      |> assign(show_form_modal: false, category: nil, form_action: nil)
      |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
   end
 
   @impl true
-  def handle_info({:category_deleted, category}, socket) do
+  def handle_info({:deleted, category}, socket) do
     {:noreply,
      socket
-     |> put_flash(:info, "Categoria removida com sucesso.")
      |> stream_delete(:category_collection, category)}
   end
 end

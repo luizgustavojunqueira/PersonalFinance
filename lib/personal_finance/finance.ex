@@ -66,9 +66,20 @@ defmodule PersonalFinance.Finance do
   Creates a category.
   """
   def create_category(%Scope{} = scope, attrs, budget) do
-    %Category{}
-    |> Category.changeset(attrs, budget.id)
-    |> Repo.insert()
+    with {:ok, category = %Category{}} <-
+           %Category{}
+           |> Category.changeset(attrs, budget.id)
+           |> Repo.insert() do
+      fully_loaded_category =
+        category
+        |> Repo.preload(:budget)
+
+      broadcast(:category, budget.id, {:saved, fully_loaded_category})
+      {:ok, fully_loaded_category}
+    else
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -81,6 +92,8 @@ defmodule PersonalFinance.Finance do
       {:ok, updated_category} ->
         fully_loaded_category =
           Category |> Repo.get!(updated_category.id) |> Repo.preload([:budget])
+
+        broadcast(:category, updated_category.budget_id, {:saved, fully_loaded_category})
 
         {:ok, fully_loaded_category}
 
@@ -106,7 +119,14 @@ defmodule PersonalFinance.Finance do
       )
       |> Repo.update_all(set: [category_id: default_category.id])
 
-      Repo.delete(category)
+      broadcast(:transaction, category.budget_id, :transactions_updated)
+
+      with {:ok, deleted_category} <- Repo.delete(category) do
+        broadcast(:category, category.budget_id, {:deleted, deleted_category})
+        {:ok, deleted_category}
+      else
+        {:error, _} = error -> error
+      end
     end
   end
 
@@ -165,8 +185,12 @@ defmodule PersonalFinance.Finance do
 
     case Repo.insert(changeset) do
       {:ok, new_transaction} ->
-        # Carregue as associações aqui antes de retornar!
-        {:ok, Repo.preload(new_transaction, [:category, :investment_type, :profile])}
+        new_transaction =
+          new_transaction
+          |> Repo.preload([:category, :investment_type, :profile])
+
+        broadcast(:transaction, budget.id, {:saved, new_transaction})
+        {:ok, new_transaction}
 
       {:error, changeset} ->
         {:error, changeset}
@@ -188,6 +212,8 @@ defmodule PersonalFinance.Finance do
           |> Repo.get!(updated_transaction.id)
           |> Repo.preload([:category, :investment_type, :profile])
 
+        broadcast(:transaction, updated_transaction.budget_id, {:saved, fully_loaded_transaction})
+
         {:ok, fully_loaded_transaction}
 
       {:error, changeset} ->
@@ -199,7 +225,12 @@ defmodule PersonalFinance.Finance do
   Deleta uma transação.
   """
   def delete_transaction(%Scope{} = scope, %Transaction{} = transaction) do
-    Repo.delete(transaction)
+    with {:ok, deleted_transaction} <- Repo.delete(transaction) do
+      broadcast(:transaction, transaction.budget_id, {:deleted, deleted_transaction})
+      {:ok, deleted_transaction}
+    else
+      {:error, _} = error -> error
+    end
   end
 
   @doc """
@@ -237,9 +268,12 @@ defmodule PersonalFinance.Finance do
   Updates a budget.
   """
   def update_budget(%Scope{} = scope, %Budget{} = budget, attrs) do
-    budget
-    |> Budget.changeset(attrs, scope.user.id)
-    |> Repo.update()
+    with {:ok, budget = %Budget{}} <-
+           budget
+           |> Budget.changeset(attrs, scope.user.id)
+           |> Repo.update() do
+      {:ok, Repo.preload(budget, [:owner])}
+    end
   end
 
   @doc """
@@ -278,6 +312,7 @@ defmodule PersonalFinance.Finance do
 
     case Repo.insert(changeset) do
       {:ok, new_budget} ->
+        broadcast(scope, :budget, {:saved, new_budget})
         {:ok, Repo.preload(new_budget, [:owner])}
 
       {:error, changeset} ->
@@ -376,18 +411,32 @@ defmodule PersonalFinance.Finance do
   Updates a profile.
   """
   def update_profile(%Scope{} = scope, %Profile{} = profile, attrs) do
-    profile
-    |> Profile.changeset(attrs, profile.budget.id)
-    |> Repo.update()
+    with {:ok, updated_profile = %Profile{}} <-
+           profile
+           |> Profile.changeset(attrs, profile.budget.id)
+           |> Repo.update() do
+      broadcast(:profile, updated_profile.budget_id, {:saved, updated_profile})
+      {:ok, updated_profile}
+    else
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
   Creates a profile for a budget.
   """
   def create_profile(%Scope{} = scope, attrs, budget) do
-    %Profile{}
-    |> Profile.changeset(attrs, budget.id)
-    |> Repo.insert()
+    with {:ok, profile = %Profile{}} <-
+           %Profile{}
+           |> Profile.changeset(attrs, budget.id)
+           |> Repo.insert() do
+      broadcast(:profile, budget.id, {:saved, profile})
+      {:ok, profile}
+    else
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """
@@ -407,7 +456,14 @@ defmodule PersonalFinance.Finance do
       )
       |> Repo.update_all(set: [profile_id: default_profile.id])
 
-      Repo.delete(profile)
+      broadcast(:transaction, profile.budget_id, :transactions_updated)
+
+      with {:ok, deleted_profile} <- Repo.delete(profile) do
+        broadcast(:profile, profile.budget_id, {:deleted, deleted_profile})
+        {:ok, deleted_profile}
+      else
+        {:error, _} = error -> error
+      end
     end
   end
 
@@ -483,5 +539,32 @@ defmodule PersonalFinance.Finance do
     else
       {:error, "Invite is not valid or has expired."}
     end
+  end
+
+  @doc """
+  Subscribes to scoped notifications abour any finance related changes.
+
+  The broadcasted message match the pattern
+  * {:saved, %Resource{}}
+  * {:deleted, %Resource{}}
+  """
+  def subscribe_finance(resource, budget_id) do
+    IO.inspect(
+      "Subscribing to finance notifications for resource: #{resource} and budget_id: #{budget_id}"
+    )
+
+    Phoenix.PubSub.subscribe(PersonalFinance.PubSub, "finance:#{budget_id}:#{resource}")
+  end
+
+  defp broadcast(resource, budget_id, message) do
+    IO.inspect(
+      "Broadcasting finance notification for resource: #{resource}, budget_id: #{budget_id}"
+    )
+
+    Phoenix.PubSub.broadcast(
+      PersonalFinance.PubSub,
+      "finance:#{budget_id}:#{resource}",
+      message
+    )
   end
 end

@@ -106,7 +106,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
            budget_params
          ) do
       {:ok, budget} ->
-        send(self(), {:budget_saved, budget})
+        send(self(), {:saved, budget})
 
         {:noreply, socket}
 
@@ -125,7 +125,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
 
         Finance.create_default_categories(socket.assigns.current_scope, budget)
 
-        send(self(), {:budget_saved, budget})
+        send(self(), {:saved, budget})
         {:noreply, socket}
 
       {:error, changeset} ->
@@ -135,7 +135,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
   end
 
   @impl true
-  def handle_info({:budget_deleted, budget}, socket) do
+  def handle_info({:deleted, budget}, socket) do
     {:noreply,
      socket
      |> put_flash(:info, "Orçamento apagado com sucesso.")
@@ -143,7 +143,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
   end
 
   @impl true
-  def handle_info({:budget_saved, budget}, socket) do
+  def handle_info({:saved, budget}, socket) do
     {:noreply,
      socket
      |> put_flash(:info, "Orçamento salvo com sucesso.")

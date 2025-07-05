@@ -14,6 +14,8 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
        |> put_flash(:error, "Orçamento não encontrado.")
        |> push_navigate(to: ~p"/budgets")}
     else
+      Finance.subscribe_finance(:profile, budget.id)
+
       socket =
         stream(
           socket,
@@ -96,8 +98,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
       Finance.get_profile(current_scope, socket.assigns.budget.id, id)
 
     case Finance.delete_profile(current_scope, profile) do
-      {:ok, profile} ->
-        send(self(), {:profile_deleted, profile})
+      {:ok, _profile} ->
         {:noreply, socket}
 
       {:error, _changeset} ->
@@ -137,9 +138,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
            socket.assigns.profile,
            profile_params
          ) do
-      {:ok, profile} ->
-        send(self(), {:profile_saved, profile})
-
+      {:ok, _profile} ->
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -153,8 +152,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
            profile_params,
            socket.assigns.budget
          ) do
-      {:ok, profile} ->
-        send(self(), {:profile_saved, profile})
+      {:ok, _profile} ->
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->
@@ -164,20 +162,18 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
   end
 
   @impl true
-  def handle_info({:profile_saved, profile}, socket) do
+  def handle_info({:saved, profile}, socket) do
     {:noreply,
      socket
-     |> put_flash(:info, "Perfil #{profile.name} salvo com sucesso.")
      |> stream_insert(:profile_collection, profile)
      |> assign(show_form_modal: false, profile: nil, form_action: nil)
      |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/profiles")}
   end
 
   @impl true
-  def handle_info({:profile_deleted, profile}, socket) do
+  def handle_info({:deleted, profile}, socket) do
     {:noreply,
      socket
-     |> put_flash(:info, "Perfil removido com sucesso.")
      |> stream_delete(:profile_collection, profile)}
   end
 end

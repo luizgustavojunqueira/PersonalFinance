@@ -15,6 +15,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
        |> put_flash(:error, "Orçamento não encontrado.")
        |> push_navigate(to: ~p"/budgets")}
     else
+      Finance.subscribe_finance(:transaction, budget.id)
       categories = Finance.list_categories(current_scope, budget)
 
       investment_category =
@@ -118,8 +119,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       Finance.get_transaction(current_scope, id, socket.assigns.budget)
 
     case Finance.delete_transaction(current_scope, transaction) do
-      {:ok, deleted} ->
-        send(self(), {:transaction_deleted, deleted})
+      {:ok, _deleted} ->
         {:noreply, socket}
 
       {:error, _changeset} ->
@@ -166,21 +166,29 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_info({:transaction_saved, transaction}, socket) do
+  def handle_info({:saved, transaction}, socket) do
     {:noreply,
      socket
-     |> put_flash(:info, "Transação salva com sucesso.")
      |> stream_insert(:transaction_collection, transaction)
      |> assign(show_form_modal: false, transaction: nil, form_action: nil)
      |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/transactions")}
   end
 
   @impl true
-  def handle_info({:transaction_deleted, transaction}, socket) do
+  def handle_info({:deleted, transaction}, socket) do
     {:noreply,
      socket
-     |> put_flash(:info, "Transação removida com sucesso.")
      |> stream_delete(:transaction_collection, transaction)}
+  end
+
+  @impl true
+  def handle_info(:transactions_updated, socket) do
+    transactions =
+      Finance.list_transactions(socket.assigns.current_scope, socket.assigns.budget)
+
+    {:noreply,
+     socket
+     |> stream(:transaction_collection, transactions)}
   end
 
   defp save_transaction(socket, :edit, transaction_params) do
@@ -204,7 +212,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
            transaction_params
          ) do
       {:ok, transaction} ->
-        send(self(), {:transaction_saved, transaction})
+        send(self(), {:saved, transaction})
 
         {:noreply, socket}
 
@@ -223,8 +231,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
            Map.put(transaction_params, "total_value", total_value),
            socket.assigns.budget
          ) do
-      {:ok, transaction} ->
-        send(self(), {:transaction_saved, transaction})
+      {:ok, _transaction} ->
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->

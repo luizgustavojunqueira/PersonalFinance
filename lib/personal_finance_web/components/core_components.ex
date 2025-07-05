@@ -356,15 +356,14 @@ defmodule PersonalFinanceWeb.CoreComponents do
             <h2 class="text-2xl font-semibold  ">
               {if @action == :edit, do: "Editar " <> @title, else: "Cadastrar " <> @title}
             </h2>
-              <span :if={@subtitle} class="mt-1 text-sm text-base-content/70 text-text-lightmode-light/70 dark:text-text-darkmode-light/70">
-                {@subtitle}
-              </span>
-          </div>
-          <.link
-            class="text-red-600 hover:text-red-800 hero-x-mark"
-            phx-click={@close_event}
+            <span
+              :if={@subtitle}
+              class="mt-1 text-sm text-base-content/70 text-text-lightmode-light/70 dark:text-text-darkmode-light/70"
             >
-          </.link>
+              {@subtitle}
+            </span>
+          </div>
+          <.link class="text-red-600 hover:text-red-800 hero-x-mark" phx-click={@close_event}></.link>
         </div>
 
         <.form
@@ -426,9 +425,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
         </tr>
       </thead>
       <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="light" 
-
-          >
+        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="light">
           <td
             :for={col <- @col}
             phx-click={@row_click && @row_click.(row)}
