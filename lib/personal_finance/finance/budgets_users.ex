@@ -1,12 +1,12 @@
-defmodule PersonalFinance.Finance.BudgetUser do
+defmodule PersonalFinance.Finance.BudgetsUsers do
   use Ecto.Schema
   import Ecto.Changeset
 
-  schema "budget_users" do
+  schema "budgets_users" do
     belongs_to :budget, PersonalFinance.Finance.Budget
     belongs_to :user, PersonalFinance.Accounts.User
 
-    timestamps(type: :utc_datetime)
+    timestamps(type: :utc_datetime, updated_at: false)
   end
 
   @doc false

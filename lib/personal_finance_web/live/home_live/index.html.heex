@@ -5,11 +5,40 @@
   budget_id={@budget.id}
 >
   <div class="w-full m-0">
-    <header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">
-        {@budget.name} - Home
-      </h1>
-    </header>
+    <.header class="flex flex-row justify-between mb-5 items-center">
+      <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Home</h1>
+
+      <:actions>
+        <.link class="primary-button-a" navigate={~p"/budgets/#{@budget.id}/users/new"}>
+          <.icon name="hero-plus" /> Convidar Usuário
+        </.link>
+      </:actions>
+    </.header>
+
+    <%= if @show_form_modal do %>
+      <.form_modal
+        title="Convidado"
+        subtitle="Preencha os detalhes do convidado"
+        action={@form_action}
+        form={@form}
+        validate_event=""
+        submit_event="send_invite"
+        submit_label="Convidar"
+      >
+        <.input field={@form[:email]} type="text" label="email" />
+
+        <%= if @invite_url do %>
+          <div class="alert alert-info mb-4">
+            <p>
+              Você pode convidar usuários para o seu orçamento através do link:
+              <a href={@invite_url} class="text-blue-600 hover:text-blue-800" target="_blank">
+                {@invite_url}
+              </a>
+            </p>
+          </div>
+        <% end %>
+      </.form_modal>
+    <% end %>
 
     <canvas
       id="my-chart"

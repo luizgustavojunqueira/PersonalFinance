@@ -1,4 +1,6 @@
 defmodule PersonalFinance.Finance do
+  alias PersonalFinance.Finance.BudgetsUsers
+  alias PersonalFinance.Finance.BudgetInvite
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
   alias PersonalFinance.Finance.{Transaction, Category, InvestmentType, Profile, Budget}
@@ -16,8 +18,6 @@ defmodule PersonalFinance.Finance do
   Returns the list of categories for a budget.
   """
   def list_categories(%Scope{} = scope, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
-
     Category
     |> where([c], c.budget_id == ^budget.id)
     |> Repo.all()
@@ -32,8 +32,6 @@ defmodule PersonalFinance.Finance do
         %Budget{} = budget,
         attrs \\ %{}
       ) do
-    true = scope.user.id == budget.owner_id
-
     Category.changeset(category, attrs, budget.id)
   end
 
@@ -41,8 +39,6 @@ defmodule PersonalFinance.Finance do
   Returns a category by ID.
   """
   def get_category(%Scope{} = scope, id, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
-
     Category
     |> Repo.get(id)
     |> Repo.preload(:budget)
@@ -52,8 +48,6 @@ defmodule PersonalFinance.Finance do
   Returns a category by name for a budget.
   """
   def get_category_by_name(name, %Scope{} = scope, budget) do
-    true = scope.user.id == budget.owner_id
-
     Category
     |> where([c], c.name == ^name and c.budget_id == ^budget.id)
     |> Repo.one()
@@ -72,8 +66,6 @@ defmodule PersonalFinance.Finance do
   Creates a category.
   """
   def create_category(%Scope{} = scope, attrs, budget) do
-    true = scope.user.id == budget.owner_id
-
     %Category{}
     |> Category.changeset(attrs, budget.id)
     |> Repo.insert()
@@ -83,7 +75,6 @@ defmodule PersonalFinance.Finance do
   Updates a category.
   """
   def update_category(%Scope{} = scope, %Category{} = category, attrs) do
-    true = scope.user.id == category.budget.owner_id
     changeset = category |> Category.changeset(attrs, category.budget.id)
 
     case Repo.update(changeset) do
@@ -102,8 +93,6 @@ defmodule PersonalFinance.Finance do
   Deletes a category and resets transactions to default category.
   """
   def delete_category(%Scope{} = scope, %Category{} = category) do
-    true = scope.user.id == category.budget.owner_id
-
     if category.is_default || category.is_fixed do
       {:error, "Cannot delete default/fixed category"}
     else
@@ -130,8 +119,6 @@ defmodule PersonalFinance.Finance do
         %Budget{} = budget,
         attrs \\ %{}
       ) do
-    true = scope.user.id == budget.owner_id
-
     Transaction.changeset(transaction, attrs, budget.id)
   end
 
@@ -139,8 +126,6 @@ defmodule PersonalFinance.Finance do
   Retorna transação por ID.
   """
   def get_transaction(%Scope{} = scope, id, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
-
     Transaction
     |> Repo.get_by(id: id, budget_id: budget.id)
     |> Repo.preload([:budget, :category, :investment_type, :profile])
@@ -150,8 +135,6 @@ defmodule PersonalFinance.Finance do
   Retorna a lista de transações para um orçamento
   """
   def list_transactions(%Scope{} = scope, budget) do
-    true = scope.user.id == budget.owner_id
-
     from(t in Transaction,
       order_by: [desc: t.date],
       where: t.budget_id == ^budget.id
@@ -164,8 +147,6 @@ defmodule PersonalFinance.Finance do
   Cria uma transação.
   """
   def create_transaction(%Scope{} = scope, attrs, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
-
     attrs =
       if Map.get(attrs, "category_id") do
         attrs
@@ -196,8 +177,6 @@ defmodule PersonalFinance.Finance do
   Atualiza uma transação.
   """
   def update_transaction(%Scope{} = scope, %Transaction{} = transaction, attrs) do
-    true = scope.user.id == transaction.budget.owner_id
-
     changeset =
       transaction
       |> Transaction.changeset(attrs, transaction.budget.id)
@@ -220,8 +199,6 @@ defmodule PersonalFinance.Finance do
   Deleta uma transação.
   """
   def delete_transaction(%Scope{} = scope, %Transaction{} = transaction) do
-    true = scope.user.id == transaction.budget.owner_id
-
     Repo.delete(transaction)
   end
 
@@ -236,10 +213,22 @@ defmodule PersonalFinance.Finance do
   Returns all budgets for a user.
   """
   def list_budgets(%Scope{} = scope) do
-    from(b in Budget,
+    from(b in PersonalFinance.Finance.Budget,
+      # Inclui orçamentos onde o usuário é o proprietário
       where: b.owner_id == ^scope.user.id,
+      # OU
+      or_where:
+        b.id in subquery(
+          # Nome da sua tabela de associação
+          from(bu in "budgets_users",
+            where: bu.user_id == ^scope.user.id,
+            select: bu.budget_id
+          )
+        ),
+      # Garante que cada orçamento apareça apenas uma vez
       distinct: true
     )
+    # Mantém o preload do proprietário
     |> Ecto.Query.preload(:owner)
     |> Repo.all()
   end
@@ -257,7 +246,6 @@ defmodule PersonalFinance.Finance do
   Deletes a budget.
   """
   def delete_budget(%Scope{} = scope, %Budget{} = budget) do
-    true = scope.user.id == budget.owner_id
     Repo.delete(budget)
   end
 
@@ -265,9 +253,25 @@ defmodule PersonalFinance.Finance do
   Returns a budget by ID for a user.
   """
   def get_budget(%Scope{} = scope, id) do
-    Budget
-    |> Ecto.Query.preload(:owner)
-    |> Repo.get_by(id: id, owner_id: scope.user.id)
+    from(b in PersonalFinance.Finance.Budget,
+      # Carrega o proprietário do orçamento
+      preload: [:owner],
+      # Onde o ID do orçamento corresponde OU
+      # o orçamento é propriedade do usuário logado OU
+      # o ID do orçamento existe na tabela de associação para o usuário logado
+      where:
+        b.id == ^id and
+          (b.owner_id == ^scope.user.id or
+             b.id in subquery(
+               # Substitua pelo nome da sua tabela de associação
+               from(bu in "budgets_users",
+                 where: bu.user_id == ^scope.user.id,
+                 select: bu.budget_id
+               )
+             ))
+    )
+    # Retorna apenas um resultado ou nil
+    |> PersonalFinance.Repo.one()
   end
 
   @doc """
@@ -339,8 +343,6 @@ defmodule PersonalFinance.Finance do
         %Budget{} = budget,
         attrs \\ %{}
       ) do
-    true = scope.user.id == budget.owner_id
-
     Profile.changeset(profile, attrs, budget.id)
   end
 
@@ -348,8 +350,6 @@ defmodule PersonalFinance.Finance do
   Returns a list of profiles for a budget.
   """
   def list_profiles(%Scope{} = scope, budget) do
-    true = scope.user.id == budget.owner_id
-
     Profile
     |> where([p], p.budget_id == ^budget.id)
     |> Repo.all()
@@ -374,8 +374,6 @@ defmodule PersonalFinance.Finance do
   Updates a profile.
   """
   def update_profile(%Scope{} = scope, %Profile{} = profile, attrs) do
-    true = scope.user.id == profile.budget.owner_id
-
     profile
     |> Profile.changeset(attrs, profile.budget.id)
     |> Repo.update()
@@ -385,8 +383,6 @@ defmodule PersonalFinance.Finance do
   Creates a profile for a budget.
   """
   def create_profile(%Scope{} = scope, attrs, budget) do
-    true = scope.user.id == budget.owner_id
-
     %Profile{}
     |> Profile.changeset(attrs, budget.id)
     |> Repo.insert()
@@ -396,8 +392,6 @@ defmodule PersonalFinance.Finance do
   Deletes a profile and resets transactions to default profile.
   """
   def delete_profile(%Scope{} = scope, %Profile{} = profile) do
-    true = scope.user.id == profile.budget.owner_id
-
     if profile.is_default do
       {:error, "Cannot delete default profile"}
     else
@@ -412,6 +406,80 @@ defmodule PersonalFinance.Finance do
       |> Repo.update_all(set: [profile_id: default_profile.id])
 
       Repo.delete(profile)
+    end
+  end
+
+  @doc """
+  Create a budget invite
+  """
+  def create_budget_invite(%Scope{} = scope, budget, email) do
+    if budget.owner_id != scope.user.id do
+      {:error, "You are not the owner of this budget."}
+    else
+      token = :crypto.strong_rand_bytes(32) |> Base.url_encode64()
+      expires_at = NaiveDateTime.utc_now() |> NaiveDateTime.add(7 * 24 * 60 * 60, :second)
+
+      attrs = %{
+        budget_id: budget.id,
+        email: email,
+        token: token,
+        inviter_id: scope.user.id,
+        status: :pending,
+        expires_at: expires_at
+      }
+
+      %BudgetInvite{}
+      |> BudgetInvite.changeset(attrs)
+      |> Repo.insert()
+    end
+  end
+
+  @doc """
+  Get a budget invite by token
+  """
+  def get_budget_invite_by_token(token) do
+    Repo.get_by(BudgetInvite, token: token) |> Repo.preload([:budget, :inviter, :invited_user])
+  end
+
+  @doc """
+  Accept a budget invite
+  """
+  def accept_budget_invite(user, %BudgetInvite{} = invite) do
+    if invite.status == :pending && user.email == invite.email &&
+         (is_nil(invite.expires_at) ||
+            NaiveDateTime.compare(NaiveDateTime.utc_now(), invite.expires_at) == :lt) do
+      Repo.transaction(fn ->
+        invite =
+          invite
+          |> BudgetInvite.changeset(%{status: :accepted, invited_user_id: user.id})
+          |> Repo.update!()
+
+        %BudgetsUsers{}
+        |> BudgetsUsers.changeset(%{
+          budget_id: invite.budget_id,
+          user_id: user.id
+        })
+        |> Repo.insert!()
+
+        {:ok, invite}
+      end)
+    else
+      {:error, "Invite is not valid or has expired."}
+    end
+  end
+
+  @doc """
+  Decline a budget invite
+  """
+  def decline_budget_invite(%Scope{} = scope, %BudgetInvite{} = invite) do
+    if invite.status == :pending && scope.user.email == invite.email &&
+         (is_nil(invite.expires_at) ||
+            NaiveDateTime.compare(NaiveDateTime.utc_now(), invite.expires_at) == :lt) do
+      invite
+      |> BudgetInvite.changeset(%{status: :declined})
+      |> Repo.update()
+    else
+      {:error, "Invite is not valid or has expired."}
     end
   end
 end

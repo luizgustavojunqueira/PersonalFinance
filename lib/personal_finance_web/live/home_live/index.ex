@@ -1,4 +1,5 @@
 defmodule PersonalFinanceWeb.HomeLive.Index do
+  alias PersonalFinance.Finance.BudgetInvite
   alias PersonalFinance.Finance
   use PersonalFinanceWeb, :live_view
 
@@ -34,11 +35,36 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
           budget: budget,
           page_title: "Home #{budget.name}",
           show_welcome_message: true,
+          show_form_modal: socket.assigns.live_action == :new,
+          form_action: socket.assigns.live_action,
           labels: labels,
-          values: values
+          values: values,
+          form: to_form(BudgetInvite.changeset(%BudgetInvite{}, %{})),
+          invite_url: nil
         )
 
       {:ok, socket}
+    end
+  end
+
+  @impl true
+  def handle_event("send_invite", %{"budget_invite" => %{"email" => email}}, socket) do
+    budget = socket.assigns.budget
+
+    case Finance.create_budget_invite(socket.assigns.current_scope, budget, email) do
+      {:ok, %BudgetInvite{} = invite} ->
+        invite_url = "http://localhost:4000/invites/#{invite.token}"
+
+        {:noreply,
+         socket
+         |> put_flash(:info, "Convite enviado para #{email}!")
+         |> assign(
+           invite_url: invite_url,
+           invite_form: to_form(BudgetInvite.changeset(invite, %{}))
+         )}
+
+      {:error, %Ecto.Changeset{} = changeset} ->
+        {:noreply, assign(socket, invite_form: to_form(changeset))}
     end
   end
 end
