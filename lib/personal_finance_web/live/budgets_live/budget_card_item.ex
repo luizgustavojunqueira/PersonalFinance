@@ -15,7 +15,9 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
     >
       <div class="flex justify-between w-full h-1/4 rounded-t-xl text-center medium p-2 px-4">
         <span class="">{@budget.name}</span>
-        <.link class="hero-ellipsis-vertical" phx-click="toggle_menu" phx-target={@myself}></.link>
+        <%= if  @budget.owner.id == @current_scope.user.id do %>
+          <.link class="hero-ellipsis-vertical" phx-click="toggle_menu" phx-target={@myself}></.link>
+        <% end %>
       </div>
 
       <span class="w-full p-2 px-6 text-center h-2/4 flex items-center justify-center">

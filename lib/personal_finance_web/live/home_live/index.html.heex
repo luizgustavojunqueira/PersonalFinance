@@ -9,9 +9,11 @@
       <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Home</h1>
 
       <:actions>
-        <.link class="primary-button-a" navigate={~p"/budgets/#{@budget.id}/users/new"}>
-          <.icon name="hero-plus" /> Convidar Usuário
-        </.link>
+        <%= if @budget.owner.id == @current_user.id do %>
+          <.link class="primary-button-a" navigate={~p"/budgets/#{@budget.id}/home/new_user"}>
+            <.icon name="hero-plus" /> Convidar Usuário
+          </.link>
+        <% end %>
       </:actions>
     </.header>
 
@@ -25,7 +27,7 @@
         submit_event="send_invite"
         submit_label="Convidar"
       >
-        <.input field={@form[:email]} type="text" label="email" />
+        <.input field={@form[:email]} type="text" label="Email" />
 
         <%= if @invite_url do %>
           <div class="alert alert-info mb-4">

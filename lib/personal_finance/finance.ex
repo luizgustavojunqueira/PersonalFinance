@@ -254,23 +254,17 @@ defmodule PersonalFinance.Finance do
   """
   def get_budget(%Scope{} = scope, id) do
     from(b in PersonalFinance.Finance.Budget,
-      # Carrega o proprietário do orçamento
       preload: [:owner],
-      # Onde o ID do orçamento corresponde OU
-      # o orçamento é propriedade do usuário logado OU
-      # o ID do orçamento existe na tabela de associação para o usuário logado
       where:
         b.id == ^id and
           (b.owner_id == ^scope.user.id or
              b.id in subquery(
-               # Substitua pelo nome da sua tabela de associação
                from(bu in "budgets_users",
                  where: bu.user_id == ^scope.user.id,
                  select: bu.budget_id
                )
              ))
     )
-    # Retorna apenas um resultado ou nil
     |> PersonalFinance.Repo.one()
   end
 
@@ -278,9 +272,17 @@ defmodule PersonalFinance.Finance do
   Creates a budget.
   """
   def create_budget(%Scope{} = scope, attrs) do
-    %Budget{}
-    |> Budget.changeset(attrs, scope.user.id)
-    |> Repo.insert()
+    changeset =
+      %Budget{}
+      |> Budget.changeset(attrs, scope.user.id)
+
+    case Repo.insert(changeset) do
+      {:ok, new_budget} ->
+        {:ok, Repo.preload(new_budget, [:owner])}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """

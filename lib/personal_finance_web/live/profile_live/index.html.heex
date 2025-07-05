@@ -34,9 +34,17 @@
       <:col :let={{_id, profile}} label="Descrição">{profile.description}</:col>
 
       <:action :let={{_id, profile}}>
-        <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/edit"}>
-          <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
-        </.link>
+        <%= if profile.is_default do %>
+          <%= if @budget.owner.id == @current_scope.user.id do %>
+            <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/edit"}>
+              <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+            </.link>
+          <% end %>
+        <% else %>
+          <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/edit"}>
+            <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+          </.link>
+        <% end %>
       </:action>
       <:action :let={{id, profile}}>
         <%= if !profile.is_default do %>

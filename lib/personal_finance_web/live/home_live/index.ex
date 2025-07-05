@@ -4,9 +4,9 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
   use PersonalFinanceWeb, :live_view
 
   @impl true
-  def mount(%{"id" => budget_id}, _session, socket) do
+  def mount(params, _session, socket) do
     current_scope = socket.assigns.current_scope
-    budget = Finance.get_budget(current_scope, budget_id)
+    budget = Finance.get_budget(current_scope, params["id"])
 
     if budget == nil do
       {:ok,
@@ -48,12 +48,25 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
   end
 
   @impl true
+  def handle_params(_params, _url, socket) do
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("close_form", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(show_form_modal: false, form_action: nil, invite_url: nil)
+     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/home")}
+  end
+
+  @impl true
   def handle_event("send_invite", %{"budget_invite" => %{"email" => email}}, socket) do
     budget = socket.assigns.budget
 
     case Finance.create_budget_invite(socket.assigns.current_scope, budget, email) do
       {:ok, %BudgetInvite{} = invite} ->
-        invite_url = "http://localhost:4000/invites/#{invite.token}"
+        invite_url = "http://localhost:4000/join/#{invite.token}"
 
         {:noreply,
          socket
