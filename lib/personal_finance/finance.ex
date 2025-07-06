@@ -312,7 +312,6 @@ defmodule PersonalFinance.Finance do
 
     case Repo.insert(changeset) do
       {:ok, new_budget} ->
-        broadcast(scope, :budget, {:saved, new_budget})
         {:ok, Repo.preload(new_budget, [:owner])}
 
       {:error, changeset} ->

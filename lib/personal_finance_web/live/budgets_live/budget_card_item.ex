@@ -82,7 +82,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
 
     case PersonalFinance.Finance.delete_budget(current_scope, budget) do
       {:ok, deleted} ->
-        send(socket.assigns.parent_pid, {:budget_deleted, deleted})
+        send(socket.assigns.parent_pid, {:deleted, deleted})
         {:noreply, socket}
 
       {:error, _changeset} ->
