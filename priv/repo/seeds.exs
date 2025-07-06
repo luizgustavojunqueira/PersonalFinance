@@ -11,58 +11,9 @@
 # and so on) as they will fail if something goes wrong.
 
 alias PersonalFinance.Repo
-alias PersonalFinance.Finance.{Category, InvestmentType, Profile, Transaction, Budget}
-alias PersonalFinance.Finance
-alias PersonalFinance.Accounts.User
+alias PersonalFinance.Finance.{InvestmentType}
 
 IO.puts("Iniciando seed do banco de dados...")
-
-test_user_email = "luiz@gmail.com"
-test_user = Repo.get_by(User, email: test_user_email)
-
-test_user =
-  unless test_user do
-    IO.puts("Criando usuários de teste: #{test_user_email}...")
-
-    attrs = %{
-      email: test_user_email,
-      name: "Luiz Gustavo",
-      password: "luizgustavo2004",
-      password_confirmation: "luizgustavo2004",
-      confirmed_at: NaiveDateTime.utc_now()
-    }
-
-    case PersonalFinance.Accounts.register_user(attrs) do
-      {:ok, user} ->
-        IO.puts("Usuário #{test_user_email} criado e confirmado.")
-        user
-
-      {:error, changeset} ->
-        IO.puts("Erro ao criar usuário #{test_user_email}: #{inspect(changeset.errors)}")
-        System.halt(1)
-    end
-  end
-
-IO.puts("Criando orçamento para o usuário #{test_user.email}...")
-
-budget = Repo.get_by(Budget, owner_id: test_user.id)
-
-budget =
-  unless budget do
-    case Finance.create_budget(%{
-           name: "Famila #{test_user.name}",
-           description: "Orçamento familiar do usuário #{test_user.name}",
-           owner_id: test_user.id
-         }) do
-      {:ok, budget} ->
-        IO.puts("Orçamento criado: #{budget.name}")
-        budget
-
-      {:error, changeset} ->
-        IO.puts("Erro ao criar orçamento: #{inspect(changeset.errors)}")
-        System.halt(1)
-    end
-  end
 
 IO.puts("Populando tipos de investimento...")
 acoes_type = Repo.get_by(InvestmentType, name: "Ações")
@@ -101,43 +52,40 @@ fundo_imobiliario_type =
     end
   end
 
-IO.puts("Populando transações...")
+cripto_type = Repo.get_by(InvestmentType, name: "Cripto")
 
-no_category = Repo.get_by(Category, name: "Sem Categoria")
-eu_profile = Repo.get_by(Profile, name: "Eu")
+cripto_type =
+  unless cripto_type do
+    case Repo.insert(%InvestmentType{
+           name: "Cripto",
+           description: "Investimento em criptomoedas"
+         }) do
+      {:ok, crypto_type} ->
+        IO.puts("  Criado tipo de investimento: #{crypto_type.name}")
+        crypto_type
 
-# Transação de prazer
-unless Repo.get_by(Transaction, description: "Jantar Romântico", profile_id: eu_profile.id) do
-  Repo.insert!(%Transaction{
-    value: 120.0,
-    amount: 1.0,
-    total_value: 120.0,
-    description: "Jantar Romântico",
-    date: ~D[2024-06-25],
-    category_id: no_category.id,
-    profile_id: eu_profile.id,
-    budget_id: budget.id
-  })
+      {:error, changeset} ->
+        IO.puts("Erro ao criar tipo: #{inspect(changeset.errors)}")
+        System.halt(1)
+    end
+  end
 
-  IO.puts("  Criada transação: Jantar Romântico")
-end
+renda_fixa_type = Repo.get_by(InvestmentType, name: "Renda Fixa")
 
-investimentos_category = Repo.get_by(Category, name: "Investimento")
+renda_fixa_type =
+  unless renda_fixa_type do
+    case Repo.insert(%InvestmentType{
+           name: "Renda Fixa",
+           description: "Investimento em renda fixa"
+         }) do
+      {:ok, rf_type} ->
+        IO.puts("  Criado tipo de investimento: #{rf_type.name}")
+        rf_type
 
-unless Repo.get_by(Transaction, description: "Ações", profile_id: eu_profile.id) do
-  Repo.insert!(%Transaction{
-    value: 10.0,
-    amount: 10.0,
-    total_value: 100.0,
-    description: "Ações",
-    date: ~D[2024-06-25],
-    investment_type_id: acoes_type.id,
-    category_id: investimentos_category.id,
-    profile_id: eu_profile.id,
-    budget_id: budget.id
-  })
+      {:error, changeset} ->
+        IO.puts("Erro ao criar tipo: #{inspect(changeset.errors)}")
+        System.halt(1)
+    end
+  end
 
-  IO.puts("  Criada transação: Jantar Romântico")
-end
-
-IO.puts("✅ Seed do banco de dados concluída!")
+IO.puts("Seed do banco de dados concluída com sucesso!")
