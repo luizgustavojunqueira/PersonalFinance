@@ -416,7 +416,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
     ~H"""
     <table class="light w-full p-2 ">
-      <thead class="p-2 medium">
+      <thead class="p-2 dark">
         <tr class="text-left">
           <th :for={col <- @col} class="p-4 py-2">{col[:label]}</th>
           <th :if={@action != []} class="p-4 py-2">

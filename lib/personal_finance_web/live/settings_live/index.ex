@@ -22,4 +22,18 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
       {:ok, socket}
     end
   end
+
+  @impl true
+  def handle_info({:invite_sent, _invite}, socket) do
+    Phoenix.LiveView.send_update(PersonalFinanceWeb.SettingsLive.CollaboratorsList,
+      id: "collaborators-list"
+    )
+
+    {:noreply, socket |> put_flash(:info, "Convite enviado com sucesso.")}
+  end
+
+  @impl true
+  def handle_info({:user_removed, _user}, socket) do
+    {:noreply, socket |> put_flash(:info, "Colaborador removido com sucesso.")}
+  end
 end

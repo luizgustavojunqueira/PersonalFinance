@@ -10,12 +10,20 @@
     </.header>
   </div>
 
-  <div>
+  <div class="flex flex-col gap-6">
     <.live_component
       module={PersonalFinanceWeb.SettingsLive.InviteForm}
       id="invite-form"
       budget={@budget}
       current_scope={@current_scope}
+      parent_pid={self()}
+    />
+    <.live_component
+      module={PersonalFinanceWeb.SettingsLive.CollaboratorsList}
+      id="collaborators-list"
+      budget={@budget}
+      current_scope={@current_scope}
+      parent_pid={self()}
     />
   </div>
 </Layouts.app>

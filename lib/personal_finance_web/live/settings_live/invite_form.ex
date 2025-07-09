@@ -12,14 +12,16 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
       socket
       |> assign(
         invite_form: invite_form,
-        invite_url: nil,
+        invite_url: nil
       )}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div class="rounded-lg shadow-md p-6 w-full bg-white dark:bg-gray-800 
+      shadow-lg 
+      ">
       <h2 class="text-2xl font-bold mb-4">
         Gerenciar Convites
       </h2>
@@ -59,6 +61,7 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
       {:ok, %BudgetInvite{} = invite} ->
         invite_url = "http://localhost:4000/join/#{invite.token}"
 
+        send(socket.assigns.parent_pid, {:invite_sent, invite})
         {:noreply,
           socket
           |> put_flash(:info, "Convite enviado para #{email}!")

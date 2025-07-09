@@ -265,6 +265,33 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
+  Get budget users including the owner.
+  """
+  def list_budget_users(%Scope{} = scope, %Budget{} = budget) do
+    from(bu in BudgetsUsers,
+      where: bu.budget_id == ^budget.id,
+      preload: [:user]
+    )
+    |> Repo.all()
+    |> Enum.map(fn bu -> bu.user end)
+    |> Enum.uniq()
+    |> Enum.concat([budget.owner])
+    |> Enum.sort_by(& &1.email)
+  end
+
+  @doc """
+  Get budget invites.
+  """
+  def list_budget_invites(%Scope{} = scope, %Budget{} = budget, status) do
+    from(bi in BudgetInvite,
+      where: bi.budget_id == ^budget.id,
+      where: bi.status == ^status,
+      preload: [:inviter, :invited_user]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
   Updates a budget.
   """
   def update_budget(%Scope{} = scope, %Budget{} = budget, attrs) do
@@ -316,6 +343,27 @@ defmodule PersonalFinance.Finance do
 
       {:error, changeset} ->
         {:error, changeset}
+    end
+  end
+
+  @doc """
+  Remove a user from a budget.
+  """
+  def remove_budget_user(%Scope{} = scope, %Budget{} = budget, user_id) do
+    if budget.owner_id != scope.user.id do
+      {:error, "You are not the owner of this budget."}
+    else
+      from(bu in BudgetsUsers,
+        where: bu.budget_id == ^budget.id and bu.user_id == ^user_id
+      )
+      |> Repo.delete_all()
+
+      from(bi in BudgetInvite,
+        where: bi.budget_id == ^budget.id and bi.invited_user_id == ^user_id
+      )
+      |> Repo.delete_all()
+
+      {:ok, "User removed from budget."}
     end
   end
 
@@ -537,6 +585,26 @@ defmodule PersonalFinance.Finance do
       |> Repo.update()
     else
       {:error, "Invite is not valid or has expired."}
+    end
+  end
+
+  @doc """
+  Revoke a budget invite
+  """
+  def revoke_budget_invite(%Scope{} = scope, %Budget{} = budget, invite_id) do
+    if budget.owner_id != scope.user.id do
+      {:error, "You are not the owner of this budget."}
+    else
+      invite =
+        BudgetInvite
+        |> where([bi], bi.id == ^invite_id and bi.budget_id == ^budget.id)
+        |> Repo.one()
+
+      if invite do
+        Repo.delete(invite)
+      else
+        {:error, "Invite not found."}
+      end
     end
   end
 
