@@ -1,18 +1,29 @@
 # PersonalFinance
 
-To start your Phoenix server:
+This application is a personal finance management tool, designed to help users organize their budgets, track transactions, and categorize spending. It provides real-time interactive features powered by Phoenix LiveView, ensuring a responsive user experience.
 
-* Run `mix setup` to install and setup dependencies
-* Start Phoenix endpoint with `mix phx.server` or inside IEx with `iex -S mix phx.server`
+Built with Elixir and Phoenix, the project leverages Ecto for data persistence and emphasizes a clear separation of concerns through LiveViews and LiveComponents for its frontend architecture.
 
-Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
+# TODOs 
 
-Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+- [ ] Refactor color palette and theme.
+- [ ] Implement user confirmation modals for all destructive actions.
+- [ ] Add comprehensive test suite (unit, integration, LiveView tests).
+- [ ] Develop profiles settings for managing income and fixed expenses.
+- [ ] Implement recurring transactions from profile settings.
+- [ ] Design and implement a dashboard with financial charts and summaries.
+- [ ] Add advanced search, filter, sort, and pagination features for transactions.
+- [ ] Implement transaction import and export functionalities (CSV, JSON).
+- [ ] Integrate with external APIs to fetch real-time financial data (stocks, cryptocurrencies).
+- [ ] Implement net worth calculation.
+- [ ] Implement investment yield calculation.
+- [ ] Add dividend reinvestment tracking.
+- [ ] Define and enforce user roles and permissions for shared budgets.
+- [ ] Enchance all form validations and error handling.
+- [ ] Mobile responsiveness improvements.
+- [ ] Portfolio tracking
+    - [ ] Track individual assets and their performanc (stocks, cryptocurrencies, fixed income).
+    - [ ] Add personal notes and tags to assets.
+    - [ ] Implement a review/analysis feature for assets.
 
-## Learn more
 
-* Official website: https://www.phoenixframework.org/
-* Guides: https://hexdocs.pm/phoenix/overview.html
-* Docs: https://hexdocs.pm/phoenix
-* Forum: https://elixirforum.com/c/phoenix-forum
-* Source: https://github.com/phoenixframework/phoenix
