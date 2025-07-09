@@ -1,16 +1,11 @@
-<Layouts.app
-  flash={@flash}
-  current_scope={@current_scope}
-  show_sidebar={true}
-  budget_id={@budget.id}
->
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
   <.header class="flex flex-row justify-between mb-5 items-center">
     <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Perfis</h1>
 
     <:actions>
-      <.link class="primary-button-a" navigate={~p"/budgets/#{@budget.id}/profiles/new"}>
+      <.button navigate={~p"/budgets/#{@budget.id}/profiles/new"}>
         <.icon name="hero-plus" /> Adicionar Perfil
-      </.link>
+      </.button>
     </:actions>
   </.header>
 
@@ -27,7 +22,7 @@
     </.form_modal>
   <% end %>
 
-  <div class="rounded-lg shadow-md p-6 medium w-full ">
+  <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg ">
     <h2 class="text-2xl font-semibold mb-4">Meus Perfis</h2>
     <.table id="profiles-table" rows={@streams.profile_collection}>
       <:col :let={{_id, profile}} label="Nome">{profile.name}</:col>

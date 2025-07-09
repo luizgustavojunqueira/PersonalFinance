@@ -1,17 +1,12 @@
-<Layouts.app
-  flash={@flash}
-  current_scope={@current_scope}
-  show_sidebar={true}
-  budget_id={@budget.id}
->
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
       <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Transações</h1>
 
       <:actions>
-        <.link class="primary-button-a" navigate={~p"/budgets/#{@budget.id}/transactions/new"}>
+        <.button navigate={~p"/budgets/#{@budget.id}/transactions/new"}>
           <.icon name="hero-plus" /> Adicionar Transação
-        </.link>
+        </.button>
       </:actions>
     </.header>
 
@@ -110,7 +105,7 @@
       </.form_modal>
     <% end %>
 
-    <div class="rounded-lg shadow-md p-6 medium w-full ">
+    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg ">
       <h2 class="text-2xl font-semibold mb-4">Minhas Transações</h2>
       <.table id="transactions_table" rows={@streams.transaction_collection}>
         <:col :let={{_id, transaction}} label="Data">
@@ -144,12 +139,12 @@
 
         <:action :let={{_id, transaction}}>
           <.link navigate={~p"/budgets/#{@budget.id}/transactions/#{transaction.id}/edit"}>
-            <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+            <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
           </.link>
         </:action>
         <:action :let={{id, transaction}}>
           <.link phx-click={JS.push("delete", value: %{id: transaction.id}) |> hide("##{id}")}>
-            <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
+            <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
           </.link>
         </:action>
       </.table>

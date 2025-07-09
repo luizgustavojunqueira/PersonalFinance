@@ -17,7 +17,7 @@ defmodule PersonalFinanceWeb.Layouts do
       <.page_header current_scope={@current_scope} />
       <main class="flex flex-row h-full w-full">
         <%= if @show_sidebar do %>
-          <.navigation_sidebar budget_id={@budget_id} />
+          <.navigation_sidebar budget={@budget} current_scope={@current_scope} />
         <% end %>
         <div class="h-full w-full px-4 py-2 ">
           <div class="w-full m-0">
@@ -104,7 +104,10 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def navigation_sidebar(assigns) do
     ~H"""
-    <div id="sidebar" class="medium overflow-hidden transition-all duration-300 collapsed">
+    <div
+      id="sidebar"
+      class="bg-dark-green text-white overflow-hidden transition-all duration-300 collapsed"
+    >
       <button
         id="toggle-sidebar"
         phx-hook="ToggleSidebar"
@@ -124,10 +127,10 @@ defmodule PersonalFinanceWeb.Layouts do
             <span class="sidebar-text hidden md:inline">Orçamentos</span>
           </.link>
         </li>
-        <%= if @budget_id do %>
+        <%= if @budget do %>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget_id}/home"}
+              navigate={~p"/budgets/#{@budget.id}/home"}
               class="flex items
             space-x-2 text-base-content hover:text-primary"
             >
@@ -137,7 +140,7 @@ defmodule PersonalFinanceWeb.Layouts do
           </li>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget_id}/transactions"}
+              navigate={~p"/budgets/#{@budget.id}/transactions"}
               class="flex items space-x-2 text-base-content hover:text-primary"
             >
               <.icon name="hero-clipboard-document-list" class="size-6" />
@@ -146,7 +149,7 @@ defmodule PersonalFinanceWeb.Layouts do
           </li>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget_id}/profiles"}
+              navigate={~p"/budgets/#{@budget.id}/profiles"}
               class="flex items space-x-2 text-base-content hover:text-primary"
             >
               <.icon name="hero-users" class="size-6" />
@@ -155,22 +158,24 @@ defmodule PersonalFinanceWeb.Layouts do
           </li>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget_id}/categories"}
+              navigate={~p"/budgets/#{@budget.id}/categories"}
               class="flex items space-x-2 text-base-content hover:text-primary"
             >
               <.icon name="hero-tag" class="size-6" />
               <span class="sidebar-text hidden md:inline">Categorias</span>
             </.link>
           </li>
-          <li class=" mb-4 ">
-            <.link
-              navigate={~p"/budgets/#{@budget_id}/settings"}
-              class="flex items space-x-2 text-base-content hover:text-primary"
-            >
-              <.icon name="hero-cog-6-tooth" class="size-6" />
-              <span class="sidebar-text hidden md:inline">Configurações</span>
-            </.link>
-          </li>
+          <%= if @budget.owner_id == @current_scope.user.id do %>
+            <li class=" mb-4 ">
+              <.link
+                navigate={~p"/budgets/#{@budget.id}/settings"}
+                class="flex items space-x-2 text-base-content hover:text-primary"
+              >
+                <.icon name="hero-cog-6-tooth" class="size-6" />
+                <span class="sidebar-text hidden md:inline">Configurações</span>
+              </.link>
+            </li>
+          <% end %>
         <% end %>
       </ul>
     </div>
@@ -179,7 +184,7 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def page_header(assigns) do
     ~H"""
-    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end medium">
+    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green text-white">
       <li>
         <Layouts.theme_toggle />
       </li>

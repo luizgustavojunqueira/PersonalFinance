@@ -15,11 +15,18 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
        |> put_flash(:error, "Orçamento não encontrado.")
        |> push_navigate(to: ~p"/budgets")}
     else
-      socket =
-        socket
-        |> assign(page_title: "Configurações", budget: budget)
+      if budget.owner_id != current_scope.user.id do
+        {:ok,
+         socket
+         |> put_flash(:error, "Página não encontrada.")
+         |> push_navigate(to: ~p"/budgets")}
+      else
+        socket =
+          socket
+          |> assign(page_title: "Configurações", budget: budget)
 
-      {:ok, socket}
+        {:ok, socket}
+      end
     end
   end
 

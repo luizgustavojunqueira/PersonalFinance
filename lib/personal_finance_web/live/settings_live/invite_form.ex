@@ -9,21 +9,19 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
     invite_form = to_form(BudgetInvite.changeset(%BudgetInvite{}, %{}))
 
     {:ok,
-      socket
-      |> assign(
-        invite_form: invite_form,
-        invite_url: nil
-      )}
+     socket
+     |> assign(
+       invite_form: invite_form,
+       invite_url: nil
+     )}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="rounded-lg shadow-md p-6 w-full bg-white dark:bg-gray-800 
-      shadow-lg 
-      ">
+    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg">
       <h2 class="text-2xl font-bold mb-4">
-        Gerenciar Convites
+        Convidar
       </h2>
       <.form
         title="Convidado"
@@ -31,18 +29,18 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
         id="invite-form"
         phx-submit="send_invite"
         phx-target={@myself}
-        >
+      >
         <.input field={@invite_form[:email]} type="email" label="Email" />
 
         <%= if @invite_url do %>
           <div class="alert alert-info mb-4">
-          <p>
-          Convite gerado com sucesso! Compartilhe o link abaixo com a pessoa convidada:
-        <a href={@invite_url} class="text-blue-600 hover:text-blue-800" target="_blank">
-        {@invite_url}
-        </a>
-        </p>
-        </div>
+            <p>
+              Convite gerado com sucesso! Compartilhe o link abaixo com a pessoa convidada:
+              <a href={@invite_url} class="text-blue-600 hover:text-blue-800" target="_blank">
+                {@invite_url}
+              </a>
+            </p>
+          </div>
         <% end %>
 
         <.button variant="primary" phx-disable-with="Salvando">
@@ -62,13 +60,14 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
         invite_url = "http://localhost:4000/join/#{invite.token}"
 
         send(socket.assigns.parent_pid, {:invite_sent, invite})
+
         {:noreply,
-          socket
-          |> put_flash(:info, "Convite enviado para #{email}!")
-          |> assign(
-            invite_url: invite_url,
-            invite_form: to_form(BudgetInvite.changeset(invite, %{}))
-          )}
+         socket
+         |> put_flash(:info, "Convite enviado para #{email}!")
+         |> assign(
+           invite_url: invite_url,
+           invite_form: to_form(BudgetInvite.changeset(invite, %{}))
+         )}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         {:noreply, assign(socket, invite_form: to_form(changeset))}

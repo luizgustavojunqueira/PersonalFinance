@@ -1,5 +1,5 @@
 /* See the Tailwind configuration guide for advanced usage
-   https://tailwindcss.com/docs/configuration */
+https://tailwindcss.com/docs/configuration */
 
 @import "tailwindcss" source(none);
 @source "../css";
@@ -7,7 +7,7 @@
 @source "../../lib/personal_finance_web";
 
 /* A Tailwind plugin that makes "hero-#{ICON}" classes available.
-   The heroicons installation itself is managed by your mix.exs */
+The heroicons installation itself is managed by your mix.exs */
 @plugin "../vendor/heroicons";
 
 /* Add variants based on LiveView classes */
@@ -41,58 +41,66 @@
     --color-text-darkmode-dark: #d3dbe6;
     --color-text-darkmode-medium: #e2e8f0; /* Texto normal/parágrafo (Slate 200) */
     --color-text-darkmode-light: #f8fafc; /* Texto de destaque/títulos (Slate 50) */
+
+    --color-offwhite: #E0F1EB;
+    --color-platinum: #dadcdd;
+    --color-light-green: #81c6a7;
+    --color-medium-green: #4bb183;
+    --color-accent: #1eac50;
+    --color-dark-green: #395b50;
 }
 
 @layer components {
     /* Estilos globais */
 
-    .dark {
-        @apply bg-bg-lightmode-dark dark:bg-bg-darkmode-dark text-text-lightmode-light dark:text-text-darkmode-light;
+    /* .dark { */
+    /*     @apply bg-bg-lightmode-dark dark:bg-bg-darkmode-dark text-text-lightmode-light dark:text-text-darkmode-light; */
+    /* } */{}
+    /**/
+    /* .hover-dark { */
+    /*     @apply hover:bg-bg-lightmode-dark dark:hover:bg-bg-darkmode-dark hover:text-text-lightmode-light dark:hover:text-text-darkmode-light; */
+    /* } */
+    /**/
+    /* .medium { */
+    /*     @apply bg-bg-lightmode-medium dark:bg-bg-darkmode-medium text-text-lightmode-medium dark:text-text-darkmode-dark; */
+    /* } */
+    /**/
+    /* .hover-medium { */
+    /*     @apply hover:bg-bg-lightmode-medium dark:hover:bg-bg-darkmode-medium hover:text-text-lightmode-medium dark:hover:text-text-darkmode-dark; */
+    /* } */
+    /**/
+    /* .light { */
+    /*     @apply bg-bg-lightmode-light dark:bg-bg-darkmode-light text-text-lightmode-light dark:text-text-darkmode-medium; */
+    /* } */
+
+
+    .btn-primary {
+        @apply bg-accent/90 text-white rounded-md p-2 px-4 my-1 hover:bg-accent;
     }
 
-    .hover-dark {
-        @apply hover:bg-bg-lightmode-dark dark:hover:bg-bg-darkmode-dark hover:text-text-lightmode-light dark:hover:text-text-darkmode-light;
-    }
-
-    .medium {
-        @apply bg-bg-lightmode-medium dark:bg-bg-darkmode-medium text-text-lightmode-medium dark:text-text-darkmode-dark;
-    }
-
-    .hover-medium {
-        @apply hover:bg-bg-lightmode-medium dark:hover:bg-bg-darkmode-medium hover:text-text-lightmode-medium dark:hover:text-text-darkmode-dark;
-    }
-
-    .light {
-        @apply bg-bg-lightmode-light dark:bg-bg-darkmode-light text-text-lightmode-light dark:text-text-darkmode-medium;
-    }
-
-    .primary-button {
-        @apply bg-blue-600 text-white hover:bg-blue-500 transition-colors hover:cursor-pointer;
-    }
-
-    .primary-button-a {
-        @apply bg-blue-600 text-white hover:bg-blue-500 transition-colors hover:cursor-pointer rounded-md p-2 px-4 my-1;
+    .btn {
+        @apply hover:cursor-pointer transition-colors;
     }
 }
 
 #sidebar {
-    width: 12rem;
+width: 12rem;
 }
 #sidebar.collapsed {
-    width: 3.5rem;
+width: 3.5rem;
 }
 #sidebar .sidebar-text {
-    opacity: 1;
-    transition: opacity 0.3s;
+opacity: 1;
+transition: opacity 0.3s;
 }
 #sidebar.collapsed .sidebar-text {
-    opacity: 0;
+opacity: 0;
 }
 
 #toggle-sidebar.collapsed {
-    justify-content: center;
+justify-content: center;
 }
 
 #toggle-sidebar {
-    justify-content: flex-end;
+justify-content: flex-end;
 }

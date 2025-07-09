@@ -60,8 +60,8 @@ defmodule PersonalFinanceWeb.CoreComponents do
       {@rest}
     >
       <div class={[
-        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap flex flex-row gap-2 items-center p-2 ml-4",
-        @kind == :info && "alert-info bg-green-100 dark:bg-green-800",
+        "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap flex flex-row gap-2 items-center p-2 ml-4 rounded-lg",
+        @kind == :info && "alert-info bg-accent/70 text-white dark:bg-green-800",
         @kind == :error && "alert-error bg-red-200 dark:bg-red-800"
       ]}>
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="size-5 shrink-0" />
@@ -89,16 +89,28 @@ defmodule PersonalFinanceWeb.CoreComponents do
       <.button navigate={~p"/"}>Home</.button>
   """
   attr :rest, :global, include: ~w(href navigate patch)
-  attr :variant, :string, values: ~w(primary)
+  attr :variant, :string, values: ~w(primary custom)
+  attr :class, :any, default: nil
   slot :inner_block, required: true
 
   def button(%{rest: rest} = assigns) do
-    variants = %{"primary" => "btn-primary", nil => "btn-primary btn-soft"}
-    assigns = assign(assigns, :class, Map.fetch!(variants, assigns[:variant]))
+    variants = %{"primary" => "btn-primary", "custom" => "", nil => "btn-primary btn-soft"}
+    internal_class = Map.fetch!(variants, assigns[:variant])
+
+    custom_class = assigns[:class]
+
+    combined_class =
+      [internal_class, custom_class]
+      |> Enum.reject(&is_nil/1)
+      |> Enum.flat_map(fn c -> if is_list(c), do: c, else: String.split(c, " ") end)
+      |> Enum.uniq()
+      |> Enum.join(" ")
+
+    assigns = assign(assigns, combined_class: combined_class)
 
     if rest[:href] || rest[:navigate] || rest[:patch] do
       ~H"""
-      <.link class={["btn", @class]} {@rest}>
+      <.link class={["btn", @combined_class]} {@rest}>
         {render_slot(@inner_block)}
       </.link>
       """
@@ -106,8 +118,8 @@ defmodule PersonalFinanceWeb.CoreComponents do
       ~H"""
       <button
         class={[
-          "btn bg-blue-600 p-2 px-4 rounded-lg my-1 hover:bg-blue-400 transition-colors text-white",
-          @class
+          "btn",
+          @combined_class
         ]}
         {@rest}
       >
@@ -213,8 +225,8 @@ defmodule PersonalFinanceWeb.CoreComponents do
           id={@id}
           name={@name}
           class={[
-            "w-full medium  p-2 rounded-lg mt-2 border-bg-lightmode-dark dark:border-bg-darkmode-dark border-1 focus:outline- :",
-            @errors != [] && "select-error"
+            "w-full bg-white p-2 rounded-lg mt-2 border-1 focus:outline- :",
+            @errors != [] && "input-error"
           ]}
           multiple={@multiple}
           {@rest}
@@ -257,7 +269,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            "w-full medium p-2 rounded-lg mt-2 border-bg-lightmode-dark dark:border-bg-darkmode-dark border-1 focus:outline- :",
+            "w-full bg-white p-2 rounded-lg mt-2 border-1 focus:outline- :",
             @errors != [] && "input-error"
           ]}
           {@rest}
@@ -347,10 +359,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
   def form_modal(assigns) do
     ~H"""
     <div
-      class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/30 "
+      class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/60 "
       {@rest}
     >
-      <div class="dark rounded-lg shadow-lg p-6 w-full max-w-2xl">
+      <div class="bg-offwhite rounded-xl shadow-2xl p-6 w-full max-w-2xl">
         <div class="flex flex-row justify-between mb-5 items-center">
           <div class="flex flex-col ">
             <h2 class="text-2xl font-semibold  ">
@@ -415,21 +427,25 @@ defmodule PersonalFinanceWeb.CoreComponents do
       end
 
     ~H"""
-    <table class="light w-full p-2 ">
-      <thead class="p-2 dark">
+    <table class="w-full p-2">
+      <thead class="p-2 bg-accent/70 text-white">
         <tr class="text-left">
-          <th :for={col <- @col} class="p-4 py-2">{col[:label]}</th>
+          <th :for={col <- @col} class="p-2 py-2">{col[:label]}</th>
           <th :if={@action != []} class="p-4 py-2">
             <span>Ações</span>
           </th>
         </tr>
       </thead>
       <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-        <tr :for={row <- @rows} id={@row_id && @row_id.(row)} class="light">
+        <tr
+          :for={row <- @rows}
+          id={@row_id && @row_id.(row)}
+          class="transition-colors bg-white/40 hover:bg-white/65"
+        >
           <td
             :for={col <- @col}
             phx-click={@row_click && @row_click.(row)}
-            class={"p-4 py-2 #{if @row_click, do: "hover:cursor-pointer"}"}
+            class={"p-2 text-dark-green #{if @row_click, do: "hover:cursor-pointer"}"}
           >
             {render_slot(col, @row_item.(row))}
           </td>

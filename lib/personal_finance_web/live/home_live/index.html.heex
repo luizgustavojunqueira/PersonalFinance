@@ -1,9 +1,4 @@
-<Layouts.app
-  flash={@flash}
-  current_scope={@current_scope}
-  show_sidebar={true}
-  budget_id={@budget.id}
->
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
       <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Home</h1>
