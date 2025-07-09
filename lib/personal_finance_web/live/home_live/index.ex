@@ -1,5 +1,4 @@
 defmodule PersonalFinanceWeb.HomeLive.Index do
-  alias PersonalFinance.Finance.{BudgetInvite}
   alias PersonalFinance.Finance
   use PersonalFinanceWeb, :live_view
 
@@ -29,12 +28,8 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
           budget: budget,
           page_title: "Home #{budget.name}",
           show_welcome_message: true,
-          show_form_modal: socket.assigns.live_action == :new,
-          form_action: socket.assigns.live_action,
           labels: labels,
           values: values,
-          form: to_form(BudgetInvite.changeset(%BudgetInvite{}, %{})),
-          invite_url: nil,
           transactions: transactions,
           categories: categories
         )
@@ -46,35 +41,6 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
   @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
-  end
-
-  @impl true
-  def handle_event("close_form", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(show_form_modal: false, form_action: nil, invite_url: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/home")}
-  end
-
-  @impl true
-  def handle_event("send_invite", %{"budget_invite" => %{"email" => email}}, socket) do
-    budget = socket.assigns.budget
-
-    case Finance.create_budget_invite(socket.assigns.current_scope, budget, email) do
-      {:ok, %BudgetInvite{} = invite} ->
-        invite_url = "http://localhost:4000/join/#{invite.token}"
-
-        {:noreply,
-         socket
-         |> put_flash(:info, "Convite enviado para #{email}!")
-         |> assign(
-           invite_url: invite_url,
-           invite_form: to_form(BudgetInvite.changeset(invite, %{}))
-         )}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, invite_form: to_form(changeset))}
-    end
   end
 
   @impl true
@@ -116,13 +82,11 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
 
   @impl true
   def handle_info({:saved, %PersonalFinance.Finance.Category{} = new_category}, socket) do
-    # Atualiza a lista de categorias
     updated_categories =
       Enum.map(socket.assigns.categories, fn c ->
         if c.id == new_category.id, do: new_category, else: c
       end)
 
-    # Se a categoria não estava na lista, adiciona
     final_categories =
       if Enum.any?(updated_categories, &(&1.id == new_category.id)) do
         updated_categories
@@ -130,7 +94,6 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
         [new_category | updated_categories]
       end
 
-    # Recalcula os dados do gráfico (transações podem ser afetadas se a categoria for renomeada, etc.)
     {labels, values} = calculate_chart_data(final_categories, socket.assigns.transactions)
 
     {:noreply, assign(socket, categories: final_categories, labels: labels, values: values)}

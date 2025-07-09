@@ -60,7 +60,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
 
   @impl true
   def handle_event("view_budget", %{"budget-id" => budget_id}, socket) do
-    {:noreply, push_navigate(socket, to: "/budgets/#{budget_id}/home")}
+    {:noreply, Phoenix.LiveView.push_navigate(socket, to: ~p"/budgets/#{budget_id}/home")}
   end
 
   @impl true
@@ -71,7 +71,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
 
   @impl true
   def handle_event("edit_budget", %{"id" => id}, socket) do
-    {:noreply, push_navigate(socket, to: "/budgets/#{id}/edit")}
+    {:noreply, Phoenix.LiveView.push_patch(socket, to: ~p"/budgets/#{id}/edit")}
   end
 
   @impl true

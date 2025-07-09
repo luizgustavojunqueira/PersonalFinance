@@ -53,9 +53,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       budget: budget,
       show_form_modal: false,
       transaction: nil,
-      selected_category_id: nil,
-      investment_category_id:
-        Finance.get_category_by_name("Investimento", socket.assigns.current_scope, budget).id
+      selected_category_id: nil
     )
   end
 

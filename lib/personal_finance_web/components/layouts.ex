@@ -162,6 +162,15 @@ defmodule PersonalFinanceWeb.Layouts do
               <span class="sidebar-text hidden md:inline">Categorias</span>
             </.link>
           </li>
+          <li class=" mb-4 ">
+            <.link
+              navigate={~p"/budgets/#{@budget_id}/settings"}
+              class="flex items space-x-2 text-base-content hover:text-primary"
+            >
+              <.icon name="hero-cog-6-tooth" class="size-6" />
+              <span class="sidebar-text hidden md:inline">Configurações</span>
+            </.link>
+          </li>
         <% end %>
       </ul>
     </div>

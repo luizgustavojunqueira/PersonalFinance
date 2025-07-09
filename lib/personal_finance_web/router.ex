@@ -62,6 +62,8 @@ defmodule PersonalFinanceWeb.Router do
       live "/budgets/:id/categories", CategoryLive.Index, :index
       live "/budgets/:id/categories/new", CategoryLive.Index, :new
       live "/budgets/:id/categories/:category_id/edit", CategoryLive.Index, :edit
+
+      live "/budgets/:id/settings", SettingsLive.Index, :index
     end
 
     post "/join/:token", InviteController, :join

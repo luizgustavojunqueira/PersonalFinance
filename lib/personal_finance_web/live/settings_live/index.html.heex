@@ -1,0 +1,21 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  show_sidebar={true}
+  budget_id={@budget.id}
+>
+  <div class="w-full m-0">
+    <.header class="flex flex-row justify-between mb-5 items-center">
+      <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Configurações</h1>
+    </.header>
+  </div>
+
+  <div>
+    <.live_component
+      module={PersonalFinanceWeb.SettingsLive.InviteForm}
+      id="invite-form"
+      budget={@budget}
+      current_scope={@current_scope}
+    />
+  </div>
+</Layouts.app>
