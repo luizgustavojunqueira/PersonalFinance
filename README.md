@@ -4,9 +4,10 @@ This application is a personal finance management tool, designed to help users o
 
 Built with Elixir and Phoenix, the project leverages Ecto for data persistence and emphasizes a clear separation of concerns through LiveViews and LiveComponents for its frontend architecture.
 
-# TODOs 
+# TODOs
 
-- [ ] Refactor color palette and theme.
+- [x] Refactor color palette and theme.
+- [x] Enchance all form validations and error handling.
 - [ ] Implement user confirmation modals for all destructive actions.
 - [ ] Add comprehensive test suite (unit, integration, LiveView tests).
 - [ ] Develop profiles settings for managing income and fixed expenses.
@@ -19,11 +20,8 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
 - [ ] Implement investment yield calculation.
 - [ ] Add dividend reinvestment tracking.
 - [ ] Define and enforce user roles and permissions for shared budgets.
-- [ ] Enchance all form validations and error handling.
 - [ ] Mobile responsiveness improvements.
 - [ ] Portfolio tracking
     - [ ] Track individual assets and their performanc (stocks, cryptocurrencies, fixed income).
     - [ ] Add personal notes and tags to assets.
     - [ ] Implement a review/analysis feature for assets.
-
-

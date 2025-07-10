@@ -33,6 +33,10 @@ defmodule PersonalFinance.Finance.Transaction do
     |> validate_required([:value], message: "O valor da transação é obrigatório")
     |> validate_required([:amount], message: "A quantidade é obrigatória")
     |> validate_required([:description], message: "A descrição é obrigatória")
+    |> validate_length(:description,
+      max: 255,
+      message: "A descrição deve ter no máximo 255 caracteres"
+    )
     |> validate_required([:date], message: "A data é obrigatória")
     |> validate_required([:profile_id], message: "Selecione um perfil")
     |> put_change(:budget_id, budget_id)

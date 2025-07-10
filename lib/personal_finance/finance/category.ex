@@ -18,7 +18,10 @@ defmodule PersonalFinance.Finance.Category do
   def changeset(category, attrs, budget_id) do
     category
     |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed])
-    |> validate_required([:name, :description, :percentage, :is_default])
+    |> validate_required([:name], message: "O nome é obrigatório.")
+    |> validate_required([:description], message: "A descrição é obrigatória.")
+    |> validate_required([:percentage], message: "A porcentagem é obrigatória.")
+    |> validate_required([:is_default])
     |> validate_length(:name,
       min: 1,
       max: 100,

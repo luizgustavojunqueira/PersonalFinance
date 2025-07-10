@@ -20,8 +20,15 @@ defmodule PersonalFinance.Finance.Profile do
     |> validate_inclusion(:is_default, [true, false],
       message: "O valor deve ser verdadeiro ou falso."
     )
-    |> validate_length(:name, min: 1, max: 100)
-    |> validate_length(:description, max: 255)
+    |> validate_length(:name,
+      min: 1,
+      max: 100,
+      message: "O nome deve ter entre 1 e 100 caracteres."
+    )
+    |> validate_length(:description,
+      max: 255,
+      message: "A descrição deve ter no máximo 255 caracteres."
+    )
     |> unique_constraint(:name,
       name: :profiles_name_budget_id_index,
       message: "Já existe um perfil com este nome para este orçamento."

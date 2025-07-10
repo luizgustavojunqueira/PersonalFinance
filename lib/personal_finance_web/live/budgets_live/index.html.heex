@@ -1,8 +1,7 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={nil}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">{@current_scope.user.name} - Orçamentos</h1>
-
+      {@current_scope.user.name} - Orçamentos
       <:actions>
         <.button variant="primary" navigate={~p"/budgets/new"}>
           <.icon name="hero-plus" /> Adicionar Orçamento

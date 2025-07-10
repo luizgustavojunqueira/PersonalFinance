@@ -199,14 +199,14 @@ defmodule PersonalFinanceWeb.CoreComponents do
     <fieldset class="fieldset mb-2">
       <label>
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
-        <span class="fieldset-label">
+        <span class="fieldset-label text-dark-green dark:text-offwhite">
           <input
             type="checkbox"
             id={@id}
             name={@name}
             value="true"
             checked={@checked}
-            class="checkbox checkbox-sm"
+            class="checkbox checkbox-sm bg-white text-black "
             {@rest}
           />{@label}
         </span>
@@ -220,12 +220,14 @@ defmodule PersonalFinanceWeb.CoreComponents do
     ~H"""
     <fieldset class="fieldset mb-2 w-full">
       <label>
-        <span :if={@label} class="fieldset-label mb-1 text-nowrap">{@label}</span>
+        <span :if={@label} class="fieldset-label mb-1 text-nowrap text-dark-green dark:text-offwhite">
+          {@label}
+        </span>
         <select
           id={@id}
           name={@name}
           class={[
-            "w-full bg-white dark:text-black p-2 rounded-lg mt-2 border-1 focus:outline- :",
+            "w-full bg-white text-black  p-2 rounded-lg mt-2 border-1 focus:outline- :",
             @errors != [] && "input-error"
           ]}
           multiple={@multiple}
@@ -244,11 +246,16 @@ defmodule PersonalFinanceWeb.CoreComponents do
     ~H"""
     <fieldset class="fieldset mb-2">
       <label>
-        <span :if={@label} class="fieldset-label mb-1">{@label}</span>
+        <span :if={@label} class="fieldset-label mb-1 text-dark-green dark:text-offwhite">
+          {@label}
+        </span>
         <textarea
           id={@id}
           name={@name}
-          class={["w-full textarea", @errors != [] && "textarea-error"]}
+          class={[
+            "w-full bg-white text-black  p-2 rounded-lg mt-2 border-1 textarea",
+            @errors != [] && "textarea-error"
+          ]}
           {@rest}
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       </label>
@@ -262,14 +269,16 @@ defmodule PersonalFinanceWeb.CoreComponents do
     ~H"""
     <fieldset class="fieldset mb-2 w-full">
       <label>
-        <span :if={@label} class="fieldset-label mb-1">{@label}</span>
+        <span :if={@label} class="text-dark-green dark:text-offwhite fieldset-label mb-1">
+          {@label}
+        </span>
         <input
           type={@type}
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            "w-full bg-white dark:text-black p-2 rounded-lg mt-2 border-1 focus:outline- :",
+            "w-full bg-white text-black p-2 rounded-lg mt-2 border-1 focus:outline- :",
             @errors != [] && "input-error"
           ]}
           {@rest}
@@ -306,7 +315,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
         <h1 class="text-3xl font-bold leading-8 text-dark-green dark:text-offwhite">
           {render_slot(@inner_block)}
         </h1>
-        <p :if={@subtitle != []} class="text-sm text-base-content/70">
+        <p
+          :if={@subtitle != []}
+          class="text-sm text-base-content/70 text-dark-green/70 dark:text-offwhite/70"
+        >
           {render_slot(@subtitle)}
         </p>
       </div>

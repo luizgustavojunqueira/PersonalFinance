@@ -10,7 +10,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
   def render(assigns) do
     ~H"""
     <div
-      class="flex flex-col rounded-xl light min-h-40 min-w-85 max-w-85 items-center p-0 relative bg-light-green/15 shadow-2xl"
+      class="flex flex-col rounded-xl light min-h-40 min-w-85 max-w-85 items-center p-0 relative bg-light-green/15 text-dark-green dark:text-offwhite shadow-2xl"
       id={@id}
     >
       <div class="flex justify-between w-full h-1/4 rounded-t-xl text-center p-2 px-4 bg-medium-green/20">

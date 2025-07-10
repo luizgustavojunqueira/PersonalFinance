@@ -14,7 +14,16 @@ defmodule PersonalFinance.Finance.Budget do
   def changeset(budget, attrs, owner_id) do
     budget
     |> cast(attrs, [:name, :description])
-    |> validate_required([:name])
+    |> validate_required([:name], message: "O nome é obrigatório.")
+    |> validate_length(:name,
+      min: 1,
+      max: 100,
+      message: "O nome deve ter entre 1 e 100 caracteres."
+    )
+    |> validate_length(:description,
+      max: 255,
+      message: "A descrição deve ter no máximo 255 caracteres."
+    )
     |> put_change(:owner_id, owner_id)
     |> unique_constraint(:name,
       name: :budgets_name_owner_id_index,

@@ -48,6 +48,7 @@ defmodule PersonalFinanceWeb.Router do
       on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
+      live "/", BudgetsLive.Index, :index
       live "/budgets", BudgetsLive.Index, :index
       live "/budgets/new", BudgetsLive.Index, :new
       live "/budgets/:id/edit", BudgetsLive.Index, :edit

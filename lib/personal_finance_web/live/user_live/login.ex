@@ -22,7 +22,7 @@ defmodule PersonalFinanceWeb.UserLive.Login do
           </:subtitle>
         </.header>
 
-        <div :if={local_mail_adapter?()} class="alert alert-info">
+        <div :if={local_mail_adapter?()} class="alert alert-info text-dark-green dark:text-offwhite">
           <.icon name="hero-information-circle" class="size-6 shrink-0" />
           <div>
             <p>You are running the local mail adapter.</p>
@@ -53,7 +53,7 @@ defmodule PersonalFinanceWeb.UserLive.Login do
           </.button>
         </.form>
 
-        <div class="divider">or</div>
+        <div class="divider text-dark-green dark:text-offwhite">or</div>
 
         <.form
           :let={f}
