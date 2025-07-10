@@ -374,7 +374,17 @@ defmodule PersonalFinanceWeb.CoreComponents do
       class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/60 "
       {@rest}
     >
-      <div class="bg-offwhite text-dark-green dark:bg-dark-green dark:text-offwhite rounded-xl shadow-2xl p-6 w-full max-w-2xl">
+      <div
+        class="bg-offwhite text-dark-green dark:bg-dark-green dark:text-offwhite rounded-xl shadow-2xl p-6 w-full max-w-2xl"
+        phx-mounted={
+          JS.transition(
+            {"transition-all ease-out duration-300",
+             "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+             "opacity-100 translate-y-0 sm:scale-100"},
+            time: 300
+          )
+        }
+      >
         <div class="flex flex-row justify-between mb-5 items-center">
           <div class="flex flex-col ">
             <h2 class="text-2xl font-semibold  ">
@@ -525,6 +535,61 @@ defmodule PersonalFinanceWeb.CoreComponents do
   def icon(%{name: "hero-" <> _} = assigns) do
     ~H"""
     <span class={[@name, @class]} />
+    """
+  end
+
+  @doc """
+  Renders a confirmation modal.
+  """
+  attr :title, :string, required: true, doc: "the title of the confirmation modal"
+  attr :message, :string, required: true, doc: "the message to display in the confirmation modal"
+
+  attr :confirm_event, :string,
+    default: "confirm",
+    doc: "the event to trigger when the user confirms the action"
+
+  attr :cancel_event, :string,
+    default: "",
+    doc: "the event to trigger when the user cancels the action"
+
+  attr :item_id, :any, default: nil, doc: "the id of the item to confirm the action for"
+
+  attr :rest, :global,
+    include: ~w(id class phx-target phx-hook phx-click),
+    doc: "the arbitrary HTML attributes to add to the confirmation modal"
+
+  def confirmation_modal(assigns) do
+    ~H"""
+    <div
+      class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/60"
+      {@rest}
+    >
+      <div
+        class="bg-offwhite text-dark-green dark:bg-dark-green dark:text-offwhite rounded-xl shadow-2xl p-6 w-full max-w-md"
+        phx-mounted={
+          JS.transition(
+            {"transition-all ease-out duration-300",
+             "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
+             "opacity-100 translate-y-0 sm:scale-100"},
+            time: 300
+          )
+        }
+      >
+        <h2 class="text-2xl font-semibold mb-4">{@title}</h2>
+        <p class="mb-6">{@message}</p>
+        <div class="flex justify-end gap-4">
+          <.button phx-click={@cancel_event} variant="custom">Cancelar</.button>
+          <.button
+            phx-click={@confirm_event}
+            phx-value-id={@item_id}
+            variant="primary"
+            phx-disable-with="Confirmando"
+          >
+            Confirmar
+          </.button>
+        </div>
+      </div>
+    </div>
     """
   end
 

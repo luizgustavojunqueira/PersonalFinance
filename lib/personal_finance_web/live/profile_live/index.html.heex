@@ -21,6 +21,16 @@
     </.form_modal>
   <% end %>
 
+  <%= if @show_delete_modal do %>
+    <.confirmation_modal
+      title="Excluir Perfil"
+      message={"Tem certeza de que deseja excluir o perfil \"#{@profile.name}\"?"}
+      confirm_event="delete"
+      cancel_event="close_confirmation"
+      item_id={@profile.id}
+    />
+  <% end %>
+
   <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
     <h2 class="text-2xl font-semibold mb-4">Meus Perfis</h2>
     <.table id="profiles-table" rows={@streams.profile_collection}>
@@ -42,7 +52,7 @@
       </:action>
       <:action :let={{id, profile}}>
         <%= if !profile.is_default do %>
-          <.link phx-click={JS.push("delete", value: %{id: profile.id}) |> hide("##{id}")}>
+          <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/delete"}>
             <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
           </.link>
         <% end %>

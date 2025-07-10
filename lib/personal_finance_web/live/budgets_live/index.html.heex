@@ -22,6 +22,16 @@
       </.form_modal>
     <% end %>
 
+    <%= if @show_delete_modal do %>
+      <.confirmation_modal
+        title="Excluir Orçamento"
+        message={"Tem certeza de que deseja excluir o orçamento \"#{@budget.name}\"?"}
+        confirm_event="delete"
+        cancel_event="close_confirmation"
+        item_id={@budget.id}
+      />
+    <% end %>
+
     <div id="budgets" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
       <.live_component
         :for={{id, budget} <- @streams.budget_collection}

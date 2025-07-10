@@ -42,6 +42,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
       page_title: "Perfis - #{budget.name}",
       profile: nil,
       show_form_modal: false,
+      show_delete_modal: false,
       form_action: nil
     )
   end
@@ -54,6 +55,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
       profile: profile,
       form_action: :new,
       show_form_modal: true,
+      show_delete_modal: false,
       form:
         to_form(
           Finance.change_profile(
@@ -78,6 +80,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
         profile: profile,
         form_action: :edit,
         show_form_modal: true,
+        show_delete_modal: false,
         form:
           to_form(
             Finance.change_profile(
@@ -90,6 +93,19 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
     end
   end
 
+  defp apply_action(socket, :delete, %{"profile_id" => profile_id}, budget) do
+    profile = Finance.get_profile(socket.assigns.current_scope, budget.id, profile_id)
+
+    assign(socket,
+      page_title: "Categorias - #{budget.name}",
+      budget: budget,
+      show_form_modal: false,
+      show_delete_modal: true,
+      profile: profile,
+      form_action: nil
+    )
+  end
+
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     current_scope = socket.assigns.current_scope
@@ -99,7 +115,10 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
 
     case Finance.delete_profile(current_scope, profile) do
       {:ok, _profile} ->
-        {:noreply, socket}
+        {:noreply,
+         Phoenix.LiveView.push_patch(socket,
+           to: ~p"/budgets/#{socket.assigns.budget.id}/profiles"
+         )}
 
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, "Falha ao remover o perfil.")}
@@ -111,6 +130,14 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
     {:noreply,
      socket
      |> assign(show_form_modal: false, profile: nil, form_action: nil)
+     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/profiles")}
+  end
+
+  @impl true
+  def handle_event("close_confirmation", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(show_delete_modal: false, profile: nil)
      |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/profiles")}
   end
 

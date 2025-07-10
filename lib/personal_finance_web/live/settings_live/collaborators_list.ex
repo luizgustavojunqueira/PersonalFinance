@@ -80,7 +80,11 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
           <:col :let={invite} label="Status">
             <span class="text-green
             -600">
-              {invite.status}
+              <%= if invite.status == :pending do %>
+                Pendente
+              <% else %>
+                Expirado
+              <% end %>
             </span>
           </:col>
 

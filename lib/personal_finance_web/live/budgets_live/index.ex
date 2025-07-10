@@ -18,6 +18,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
     assign(socket,
       page_title: "Orçamentos",
       show_form_modal: false,
+      show_delete_modal: false,
       budget: nil
     )
   end
@@ -28,6 +29,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
     assign(socket,
       page_title: "Orçamentos",
       show_form_modal: true,
+      show_delete_modal: false,
       form_action: :new,
       budget: budget,
       form:
@@ -51,6 +53,7 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
       assign(socket,
         page_title: "Orçamentos",
         show_form_modal: true,
+        show_delete_modal: false,
         form_action: :edit,
         budget: budget,
         form:
@@ -62,6 +65,18 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
           )
       )
     end
+  end
+
+  defp apply_action(socket, :delete, %{"id" => budget_id}) do
+    budget = Finance.get_budget(socket.assigns.current_scope, budget_id)
+
+    assign(socket,
+      page_title: "Orçamentos",
+      budget: budget,
+      show_form_modal: false,
+      show_delete_modal: true,
+      form_action: nil
+    )
   end
 
   @impl true
@@ -76,6 +91,14 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
     {:noreply,
      socket
      |> assign(show_form_modal: false, budget: nil, form_action: nil)
+     |> Phoenix.LiveView.push_patch(to: ~p"/budgets")}
+  end
+
+  @impl true
+  def handle_event("close_confirmation", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(show_delete_modal: false, budget: nil)
      |> Phoenix.LiveView.push_patch(to: ~p"/budgets")}
   end
 
@@ -97,6 +120,25 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
      assign(socket,
        form: to_form(changeset, action: :validate)
      )}
+  end
+
+  @impl true
+  def handle_event("delete", %{"id" => id}, socket) do
+    current_scope = socket.assigns.current_scope
+
+    budget = PersonalFinance.Finance.get_budget(current_scope, id)
+
+    case PersonalFinance.Finance.delete_budget(current_scope, budget) do
+      {:ok, _deleted} ->
+        {:noreply,
+         socket
+         |> put_flash(:info, "Orçamento excluído com sucesso.")
+         |> stream_delete(:budget_collection, budget)
+         |> Phoenix.LiveView.push_patch(to: ~p"/budgets")}
+
+      {:error, _changeset} ->
+        {:noreply, assign(socket, show_menu: false)}
+    end
   end
 
   defp save_budget(socket, :edit, budget_params) do
@@ -132,14 +174,6 @@ defmodule PersonalFinanceWeb.BudgetsLive.Index do
         IO.inspect(changeset, label: "Budget Changeset Error")
         {:noreply, assign(socket, form: to_form(changeset))}
     end
-  end
-
-  @impl true
-  def handle_info({:deleted, budget}, socket) do
-    {:noreply,
-     socket
-     |> put_flash(:info, "Orçamento apagado com sucesso.")
-     |> stream_delete(:budget_collection, budget)}
   end
 
   @impl true

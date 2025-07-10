@@ -39,6 +39,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
       page_title: "Categorias - #{budget.name}",
       budget: budget,
       show_form_modal: false,
+      show_delete_modal: false,
       category: nil
     )
   end
@@ -50,6 +51,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
       page_title: "Categorias - #{budget.name}",
       budget: budget,
       show_form_modal: true,
+      show_delete_modal: false,
       category: category,
       form_action: :new,
       form:
@@ -74,6 +76,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
       assign(socket,
         page_title: "Categorias - #{budget.name}",
         show_form_modal: true,
+        show_delete_modal: false,
         budget: budget,
         category: category,
         form_action: :edit,
@@ -89,6 +92,19 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     end
   end
 
+  defp apply_action(socket, :delete, %{"category_id" => category_id}, %Budget{} = budget) do
+    category = Finance.get_category(socket.assigns.current_scope, category_id, budget)
+
+    assign(socket,
+      page_title: "Categorias - #{budget.name}",
+      budget: budget,
+      show_form_modal: false,
+      show_delete_modal: true,
+      category: category,
+      form_action: nil
+    )
+  end
+
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     current_scope = socket.assigns.current_scope
@@ -97,7 +113,10 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
     case Finance.delete_category(current_scope, category) do
       {:ok, _deleted} ->
-        {:noreply, socket}
+        {:noreply,
+         Phoenix.LiveView.push_patch(socket,
+           to: ~p"/budgets/#{socket.assigns.budget.id}/categories"
+         )}
 
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, "Falha ao remover categoria.")}
@@ -109,6 +128,14 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     {:noreply,
      socket
      |> assign(show_form_modal: false, category: nil, form_action: nil)
+     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
+  end
+
+  @impl true
+  def handle_event("close_confirmation", _params, socket) do
+    {:noreply,
+     socket
+     |> assign(show_delete_modal: false, category: nil)
      |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
   end
 
