@@ -225,7 +225,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           id={@id}
           name={@name}
           class={[
-            "w-full bg-white p-2 rounded-lg mt-2 border-1 focus:outline- :",
+            "w-full bg-white dark:text-black p-2 rounded-lg mt-2 border-1 focus:outline- :",
             @errors != [] && "input-error"
           ]}
           multiple={@multiple}
@@ -269,7 +269,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            "w-full bg-white p-2 rounded-lg mt-2 border-1 focus:outline- :",
+            "w-full bg-white dark:text-black p-2 rounded-lg mt-2 border-1 focus:outline- :",
             @errors != [] && "input-error"
           ]}
           {@rest}
@@ -301,9 +301,9 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "flex items-center justify-between gap-6", "pb-4", @class]}>
+    <header class={[@actions != [] && "m-2 flex items-center justify-between gap-6", "pb-4", @class]}>
       <div>
-        <h1 class="text-lg font-semibold leading-8">
+        <h1 class="text-3xl font-bold leading-8 text-dark-green dark:text-offwhite">
           {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="text-sm text-base-content/70">
@@ -362,7 +362,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
       class="fixed z-50 top-0 left-0 w-full h-full flex items-center justify-center bg-black/60 "
       {@rest}
     >
-      <div class="bg-offwhite rounded-xl shadow-2xl p-6 w-full max-w-2xl">
+      <div class="bg-offwhite text-dark-green dark:bg-dark-green dark:text-offwhite rounded-xl shadow-2xl p-6 w-full max-w-2xl">
         <div class="flex flex-row justify-between mb-5 items-center">
           <div class="flex flex-col ">
             <h2 class="text-2xl font-semibold  ">
@@ -428,7 +428,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
     ~H"""
     <table class="w-full p-2">
-      <thead class="p-2 bg-accent/70 text-white">
+      <thead class="p-2 bg-accent/70 text-white dark:bg-accent/30 ">
         <tr class="text-left">
           <th :for={col <- @col} class="p-2 py-2">{col[:label]}</th>
           <th :if={@action != []} class="p-4 py-2">
@@ -440,12 +440,12 @@ defmodule PersonalFinanceWeb.CoreComponents do
         <tr
           :for={row <- @rows}
           id={@row_id && @row_id.(row)}
-          class="transition-colors bg-white/40 hover:bg-white/65"
+          class="transition-colors bg-white/40 hover:bg-white/65 dark:bg-light-green/90 dark:hover:bg-light-green/70 "
         >
           <td
             :for={col <- @col}
             phx-click={@row_click && @row_click.(row)}
-            class={"p-2 text-dark-green #{if @row_click, do: "hover:cursor-pointer"}"}
+            class={"p-2 text-dark-green dark:text-white #{if @row_click, do: "hover:cursor-pointer"}"}
           >
             {render_slot(col, @row_item.(row))}
           </td>

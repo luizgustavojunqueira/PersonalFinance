@@ -1,8 +1,7 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Categorias</h1>
-
+      {@budget.name} - Categorias
       <:actions>
         <.button navigate={~p"/budgets/#{@budget.id}/categories/new"}>
           <.icon name="hero-plus" /> Adicionar Categoria
@@ -24,7 +23,7 @@
       </.form_modal>
     <% end %>
 
-    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg ">
+    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
       <h2 class="text-2xl font-semibold mb-4">Minhas Categorias</h2>
       <.table id="categories_table" rows={@streams.category_collection}>
         <:col :let={{_id, category}} label="Perfil">

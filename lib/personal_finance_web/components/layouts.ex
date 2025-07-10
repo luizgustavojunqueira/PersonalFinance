@@ -106,7 +106,7 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div
       id="sidebar"
-      class="bg-dark-green text-white overflow-hidden transition-all duration-300 collapsed"
+      class="bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite overflow-hidden transition-all  collapsed"
     >
       <button
         id="toggle-sidebar"
@@ -184,7 +184,7 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def page_header(assigns) do
     ~H"""
-    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green text-white">
+    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite">
       <li>
         <Layouts.theme_toggle />
       </li>

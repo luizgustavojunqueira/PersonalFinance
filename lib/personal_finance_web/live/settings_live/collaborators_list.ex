@@ -24,7 +24,7 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg ">
+    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
       <h2 class="text-2xl font-bold mb-4">
         Colaboradores
       </h2>
@@ -65,7 +65,7 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
       </h2>
 
       <%= if @budget_invites == [] do %>
-        <p class="text-gray-500">Nenhum convite pendente.</p>
+        <p>Nenhum convite pendente.</p>
       <% else %>
         <.table id="budget_invites_table" rows={@budget_invites}>
           <:col :let={invite} label="Email">

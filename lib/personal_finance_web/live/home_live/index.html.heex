@@ -1,17 +1,17 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
-      <h1 class="text-3xl font-bold mb-6 ">{@budget.name} - Home</h1>
+      {@budget.name} - Home
     </.header>
 
     <div class="flex flex-col items-center justify-center">
       <h2 class="text-2xl font-bold mb-4">Gráfico de Despesas</h2>
-      <p class="text-gray-600 mb-6">
+      <p>
         Este gráfico mostra a distribuição das despesas do orçamento por categoria.
       </p>
       <canvas
         id="expensesChart"
-        class="max-w-100 max-h-100"
+        class="max-w-100 max-h-100 "
         phx-hook="ChartJS"
         data-values={Jason.encode!(@values)}
         data-labels={Jason.encode!(@labels)}
