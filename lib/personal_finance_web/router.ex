@@ -59,6 +59,7 @@ defmodule PersonalFinanceWeb.Router do
       live "/budgets/:id/profiles/new", ProfileLive.Index, :new
       live "/budgets/:id/profiles/:profile_id/edit", ProfileLive.Index, :edit
       live "/budgets/:id/profiles/:profile_id/delete", ProfileLive.Index, :delete
+      live "/budgets/:id/profiles/:profile_id/settings", ProfileLive.Settings
       live "/budgets/:id/transactions", TransactionLive.Index, :index
       live "/budgets/:id/transactions/new", TransactionLive.Index, :new
       live "/budgets/:id/transactions/:transaction_id/edit", TransactionLive.Index, :edit
