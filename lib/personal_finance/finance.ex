@@ -192,6 +192,8 @@ defmodule PersonalFinance.Finance do
       %Transaction{}
       |> Transaction.changeset(attrs, budget.id)
 
+    IO.inspect(changeset, label: "Transaction Changeset")
+
     case Repo.insert(changeset) do
       {:ok, new_transaction} ->
         new_transaction =
@@ -724,6 +726,93 @@ defmodule PersonalFinance.Finance do
 
       {:error, changeset} ->
         {:error, changeset}
+    end
+  end
+
+  @doc """
+  List the pending recurrent transactions for a budget.
+  """
+  def list_pending_recurrent_transactions(%Scope{} = scope, budget_id) do
+    recurring_entries =
+      from(re in RecurringEntry,
+        where:
+          re.budget_id == ^budget_id and re.is_active == true and
+            re.start_date <= ^Date.utc_today(),
+        order_by: [asc: re.start_date, asc: re.description],
+        preload: [:category, :profile]
+      )
+      |> Repo.all()
+
+    today = Date.utc_today()
+    current_month_start = Date.beginning_of_month(today)
+
+    generated_transactions_in_period =
+      from(t in Transaction,
+        where:
+          t.budget_id == ^budget_id and t.date >= ^current_month_start and
+            not is_nil(t.recurring_entry_id),
+        select: t.recurring_entry_id
+      )
+      |> Repo.all()
+      |> MapSet.new()
+
+    Enum.flat_map(recurring_entries, fn %RecurringEntry{} = entry ->
+      date_expected =
+        case entry.frequency do
+          :daily -> Date.add(entry.start_date, 1)
+          :weekly -> Date.add(entry.start_date, 7)
+          :monthly -> Date.add(entry.start_date, Date.days_in_month(today))
+          :yearly -> Date.add(entry.start_date, 365)
+        end
+
+      is_pending =
+        date_expected &&
+          (is_nil(entry.end_date) || Date.compare(date_expected, entry.end_date) == :lt) &&
+          not MapSet.member?(generated_transactions_in_period, entry.id) &&
+          Date.compare(date_expected, Date.add(today, 60)) == :lt
+
+      if is_pending do
+        [
+          %{
+            id: entry.id,
+            description: entry.description,
+            amount: entry.amount,
+            value: entry.value,
+            date_expected: date_expected,
+            recurring_entry: entry
+          }
+        ]
+      else
+        []
+      end
+    end)
+  end
+
+  @doc """
+  Generate a transaction from a recurring entry.
+  """
+  def confirm_recurring_transaction(
+        %Scope{} = scope,
+        %Budget{} = budget,
+        id
+      ) do
+    if budget do
+      recurring_entry = get_recurring_entry(scope, budget.id, id)
+
+      transaction_attrs = %{
+        "description" => recurring_entry.description,
+        "value" => recurring_entry.value,
+        "amount" => recurring_entry.amount,
+        "date" => Date.utc_today(),
+        "category_id" => recurring_entry.category_id,
+        "profile_id" => recurring_entry.profile_id,
+        "budget_id" => budget.id,
+        "recurring_entry_id" => recurring_entry.id
+      }
+
+      create_transaction(scope, transaction_attrs, budget)
+    else
+      {:error, "Budget not found."}
     end
   end
 

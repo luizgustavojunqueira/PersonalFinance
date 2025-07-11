@@ -52,6 +52,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       page_title: "Transações - #{budget.name}",
       budget: budget,
       show_form_modal: false,
+      show_pending_transactions_drawer: false,
       transaction: nil,
       selected_category_id: nil
     )
@@ -66,6 +67,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       transaction: transaction,
       form_action: :new,
       show_form_modal: true,
+      show_pending_transactions_drawer: false,
       form:
         to_form(
           Finance.change_transaction(
@@ -96,6 +98,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
         transaction: transaction,
         form_action: :edit,
         show_form_modal: true,
+        show_pending_transactions_drawer: false,
         selected_category_id: selected_category_id,
         form:
           to_form(
@@ -161,6 +164,26 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   @impl true
   def handle_event("save", %{"transaction" => transaction_params}, socket) do
     save_transaction(socket, socket.assigns.form_action, transaction_params)
+  end
+
+  @impl true
+  def handle_event("show_pending_transactions_drawer", _params, socket) do
+    {:noreply,
+     assign(socket,
+       show_pending_transactions_drawer: true,
+       transaction: nil,
+       form_action: nil
+     )}
+  end
+
+  @impl true
+  def handle_event("close_pending_transactions_drawer", _params, socket) do
+    {:noreply,
+     assign(socket,
+       show_pending_transactions_drawer: false,
+       transaction: nil,
+       form_action: nil
+     )}
   end
 
   @impl true

@@ -3,9 +3,14 @@
     <.header class="flex flex-row justify-between mb-5 items-center">
       {@budget.name} - Transações
       <:actions>
-        <.button navigate={~p"/budgets/#{@budget.id}/transactions/new"}>
-          <.icon name="hero-plus" /> Adicionar Transação
-        </.button>
+        <div class="flex flex-row gap-2">
+          <.button navigate={~p"/budgets/#{@budget.id}/transactions/new"}>
+            <.icon name="hero-plus" /> Adicionar Transação
+          </.button>
+          <.button variant="primary" phx-click="show_pending_transactions_drawer">
+            <.icon name="hero-clock" /> Transações Pendentes
+          </.button>
+        </div>
       </:actions>
     </.header>
 
@@ -102,6 +107,15 @@
           placeholder="Ex: 2023-10-01"
         />
       </.form_modal>
+    <% end %>
+
+    <%= if @show_pending_transactions_drawer do %>
+      <.live_component
+        module={PersonalFinanceWeb.TransactionLive.PendingTransactions}
+        id="pending-transactions-drawer"
+        budget={@budget}
+        current_scope={@current_scope}
+      />
     <% end %>
 
     <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
