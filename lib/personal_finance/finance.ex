@@ -3,7 +3,16 @@ defmodule PersonalFinance.Finance do
   alias PersonalFinance.Finance.BudgetInvite
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
-  alias PersonalFinance.Finance.{Transaction, Category, InvestmentType, Profile, Budget}
+
+  alias PersonalFinance.Finance.{
+    Transaction,
+    Category,
+    InvestmentType,
+    Profile,
+    Budget,
+    RecurringEntry
+  }
+
   import Ecto.Query
 
   @doc """
@@ -605,6 +614,116 @@ defmodule PersonalFinance.Finance do
       else
         {:error, "Invite not found."}
       end
+    end
+  end
+
+  @doc """
+  Create a recurring entry changeset for a budget and user.
+  """
+  def change_recurring_entry(
+        %Scope{} = scope,
+        %PersonalFinance.Finance.RecurringEntry{} = recurring_entry,
+        %Budget{} = budget,
+        attrs \\ %{}
+      ) do
+    RecurringEntry.changeset(recurring_entry, attrs, budget.id)
+  end
+
+  @doc """
+  Create a recurring entry.
+  """
+  def create_recurring_entry(%Scope{} = scope, attrs, %Budget{} = budget) do
+    with {:ok, recurring_entry = %RecurringEntry{}} <-
+           %RecurringEntry{}
+           |> RecurringEntry.changeset(attrs, budget.id)
+           |> Repo.insert() do
+      broadcast(:recurring_entry, budget.id, {:saved, recurring_entry})
+      {:ok, recurring_entry}
+    else
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  @doc """
+  Updates a recurring entry.
+  """
+  def update_recurring_entry(%Scope{} = scope, %RecurringEntry{} = recurring_entry, attrs) do
+    changeset =
+      recurring_entry
+      |> RecurringEntry.changeset(attrs, recurring_entry.budget.id)
+
+    case Repo.update(changeset) do
+      {:ok, updated_recurring_entry} ->
+        broadcast(
+          :recurring_entry,
+          updated_recurring_entry.budget_id,
+          {:saved, updated_recurring_entry}
+        )
+
+        {:ok, updated_recurring_entry}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  @doc """
+  Deletes a recurring entry.
+  """
+  def delete_recurring_entry(%Scope{} = scope, %RecurringEntry{} = recurring_entry) do
+    with {:ok, deleted_recurring_entry} <- Repo.delete(recurring_entry) do
+      broadcast(:recurring_entry, recurring_entry.budget.id, {:deleted, deleted_recurring_entry})
+      {:ok, deleted_recurring_entry}
+    else
+      {:error, _} = error -> error
+    end
+  end
+
+  @doc """
+  List recurring entries for a budget and profile
+  """
+  def list_recurring_entries(%Scope{} = scope, budget_id, profile_id) do
+    from(re in RecurringEntry,
+      where: re.budget_id == ^budget_id and re.profile_id == ^profile_id,
+      order_by: [asc: re.start_date]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  Get a recurring entry by ID for a budget and profile.
+  """
+  def get_recurring_entry(%Scope{} = scope, budget_id, id) do
+    from(re in RecurringEntry,
+      where: re.budget_id == ^budget_id and re.id == ^id
+    )
+    |> Repo.one()
+    |> Repo.preload([:budget, :category, :profile])
+  end
+
+  @doc """
+  Toggle the status of a recurring entry.
+  """
+  def toggle_recurring_entry_status(%Scope{} = scope, %RecurringEntry{} = recurring_entry) do
+    new_status = not recurring_entry.is_active
+
+    changeset =
+      recurring_entry
+      |> RecurringEntry.changeset(%{is_active: new_status}, recurring_entry.budget.id)
+
+    case Repo.update(changeset) do
+      {:ok, updated_recurring_entry} ->
+        broadcast(
+          :recurring_entry,
+          updated_recurring_entry.budget_id,
+          {:saved, updated_recurring_entry}
+        )
+
+        {:ok, updated_recurring_entry}
+
+      {:error, changeset} ->
+        {:error, changeset}
     end
   end
 

@@ -1,7 +1,7 @@
 defmodule PersonalFinance.Finance.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
-  alias PersonalFinance.Finance.{Category, InvestmentType, Profile}
+  alias PersonalFinance.Finance.{Category, InvestmentType, Profile, RecurringEntry}
 
   schema "transactions" do
     field :value, :float
@@ -13,6 +13,8 @@ defmodule PersonalFinance.Finance.Transaction do
     belongs_to :investment_type, InvestmentType
     belongs_to :profile, Profile
     belongs_to :budget, PersonalFinance.Finance.Budget
+
+    belongs_to :recurring_entry, RecurringEntry, foreign_key: :recurring_entry_id
 
     timestamps(type: :utc_datetime)
   end
@@ -28,7 +30,8 @@ defmodule PersonalFinance.Finance.Transaction do
       :date,
       :investment_type_id,
       :category_id,
-      :profile_id
+      :profile_id,
+      :recurring_entry_id
     ])
     |> validate_required([:value], message: "O valor da transação é obrigatório")
     |> validate_required([:amount], message: "A quantidade é obrigatória")
