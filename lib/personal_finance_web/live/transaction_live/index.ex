@@ -169,20 +169,10 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_event("show_pending_transactions_drawer", _params, socket) do
+  def handle_event("toggle_pending_transactions_drawer", _params, socket) do
     {:noreply,
      assign(socket,
-       show_pending_transactions_drawer: true,
-       transaction: nil,
-       form_action: nil
-     )}
-  end
-
-  @impl true
-  def handle_event("close_pending_transactions_drawer", _params, socket) do
-    {:noreply,
-     assign(socket,
-       show_pending_transactions_drawer: false,
+       show_pending_transactions_drawer: not socket.assigns.show_pending_transactions_drawer,
        transaction: nil,
        form_action: nil
      )}

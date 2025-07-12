@@ -7,7 +7,7 @@
           <.button navigate={~p"/budgets/#{@budget.id}/transactions/new"}>
             <.icon name="hero-plus" /> Adicionar Transação
           </.button>
-          <.button variant="primary" phx-click="show_pending_transactions_drawer">
+          <.button variant="primary" phx-click="toggle_pending_transactions_drawer">
             <.icon name="hero-clock" /> Transações Pendentes
           </.button>
         </div>
