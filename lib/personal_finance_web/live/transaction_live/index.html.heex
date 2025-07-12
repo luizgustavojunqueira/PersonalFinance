@@ -123,7 +123,7 @@
       <.table id="transactions_table" rows={@streams.transaction_collection}>
         <:col :let={{_id, transaction}} label="Data">
           <%= if transaction.inserted_at do %>
-            {format_date(transaction.date)}
+            {DateUtils.format_date(transaction.date)}
           <% else %>
             Data não disponível
           <% end %>
@@ -140,14 +140,14 @@
         </:col>
         <:col :let={{_id, transaction}} label="Quantidade">
           {if transaction.investment_type && transaction.investment_type.name == "Cripto",
-            do: format_amount(transaction.amount, true),
-            else: format_amount(transaction.amount, false)}
+            do: CurrencyUtils.format_amount(transaction.amount, true),
+            else: CurrencyUtils.format_amount(transaction.amount, false)}
         </:col>
         <:col :let={{_id, transaction}} label="Valor Unitário">
-          {format_money(transaction.value)}
+          {CurrencyUtils.format_money(transaction.value)}
         </:col>
         <:col :let={{_id, transaction}} label="Valor Total">
-          {format_money(transaction.total_value)}
+          {CurrencyUtils.format_money(transaction.total_value)}
         </:col>
 
         <:action :let={{_id, transaction}}>

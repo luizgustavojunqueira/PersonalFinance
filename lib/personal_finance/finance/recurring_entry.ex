@@ -9,8 +9,7 @@ defmodule PersonalFinance.Finance.RecurringEntry do
     field :value, :float
     field :start_date, :date
     field :end_date, :date
-    field :day_of_month, :integer
-    field :frequency, Ecto.Enum, values: [:daily, :weekly, :monthly, :yearly], default: :monthly
+    field :frequency, Ecto.Enum, values: [:monthly, :yearly], default: :monthly
     field :type, Ecto.Enum, values: [:income, :expense], default: :expense
     field :is_active, :boolean, default: true
 
@@ -30,7 +29,6 @@ defmodule PersonalFinance.Finance.RecurringEntry do
       :value,
       :start_date,
       :end_date,
-      :day_of_month,
       :frequency,
       :type,
       :is_active,

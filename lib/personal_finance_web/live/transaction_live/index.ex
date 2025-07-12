@@ -1,6 +1,8 @@
 defmodule PersonalFinanceWeb.TransactionLive.Index do
   alias PersonalFinance.Finance.{Transaction}
   alias PersonalFinance.Finance
+  alias PersonalFinance.CurrencyUtils
+  alias PersonalFinance.DateUtils
   use PersonalFinanceWeb, :live_view
 
   @impl true
@@ -272,26 +274,4 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   defp parse_float(_), do: 0.0
-
-  def format_date(nil), do: "Data não disponível"
-  def format_date(%Date{} = date), do: Calendar.strftime(date, "%d/%m/%Y")
-  def format_date(%NaiveDateTime{} = dt), do: Calendar.strftime(dt, "%d/%m/%Y %H:%M")
-  def format_date(_), do: "Data inválida"
-
-  def format_money(nil), do: "R$ 0,00"
-
-  def format_money(value) when is_float(value) or is_integer(value) do
-    formatted_value = :erlang.float_to_binary(value, [:compact, decimals: 2])
-    "R$ #{formatted_value}"
-  end
-
-  def format_amount(nil), do: "0,00"
-
-  def format_amount(value, cripto \\ false) when is_float(value) or is_integer(value) do
-    if cripto do
-      :erlang.float_to_binary(value, [:compact, decimals: 8])
-    else
-      :erlang.float_to_binary(value, [:compact, decimals: 2])
-    end
-  end
 end

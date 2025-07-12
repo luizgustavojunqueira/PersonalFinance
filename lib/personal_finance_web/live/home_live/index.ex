@@ -45,8 +45,6 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
 
   @impl true
   def handle_info({:saved, %PersonalFinance.Finance.Transaction{} = new_transaction}, socket) do
-    IO.inspect(new_transaction, label: "New Transaction")
-
     updated_transactions =
       Enum.map(socket.assigns.transactions, fn t ->
         if t.id == new_transaction.id, do: new_transaction, else: t

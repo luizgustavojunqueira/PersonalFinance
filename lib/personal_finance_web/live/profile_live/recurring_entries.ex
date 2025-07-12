@@ -1,6 +1,7 @@
 defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   use PersonalFinanceWeb, :live_component
 
+  alias PersonalFinance.DateUtils
   alias PersonalFinance.Finance.RecurringEntry
   alias PersonalFinance.Finance
 
@@ -31,21 +32,13 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
             field={@form[:frequency]}
             type="select"
             label="Frequência"
-            options={[:daily, :weekly, :monthly, :yearly]}
+            options={[:monthly, :yearly]}
             required
           />
         </div>
         <div class="flex justify-between items-center mb-4 gap-4">
           <.input field={@form[:start_date]} type="date" label="Data de Início" required />
           <.input field={@form[:end_date]} type="date" label="Data de Término" />
-          <.input
-            field={@form[:day_of_month]}
-            type="number"
-            label="Dia do Mês"
-            min="1"
-            max="31"
-            required
-          />
         </div>
         <div class="flex justify-between items-center mb-4 gap-4">
           <.input field={@form[:amount]} type="number" label="Quantidade" step="0.01" required />
@@ -71,10 +64,21 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
             "Despesa"
           end}
         </:col>
-        <:col :let={{_id, entry}} label="Data de Início">{entry.start_date}</:col>
-        <:col :let={{_id, entry}} label="Data de Término">{entry.end_date}</:col>
-        <:col :let={{_id, entry}} label="Dia do Mês">{entry.day_of_month}</:col>
-        <:col :let={{_id, entry}} label="Frequência">{entry.frequency}</:col>
+
+        <:col :let={{_id, entry}} label="Descrição">{entry.category.name}</:col>
+        <:col :let={{_id, entry}} label="Data de Início">
+          {DateUtils.format_date(entry.start_date)}
+        </:col>
+        <:col :let={{_id, entry}} label="Data de Término">
+          {DateUtils.format_date(entry.end_date)}
+        </:col>
+        <:col :let={{_id, entry}} label="Frequência">
+          {if entry.frequency == :monthly do
+            "Mensal"
+          else
+            "Anual"
+          end}
+        </:col>
         <:col :let={{_id, entry}} label="Status">
           {if entry.is_active do
             "Ativo"
