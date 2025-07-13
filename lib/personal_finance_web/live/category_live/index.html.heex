@@ -1,9 +1,9 @@
-<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
-      {@budget.name} - Categorias
+      {@ledger.name} - Categorias
       <:actions>
-        <.button navigate={~p"/budgets/#{@budget.id}/categories/new"}>
+        <.button navigate={~p"/ledgers/#{@ledger.id}/categories/new"}>
           <.icon name="hero-plus" /> Adicionar Categoria
         </.button>
       </:actions>
@@ -46,14 +46,14 @@
 
         <:action :let={{_id, category}}>
           <%= if !category.is_default do %>
-            <.link navigate={~p"/budgets/#{@budget.id}/categories/#{category.id}/edit"}>
+            <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/edit"}>
               <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
             </.link>
           <% end %>
         </:action>
         <:action :let={{_id, category}}>
           <%= if !category.is_fixed do %>
-            <.link navigate={~p"/budgets/#{@budget.id}/categories/#{category.id}/delete"}>
+            <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/delete"}>
               <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
             </.link>
           <% end %>

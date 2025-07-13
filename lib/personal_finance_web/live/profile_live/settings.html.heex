@@ -1,13 +1,13 @@
-<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <.header class="flex flex-row justify-between mb-5 items-center">
-    {@budget.name} - Configurações do Perfil
+    {@ledger.name} - Configurações do Perfil
   </.header>
 
   <.live_component
     module={PersonalFinanceWeb.ProfileLive.RecurringEntries}
     id="recurring-entries-component"
     current_scope={@current_scope}
-    budget={@budget}
+    ledger={@ledger}
     profile={@profile}
   />
 </Layouts.app>

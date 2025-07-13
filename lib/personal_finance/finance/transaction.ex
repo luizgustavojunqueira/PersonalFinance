@@ -13,7 +13,7 @@ defmodule PersonalFinance.Finance.Transaction do
     belongs_to :category, Category
     belongs_to :investment_type, InvestmentType
     belongs_to :profile, Profile
-    belongs_to :budget, PersonalFinance.Finance.Budget
+    belongs_to :ledger, PersonalFinance.Finance.Ledger
 
     belongs_to :recurring_entry, RecurringEntry, foreign_key: :recurring_entry_id
 
@@ -21,7 +21,7 @@ defmodule PersonalFinance.Finance.Transaction do
   end
 
   @doc false
-  def changeset(transaction, attrs, budget_id) do
+  def changeset(transaction, attrs, ledger_id) do
     transaction
     |> cast(attrs, [
       :value,
@@ -45,6 +45,6 @@ defmodule PersonalFinance.Finance.Transaction do
     )
     |> validate_required([:date], message: "A data é obrigatória")
     |> validate_required([:profile_id], message: "Selecione um perfil")
-    |> put_change(:budget_id, budget_id)
+    |> put_change(:ledger_id, ledger_id)
   end
 end

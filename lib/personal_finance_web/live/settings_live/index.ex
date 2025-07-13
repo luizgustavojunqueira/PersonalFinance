@@ -7,23 +7,23 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
   def mount(params, _session, socket) do
     current_scope = socket.assigns.current_scope
 
-    budget = Finance.get_budget(current_scope, params["id"])
+    ledger = Finance.get_ledger(current_scope, params["id"])
 
-    if budget == nil do
+    if ledger == nil do
       {:ok,
        socket
        |> put_flash(:error, "Orçamento não encontrado.")
-       |> push_navigate(to: ~p"/budgets")}
+       |> push_navigate(to: ~p"/ledgers")}
     else
-      if budget.owner_id != current_scope.user.id do
+      if ledger.owner_id != current_scope.user.id do
         {:ok,
          socket
          |> put_flash(:error, "Página não encontrada.")
-         |> push_navigate(to: ~p"/budgets")}
+         |> push_navigate(to: ~p"/ledgers")}
       else
         socket =
           socket
-          |> assign(page_title: "Configurações", budget: budget)
+          |> assign(page_title: "Configurações", ledger: ledger)
 
         {:ok, socket}
       end

@@ -6,40 +6,40 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
 
   @impl true
   def mount(params, _session, socket) do
-    budget = Finance.get_budget(socket.assigns.current_scope, params["id"])
+    ledger = Finance.get_ledger(socket.assigns.current_scope, params["id"])
 
-    if budget == nil do
+    if ledger == nil do
       {:ok,
        socket
        |> put_flash(:error, "Orçamento não encontrado.")
-       |> push_navigate(to: ~p"/budgets")}
+       |> push_navigate(to: ~p"/ledgers")}
     else
-      Finance.subscribe_finance(:profile, budget.id)
+      Finance.subscribe_finance(:profile, ledger.id)
 
       socket =
         stream(
           socket,
           :profile_collection,
-          Finance.list_profiles(socket.assigns.current_scope, budget)
+          Finance.list_profiles(socket.assigns.current_scope, ledger)
         )
 
       {:ok,
        socket
-       |> assign(budget: budget)
-       |> apply_action(socket.assigns.live_action, params, budget)}
+       |> assign(ledger: ledger)
+       |> apply_action(socket.assigns.live_action, params, ledger)}
     end
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.budget)
+    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.ledger)
 
     {:noreply, socket}
   end
 
-  defp apply_action(socket, :index, _params, budget) do
+  defp apply_action(socket, :index, _params, ledger) do
     assign(socket,
-      page_title: "Perfis - #{budget.name}",
+      page_title: "Perfis - #{ledger.name}",
       profile: nil,
       show_form_modal: false,
       show_delete_modal: false,
@@ -47,8 +47,8 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
     )
   end
 
-  defp apply_action(socket, :new, _params, budget) do
-    profile = %Profile{budget_id: budget.id}
+  defp apply_action(socket, :new, _params, ledger) do
+    profile = %Profile{ledger_id: ledger.id}
 
     assign(socket,
       page_title: "Novo Perfil",
@@ -61,19 +61,19 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
           Finance.change_profile(
             socket.assigns.current_scope,
             profile,
-            budget
+            ledger
           )
         )
     )
   end
 
-  defp apply_action(socket, :edit, %{"profile_id" => profile_id}, budget) do
-    profile = Finance.get_profile(socket.assigns.current_scope, budget.id, profile_id)
+  defp apply_action(socket, :edit, %{"profile_id" => profile_id}, ledger) do
+    profile = Finance.get_profile(socket.assigns.current_scope, ledger.id, profile_id)
 
     if profile == nil do
       socket
       |> put_flash(:error, "Perfil não encontrado.")
-      |> push_navigate(to: ~p"/budgets/#{budget.id}/profiles")
+      |> push_navigate(to: ~p"/ledgers/#{ledger.id}/profiles")
     else
       assign(socket,
         page_title: "Edit Profile",
@@ -86,19 +86,19 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
             Finance.change_profile(
               socket.assigns.current_scope,
               profile,
-              budget
+              ledger
             )
           )
       )
     end
   end
 
-  defp apply_action(socket, :delete, %{"profile_id" => profile_id}, budget) do
-    profile = Finance.get_profile(socket.assigns.current_scope, budget.id, profile_id)
+  defp apply_action(socket, :delete, %{"profile_id" => profile_id}, ledger) do
+    profile = Finance.get_profile(socket.assigns.current_scope, ledger.id, profile_id)
 
     assign(socket,
-      page_title: "Categorias - #{budget.name}",
-      budget: budget,
+      page_title: "Categorias - #{ledger.name}",
+      ledger: ledger,
       show_form_modal: false,
       show_delete_modal: true,
       profile: profile,
@@ -111,13 +111,13 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
     current_scope = socket.assigns.current_scope
 
     profile =
-      Finance.get_profile(current_scope, socket.assigns.budget.id, id)
+      Finance.get_profile(current_scope, socket.assigns.ledger.id, id)
 
     case Finance.delete_profile(current_scope, profile) do
       {:ok, _profile} ->
         {:noreply,
          Phoenix.LiveView.push_patch(socket,
-           to: ~p"/budgets/#{socket.assigns.budget.id}/profiles"
+           to: ~p"/ledgers/#{socket.assigns.ledger.id}/profiles"
          )}
 
       {:error, _changeset} ->
@@ -130,7 +130,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
     {:noreply,
      socket
      |> assign(show_form_modal: false, profile: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/profiles")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/profiles")}
   end
 
   @impl true
@@ -138,7 +138,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
     {:noreply,
      socket
      |> assign(show_delete_modal: false, profile: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/profiles")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/profiles")}
   end
 
   @impl true
@@ -152,7 +152,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
       Finance.change_profile(
         socket.assigns.current_scope,
         socket.assigns.profile,
-        socket.assigns.budget,
+        socket.assigns.ledger,
         profile_params
       )
 
@@ -177,7 +177,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
     case Finance.create_profile(
            socket.assigns.current_scope,
            profile_params,
-           socket.assigns.budget
+           socket.assigns.ledger
          ) do
       {:ok, _profile} ->
         {:noreply, socket}
@@ -194,7 +194,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
      socket
      |> stream_insert(:profile_collection, profile)
      |> assign(show_form_modal: false, profile: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/profiles")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/profiles")}
   end
 
   @impl true

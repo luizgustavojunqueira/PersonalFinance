@@ -5,18 +5,18 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
 
   @impl true
   def update(assigns, socket) do
-    budget = Map.get(assigns, :budget) || socket.assigns.budget
+    ledger = Map.get(assigns, :ledger) || socket.assigns.ledger
     current_scope = Map.get(assigns, :current_scope) || socket.assigns.current_scope
 
-    budget_users = Finance.list_budget_users(current_scope, budget)
-    budget_invites = Finance.list_budget_invites(current_scope, budget, :pending)
+    ledger_users = Finance.list_ledger_users(current_scope, ledger)
+    ledger_invites = Finance.list_ledger_invites(current_scope, ledger, :pending)
 
     {:ok,
      socket
      |> assign(assigns)
      |> assign(
-       budget_users: budget_users,
-       budget_invites: budget_invites,
+       ledger_users: ledger_users,
+       ledger_invites: ledger_invites,
        page_title: "Colaboradores"
      )}
   end
@@ -29,16 +29,16 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
         Colaboradores
       </h2>
 
-      <%= if @budget_users == [] do %>
+      <%= if @ledger_users == [] do %>
         <p class="text-gray-500">Nenhum colaborador adicionado.</p>
       <% else %>
-        <.table id="budget_users_table" rows={@budget_users}>
+        <.table id="ledger_users_table" rows={@ledger_users}>
           <:col :let={user} label="Colaborador">
             {user.name} ({user.email})
           </:col>
           <:col :let={user} label="Tipo">
             <span class="light">
-              <%= if @budget.owner_id == user.id do %>
+              <%= if @ledger.owner_id == user.id do %>
                 Dono
               <% else %>
                 Colaborador
@@ -46,7 +46,7 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
             </span>
           </:col>
           <:col :let={user} label="Ações">
-            <%= if @budget.owner_id != user.id && @budget.owner_id == @current_scope.user.id do %>
+            <%= if @ledger.owner_id != user.id && @ledger.owner_id == @current_scope.user.id do %>
               <.link
                 class="text-red-600 hover:text-red-800"
                 phx-click="remove_user"
@@ -64,10 +64,10 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
         Convites Pendentes
       </h2>
 
-      <%= if @budget_invites == [] do %>
+      <%= if @ledger_invites == [] do %>
         <p>Nenhum convite pendente.</p>
       <% else %>
-        <.table id="budget_invites_table" rows={@budget_invites}>
+        <.table id="ledger_invites_table" rows={@ledger_invites}>
           <:col :let={invite} label="Email">
             {invite.email}
           </:col>
@@ -117,16 +117,16 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
 
   @impl true
   def handle_event("revoke_invite", %{"id" => id}, socket) do
-    budget = socket.assigns.budget
+    ledger = socket.assigns.ledger
     current_scope = socket.assigns.current_scope
 
-    case Finance.revoke_budget_invite(current_scope, budget, id) do
+    case Finance.revoke_ledger_invite(current_scope, ledger, id) do
       {:ok, _invite} ->
         {:noreply,
          assign(
            socket,
-           :budget_invites,
-           Finance.list_budget_invites(current_scope, budget, :pending)
+           :ledger_invites,
+           Finance.list_ledger_invites(current_scope, ledger, :pending)
          )}
 
       {:error, reason} ->
@@ -136,18 +136,18 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
 
   @impl true
   def handle_event("remove_user", %{"id" => user_id}, socket) do
-    budget = socket.assigns.budget
+    ledger = socket.assigns.ledger
     current_scope = socket.assigns.current_scope
 
-    case Finance.remove_budget_user(current_scope, budget, user_id) do
+    case Finance.remove_ledger_user(current_scope, ledger, user_id) do
       {:ok, _} ->
         send(socket.assigns.parent_pid, {:user_removed, user_id})
 
         {:noreply,
          assign(
            socket,
-           :budget_users,
-           Finance.list_budget_users(current_scope, budget)
+           :ledger_users,
+           Finance.list_ledger_users(current_scope, ledger)
          )}
 
       {:error, reason} ->

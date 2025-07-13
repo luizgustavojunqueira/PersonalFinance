@@ -2,11 +2,11 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
   use PersonalFinanceWeb, :live_component
 
   alias PersonalFinance.Finance
-  alias PersonalFinance.Finance.BudgetInvite
+  alias PersonalFinance.Finance.LedgerInvite
 
   @impl true
   def mount(socket) do
-    invite_form = to_form(BudgetInvite.changeset(%BudgetInvite{}, %{}))
+    invite_form = to_form(LedgerInvite.changeset(%LedgerInvite{}, %{}))
 
     {:ok,
      socket
@@ -52,11 +52,11 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
   end
 
   @impl true
-  def handle_event("send_invite", %{"budget_invite" => %{"email" => email}}, socket) do
-    budget = socket.assigns.budget
+  def handle_event("send_invite", %{"ledger_invite" => %{"email" => email}}, socket) do
+    ledger = socket.assigns.ledger
 
-    case Finance.create_budget_invite(socket.assigns.current_scope, budget, email) do
-      {:ok, %BudgetInvite{} = invite} ->
+    case Finance.create_ledger_invite(socket.assigns.current_scope, ledger, email) do
+      {:ok, %LedgerInvite{} = invite} ->
         invite_url = "http://localhost:4000/join/#{invite.token}"
 
         send(socket.assigns.parent_pid, {:invite_sent, invite})
@@ -66,7 +66,7 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
          |> put_flash(:info, "Convite enviado para #{email}!")
          |> assign(
            invite_url: invite_url,
-           invite_form: to_form(BudgetInvite.changeset(invite, %{}))
+           invite_form: to_form(LedgerInvite.changeset(invite, %{}))
          )}
 
       {:error, %Ecto.Changeset{} = changeset} ->

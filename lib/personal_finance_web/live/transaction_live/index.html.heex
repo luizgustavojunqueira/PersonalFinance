@@ -1,10 +1,10 @@
-<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
-      {@budget.name} - Transações
+      {@ledger.name} - Transações
       <:actions>
         <div class="flex flex-row gap-2">
-          <.button navigate={~p"/budgets/#{@budget.id}/transactions/new"}>
+          <.button navigate={~p"/ledgers/#{@ledger.id}/transactions/new"}>
             <.icon name="hero-plus" /> Adicionar Transação
           </.button>
           <.button variant="primary" phx-click="toggle_pending_transactions_drawer">
@@ -123,7 +123,7 @@
       <.live_component
         module={PersonalFinanceWeb.TransactionLive.PendingTransactions}
         id="pending-transactions-drawer"
-        budget={@budget}
+        ledger={@ledger}
         current_scope={@current_scope}
       />
     <% end %>
@@ -164,7 +164,7 @@
         </:col>
 
         <:action :let={{_id, transaction}}>
-          <.link navigate={~p"/budgets/#{@budget.id}/transactions/#{transaction.id}/edit"}>
+          <.link navigate={~p"/ledgers/#{@ledger.id}/transactions/#{transaction.id}/edit"}>
             <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
           </.link>
         </:action>

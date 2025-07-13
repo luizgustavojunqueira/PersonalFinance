@@ -1,7 +1,7 @@
 defmodule PersonalFinance.Finance.RecurringEntry do
   use Ecto.Schema
   import Ecto.Changeset
-  alias PersonalFinance.Finance.{Budget, Category, Profile}
+  alias PersonalFinance.Finance.{Ledger, Category, Profile}
 
   schema "recurring_entries" do
     field :description, :string
@@ -13,7 +13,7 @@ defmodule PersonalFinance.Finance.RecurringEntry do
     field :type, Ecto.Enum, values: [:income, :expense], default: :expense
     field :is_active, :boolean, default: true
 
-    belongs_to :budget, Budget
+    belongs_to :ledger, Ledger
     belongs_to :category, Category
     belongs_to :profile, Profile
 
@@ -21,7 +21,7 @@ defmodule PersonalFinance.Finance.RecurringEntry do
   end
 
   @doc false
-  def changeset(recurring_entry, attrs, budget_id) do
+  def changeset(recurring_entry, attrs, ledger_id) do
     recurring_entry
     |> cast(attrs, [
       :description,
@@ -43,7 +43,7 @@ defmodule PersonalFinance.Finance.RecurringEntry do
       :type,
       :is_active
     ])
-    |> put_change(:budget_id, budget_id)
+    |> put_change(:ledger_id, ledger_id)
     |> validate_required(:description, message: "Descrição é obrigatória")
     |> validate_length(:description, max: 255, message: "Descrição muito longa")
   end

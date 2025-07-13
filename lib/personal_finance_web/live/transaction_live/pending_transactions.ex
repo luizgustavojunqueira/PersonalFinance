@@ -7,11 +7,11 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
 
   @impl true
   def update(assigns, socket) do
-    budget = Map.get(assigns, :budget) || socket.assigns.budget
+    ledger = Map.get(assigns, :ledger) || socket.assigns.ledger
     current_scope = Map.get(assigns, :current_scope) || socket.assigns.current_scope
 
     pending_recurrent_transactions =
-      Finance.list_pending_recurrent_transactions(current_scope, budget.id, 1)
+      Finance.list_pending_recurrent_transactions(current_scope, ledger.id, 1)
 
     {:ok,
      socket
@@ -25,10 +25,10 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
 
   @impl true
   def handle_event("confirm_transaction", %{"id" => id}, socket) do
-    budget = socket.assigns.budget
+    ledger = socket.assigns.ledger
     current_scope = socket.assigns.current_scope
 
-    case Finance.confirm_recurring_transaction(current_scope, budget, id) do
+    case Finance.confirm_recurring_transaction(current_scope, ledger, id) do
       {:ok, _transaction} ->
         {:noreply,
          socket
@@ -46,13 +46,13 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
 
   @impl true
   def handle_event("update_months", %{"months" => months}, socket) do
-    budget = socket.assigns.budget
+    ledger = socket.assigns.ledger
     current_scope = socket.assigns.current_scope
 
     months = String.to_integer(months)
 
     pending_recurrent_transactions =
-      Finance.list_pending_recurrent_transactions(current_scope, budget.id, months)
+      Finance.list_pending_recurrent_transactions(current_scope, ledger.id, months)
 
     {:noreply,
      socket

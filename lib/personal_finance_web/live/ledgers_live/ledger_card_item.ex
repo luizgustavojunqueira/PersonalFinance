@@ -1,4 +1,4 @@
-defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
+defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
   use PersonalFinanceWeb, :live_component
 
   @impl true
@@ -15,20 +15,20 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
       phx-mounted={JS.transition({"ease-out duration-300", "opacity-0", "opacity-100"}, time: 300)}
     >
       <div class="flex justify-between w-full h-1/4 rounded-t-xl text-center p-2 px-4 bg-medium-green/20">
-        <span class="font-bold">{@budget.name}</span>
-        <%= if @budget.owner.id == @current_scope.user.id do %>
+        <span class="font-bold">{@ledger.name}</span>
+        <%= if @ledger.owner.id == @current_scope.user.id do %>
           <.link class="hero-ellipsis-vertical" phx-click="toggle_menu" phx-target={@myself}></.link>
         <% end %>
       </div>
 
       <span class="w-full p-2 px-6 text-center h-2/4 flex items-center justify-center">
-        {@budget.description}
+        {@ledger.description}
       </span>
       <.button
         variant="custom"
         class="bg-accent/90 hover:bg-accent text-white p-2 rounded-b-xl w-full primary-button min-h-10 h-1/4"
-        phx-click="view_budget"
-        phx-value-budget-id={@budget.id}
+        phx-click="view_ledger"
+        phx-value-ledger-id={@ledger.id}
         phx-target={@myself}
       >
         Visualizar
@@ -36,8 +36,8 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
       <%= if @show_menu do %>
         <div class="absolute right-5 top-5 p-2 flex flex-col gap-4 rounded-xl shadow-lg bg-white ">
           <span
-            phx-click="edit_budget"
-            phx-value-id={@budget.id}
+            phx-click="edit_ledger"
+            phx-value-id={@ledger.id}
             phx-target={@myself}
             class="flex items-center flex-row justify-start gap-2 text-blue-600 hover:text-blue-800 hover:cursor-pointer "
           >
@@ -46,8 +46,8 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
           </span>
 
           <span
-            phx-click="delete_budget"
-            phx-value-id={@budget.id}
+            phx-click="delete_ledger"
+            phx-value-id={@ledger.id}
             phx-target={@myself}
             class="flex items-center flex-row justify-start gap-2 text-red-600 hover:text-red-800 hover:cursor-pointer "
           >
@@ -61,8 +61,8 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
   end
 
   @impl true
-  def handle_event("view_budget", %{"budget-id" => budget_id}, socket) do
-    {:noreply, Phoenix.LiveView.push_navigate(socket, to: ~p"/budgets/#{budget_id}/home")}
+  def handle_event("view_ledger", %{"ledger-id" => ledger_id}, socket) do
+    {:noreply, Phoenix.LiveView.push_navigate(socket, to: ~p"/ledgers/#{ledger_id}/home")}
   end
 
   @impl true
@@ -72,12 +72,12 @@ defmodule PersonalFinanceWeb.BudgetsLive.BudgetCardItem do
   end
 
   @impl true
-  def handle_event("edit_budget", %{"id" => id}, socket) do
-    {:noreply, Phoenix.LiveView.push_patch(socket, to: ~p"/budgets/#{id}/edit")}
+  def handle_event("edit_ledger", %{"id" => id}, socket) do
+    {:noreply, Phoenix.LiveView.push_patch(socket, to: ~p"/ledgers/#{id}/edit")}
   end
 
   @impl true
-  def handle_event("delete_budget", %{"id" => id}, socket) do
-    {:noreply, Phoenix.LiveView.push_patch(socket, to: ~p"/budgets/#{id}/delete")}
+  def handle_event("delete_ledger", %{"id" => id}, socket) do
+    {:noreply, Phoenix.LiveView.push_patch(socket, to: ~p"/ledgers/#{id}/delete")}
   end
 end

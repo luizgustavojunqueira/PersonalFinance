@@ -2,10 +2,13 @@ import Config
 
 # Configure your database
 config :personal_finance, PersonalFinance.Repo,
-  database: Path.expand("../personal_finance_dev.db", __DIR__),
-  pool_size: 5,
+  username: "postgres",
+  password: "password",
+  hostname: "localhost",
+  database: "personal_finance_dev",
   stacktrace: true,
-  show_sensitive_data_on_connection_error: true
+  show_sensitive_data_on_connection_error: true,
+  pool_size: 10
 
 # For development, we disable any cache and enable
 # debugging and code reloading.

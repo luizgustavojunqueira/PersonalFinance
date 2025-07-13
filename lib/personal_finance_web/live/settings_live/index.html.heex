@@ -1,7 +1,7 @@
-<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <div class="w-full m-0">
     <.header class="flex flex-row justify-between mb-5 items-center">
-      {@budget.name} - Configurações
+      {@ledger.name} - Configurações
     </.header>
   </div>
 
@@ -9,14 +9,14 @@
     <.live_component
       module={PersonalFinanceWeb.SettingsLive.InviteForm}
       id="invite-form"
-      budget={@budget}
+      ledger={@ledger}
       current_scope={@current_scope}
       parent_pid={self()}
     />
     <.live_component
       module={PersonalFinanceWeb.SettingsLive.CollaboratorsList}
       id="collaborators-list"
-      budget={@budget}
+      ledger={@ledger}
       current_scope={@current_scope}
       parent_pid={self()}
     />

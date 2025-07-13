@@ -9,13 +9,13 @@ defmodule PersonalFinance.Finance.Category do
     field :percentage, :float, default: 0.0
     field :is_default, :boolean, default: false
     field :is_fixed, :boolean, default: false
-    belongs_to :budget, PersonalFinance.Finance.Budget
+    belongs_to :ledger, PersonalFinance.Finance.Ledger
 
     timestamps(type: :utc_datetime)
   end
 
   @doc false
-  def changeset(category, attrs, budget_id) do
+  def changeset(category, attrs, ledger_id) do
     category
     |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed])
     |> validate_required([:name], message: "O nome é obrigatório.")
@@ -33,14 +33,14 @@ defmodule PersonalFinance.Finance.Category do
     )
     |> validate_inclusion(:is_default, [true, false])
     |> unique_constraint(:is_default,
-      name: :unique_default_category_per_budget,
+      name: :unique_default_category_per_ledger,
       where: "is_default = true"
     )
     |> unique_constraint(:name,
-      name: :categories_name_budget_id_index,
+      name: :categories_name_ledger_id_index,
       message: "Já existe uma categoria com esse nome para este usuário."
     )
-    |> foreign_key_constraint(:budget_id, name: :categories_budget_id_fkey)
+    |> foreign_key_constraint(:ledger_id, name: :categories_ledger_id_fkey)
     |> validate_number(:percentage,
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: 100,
@@ -48,19 +48,19 @@ defmodule PersonalFinance.Finance.Category do
     )
     |> validate_total_percentage()
     |> apply_fixed_category_rules(category.id != nil)
-    |> put_change(:budget_id, budget_id)
+    |> put_change(:ledger_id, ledger_id)
   end
 
   def validate_total_percentage(changeset) do
-    budget_id = get_change(changeset, :budget_id) || get_field(changeset, :budget_id)
+    ledger_id = get_change(changeset, :ledger_id) || get_field(changeset, :ledger_id)
     current_percentage = get_change(changeset, :percentage)
 
-    if budget_id && current_percentage do
+    if ledger_id && current_percentage do
       category_id = changeset.data.id
 
       query =
         from(c in PersonalFinance.Finance.Category,
-          where: c.budget_id == ^budget_id,
+          where: c.ledger_id == ^ledger_id,
           select: c.percentage
         )
 

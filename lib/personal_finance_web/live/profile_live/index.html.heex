@@ -1,8 +1,8 @@
-<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} budget={@budget}>
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <.header class="flex flex-row justify-between mb-5 items-center">
-    {@budget.name} - Perfis
+    {@ledger.name} - Perfis
     <:actions>
-      <.button navigate={~p"/budgets/#{@budget.id}/profiles/new"}>
+      <.button navigate={~p"/ledgers/#{@ledger.id}/profiles/new"}>
         <.icon name="hero-plus" /> Adicionar Perfil
       </.button>
     </:actions>
@@ -38,7 +38,7 @@
       rows={@streams.profile_collection}
       row_click={
         fn {_id, profile} ->
-          JS.navigate(~p"/budgets/#{@budget.id}/profiles/#{profile.id}/settings")
+          JS.navigate(~p"/ledgers/#{@ledger.id}/profiles/#{profile.id}/settings")
         end
       }
     >
@@ -47,20 +47,20 @@
 
       <:action :let={{_id, profile}}>
         <%= if profile.is_default do %>
-          <%= if @budget.owner.id == @current_scope.user.id do %>
-            <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/edit"}>
+          <%= if @ledger.owner.id == @current_scope.user.id do %>
+            <.link navigate={~p"/ledgers/#{@ledger.id}/profiles/#{profile.id}/edit"}>
               <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
             </.link>
           <% end %>
         <% else %>
-          <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/edit"}>
+          <.link navigate={~p"/ledgers/#{@ledger.id}/profiles/#{profile.id}/edit"}>
             <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
           </.link>
         <% end %>
       </:action>
       <:action :let={{_id, profile}}>
         <%= if !profile.is_default do %>
-          <.link navigate={~p"/budgets/#{@budget.id}/profiles/#{profile.id}/delete"}>
+          <.link navigate={~p"/ledgers/#{@ledger.id}/profiles/#{profile.id}/delete"}>
             <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
           </.link>
         <% end %>

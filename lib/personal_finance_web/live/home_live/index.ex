@@ -5,19 +5,19 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
   @impl true
   def mount(params, _session, socket) do
     current_scope = socket.assigns.current_scope
-    budget = Finance.get_budget(current_scope, params["id"])
+    ledger = Finance.get_ledger(current_scope, params["id"])
 
-    if budget == nil do
+    if ledger == nil do
       {:ok,
        socket
        |> put_flash(:error, "Orçamento não encontrado.")
-       |> push_navigate(to: ~p"/budgets")}
+       |> push_navigate(to: ~p"/ledgers")}
     else
-      Finance.subscribe_finance(:transaction, budget.id)
-      Finance.subscribe_finance(:category, budget.id)
+      Finance.subscribe_finance(:transaction, ledger.id)
+      Finance.subscribe_finance(:category, ledger.id)
 
-      transactions = Finance.list_transactions(current_scope, budget)
-      categories = Finance.list_categories(current_scope, budget)
+      transactions = Finance.list_transactions(current_scope, ledger)
+      categories = Finance.list_categories(current_scope, ledger)
 
       {labels, values} = calculate_chart_data(categories, transactions)
 
@@ -25,8 +25,8 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
         socket
         |> assign(
           current_user: current_scope.user,
-          budget: budget,
-          page_title: "Home #{budget.name}",
+          ledger: ledger,
+          page_title: "Home #{ledger.name}",
           show_welcome_message: true,
           labels: labels,
           values: values,
@@ -112,9 +112,9 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
   @impl true
   def handle_info(:transactions_updated, socket) do
     current_scope = socket.assigns.current_scope
-    budget = socket.assigns.budget
+    ledger = socket.assigns.ledger
 
-    updated_transactions = PersonalFinance.Finance.list_transactions(current_scope, budget)
+    updated_transactions = PersonalFinance.Finance.list_transactions(current_scope, ledger)
 
     {labels, values} = calculate_chart_data(socket.assigns.categories, updated_transactions)
 

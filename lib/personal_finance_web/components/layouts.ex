@@ -17,7 +17,7 @@ defmodule PersonalFinanceWeb.Layouts do
       <.page_header current_scope={@current_scope} />
       <main class="flex flex-row h-full w-full">
         <%= if @show_sidebar do %>
-          <.navigation_sidebar budget={@budget} current_scope={@current_scope} />
+          <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
         <% end %>
         <div class="h-full w-full px-4 py-2 ">
           <div class="w-full m-0">
@@ -119,18 +119,18 @@ defmodule PersonalFinanceWeb.Layouts do
       <ul class="p-4 w-80 ">
         <li class=" mb-4 ">
           <.link
-            navigate={~p"/budgets"}
+            navigate={~p"/ledgers"}
             class="flex items space-x-2 text-base-content hover:text-primary"
           >
             <.icon name="hero-book-open" class="size-6" />
 
-            <span class="sidebar-text hidden md:inline">Orçamentos</span>
+            <span class="sidebar-text hidden md:inline">Ledgers</span>
           </.link>
         </li>
-        <%= if @budget do %>
+        <%= if @ledger do %>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget.id}/home"}
+              navigate={~p"/ledgers/#{@ledger.id}/home"}
               class="flex items
             space-x-2 text-base-content hover:text-primary"
             >
@@ -140,7 +140,7 @@ defmodule PersonalFinanceWeb.Layouts do
           </li>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget.id}/transactions"}
+              navigate={~p"/ledgers/#{@ledger.id}/transactions"}
               class="flex items space-x-2 text-base-content hover:text-primary"
             >
               <.icon name="hero-clipboard-document-list" class="size-6" />
@@ -149,7 +149,7 @@ defmodule PersonalFinanceWeb.Layouts do
           </li>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget.id}/profiles"}
+              navigate={~p"/ledgers/#{@ledger.id}/profiles"}
               class="flex items space-x-2 text-base-content hover:text-primary"
             >
               <.icon name="hero-users" class="size-6" />
@@ -158,17 +158,17 @@ defmodule PersonalFinanceWeb.Layouts do
           </li>
           <li class=" mb-4 ">
             <.link
-              navigate={~p"/budgets/#{@budget.id}/categories"}
+              navigate={~p"/ledgers/#{@ledger.id}/categories"}
               class="flex items space-x-2 text-base-content hover:text-primary"
             >
               <.icon name="hero-tag" class="size-6" />
               <span class="sidebar-text hidden md:inline">Categorias</span>
             </.link>
           </li>
-          <%= if @budget.owner_id == @current_scope.user.id do %>
+          <%= if @ledger.owner_id == @current_scope.user.id do %>
             <li class=" mb-4 ">
               <.link
-                navigate={~p"/budgets/#{@budget.id}/settings"}
+                navigate={~p"/ledgers/#{@ledger.id}/settings"}
                 class="flex items space-x-2 text-base-content hover:text-primary"
               >
                 <.icon name="hero-cog-6-tooth" class="size-6" />

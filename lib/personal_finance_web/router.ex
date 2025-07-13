@@ -48,27 +48,27 @@ defmodule PersonalFinanceWeb.Router do
       on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
-      live "/", BudgetsLive.Index, :index
-      live "/budgets", BudgetsLive.Index, :index
-      live "/budgets/new", BudgetsLive.Index, :new
-      live "/budgets/:id/edit", BudgetsLive.Index, :edit
-      live "/budgets/:id/delete", BudgetsLive.Index, :delete
-      live "/budgets/:id/home", HomeLive.Index, :index
-      live "/budgets/:id/home/new_user", HomeLive.Index, :new
-      live "/budgets/:id/profiles", ProfileLive.Index, :index
-      live "/budgets/:id/profiles/new", ProfileLive.Index, :new
-      live "/budgets/:id/profiles/:profile_id/edit", ProfileLive.Index, :edit
-      live "/budgets/:id/profiles/:profile_id/delete", ProfileLive.Index, :delete
-      live "/budgets/:id/profiles/:profile_id/settings", ProfileLive.Settings
-      live "/budgets/:id/transactions", TransactionLive.Index, :index
-      live "/budgets/:id/transactions/new", TransactionLive.Index, :new
-      live "/budgets/:id/transactions/:transaction_id/edit", TransactionLive.Index, :edit
-      live "/budgets/:id/categories", CategoryLive.Index, :index
-      live "/budgets/:id/categories/new", CategoryLive.Index, :new
-      live "/budgets/:id/categories/:category_id/edit", CategoryLive.Index, :edit
-      live "/budgets/:id/categories/:category_id/delete", CategoryLive.Index, :delete
+      live "/", LedgersLive.Index, :index
+      live "/ledgers", LedgersLive.Index, :index
+      live "/ledgers/new", LedgersLive.Index, :new
+      live "/ledgers/:id/edit", LedgersLive.Index, :edit
+      live "/ledgers/:id/delete", LedgersLive.Index, :delete
+      live "/ledgers/:id/home", HomeLive.Index, :index
+      live "/ledgers/:id/home/new_user", HomeLive.Index, :new
+      live "/ledgers/:id/profiles", ProfileLive.Index, :index
+      live "/ledgers/:id/profiles/new", ProfileLive.Index, :new
+      live "/ledgers/:id/profiles/:profile_id/edit", ProfileLive.Index, :edit
+      live "/ledgers/:id/profiles/:profile_id/delete", ProfileLive.Index, :delete
+      live "/ledgers/:id/profiles/:profile_id/settings", ProfileLive.Settings
+      live "/ledgers/:id/transactions", TransactionLive.Index, :index
+      live "/ledgers/:id/transactions/new", TransactionLive.Index, :new
+      live "/ledgers/:id/transactions/:transaction_id/edit", TransactionLive.Index, :edit
+      live "/ledgers/:id/categories", CategoryLive.Index, :index
+      live "/ledgers/:id/categories/new", CategoryLive.Index, :new
+      live "/ledgers/:id/categories/:category_id/edit", CategoryLive.Index, :edit
+      live "/ledgers/:id/categories/:category_id/delete", CategoryLive.Index, :delete
 
-      live "/budgets/:id/settings", SettingsLive.Index, :index
+      live "/ledgers/:id/settings", SettingsLive.Index, :index
     end
 
     post "/join/:token", InviteController, :join

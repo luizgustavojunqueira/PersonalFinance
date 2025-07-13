@@ -124,7 +124,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
     recurring_entries =
       Finance.list_recurring_entries(
         assigns.current_scope,
-        assigns.budget.id,
+        assigns.ledger.id,
         assigns.profile.id
       )
 
@@ -133,7 +133,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
       |> assign(assigns)
       |> assign(
         categories:
-          Enum.map(Finance.list_categories(assigns.current_scope, assigns.budget), fn category ->
+          Enum.map(Finance.list_categories(assigns.current_scope, assigns.ledger), fn category ->
             {category.name, category.id}
           end),
         form_action: :create,
@@ -142,10 +142,10 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
             Finance.change_recurring_entry(
               assigns.current_scope,
               %Finance.RecurringEntry{
-                budget_id: assigns.budget.id,
+                ledger_id: assigns.ledger.id,
                 profile_id: assigns.profile.id
               },
-              assigns.budget
+              assigns.ledger
             )
           )
       )
@@ -160,10 +160,10 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
       Finance.change_recurring_entry(
         socket.assigns.current_scope,
         %Finance.RecurringEntry{
-          budget_id: socket.assigns.budget.id,
+          ledger_id: socket.assigns.ledger.id,
           profile_id: socket.assigns.profile.id
         },
-        socket.assigns.budget,
+        socket.assigns.ledger,
         params
       )
 
@@ -173,7 +173,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   @impl true
   def handle_event("toggle_status", %{"id" => id}, socket) do
     recurring_entry =
-      Finance.get_recurring_entry(socket.assigns.current_scope, socket.assigns.budget.id, id)
+      Finance.get_recurring_entry(socket.assigns.current_scope, socket.assigns.ledger.id, id)
 
     case Finance.toggle_recurring_entry_status(socket.assigns.current_scope, recurring_entry) do
       {:ok, updated_entry} ->
@@ -196,13 +196,13 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   @impl true
   def handle_event("edit", %{"id" => id}, socket) do
     recurring_entry =
-      Finance.get_recurring_entry(socket.assigns.current_scope, socket.assigns.budget.id, id)
+      Finance.get_recurring_entry(socket.assigns.current_scope, socket.assigns.ledger.id, id)
 
     changeset =
       Finance.change_recurring_entry(
         socket.assigns.current_scope,
         recurring_entry,
-        socket.assigns.budget
+        socket.assigns.ledger
       )
 
     {:noreply,
@@ -217,7 +217,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     recurring_entry =
-      Finance.get_recurring_entry(socket.assigns.current_scope, socket.assigns.budget.id, id)
+      Finance.get_recurring_entry(socket.assigns.current_scope, socket.assigns.ledger.id, id)
 
     case Finance.delete_recurring_entry(
            socket.assigns.current_scope,
@@ -246,7 +246,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
     case Finance.create_recurring_entry(
            socket.assigns.current_scope,
            Map.put(params, "profile_id", socket.assigns.profile.id),
-           socket.assigns.budget
+           socket.assigns.ledger
          ) do
       {:ok, recurring_entry} ->
         {:noreply,
@@ -257,10 +257,10 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
                Finance.change_recurring_entry(
                  socket.assigns.current_scope,
                  %Finance.RecurringEntry{
-                   budget_id: socket.assigns.budget.id,
+                   ledger_id: socket.assigns.ledger.id,
                    profile_id: socket.assigns.profile.id
                  },
-                 socket.assigns.budget
+                 socket.assigns.ledger
                )
              )
          )
@@ -276,7 +276,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
     recurring_entry =
       Finance.get_recurring_entry(
         socket.assigns.current_scope,
-        socket.assigns.budget.id,
+        socket.assigns.ledger.id,
         socket.assigns.recurring_entry.id
       )
 
@@ -294,10 +294,10 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
                Finance.change_recurring_entry(
                  socket.assigns.current_scope,
                  %RecurringEntry{
-                   budget_id: socket.assigns.budget.id,
+                   ledger_id: socket.assigns.ledger.id,
                    profile_id: socket.assigns.profile.id
                  },
-                 socket.assigns.budget
+                 socket.assigns.ledger
                )
              )
          )

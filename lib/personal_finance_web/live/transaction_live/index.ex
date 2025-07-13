@@ -9,23 +9,23 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   def mount(params, _session, socket) do
     current_scope = socket.assigns.current_scope
 
-    budget = Finance.get_budget(current_scope, params["id"])
+    ledger = Finance.get_ledger(current_scope, params["id"])
 
-    if budget == nil do
+    if ledger == nil do
       {:ok,
        socket
        |> put_flash(:error, "Orçamento não encontrado.")
-       |> push_navigate(to: ~p"/budgets")}
+       |> push_navigate(to: ~p"/ledgers")}
     else
-      Finance.subscribe_finance(:transaction, budget.id)
-      categories = Finance.list_categories(current_scope, budget)
+      Finance.subscribe_finance(:transaction, ledger.id)
+      categories = Finance.list_categories(current_scope, ledger)
 
       investment_category =
-        Finance.get_category_by_name("Investimento", socket.assigns.current_scope, budget)
+        Finance.get_category_by_name("Investimento", socket.assigns.current_scope, ledger)
 
       investment_types = Finance.list_investment_types()
 
-      profiles = Finance.list_profiles(socket.assigns.current_scope, budget)
+      profiles = Finance.list_profiles(socket.assigns.current_scope, ledger)
 
       socket =
         socket
@@ -36,23 +36,23 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
           selected_category_id: nil
         )
-        |> stream(:transaction_collection, Finance.list_transactions(current_scope, budget))
+        |> stream(:transaction_collection, Finance.list_transactions(current_scope, ledger))
 
-      {:ok, socket |> apply_action(socket.assigns.live_action, params, budget)}
+      {:ok, socket |> apply_action(socket.assigns.live_action, params, ledger)}
     end
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.budget)
+    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.ledger)
 
     {:noreply, socket}
   end
 
-  defp apply_action(socket, :index, _params, budget) do
+  defp apply_action(socket, :index, _params, ledger) do
     assign(socket,
-      page_title: "Transações - #{budget.name}",
-      budget: budget,
+      page_title: "Transações - #{ledger.name}",
+      ledger: ledger,
       show_form_modal: false,
       show_pending_transactions_drawer: false,
       transaction: nil,
@@ -60,12 +60,12 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     )
   end
 
-  defp apply_action(socket, :new, _params, budget) do
-    transaction = %Transaction{budget_id: budget.id}
+  defp apply_action(socket, :new, _params, ledger) do
+    transaction = %Transaction{ledger_id: ledger.id}
 
     assign(socket,
       page_title: "Nova Transação",
-      budget: budget,
+      ledger: ledger,
       transaction: transaction,
       form_action: :new,
       show_form_modal: true,
@@ -74,21 +74,21 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
         to_form(
           Finance.change_transaction(
             socket.assigns.current_scope,
-            %Transaction{budget_id: budget.id},
-            budget
+            %Transaction{ledger_id: ledger.id},
+            ledger
           )
         )
     )
   end
 
-  defp apply_action(socket, :edit, %{"transaction_id" => transaction_id}, budget) do
+  defp apply_action(socket, :edit, %{"transaction_id" => transaction_id}, ledger) do
     transaction =
-      Finance.get_transaction(socket.assigns.current_scope, transaction_id, budget)
+      Finance.get_transaction(socket.assigns.current_scope, transaction_id, ledger)
 
     if transaction == nil do
       socket
       |> put_flash(:error, "Transação não encontrada.")
-      |> push_navigate(to: ~p"/budgets/#{budget.id}/transactions")
+      |> push_navigate(to: ~p"/ledgers/#{ledger.id}/transactions")
     else
       selected_category_id =
         transaction.category_id ||
@@ -96,7 +96,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
       assign(socket,
         page_title: "Editar Transação",
-        budget: budget,
+        ledger: ledger,
         transaction: transaction,
         form_action: :edit,
         show_form_modal: true,
@@ -107,7 +107,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
             Finance.change_transaction(
               socket.assigns.current_scope,
               transaction,
-              budget
+              ledger
             )
           )
       )
@@ -119,7 +119,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     current_scope = socket.assigns.current_scope
 
     transaction =
-      Finance.get_transaction(current_scope, id, socket.assigns.budget)
+      Finance.get_transaction(current_scope, id, socket.assigns.ledger)
 
     case Finance.delete_transaction(current_scope, transaction) do
       {:ok, _deleted} ->
@@ -135,7 +135,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     {:noreply,
      socket
      |> assign(show_form_modal: false, transaction: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/transactions")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/transactions")}
   end
 
   @impl true
@@ -152,7 +152,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       Finance.change_transaction(
         socket.assigns.current_scope,
         socket.assigns.transaction,
-        socket.assigns.budget,
+        socket.assigns.ledger,
         params
       )
 
@@ -184,7 +184,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
      socket
      |> stream_insert(:transaction_collection, transaction)
      |> assign(show_form_modal: false, transaction: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/transactions")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/transactions")}
   end
 
   @impl true
@@ -197,7 +197,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   @impl true
   def handle_info(:transactions_updated, socket) do
     transactions =
-      Finance.list_transactions(socket.assigns.current_scope, socket.assigns.budget)
+      Finance.list_transactions(socket.assigns.current_scope, socket.assigns.ledger)
 
     {:noreply,
      socket
@@ -242,7 +242,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     case Finance.create_transaction(
            socket.assigns.current_scope,
            Map.put(transaction_params, "total_value", total_value),
-           socket.assigns.budget
+           socket.assigns.ledger
          ) do
       {:ok, _transaction} ->
         {:noreply, socket}

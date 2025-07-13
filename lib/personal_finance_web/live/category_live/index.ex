@@ -1,5 +1,5 @@
 defmodule PersonalFinanceWeb.CategoryLive.Index do
-  alias PersonalFinance.Finance.Budget
+  alias PersonalFinance.Finance.Ledger
   alias PersonalFinance.Finance.Category
   alias PersonalFinance.Finance
   use PersonalFinanceWeb, :live_view
@@ -8,48 +8,48 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   def mount(params, _session, socket) do
     current_scope = socket.assigns.current_scope
 
-    budget = Finance.get_budget(current_scope, params["id"])
+    ledger = Finance.get_ledger(current_scope, params["id"])
 
-    if budget == nil do
+    if ledger == nil do
       {:ok,
        socket
        |> put_flash(:error, "Orçamento não encontrado.")
-       |> push_navigate(to: ~p"/budgets")}
+       |> push_navigate(to: ~p"/ledgers")}
     else
-      Finance.subscribe_finance(:category, budget.id)
+      Finance.subscribe_finance(:category, ledger.id)
 
       socket =
         socket
-        |> assign(budget: budget)
-        |> stream(:category_collection, Finance.list_categories(current_scope, budget))
+        |> assign(ledger: ledger)
+        |> stream(:category_collection, Finance.list_categories(current_scope, ledger))
 
-      {:ok, socket |> apply_action(socket.assigns.live_action, params, budget)}
+      {:ok, socket |> apply_action(socket.assigns.live_action, params, ledger)}
     end
   end
 
   @impl true
   def handle_params(params, _url, socket) do
-    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.budget)
+    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.ledger)
 
     {:noreply, socket}
   end
 
-  defp apply_action(socket, :index, _params, budget) do
+  defp apply_action(socket, :index, _params, ledger) do
     assign(socket,
-      page_title: "Categorias - #{budget.name}",
-      budget: budget,
+      page_title: "Categorias - #{ledger.name}",
+      ledger: ledger,
       show_form_modal: false,
       show_delete_modal: false,
       category: nil
     )
   end
 
-  defp apply_action(socket, :new, _params, %Budget{} = budget) do
-    category = %Category{budget_id: budget.id}
+  defp apply_action(socket, :new, _params, %Ledger{} = ledger) do
+    category = %Category{ledger_id: ledger.id}
 
     assign(socket,
-      page_title: "Categorias - #{budget.name}",
-      budget: budget,
+      page_title: "Categorias - #{ledger.name}",
+      ledger: ledger,
       show_form_modal: true,
       show_delete_modal: false,
       category: category,
@@ -59,25 +59,25 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
           Finance.change_category(
             socket.assigns.current_scope,
             category,
-            budget
+            ledger
           )
         )
     )
   end
 
-  defp apply_action(socket, :edit, %{"category_id" => category_id}, %Budget{} = budget) do
-    category = Finance.get_category(socket.assigns.current_scope, category_id, budget)
+  defp apply_action(socket, :edit, %{"category_id" => category_id}, %Ledger{} = ledger) do
+    category = Finance.get_category(socket.assigns.current_scope, category_id, ledger)
 
     if category == nil do
       socket
       |> put_flash(:error, "Categoria não encontrada.")
-      |> push_navigate(to: ~p"/budgets/#{budget.id}/categories")
+      |> push_navigate(to: ~p"/ledgers/#{ledger.id}/categories")
     else
       assign(socket,
-        page_title: "Categorias - #{budget.name}",
+        page_title: "Categorias - #{ledger.name}",
         show_form_modal: true,
         show_delete_modal: false,
-        budget: budget,
+        ledger: ledger,
         category: category,
         form_action: :edit,
         form:
@@ -85,19 +85,19 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
             Finance.change_category(
               socket.assigns.current_scope,
               category,
-              budget
+              ledger
             )
           )
       )
     end
   end
 
-  defp apply_action(socket, :delete, %{"category_id" => category_id}, %Budget{} = budget) do
-    category = Finance.get_category(socket.assigns.current_scope, category_id, budget)
+  defp apply_action(socket, :delete, %{"category_id" => category_id}, %Ledger{} = ledger) do
+    category = Finance.get_category(socket.assigns.current_scope, category_id, ledger)
 
     assign(socket,
-      page_title: "Categorias - #{budget.name}",
-      budget: budget,
+      page_title: "Categorias - #{ledger.name}",
+      ledger: ledger,
       show_form_modal: false,
       show_delete_modal: true,
       category: category,
@@ -109,13 +109,13 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   def handle_event("delete", %{"id" => id}, socket) do
     current_scope = socket.assigns.current_scope
 
-    category = Finance.get_category(current_scope, id, socket.assigns.budget)
+    category = Finance.get_category(current_scope, id, socket.assigns.ledger)
 
     case Finance.delete_category(current_scope, category) do
       {:ok, _deleted} ->
         {:noreply,
          Phoenix.LiveView.push_patch(socket,
-           to: ~p"/budgets/#{socket.assigns.budget.id}/categories"
+           to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories"
          )}
 
       {:error, _changeset} ->
@@ -128,7 +128,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     {:noreply,
      socket
      |> assign(show_form_modal: false, category: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories")}
   end
 
   @impl true
@@ -136,7 +136,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     {:noreply,
      socket
      |> assign(show_delete_modal: false, category: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories")}
   end
 
   @impl true
@@ -150,7 +150,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
       Finance.change_category(
         socket.assigns.current_scope,
         socket.assigns.category,
-        socket.assigns.budget,
+        socket.assigns.ledger,
         category_params
       )
 
@@ -178,7 +178,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     case Finance.create_category(
            socket.assigns.current_scope,
            category_params,
-           socket.assigns.budget
+           socket.assigns.ledger
          ) do
       {:ok, _category} ->
         {:noreply, socket}
@@ -195,7 +195,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
      socket
      |> stream_insert(:category_collection, category)
      |> assign(show_form_modal: false, category: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/budgets/#{socket.assigns.budget.id}/categories")}
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories")}
   end
 
   @impl true

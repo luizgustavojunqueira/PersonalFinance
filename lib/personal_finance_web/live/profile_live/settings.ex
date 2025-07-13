@@ -5,27 +5,27 @@ defmodule PersonalFinanceWeb.ProfileLive.Settings do
 
   @impl true
   def mount(params, _session, socket) do
-    budget = Finance.get_budget(socket.assigns.current_scope, params["id"])
+    ledger = Finance.get_ledger(socket.assigns.current_scope, params["id"])
 
-    if budget == nil do
+    if ledger == nil do
       {:ok,
        socket
        |> put_flash(:error, "Orçamento não encontrado.")
-       |> push_navigate(to: ~p"/budgets")}
+       |> push_navigate(to: ~p"/ledgers")}
     else
-      Finance.subscribe_finance(:profile, budget.id)
+      Finance.subscribe_finance(:profile, ledger.id)
 
-      profile = Finance.get_profile(socket.assigns.current_scope, budget.id, params["profile_id"])
+      profile = Finance.get_profile(socket.assigns.current_scope, ledger.id, params["profile_id"])
 
       if profile == nil do
         {:ok,
          socket
          |> put_flash(:error, "Perfil não encontrado.")
-         |> push_navigate(to: ~p"/budgets/#{budget.id}/profiles")}
+         |> push_navigate(to: ~p"/ledgers/#{ledger.id}/profiles")}
       else
         {:ok,
          socket
-         |> assign(budget: budget, profile: profile)}
+         |> assign(ledger: ledger, profile: profile)}
       end
     end
   end
