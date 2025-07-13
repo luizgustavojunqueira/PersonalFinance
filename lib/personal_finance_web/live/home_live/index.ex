@@ -33,16 +33,60 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
           values: values,
           transactions: transactions,
           categories: categories,
+          profiles:
+            Enum.map(Finance.list_profiles(current_scope, ledger), fn profile ->
+              {profile.name, profile.id}
+            end),
+          balance: ledger.balance,
           month_balance:
             Finance.get_month_balance(
               current_scope,
               ledger.id,
-              Date.utc_today()
-            )
+              Date.utc_today(),
+              nil
+            ),
+          form: to_form(%{"profile_id" => nil})
         )
 
       {:ok, socket}
     end
+  end
+
+  @impl true
+  def handle_event("select_profile", %{"profile_id" => profile_id_str}, socket) do
+    current_scope = socket.assigns.current_scope
+    ledger = socket.assigns.ledger
+
+    profile_id = if profile_id_str == "", do: nil, else: String.to_integer(profile_id_str)
+
+    new_balance =
+      if is_nil(profile_id) do
+        ledger.balance
+      else
+        Finance.get_balance(current_scope, ledger.id, profile_id)
+      end
+
+    new_month_balance =
+      Finance.get_month_balance(
+        current_scope,
+        ledger.id,
+        Date.utc_today(),
+        profile_id
+      )
+
+    transactions = Finance.list_transactions(current_scope, ledger, profile_id)
+
+    {labels, values} = calculate_chart_data(socket.assigns.categories, transactions)
+
+    {:noreply,
+     assign(socket,
+       month_balance: new_month_balance,
+       balance: new_balance,
+       transactions: transactions,
+       labels: labels,
+       values: values,
+       form: to_form(%{"profile_id" => profile_id_str})
+     )}
   end
 
   @impl true

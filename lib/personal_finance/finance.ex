@@ -163,11 +163,21 @@ defmodule PersonalFinance.Finance do
   @doc """
   Retorna a lista de transações para um orçamento
   """
-  def list_transactions(%Scope{} = scope, ledger) do
-    from(t in Transaction,
-      order_by: [desc: t.date],
-      where: t.ledger_id == ^ledger.id
-    )
+  def list_transactions(%Scope{} = scope, ledger, profile_id \\ nil) do
+    query =
+      from(t in Transaction,
+        order_by: [desc: t.date],
+        where: t.ledger_id == ^ledger.id
+      )
+
+    query =
+      if profile_id do
+        from(t in query, where: t.profile_id == ^profile_id)
+      else
+        query
+      end
+
+    query
     |> Ecto.Query.preload([:category, :investment_type, :profile])
     |> Repo.all()
   end
@@ -1006,18 +1016,27 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Get balance for a month in a ledger.
+  Get balance for a month in a ledger for a specific profile.
   """
-  def get_month_balance(%Scope{} = scope, ledger_id, date) do
-    date = Date.beginning_of_month(date)
+  def get_month_balance(%Scope{} = scope, ledger_id, date, profile_id \\ nil) do
+    month_start = Date.beginning_of_month(date)
+    month_end = Date.end_of_month(date)
+
+    base_query =
+      from(t in Transaction,
+        where: t.ledger_id == ^ledger_id and t.date >= ^month_start and t.date <= ^month_end
+      )
+
+    query_with_profile =
+      if profile_id do
+        from(t in base_query, where: t.profile_id == ^profile_id)
+      else
+        base_query
+      end
 
     total_incomes =
-      from(t in Transaction,
-        where:
-          t.ledger_id == ^ledger_id and
-            t.type == :income and
-            t.date >= ^date and
-            t.date < ^Date.add(date, 30),
+      from(t in query_with_profile,
+        where: t.type == :income,
         select: sum(t.total_value)
       )
       |> Repo.one()
@@ -1027,12 +1046,8 @@ defmodule PersonalFinance.Finance do
       end
 
     total_expenses =
-      from(t in Transaction,
-        where:
-          t.ledger_id == ^ledger_id and
-            t.type == :expense and
-            t.date >= ^date and
-            t.date < ^Date.add(date, 30),
+      from(t in query_with_profile,
+        where: t.type == :expense,
         select: sum(t.total_value)
       )
       |> Repo.one()
@@ -1046,6 +1061,47 @@ defmodule PersonalFinance.Finance do
       total_expenses: total_expenses,
       balance: total_incomes - total_expenses
     }
+  end
+
+  @doc """
+  Get the balance for a ledger for a specific profile.
+  """
+  def get_balance(%Scope{} = scope, ledger_id, profile_id \\ nil) do
+    base_query =
+      from(t in Transaction,
+        where: t.ledger_id == ^ledger_id
+      )
+
+    query_with_profile =
+      if profile_id do
+        from(t in base_query, where: t.profile_id == ^profile_id)
+      else
+        base_query
+      end
+
+    total_incomes =
+      from(t in query_with_profile,
+        where: t.type == :income,
+        select: sum(t.total_value)
+      )
+      |> Repo.one()
+      |> case do
+        nil -> 0.0
+        value -> value
+      end
+
+    total_expenses =
+      from(t in query_with_profile,
+        where: t.type == :expense,
+        select: sum(t.total_value)
+      )
+      |> Repo.one()
+      |> case do
+        nil -> 0.0
+        value -> value
+      end
+
+    total_incomes - total_expenses
   end
 
   @doc """
