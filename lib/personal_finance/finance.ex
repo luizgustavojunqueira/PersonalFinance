@@ -799,6 +799,7 @@ defmodule PersonalFinance.Finance do
           date_expected: date,
           category: entry.category,
           profile: entry.profile,
+          type: entry.type,
           recurring_entry: entry
         }
       end)
@@ -943,7 +944,8 @@ defmodule PersonalFinance.Finance do
         "category_id" => recurring_entry.category_id,
         "profile_id" => recurring_entry.profile_id,
         "budget_id" => budget.id,
-        "recurring_entry_id" => recurring_entry.id
+        "recurring_entry_id" => recurring_entry.id,
+        "type" => recurring_entry.type
       }
 
       create_transaction(scope, transaction_attrs, budget)

@@ -9,6 +9,7 @@ defmodule PersonalFinance.Finance.Transaction do
     field :amount, :float
     field :description, :string
     field :date, :date
+    field :type, Ecto.Enum, values: [:income, :expense], default: :expense
     belongs_to :category, Category
     belongs_to :investment_type, InvestmentType
     belongs_to :profile, Profile
@@ -31,8 +32,10 @@ defmodule PersonalFinance.Finance.Transaction do
       :investment_type_id,
       :category_id,
       :profile_id,
-      :recurring_entry_id
+      :recurring_entry_id,
+      :type
     ])
+    |> validate_inclusion(:type, [:income, :expense], message: "Tipo de transação inválido")
     |> validate_required([:value], message: "O valor da transação é obrigatório")
     |> validate_required([:amount], message: "A quantidade é obrigatória")
     |> validate_required([:description], message: "A descrição é obrigatória")

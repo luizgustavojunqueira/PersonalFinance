@@ -30,13 +30,23 @@
           placeholder="Ex: Monster"
         />
 
-        <.input
-          field={@form[:profile_id]}
-          id="input-profile"
-          type="select"
-          options={@profiles}
-          label="Perfil"
-        />
+        <div class="flex flex-row gap-2 ">
+          <.input
+            field={@form[:profile_id]}
+            id="input-profile"
+            type="select"
+            options={@profiles}
+            label="Perfil"
+          />
+
+          <.input
+            field={@form[:type]}
+            id="input-type"
+            type="select"
+            label="Tipo"
+            options={[{"Receita", :income}, {"Despesa", :expense}]}
+          />
+        </div>
 
         <div class="flex flex-row gap-2 transition-all ">
           <.input
@@ -132,10 +142,13 @@
         <:col :let={{_id, transaction}} label="Perfil">
           {transaction.profile && transaction.profile.name}
         </:col>
+        <:col :let={{_id, transaction}} label="Tipo">
+          {if transaction.type == :income, do: "Receita", else: "Despesa"}
+        </:col>
         <:col :let={{_id, transaction}} label="Categoria">
           {transaction.category && transaction.category.name}
         </:col>
-        <:col :let={{_id, transaction}} label="Tipo">
+        <:col :let={{_id, transaction}} label="Tipo de Investimento">
           {transaction.investment_type && transaction.investment_type.name}
         </:col>
         <:col :let={{_id, transaction}} label="Quantidade">

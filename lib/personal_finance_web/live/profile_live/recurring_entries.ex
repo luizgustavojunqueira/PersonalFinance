@@ -65,7 +65,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
           end}
         </:col>
 
-        <:col :let={{_id, entry}} label="Descrição">{entry.category.name}</:col>
+        <:col :let={{_id, entry}} label="Categoria">{entry.category.name}</:col>
         <:col :let={{_id, entry}} label="Data de Início">
           {DateUtils.format_date(entry.start_date)}
         </:col>

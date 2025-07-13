@@ -116,6 +116,9 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
               <:col :let={transaction} label="Perfil">
                 {transaction.profile.name}
               </:col>
+              <:col :let={transaction} label="Tipo">
+                {if transaction.type == :expense, do: "Despesa", else: "Receita"}
+              </:col>
               <:col :let={transaction} label="Valor">
                 {CurrencyUtils.format_money(transaction.value)}
               </:col>
@@ -129,7 +132,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
                   phx-value-id={transaction.recurring_entry.id}
                   phx-target={@myself}
                 >
-                  Confirmar
+                  <.icon name="hero-check" class="inline-block mr-1" />
                 </.link>
               </:col>
             </.table>
