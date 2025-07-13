@@ -198,6 +198,21 @@ defmodule PersonalFinance.Finance do
           new_transaction
           |> Repo.preload([:category, :investment_type, :profile])
 
+        Ledger
+        |> Repo.get!(ledger.id)
+        |> Ledger.changeset(
+          %{
+            balance:
+              ledger.balance +
+                if(new_transaction.type == :income,
+                  do: new_transaction.total_value,
+                  else: -new_transaction.total_value
+                )
+          },
+          ledger.owner_id
+        )
+        |> Repo.update!()
+
         broadcast(:transaction, ledger.id, {:saved, new_transaction})
         {:ok, new_transaction}
 
@@ -221,6 +236,27 @@ defmodule PersonalFinance.Finance do
           |> Repo.get!(updated_transaction.id)
           |> Repo.preload([:category, :investment_type, :profile])
 
+        previous_total_value = transaction.total_value
+
+        Ledger
+        |> Repo.get!(updated_transaction.ledger_id)
+        |> Ledger.changeset(
+          %{
+            balance:
+              updated_transaction.ledger.balance +
+                if(transaction.type == :income,
+                  do: -previous_total_value,
+                  else: previous_total_value
+                ) +
+                if(updated_transaction.type == :income,
+                  do: updated_transaction.total_value,
+                  else: -updated_transaction.total_value
+                )
+          },
+          updated_transaction.ledger.owner_id
+        )
+        |> Repo.update!()
+
         broadcast(:transaction, updated_transaction.ledger_id, {:saved, fully_loaded_transaction})
 
         {:ok, fully_loaded_transaction}
@@ -235,6 +271,21 @@ defmodule PersonalFinance.Finance do
   """
   def delete_transaction(%Scope{} = scope, %Transaction{} = transaction) do
     with {:ok, deleted_transaction} <- Repo.delete(transaction) do
+      Ledger
+      |> Repo.get!(deleted_transaction.ledger_id)
+      |> Ledger.changeset(
+        %{
+          balance:
+            deleted_transaction.ledger.balance +
+              if(deleted_transaction.type == :income,
+                do: -deleted_transaction.total_value,
+                else: deleted_transaction.total_value
+              )
+        },
+        deleted_transaction.ledger.owner_id
+      )
+      |> Repo.update!()
+
       broadcast(:transaction, transaction.ledger_id, {:deleted, deleted_transaction})
       {:ok, deleted_transaction}
     else
@@ -952,6 +1003,49 @@ defmodule PersonalFinance.Finance do
     else
       {:error, "Ledger not found."}
     end
+  end
+
+  @doc """
+  Get balance for a month in a ledger.
+  """
+  def get_month_balance(%Scope{} = scope, ledger_id, date) do
+    date = Date.beginning_of_month(date)
+
+    total_incomes =
+      from(t in Transaction,
+        where:
+          t.ledger_id == ^ledger_id and
+            t.type == :income and
+            t.date >= ^date and
+            t.date < ^Date.add(date, 30),
+        select: sum(t.total_value)
+      )
+      |> Repo.one()
+      |> case do
+        nil -> 0.0
+        value -> value
+      end
+
+    total_expenses =
+      from(t in Transaction,
+        where:
+          t.ledger_id == ^ledger_id and
+            t.type == :expense and
+            t.date >= ^date and
+            t.date < ^Date.add(date, 30),
+        select: sum(t.total_value)
+      )
+      |> Repo.one()
+      |> case do
+        nil -> 0.0
+        value -> value
+      end
+
+    %{
+      total_incomes: total_incomes,
+      total_expenses: total_expenses,
+      balance: total_incomes - total_expenses
+    }
   end
 
   @doc """

@@ -1,5 +1,6 @@
 defmodule PersonalFinanceWeb.HomeLive.Index do
   alias PersonalFinance.Finance
+  alias PersonalFinance.CurrencyUtils
   use PersonalFinanceWeb, :live_view
 
   @impl true
@@ -31,7 +32,13 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
           labels: labels,
           values: values,
           transactions: transactions,
-          categories: categories
+          categories: categories,
+          month_balance:
+            Finance.get_month_balance(
+              current_scope,
+              ledger.id,
+              Date.utc_today()
+            )
         )
 
       {:ok, socket}

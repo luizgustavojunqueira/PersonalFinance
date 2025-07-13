@@ -41,5 +41,9 @@ defmodule PersonalFinance.Repo.Migrations.RenameBudgetLedger do
     alter table(:ledger_invites) do
       modify :ledger_id, references(:ledgers, on_delete: :delete_all), null: false
     end
+
+    alter table(:ledgers) do
+      add :balance, :float, default: 0.0, null: false
+    end
   end
 end
