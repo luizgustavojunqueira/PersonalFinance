@@ -12,7 +12,8 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
 - [x] Develop profiles settings for managing income and fixed expenses.
 - [x] Configure recurring transactions on profile settings.
 - [x] Implement recurring transactions from profile settings.
-- [ ] Implement net worth calculation.
+- [x] Implement balances calculation.
+- [ ] Live update balances on dashboard
 - [ ] Design and implement a dashboard with financial charts and summaries.
 - [ ] Add advanced search, filter, sort, and pagination features for transactions.
 - [ ] Add comprehensive test suite (unit, integration, LiveView tests).
