@@ -442,7 +442,7 @@ defmodule PersonalFinance.Finance do
   """
   def create_default_profiles(%Scope{} = scope, %Ledger{} = ledger) do
     default_profile_attrs = %{
-      "name" => "Eu",
+      "name" => scope.user.name,
       "description" => "Perfil principal do usuário",
       "is_default" => true,
       "ledger_id" => ledger.id

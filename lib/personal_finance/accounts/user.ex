@@ -28,6 +28,8 @@ defmodule PersonalFinance.Accounts.User do
     user
     |> cast(attrs, [:email, :name])
     |> validate_email(opts)
+    |> validate_required([:name])
+    |> validate_length(:name, min: 1, max: 160)
   end
 
   defp validate_email(changeset, opts) do
