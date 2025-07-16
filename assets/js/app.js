@@ -94,7 +94,7 @@ Hooks.Chart = {
             metaSeries.label.formatter = function (params) {
                 return params.name === "Sem Categoria"
                     ? ""
-                    : "Meta: R$" + params.value;
+                    : "R$" + params.value;
             };
         }
 
