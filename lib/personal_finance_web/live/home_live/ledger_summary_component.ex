@@ -4,14 +4,13 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   alias PersonalFinance.DateUtils
   alias PersonalFinance.CurrencyUtils
   alias PersonalFinance.Balance
-  alias PersonalFinance.Accounts.Scope
 
   @impl true
   def render(assigns) do
     ~H"""
     <div class="flex flex-row gap-4 px-4">
       <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 max-h-[calc(100vh-8rem)] overflow-y-auto">
-        <div class="bg-light-green/50 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 ">
+        <div class="bg-light-green/50 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 dark:text-white ">
           <div class="flex flex-col">
             Saldo Atual
             <span class="text-3xl font-bold text-black">
@@ -22,15 +21,18 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="flex flex-col">
             Saldo Mensal
             <div class="flex flex-col gap-1">
-              <span class="text-xl font-bold text-green-600">
+              <span class="text-xl font-bold text-green-600 dark:text-green-400">
                 + {@month_balance.total_incomes |> CurrencyUtils.format_money()}
               </span>
-              <span class="text-xl font-bold text-red-600">
+              <span class="text-xl font-bold text-red-600 dark:text-red-400">
                 - {@month_balance.total_expenses |> CurrencyUtils.format_money()}
               </span>
               <span class={[
-                "text-3xl font-bold text-dark-green",
-                if(@month_balance.balance < 0, do: " text-red-700", else: " text-green-700")
+                "text-3xl font-bold",
+                if(@month_balance.balance < 0,
+                  do: " text-red-700 hover:text-red-900",
+                  else: " text-green-700 hover:text-green-900"
+                )
               ]}>
                 {@month_balance.balance |> CurrencyUtils.format_money()}
               </span>
@@ -38,12 +40,12 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           </div>
         </div>
 
-        <div class="bg-medium-green/40 text-xl font-bold rounded-lg flex flex-col items-left text-dark-green gap-2 h-fit ">
+        <div class="bg-medium-green/40 text-xl font-bold rounded-lg flex flex-col items-left text-dark-green gap-2 h-fit dark:text-white ">
           <div class="flex flex-col p-4">
             Transações Recentes
             <span class="text-sm text-gray-600">
               <.link
-                class="text-blue-600 hover:text-blue-800"
+                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600"
                 navigate={~p"/ledgers/#{@ledger.id}/transactions"}
               >
                 Ver todas
@@ -54,21 +56,23 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="flex flex-col">
             <div
               :for={{id, transaction} <- @streams.recent_transactions}
-              class="flex flex-row justify-between items-center bg-light-green/40 p-4 gap-2"
+              class="flex flex-row justify-between items-center bg-light-green/40 p-4 gap-2 hover:bg-light-green/80 transition-colors   text-dark-green dark:text-white "
               id={id}
             >
               <div class="flex flex-row gap-4 items-center">
-                <.icon name="hero-banknotes" class="text-2xl text-dark-green" />
+                <.icon name="hero-banknotes" class="text-2xl" />
                 <div class="flex flex-col ">
                   <span class="text-lg font-semibold">{transaction.description}</span>
-                  <span class="text-sm font-semibold">{transaction.profile.name}</span>
+                  <span class="text-sm font-semibold text-dark-green/70 dark:text-white/70">
+                    {transaction.profile.name}
+                  </span>
                 </div>
               </div>
               <div class="flex flex-col ">
-                <span class="text-lg font-bold text-dark-green">
+                <span class="text-lg font-bold ">
                   {CurrencyUtils.format_money(transaction.total_value)}
                 </span>
-                <span class="text-sm text-gray-600">
+                <span class="text-sm text-dark-green/70 dark:text-white/70">
                   {DateUtils.format_date(transaction.date)}
                 </span>
               </div>
@@ -148,7 +152,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
          |> format_categories(transactions)
          |> get_chart_data(String.to_existing_atom(chart_type)),
        form_chart: to_form(%{"chart_type" => chart_type})
-     )}
+     )
+     |> stream(:recent_transactions, socket.assigns.transactions |> Enum.take(5))}
   end
 
   defp assign_balance(socket) do
