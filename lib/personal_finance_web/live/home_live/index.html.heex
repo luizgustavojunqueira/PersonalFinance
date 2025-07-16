@@ -18,7 +18,7 @@
         <div class="flex flex-col">
           Saldo Atual
           <span class="text-3xl font-bold text-dark-green">
-            {@balance |> CurrencyUtils.format_money()}
+            {@balance.balance |> CurrencyUtils.format_money()}
           </span>
         </div>
 
@@ -41,15 +41,31 @@
         </div>
       </div>
 
-      <div
-        id="gauge"
-        phx-hook="Chart"
-        class="min-w-100 bg-light-green text-xl font-bold rounded-lg p-4 flex flex-col items-left  text-white gap-4 max-h-150"
-      >
-        Análise Mensal <div id="gauge-chart" class="min-w-100 min-h-120" phx-update="ignore" />
-        <div id="gauge-data" hidden>{Jason.encode!(@chart_option)}</div>
-      </div>
+      <div class="min-w-100 bg-light-green text-xl font-bold rounded-lg p-4 flex flex-col items-left text-white gap-4 ">
+        Análise Mensal
+        <.form id="chart_select_form" for={@form_chart} phx-change="select_chart_type">
+          <.input
+            type="select"
+            field={@form[:chart_type]}
+            label="Tipo de Gráfico"
+            options={[{"Barras", :bars}, {"Pizza", :pie}]}
+          />
+        </.form>
 
+        <%= if @chart_type == :pie do %>
+          <div id="pie" phx-hook="Chart">
+            <div id="pie-chart" class="min-w-100 min-h-120" phx-update="ignore" />
+            <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
+          </div>
+        <% else %>
+          <%= if @chart_type == :bars do %>
+            <div id="bar" phx-hook="Chart">
+              <div id="bar-chart" class="min-w-150 min-h-120" phx-update="ignore" />
+              <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
+            </div>
+          <% end %>
+        <% end %>
+      </div>
       <%!-- <div class="w-full flex flex-row"> --%>
       <%!--   <div class="w-full text-dark-green flex flex-col items-center justify-center"> --%>
       <%!--     <h2 class="text-2xl font-bold mb-4">Gráfico de Despesas</h2> --%>

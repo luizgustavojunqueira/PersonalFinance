@@ -62,20 +62,42 @@ Hooks.ToggleSidebar = {
 
 Hooks.Chart = {
     mounted() {
-        console.log("Chart mounted", this.el);
         selector = "#" + this.el.id;
         this.chart = echarts.init(this.el.querySelector(selector + "-chart"));
         option = JSON.parse(
             this.el.querySelector(selector + "-data").textContent,
         );
-        this.chart.setOption(option);
+        this._updateChartOptions();
     },
+
     updated() {
-        console.log("Chart updated", this.el);
+        this._updateChartOptions();
+    },
+
+    _updateChartOptions() {
         selector = "#" + this.el.id;
         option = JSON.parse(
             this.el.querySelector(selector + "-data").textContent,
         );
+
+        const restanteSeries = option.series.find((s) => s.name === "Restante");
+        if (restanteSeries && restanteSeries.label) {
+            restanteSeries.label.formatter = function (params) {
+                return params.name === "Sem Categoria"
+                    ? ""
+                    : "R$" + params.value;
+            };
+        }
+
+        const metaSeries = option.series.find((s) => s.name === "Meta");
+        if (metaSeries && metaSeries.label) {
+            metaSeries.label.formatter = function (params) {
+                return params.name === "Sem Categoria"
+                    ? ""
+                    : "Meta: R$" + params.value;
+            };
+        }
+
         this.chart.setOption(option);
     },
 };
