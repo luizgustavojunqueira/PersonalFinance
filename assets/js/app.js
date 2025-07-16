@@ -22,7 +22,7 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
-import Chart from "chart.js/auto";
+import * as echarts from "echarts";
 import topbar from "../vendor/topbar";
 
 let Hooks = {};
@@ -60,26 +60,23 @@ Hooks.ToggleSidebar = {
     },
 };
 
-Hooks.ChartJS = {
-    dataset() {
-        return;
-    },
+Hooks.Chart = {
     mounted() {
-        const ctx = this.el;
-        const data = {
-            type: "pie",
-            data: {
-                labels: JSON.parse(this.el.dataset.labels),
-                datasets: [{ data: JSON.parse(this.el.dataset.values) }],
-            },
-            options: { responsive: true, spacing: 2, offset: 2 },
-        };
-        this.chart = new Chart(ctx, data);
+        console.log("Chart mounted", this.el);
+        selector = "#" + this.el.id;
+        this.chart = echarts.init(this.el.querySelector(selector + "-chart"));
+        option = JSON.parse(
+            this.el.querySelector(selector + "-data").textContent,
+        );
+        this.chart.setOption(option);
     },
     updated() {
-        this.chart.data.labels = JSON.parse(this.el.dataset.labels);
-        this.chart.data.datasets[0].data = JSON.parse(this.el.dataset.values);
-        this.chart.update();
+        console.log("Chart updated", this.el);
+        selector = "#" + this.el.id;
+        option = JSON.parse(
+            this.el.querySelector(selector + "-data").textContent,
+        );
+        this.chart.setOption(option);
     },
 };
 

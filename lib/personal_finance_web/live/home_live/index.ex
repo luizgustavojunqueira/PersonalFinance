@@ -20,8 +20,6 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
       transactions = Finance.list_transactions(current_scope, ledger)
       categories = Finance.list_categories(current_scope, ledger)
 
-      {labels, values} = calculate_chart_data(categories, transactions)
-
       socket =
         socket
         |> assign(
@@ -29,15 +27,13 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
           ledger: ledger,
           page_title: "Home #{ledger.name}",
           show_welcome_message: true,
-          labels: labels,
-          values: values,
           transactions: transactions,
           categories: categories,
           profiles:
             Enum.map(Finance.list_profiles(current_scope, ledger), fn profile ->
               {profile.name, profile.id}
             end),
-          balance: ledger.balance,
+          balance: Finance.get_balance(current_scope, ledger.id, nil),
           month_balance:
             Finance.get_month_balance(
               current_scope,
@@ -45,7 +41,8 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
               Date.utc_today(),
               nil
             ),
-          form: to_form(%{"profile_id" => nil})
+          form: to_form(%{"profile_id" => nil}),
+          chart_option: get_chart_data(categories, transactions)
         )
 
       {:ok, socket}
@@ -60,11 +57,7 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
     profile_id = if profile_id_str == "", do: nil, else: String.to_integer(profile_id_str)
 
     new_balance =
-      if is_nil(profile_id) do
-        ledger.balance
-      else
-        Finance.get_balance(current_scope, ledger.id, profile_id)
-      end
+      Finance.get_balance(current_scope, ledger.id, profile_id)
 
     new_month_balance =
       Finance.get_month_balance(
@@ -76,15 +69,12 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
 
     transactions = Finance.list_transactions(current_scope, ledger, profile_id)
 
-    {labels, values} = calculate_chart_data(socket.assigns.categories, transactions)
-
     {:noreply,
      assign(socket,
        month_balance: new_month_balance,
        balance: new_balance,
        transactions: transactions,
-       labels: labels,
-       values: values,
+       chart_option: get_chart_data(socket.assigns.categories, transactions),
        form: to_form(%{"profile_id" => profile_id_str})
      )}
   end
@@ -108,10 +98,24 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
         [new_transaction | updated_transactions]
       end
 
-    # Recalcula os dados do gráfico
-    {labels, values} = calculate_chart_data(socket.assigns.categories, final_transactions)
-
-    {:noreply, assign(socket, transactions: final_transactions, labels: labels, values: values)}
+    {:noreply,
+     assign(socket,
+       transactions: final_transactions,
+       balance:
+         Finance.get_balance(
+           socket.assigns.current_scope,
+           socket.assigns.ledger.id,
+           nil
+         ),
+       month_balance:
+         Finance.get_month_balance(
+           socket.assigns.current_scope,
+           socket.assigns.ledger.id,
+           Date.utc_today(),
+           nil
+         ),
+       chart_option: get_chart_data(socket.assigns.categories, final_transactions)
+     )}
   end
 
   @impl true
@@ -123,10 +127,24 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
     updated_transactions =
       Enum.reject(socket.assigns.transactions, fn t -> t.id == deleted_transaction.id end)
 
-    # Recalcula os dados do gráfico
-    {labels, values} = calculate_chart_data(socket.assigns.categories, updated_transactions)
-
-    {:noreply, assign(socket, transactions: updated_transactions, labels: labels, values: values)}
+    {:noreply,
+     assign(socket,
+       transactions: updated_transactions,
+       balance:
+         Finance.get_balance(
+           socket.assigns.current_scope,
+           socket.assigns.ledger.id,
+           nil
+         ),
+       month_balance:
+         Finance.get_month_balance(
+           socket.assigns.current_scope,
+           socket.assigns.ledger.id,
+           Date.utc_today(),
+           nil
+         ),
+       chart_option: get_chart_data(socket.assigns.categories, updated_transactions)
+     )}
   end
 
   @impl true
@@ -143,9 +161,11 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
         [new_category | updated_categories]
       end
 
-    {labels, values} = calculate_chart_data(final_categories, socket.assigns.transactions)
-
-    {:noreply, assign(socket, categories: final_categories, labels: labels, values: values)}
+    {:noreply,
+     assign(socket,
+       categories: final_categories,
+       chart_option: get_chart_data(final_categories, socket.assigns.transactions)
+     )}
   end
 
   @impl true
@@ -154,10 +174,11 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
     updated_categories =
       Enum.reject(socket.assigns.categories, fn c -> c.id == deleted_category.id end)
 
-    # Recalcula os dados do gráfico
-    {labels, values} = calculate_chart_data(updated_categories, socket.assigns.transactions)
-
-    {:noreply, assign(socket, categories: updated_categories, labels: labels, values: values)}
+    {:noreply,
+     assign(socket,
+       categories: updated_categories,
+       chart_option: get_chart_data(updated_categories, socket.assigns.transactions)
+     )}
   end
 
   @impl true
@@ -167,22 +188,72 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
 
     updated_transactions = PersonalFinance.Finance.list_transactions(current_scope, ledger)
 
-    {labels, values} = calculate_chart_data(socket.assigns.categories, updated_transactions)
-
-    {:noreply, assign(socket, transactions: updated_transactions, labels: labels, values: values)}
+    {:noreply,
+     assign(socket,
+       transactions: updated_transactions,
+       balance:
+         Finance.get_balance(
+           socket.assigns.current_scope,
+           socket.assigns.ledger.id,
+           nil
+         ),
+       month_balance:
+         Finance.get_month_balance(
+           socket.assigns.current_scope,
+           socket.assigns.ledger.id,
+           Date.utc_today(),
+           nil
+         ),
+       chart_option: get_chart_data(socket.assigns.categories, updated_transactions)
+     )}
   end
 
-  defp calculate_chart_data(categories, transactions) do
-    labels =
+  defp get_chart_data(categories, transactions) do
+    data =
       Enum.map(categories, fn category ->
-        category.name
-      end)
+        total =
+          Enum.reduce(transactions, 0, fn t, acc ->
+            if t.category_id == category.id, do: acc + t.total_value, else: acc
+          end)
 
-    values =
-      Enum.map(categories, fn category ->
-        Finance.get_total_value_by_category(category.id, transactions)
+        %{name: category.name, value: total}
       end)
+      |> Enum.filter(fn %{value: v} -> v > 0 end)
 
-    {labels, values}
+    option = %{
+      tooltip: %{
+        trigger: "item"
+      },
+      legend: %{
+        top: "0",
+        left: "left"
+      },
+      series: [
+        %{
+          name: "Categoria",
+          type: "pie",
+          radius: ["40%", "80%"],
+          itemStyle: %{
+            borderRadius: 10,
+            borderColor: "#fff",
+            borderWidth: 1
+          },
+          label: %{
+            show: false
+          },
+          emphasis: %{
+            label: %{
+              show: false
+            }
+          },
+          labelLine: %{
+            show: false
+          },
+          data: data
+        }
+      ]
+    }
+
+    option
   end
 end
