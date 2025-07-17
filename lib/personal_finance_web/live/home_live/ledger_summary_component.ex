@@ -224,8 +224,6 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   end
 
   defp assign_messages(socket) do
-    messages = []
-
     formatted_categories =
       socket.assigns.categories
       |> format_categories(
