@@ -1,9 +1,7 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
-  <div class="w-full m-0">
-    <.header class="flex flex-row justify-between mb-5 items-center">
-      {@ledger.name} - Configurações
-    </.header>
-  </div>
+  <.header>
+    {@ledger.name} - Configurações
+  </.header>
 
   <div class="grid grid-cols-[1fr_3fr] gap-6 ">
     <.live_component

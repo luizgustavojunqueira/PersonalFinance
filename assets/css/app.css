@@ -104,3 +104,28 @@ justify-content: center;
 #toggle-sidebar {
 justify-content: flex-end;
 }
+
+::-webkit-scrollbar {
+  width: 6px; /* Largura da scrollbar vertical */
+  height: 6px; /* Altura da scrollbar horizontal */
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 6px; /* Borda arredondada para a pista */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #22c55e; /* Cor do "polegar" (o elemento arrastável) - um verde vibrante */
+  border-radius: 6px; /* Borda arredondada para o polegar */
+  border: 1px solid #f0fdf4; /* Borda ao redor do polegar para dar espaço, usando a mesma cor da pista */
+}
+
+/* Opcional: Efeito hover no polegar */
+::-webkit-scrollbar-thumb:hover {
+  background: #16a34a; /* Um verde um pouco mais escuro no hover */
+}
+
+/* Opcional: Canto da scrollbar (onde as scrollbars vertical e horizontal se encontram) */
+::-webkit-scrollbar-corner {
+  background: #f0fdf4; /* Cor do canto */
+}

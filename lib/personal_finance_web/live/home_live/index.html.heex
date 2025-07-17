@@ -1,28 +1,26 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
-  <div class="w-full m-0">
-    <.header class="flex flex-row justify-between  items-center">
-      {@ledger.name} - Home
-      <:actions>
-        <.form id="profile_select_form" for={@form} phx-change="select_profile">
-          <.input
-            type="select"
-            field={@form[:profile_id]}
-            label="Perfil"
-            options={[{"Total", ""} | @profiles]}
-          />
-        </.form>
-      </:actions>
-    </.header>
+  <.header>
+    {@ledger.name} - Home
+    <:actions>
+      <.form id="profile_select_form" for={@form} phx-change="select_profile">
+        <.input
+          type="select"
+          field={@form[:profile_id]}
+          label="Perfil"
+          options={[{"Total", ""} | @profiles]}
+        />
+      </.form>
+    </:actions>
+  </.header>
 
-    <.live_component
-      id="ledger_summary_component"
-      module={PersonalFinanceWeb.HomeLive.LedgerSummaryComponent}
-      current_scope={@current_scope}
-      ledger={@ledger}
-      profiles={@profiles}
-      profile_id={@profile_id}
-      transactions={@transactions}
-      categories={@categories}
-    />
-  </div>
+  <.live_component
+    id="ledger_summary_component"
+    module={PersonalFinanceWeb.HomeLive.LedgerSummaryComponent}
+    current_scope={@current_scope}
+    ledger={@ledger}
+    profiles={@profiles}
+    profile_id={@profile_id}
+    transactions={@transactions}
+    categories={@categories}
+  />
 </Layouts.app>

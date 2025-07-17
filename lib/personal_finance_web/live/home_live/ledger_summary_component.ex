@@ -9,7 +9,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   def render(assigns) do
     ~H"""
     <div class="flex flex-row gap-4 px-4">
-      <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
+      <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 h-full overflow-y-auto">
         <div class="bg-light-green/50 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 dark:text-white ">
           <div class="flex flex-col">
             Saldo Atual

@@ -1,47 +1,45 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={nil}>
-  <div class="w-full m-0">
-    <.header class="flex flex-row justify-between mb-5 items-center">
-      {@current_scope.user.name} - Ledgers
-      <:actions>
-        <.button variant="primary" navigate={~p"/ledgers/new"}>
-          <.icon name="hero-plus" /> Adicionar Ledger
-        </.button>
-      </:actions>
-    </.header>
+  <.header>
+    {@current_scope.user.name} - Ledgers
+    <:actions>
+      <.button variant="primary" navigate={~p"/ledgers/new"}>
+        <.icon name="hero-plus" /> Adicionar Ledger
+      </.button>
+    </:actions>
+  </.header>
 
-    <%= if @show_form_modal do %>
-      <.form_modal
-        title="Ledger"
-        subtitle="Preencha os detalhes do ledger"
-        action={@form_action}
-        form={@form}
-        submit_label="Salvar"
-      >
-        <.input field={@form[:name]} type="text" label="Nome" />
-        <.input field={@form[:description]} type="text" label="Descrição" />
-        <.input field={@form[:balance]} type="text" label="Saldo inicial" />
-      </.form_modal>
-    <% end %>
+  <%= if @show_form_modal do %>
+    <.form_modal
+      title="Ledger"
+      subtitle="Preencha os detalhes do ledger"
+      action={@form_action}
+      form={@form}
+      submit_label="Salvar"
+    >
+      <.input field={@form[:name]} type="text" label="Nome" />
+      <.input field={@form[:description]} type="text" label="Descrição" />
+      <.input field={@form[:balance]} type="text" label="Saldo inicial" />
+    </.form_modal>
+  <% end %>
 
-    <%= if @show_delete_modal do %>
-      <.confirmation_modal
-        title="Excluir Orçamento"
-        message={"Tem certeza de que deseja excluir o orçamento \"#{@ledger.name}\"?"}
-        confirm_event="delete"
-        cancel_event="close_confirmation"
-        item_id={@ledger.id}
-      />
-    <% end %>
+  <%= if @show_delete_modal do %>
+    <.confirmation_modal
+      title="Excluir Orçamento"
+      message={"Tem certeza de que deseja excluir o orçamento \"#{@ledger.name}\"?"}
+      confirm_event="delete"
+      cancel_event="close_confirmation"
+      item_id={@ledger.id}
+    />
+  <% end %>
 
-    <div id="ledgers" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
-      <.live_component
-        :for={{id, ledger} <- @streams.ledger_collection}
-        module={PersonalFinanceWeb.LedgersLive.LedgerCardItem}
-        id={id}
-        ledger={ledger}
-        current_scope={@current_scope}
-        parent_pid={self()}
-      />
-    </div>
+  <div id="ledgers" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
+    <.live_component
+      :for={{id, ledger} <- @streams.ledger_collection}
+      module={PersonalFinanceWeb.LedgersLive.LedgerCardItem}
+      id={id}
+      ledger={ledger}
+      current_scope={@current_scope}
+      parent_pid={self()}
+    />
   </div>
 </Layouts.app>

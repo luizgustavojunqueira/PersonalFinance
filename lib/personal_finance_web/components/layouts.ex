@@ -13,16 +13,14 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <div class="flex flex-col h-screen">
+    <div class="flex flex-col max-h-screen min-h-screen max-w-screen">
       <.page_header current_scope={@current_scope} />
-      <main class="flex flex-row h-full w-full">
+      <main class="flex flex-row max-h-screen min-h-screen max-w-screen">
         <%= if @show_sidebar do %>
           <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
         <% end %>
-        <div class="h-full w-full px-4 py-2 ">
-          <div class="w-full m-0">
-            {render_slot(@inner_block)}
-          </div>
+        <div class=" w-full px-4 pb-4 overflow-y-auto">
+          {render_slot(@inner_block)}
         </div>
         <.flash_group flash={@flash} />
       </main>
@@ -106,7 +104,7 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div
       id="sidebar"
-      class="bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite overflow-hidden transition-all  collapsed"
+      class="bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite overflow-hidden transition-all collapsed "
     >
       <button
         id="toggle-sidebar"

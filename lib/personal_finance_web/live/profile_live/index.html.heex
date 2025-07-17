@@ -1,5 +1,5 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
-  <.header class="flex flex-row justify-between mb-5 items-center">
+  <.header>
     {@ledger.name} - Perfis
     <:actions>
       <.button navigate={~p"/ledgers/#{@ledger.id}/profiles/new"}>

@@ -1,64 +1,62 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
-  <div class="w-full m-0">
-    <.header class="flex flex-row justify-between mb-5 items-center">
-      {@ledger.name} - Categorias
-      <:actions>
-        <.button navigate={~p"/ledgers/#{@ledger.id}/categories/new"}>
-          <.icon name="hero-plus" /> Adicionar Categoria
-        </.button>
-      </:actions>
-    </.header>
+  <.header>
+    {@ledger.name} - Categorias
+    <:actions>
+      <.button navigate={~p"/ledgers/#{@ledger.id}/categories/new"}>
+        <.icon name="hero-plus" /> Adicionar Categoria
+      </.button>
+    </:actions>
+  </.header>
 
-    <%= if @show_form_modal do %>
-      <.form_modal
-        title="Categoria"
-        subtitle="Preencha os detalhes da categoria"
-        action={@form_action}
-        form={@form}
-        submit_label="Salvar"
-      >
-        <.input field={@form[:name]} type="text" label="Nome" />
-        <.input field={@form[:description]} type="text" label="Descrição" />
-        <.input field={@form[:percentage]} type="number" label="Porcentagem" />
-      </.form_modal>
-    <% end %>
+  <%= if @show_form_modal do %>
+    <.form_modal
+      title="Categoria"
+      subtitle="Preencha os detalhes da categoria"
+      action={@form_action}
+      form={@form}
+      submit_label="Salvar"
+    >
+      <.input field={@form[:name]} type="text" label="Nome" />
+      <.input field={@form[:description]} type="text" label="Descrição" />
+      <.input field={@form[:percentage]} type="number" label="Porcentagem" />
+    </.form_modal>
+  <% end %>
 
-    <%= if @show_delete_modal do %>
-      <.confirmation_modal
-        title="Excluir Categoria"
-        message={"Tem certeza de que deseja excluir a categoria \"#{@category.name}\"?"}
-        confirm_event="delete"
-        cancel_event="close_confirmation"
-        item_id={@category.id}
-      />
-    <% end %>
+  <%= if @show_delete_modal do %>
+    <.confirmation_modal
+      title="Excluir Categoria"
+      message={"Tem certeza de que deseja excluir a categoria \"#{@category.name}\"?"}
+      confirm_event="delete"
+      cancel_event="close_confirmation"
+      item_id={@category.id}
+    />
+  <% end %>
 
-    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
-      <h2 class="text-2xl font-semibold mb-4">Minhas Categorias</h2>
-      <.table id="categories_table" rows={@streams.category_collection}>
-        <:col :let={{_id, category}} label="Perfil">
-          {category.name}
-        </:col>
-        <:col :let={{_id, category}} label="Descrição">{category.description}</:col>
-        <:col :let={{_id, category}} label="Categoria">
-          {category.percentage}
-        </:col>
+  <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
+    <h2 class="text-2xl font-semibold mb-4">Minhas Categorias</h2>
+    <.table id="categories_table" rows={@streams.category_collection}>
+      <:col :let={{_id, category}} label="Perfil">
+        {category.name}
+      </:col>
+      <:col :let={{_id, category}} label="Descrição">{category.description}</:col>
+      <:col :let={{_id, category}} label="Categoria">
+        {category.percentage}
+      </:col>
 
-        <:action :let={{_id, category}}>
-          <%= if !category.is_default do %>
-            <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/edit"}>
-              <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
-            </.link>
-          <% end %>
-        </:action>
-        <:action :let={{_id, category}}>
-          <%= if !category.is_fixed do %>
-            <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/delete"}>
-              <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
-            </.link>
-          <% end %>
-        </:action>
-      </.table>
-    </div>
+      <:action :let={{_id, category}}>
+        <%= if !category.is_default do %>
+          <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/edit"}>
+            <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+          </.link>
+        <% end %>
+      </:action>
+      <:action :let={{_id, category}}>
+        <%= if !category.is_fixed do %>
+          <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/delete"}>
+            <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
+          </.link>
+        <% end %>
+      </:action>
+    </.table>
   </div>
 </Layouts.app>
