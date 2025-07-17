@@ -9,7 +9,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   def render(assigns) do
     ~H"""
     <div class="flex flex-row gap-4 px-4">
-      <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 max-h-[calc(100vh-8rem)] overflow-y-auto">
+      <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 max-h-[calc(100vh-6rem)] overflow-y-auto">
         <div class="bg-light-green/50 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 dark:text-white ">
           <div class="flex flex-col">
             Saldo Atual
@@ -81,35 +81,71 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
       </div>
 
-      <div class="min-w-150 bg-light-green/40 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green dark:text-white gap-4 h-fit ">
-        <div class="flex flex-row justify-between items-center">
-          Análise Mensal
-          <.form
-            id="chart_select_form"
-            for={@form_chart}
-            phx-change="select_chart_type"
-            phx-target={@myself}
-          >
-            <.input
-              type="select"
-              field={@form_chart[:chart_type]}
-              options={[{"Barras", :bars}, {"Pizza", :pie}]}
-            />
-          </.form>
+      <div class="min-w-150 grid grid-rows-[2fr_1fr] gap-4 overflow-y-auto">
+        <div class="bg-light-green/40 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green dark:text-white gap-4 h-fit ">
+          <div class="flex flex-row justify-between items-center">
+            Análise Mensal
+            <.form
+              id="chart_select_form"
+              for={@form_chart}
+              phx-change="select_chart_type"
+              phx-target={@myself}
+            >
+              <.input
+                type="select"
+                field={@form_chart[:chart_type]}
+                options={[{"Barras", :bars}, {"Pizza", :pie}]}
+              />
+            </.form>
+          </div>
+
+          <%= if @chart_type == :pie do %>
+            <div id="pie" phx-hook="Chart">
+              <div id="pie-chart" class="min-w-150 min-h-120" phx-update="ignore" />
+              <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
+            </div>
+          <% else %>
+            <%= if @chart_type == :bars do %>
+              <div id="bar" phx-hook="Chart">
+                <div id="bar-chart" class="min-w-150  min-h-120" phx-update="ignore" />
+                <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
+              </div>
+            <% end %>
+          <% end %>
         </div>
 
-        <%= if @chart_type == :pie do %>
-          <div id="pie" phx-hook="Chart">
-            <div id="pie-chart" class="min-w-150 min-h-120" phx-update="ignore" />
-            <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
-          </div>
-        <% else %>
-          <%= if @chart_type == :bars do %>
-            <div id="bar" phx-hook="Chart">
-              <div id="bar-chart" class="min-w-150 min-h-120" phx-update="ignore" />
-              <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
+        <%= if !Enum.empty?(@messages) do %>
+          <div class="bg-light-green/40 text-dark-green dark:text-white rounded-xl p-4 shadow-sm space-y-4 h-fit">
+            <div class="flex items-center justify-between">
+              <span class="text-xl font-semibold">Avisos</span>
             </div>
-          <% end %>
+
+            <div class="space-y-2">
+              <div
+                :for={message <- @messages}
+                class="flex items-center gap-3 bg-white/60 dark:bg-white/10 rounded-lg p-3 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
+              >
+                <.icon
+                  name={
+                    case message.type do
+                      :info -> "hero-information-circle"
+                      :warning -> "hero-exclamation-circle"
+                      :error -> "hero-x-circle"
+                    end
+                  }
+                  class={
+                  "w-5 h-5 " <>
+                    case message.type do
+                      :info -> "text-blue-500 dark:text-blue-400"
+                      :warning -> "text-yellow-500 dark:text-yellow-400"
+                      :error -> "text-red-500 dark:text-red-400"
+                    end
+                }
+                />
+                <span class="text-sm font-medium">{message.text}</span>
+              </div>
+            </div>
+          </div>
         <% end %>
       </div>
     </div>
@@ -136,6 +172,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
      |> assign(assigns)
      |> assign_balance()
      |> assign_chart_data()
+     |> assign_messages()
      |> stream(:recent_transactions, assigns.transactions |> Enum.take(5))}
   end
 
@@ -186,6 +223,83 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
     assign(socket, chart_option: chart_data)
   end
 
+  defp assign_messages(socket) do
+    messages = []
+
+    formatted_categories =
+      socket.assigns.categories
+      |> format_categories(
+        socket.assigns.transactions || [],
+        socket.assigns.monthly_incomes || 0
+      )
+
+    investment_category =
+      Enum.find(formatted_categories, fn category ->
+        category.name == "Investimento"
+      end)
+
+    investment_message =
+      if investment_category do
+        if investment_category.remaining > 0 do
+          %{
+            text:
+              "Você ainda tem R$ #{CurrencyUtils.format_amount(investment_category.remaining)} para investir este mês.",
+            type: :info
+          }
+        else
+          %{
+            text: "Você atingiu sua meta de investimento para este mês!",
+            type: :info
+          }
+        end
+      else
+        nil
+      end
+
+    messages = [investment_message]
+
+    categories_messages =
+      Enum.map(formatted_categories, fn category ->
+        if category.name != "Sem Categoria" do
+          percent_pass =
+            if category.goal > 0 do
+              Float.round(category.total / category.goal * 100, 2)
+            else
+              0.0
+            end
+
+          case percent_pass do
+            percent when percent > 100 ->
+              %{
+                text:
+                  "Você ultrapassou sua meta de #{category.name} em R$ #{CurrencyUtils.format_amount(abs(category.remaining))} (#{percent_pass}% da meta).",
+                type: if(percent > 115, do: :error, else: :warning)
+              }
+
+            percent when percent > 85 ->
+              %{
+                text:
+                  "Você está próximo de ultrapassar sua meta de #{category.name} (#{percent_pass}%). Faltam apenas R$ #{CurrencyUtils.format_amount(category.remaining)}.",
+                type: :warning
+              }
+
+            _ ->
+              nil
+          end
+        end
+      end)
+
+    messages =
+      messages
+      |> Enum.reject(&is_nil/1)
+      |> Enum.concat(categories_messages)
+      |> Enum.reject(&is_nil/1)
+
+    IO.inspect(messages)
+
+    assign(socket, messages: messages)
+  end
+
   defp format_categories(categories, transactions, monthly_income) do
     categories
     |> Enum.sort()
@@ -204,7 +318,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       remaining =
         if(category.name == "Sem Categoria",
           do: 0.0,
-          else: goal - total
+          else: Float.round(goal - total, 2)
         )
 
       %{
@@ -304,7 +418,10 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         %{
           type: "value",
           axisLabel: %{
-            formatter: "R$ {value}"
+            formatter: "R$ {value}",
+            color: "#000",
+            fontSize: 12,
+            width: 100
           },
           splitLine: %{
             lineStyle: %{
