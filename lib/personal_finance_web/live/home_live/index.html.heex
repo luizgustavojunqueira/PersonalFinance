@@ -1,6 +1,6 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <div class="w-full m-0">
-    <.header class="flex flex-row justify-between mb-5 items-center">
+    <.header class="flex flex-row justify-between  items-center">
       {@ledger.name} - Home
       <:actions>
         <.form id="profile_select_form" for={@form} phx-change="select_profile">

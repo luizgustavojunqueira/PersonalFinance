@@ -310,7 +310,11 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
   def header(assigns) do
     ~H"""
-    <header class={[@actions != [] && "m-2 flex items-center justify-between gap-6", "pb-4", @class]}>
+    <header class={[
+      @actions != [] && "m-2 mb-0 flex items-center justify-between gap-6",
+      "pb-4",
+      @class
+    ]}>
       <div>
         <h1 class="text-3xl font-bold leading-8 text-dark-green dark:text-offwhite">
           {render_slot(@inner_block)}

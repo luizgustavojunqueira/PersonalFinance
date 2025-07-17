@@ -30,8 +30,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
               <span class={[
                 "text-3xl font-bold",
                 if(@month_balance.balance < 0,
-                  do: " text-red-700 hover:text-red-900",
-                  else: " text-green-700 hover:text-green-900"
+                  do: " text-red-700",
+                  else: " text-green-700"
                 )
               ]}>
                 {@month_balance.balance |> CurrencyUtils.format_money()}
@@ -56,7 +56,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="flex flex-col">
             <div
               :for={{id, transaction} <- @streams.recent_transactions}
-              class="flex flex-row justify-between items-center bg-light-green/40 p-4 gap-2 hover:bg-light-green/80 transition-colors   text-dark-green dark:text-white "
+              class="flex flex-row justify-between items-center bg-light-green/40 p-4 gap-2 hover:bg-light-green/80 transition-colors text-dark-green dark:text-white "
               id={id}
             >
               <div class="flex flex-row gap-4 items-center">
@@ -81,7 +81,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
       </div>
 
-      <div class="min-w-100 bg-light-green/40 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green gap-4 h-fit ">
+      <div class="min-w-150 bg-light-green/40 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green dark:text-white gap-4 h-fit ">
         <div class="flex flex-row justify-between items-center">
           Análise Mensal
           <.form
@@ -143,13 +143,14 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   def handle_event("select_chart_type", %{"chart_type" => chart_type}, socket) do
     transactions = socket.assigns.transactions
     categories = socket.assigns.categories
+    monthly_income = socket.assigns.monthly_incomes || 0
 
     {:noreply,
      assign(socket,
        chart_type: String.to_existing_atom(chart_type),
        chart_option:
          categories
-         |> format_categories(transactions)
+         |> format_categories(transactions, monthly_income)
          |> get_chart_data(String.to_existing_atom(chart_type)),
        form_chart: to_form(%{"chart_type" => chart_type})
      )
@@ -166,7 +167,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
 
     assign(socket,
       balance: new_balance,
-      month_balance: new_month_balance
+      month_balance: new_month_balance,
+      monthly_incomes: new_month_balance.total_incomes
     )
   end
 
@@ -174,35 +176,44 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
     chart_type = socket.assigns.chart_type || :bars
     categories = socket.assigns.categories || []
     transactions = socket.assigns.transactions || []
+    monthly_income = socket.assigns.monthly_incomes || 0
 
     chart_data =
       categories
-      |> format_categories(transactions)
+      |> format_categories(transactions, monthly_income)
       |> get_chart_data(chart_type)
 
     assign(socket, chart_option: chart_data)
   end
 
-  defp format_categories(categories, transactions) do
+  defp format_categories(categories, transactions, monthly_income) do
     categories
     |> Enum.sort()
+    |> Enum.reject(fn category ->
+      category.name == "Sem Categoria"
+    end)
     |> Enum.map(fn category ->
       total =
-        Enum.reduce(transactions, 0, fn t, acc ->
+        Enum.reduce(transactions, 0.0, fn t, acc ->
           if t.category_id == category.id, do: acc + t.total_value, else: acc
         end)
+
+      total = Float.round(total, 2)
+      goal = Float.round(category.percentage * monthly_income / 100, 2)
+
+      remaining =
+        if(category.name == "Sem Categoria",
+          do: 0.0,
+          else: goal - total
+        )
 
       %{
         id: category.id,
         name: category.name,
         percentage: category.percentage,
         total: total,
-        goal: category.percentage * 1000 / 100,
-        remaining:
-          if(category.name == "Sem Categoria",
-            do: 0,
-            else: category.percentage * 5000 / 100 - total
-          )
+        goal: goal,
+        remaining: remaining
       }
     end)
   end
