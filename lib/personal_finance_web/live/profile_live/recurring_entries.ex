@@ -55,66 +55,68 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
           </.button>
         </div>
       </.form>
-      <.table id="recurring_entries_table" rows={@streams.recurring_entries}>
-        <:col :let={{_id, entry}} label="Descrição">{entry.description}</:col>
-        <:col :let={{_id, entry}} label="Tipo">
-          {if entry.type == :income do
-            "Receita"
-          else
-            "Despesa"
-          end}
-        </:col>
+      <%= if @num_recurring_entries > 0 do %>
+        <.table id="recurring_entries_table" rows={@streams.recurring_entries}>
+          <:col :let={{_id, entry}} label="Descrição">{entry.description}</:col>
+          <:col :let={{_id, entry}} label="Tipo">
+            {if entry.type == :income do
+              "Receita"
+            else
+              "Despesa"
+            end}
+          </:col>
 
-        <:col :let={{_id, entry}} label="Categoria">{entry.category.name}</:col>
-        <:col :let={{_id, entry}} label="Data de Início">
-          {DateUtils.format_date(entry.start_date)}
-        </:col>
-        <:col :let={{_id, entry}} label="Data de Término">
-          {DateUtils.format_date(entry.end_date)}
-        </:col>
-        <:col :let={{_id, entry}} label="Frequência">
-          {if entry.frequency == :monthly do
-            "Mensal"
-          else
-            "Anual"
-          end}
-        </:col>
-        <:col :let={{_id, entry}} label="Status">
-          {if entry.is_active do
-            "Ativo"
-          else
-            "Inativo"
-          end}
-        </:col>
+          <:col :let={{_id, entry}} label="Categoria">{entry.category.name}</:col>
+          <:col :let={{_id, entry}} label="Data de Início">
+            {DateUtils.format_date(entry.start_date)}
+          </:col>
+          <:col :let={{_id, entry}} label="Data de Término">
+            {DateUtils.format_date(entry.end_date)}
+          </:col>
+          <:col :let={{_id, entry}} label="Frequência">
+            {if entry.frequency == :monthly do
+              "Mensal"
+            else
+              "Anual"
+            end}
+          </:col>
+          <:col :let={{_id, entry}} label="Status">
+            {if entry.is_active do
+              "Ativo"
+            else
+              "Inativo"
+            end}
+          </:col>
 
-        <:action :let={{_id, entry}}>
-          <.button
-            variant="custom"
-            phx-click="toggle_status"
-            phx-value-id={entry.id}
-            phx-target={@myself}
-          >
-            <.icon
-              name="hero-check"
-              class={
-                if entry.is_active,
-                  do: "text-green-600 hover:text-green-800",
-                  else: "text-gray-600 hover:text-gray-800"
-              }
-            />
-          </.button>
-        </:action>
-        <:action :let={{_id, entry}}>
-          <.button variant="custom" phx-click="edit" phx-value-id={entry.id} phx-target={@myself}>
-            <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
-          </.button>
-        </:action>
-        <:action :let={{_id, entry}}>
-          <.button variant="custom" phx-click="delete" phx-value-id={entry.id} phx-target={@myself}>
-            <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
-          </.button>
-        </:action>
-      </.table>
+          <:action :let={{_id, entry}}>
+            <.button
+              variant="custom"
+              phx-click="toggle_status"
+              phx-value-id={entry.id}
+              phx-target={@myself}
+            >
+              <.icon
+                name="hero-check"
+                class={
+                  if entry.is_active,
+                    do: "text-green-600 hover:text-green-800",
+                    else: "text-gray-600 hover:text-gray-800"
+                }
+              />
+            </.button>
+          </:action>
+          <:action :let={{_id, entry}}>
+            <.button variant="custom" phx-click="edit" phx-value-id={entry.id} phx-target={@myself}>
+              <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+            </.button>
+          </:action>
+          <:action :let={{_id, entry}}>
+            <.button variant="custom" phx-click="delete" phx-value-id={entry.id} phx-target={@myself}>
+              <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
+            </.button>
+          </:action>
+        </.table>
+      <% end %>
     </div>
     """
   end
@@ -147,7 +149,8 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
               },
               assigns.ledger
             )
-          )
+          ),
+        num_recurring_entries: Enum.count(recurring_entries)
       )
       |> stream(:recurring_entries, recurring_entries)
 
@@ -227,6 +230,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
         {:noreply,
          socket
          |> put_flash(:info, "Transação recorrente removida com sucesso.")
+         |> assign(num_recurring_entries: socket.assigns.num_recurring_entries - 1)
          |> stream_delete(:recurring_entries, recurring_entry)}
 
       {:error, changeset} ->
@@ -262,7 +266,8 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
                  },
                  socket.assigns.ledger
                )
-             )
+             ),
+           num_recurring_entries: socket.assigns.num_recurring_entries + 1
          )
          |> put_flash(:info, "Transação recorrente salva com sucesso.")
          |> stream_insert(:recurring_entries, recurring_entry)}

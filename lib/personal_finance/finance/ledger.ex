@@ -5,7 +5,6 @@ defmodule PersonalFinance.Finance.Ledger do
   schema "ledgers" do
     field :name, :string
     field :description, :string, default: nil
-    field :balance, :float, default: 0.0
     belongs_to :owner, PersonalFinance.Accounts.User
 
     timestamps(type: :utc_datetime)
@@ -14,7 +13,7 @@ defmodule PersonalFinance.Finance.Ledger do
   @doc false
   def changeset(ledger, attrs, owner_id) do
     ledger
-    |> cast(attrs, [:name, :description, :balance])
+    |> cast(attrs, [:name, :description])
     |> validate_required([:name], message: "O nome é obrigatório.")
     |> validate_length(:name,
       min: 1,

@@ -237,7 +237,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       end)
 
     investment_message =
-      if investment_category do
+      if investment_category && investment_category.goal > 0 do
         if investment_category.remaining > 0 do
           %{
             text:

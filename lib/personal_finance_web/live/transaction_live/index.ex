@@ -27,6 +27,9 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
       profiles = Finance.list_profiles(socket.assigns.current_scope, ledger)
 
+      transactions =
+        Finance.list_transactions(current_scope, ledger)
+
       socket =
         socket
         |> assign(
@@ -35,13 +38,14 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           investment_types: Enum.map(investment_types, fn type -> {type.name, type.id} end),
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
           selected_category_id: nil,
-          show_pending_transactions_drawer: false
+          show_pending_transactions_drawer: false,
+          num_transactions: Enum.count(transactions)
         )
         |> stream_configure(
           :transaction_collection,
           dom_id: &"transaction-#{&1.id}"
         )
-        |> stream(:transaction_collection, Finance.list_transactions(current_scope, ledger))
+        |> stream(:transaction_collection, transactions)
 
       {:ok, socket |> apply_action(socket.assigns.live_action, params, ledger)}
     end
@@ -186,6 +190,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
      socket
      |> stream_insert(:transaction_collection, transaction, at: 0)
      |> assign(show_form_modal: false, transaction: nil, form_action: nil)
+     |> assign(num_transactions: socket.assigns.num_transactions + 1)
      |> put_flash(:info, "Transação salva com sucesso.")
      |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/transactions")}
   end
@@ -194,6 +199,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   def handle_info({:deleted, transaction}, socket) do
     {:noreply,
      socket
+     |> put_flash(:info, "Transação removida com sucesso.")
+     |> assign(num_transactions: socket.assigns.num_transactions - 1)
      |> stream_delete(:transaction_collection, transaction)}
   end
 
@@ -204,6 +211,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     {:noreply,
      socket
+     |> assign(num_transactions: Enum.count(transactions))
      |> stream(:transaction_collection, transactions)}
   end
 
@@ -227,9 +235,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
            socket.assigns.transaction,
            transaction_params
          ) do
-      {:ok, transaction} ->
-        send(self(), {:saved, transaction})
-
+      {:ok, _transaction} ->
         {:noreply, socket}
 
       {:error, %Ecto.Changeset{} = changeset} ->

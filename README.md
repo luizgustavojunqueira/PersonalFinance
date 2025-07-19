@@ -19,7 +19,7 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
     - [x] Show most recent transactions
     - [x] Show alert messages based on value spent on each category
     - [x] Customize categories colors
-    - [ ] Responsive dashboard
+    - [x] Responsive dashboard
 - [x] Mobile responsiveness improvements.
 - [ ] Add advanced search, filter, sort, and pagination features for transactions.
 - [ ] Add comprehensive test suite (unit, integration, LiveView tests).
