@@ -28,14 +28,20 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
     ledger = socket.assigns.ledger
     current_scope = socket.assigns.current_scope
 
+    IO.inspect(id, label: "Confirming transaction with ID")
+
     case Finance.confirm_recurring_transaction(current_scope, ledger, id) do
       {:ok, _transaction} ->
+        pending_recurrent_transactions =
+          Finance.list_pending_recurrent_transactions(
+            current_scope,
+            ledger.id,
+            socket.assigns.form[:months].value || 1
+          )
+
         {:noreply,
          socket
-         |> put_flash(
-           :info,
-           "Transação recorrente confirmada com sucesso."
-         )}
+         |> assign(pending_recurrent_transactions: pending_recurrent_transactions)}
 
       {:error, _changeset} ->
         {:noreply,
@@ -63,7 +69,6 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
   def render(assigns) do
     ~H"""
     <div class="fixed z-50 top-0 left-0 w-full h-full">
-      <div class="w-full h-full bg-black/30" phx-click="toggle_pending_transactions_drawer"></div>
       <div
         class="fixed top-0 right-0 h-full w-148 bg-offwhite dark:bg-gray-800 shadow-lg p-6 flex flex-col text-dark-green dark:text-offwhite z-50"
         phx-mounted={
@@ -86,7 +91,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
             phx-click="toggle_pending_transactions_drawer"
             class="text-gray-500 hover:text-gray-700"
           >
-            <.icon name="hero-x-mark" />
+            <.icon name="hero-x-mark" class="w-10 h-10" />
           </.button>
         </div>
 

@@ -453,38 +453,46 @@ defmodule PersonalFinanceWeb.CoreComponents do
       end
 
     ~H"""
-    <table class="w-full p-2">
-      <thead class="p-2 bg-accent/70 text-white dark:bg-accent/30 ">
-        <tr class="text-left">
-          <th :for={col <- @col} class="p-2 py-2">{col[:label]}</th>
-          <th :if={@action != []} class="p-4 py-2">
-            <span>Ações</span>
-          </th>
-        </tr>
-      </thead>
-      <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
-        <tr
-          :for={row <- @rows}
-          id={@row_id && @row_id.(row)}
-          class="transition-colors bg-white/40 hover:bg-white/65 dark:bg-light-green/90 dark:hover:bg-light-green/70 "
-        >
-          <td
-            :for={col <- @col}
-            phx-click={@row_click && @row_click.(row)}
-            class={"p-2 text-dark-green dark:text-white #{if @row_click, do: "hover:cursor-pointer"}"}
+    <div class="rounded-xl overflow-hidden">
+      <table class="w-full p-2">
+        <thead class="p-2 bg-accent/70 text-white dark:bg-accent/30">
+          <tr class="text-left">
+            <th :for={col <- @col} class="p-2 py-2">{col[:label]}</th>
+            <th :if={@action != []} class="p-4 py-2">
+              <span>Ações</span>
+            </th>
+          </tr>
+        </thead>
+        <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
+          <tr
+            :for={row <- @rows}
+            id={@row_id && @row_id.(row)}
+            class="transition-colors bg-white/90 dark:bg-medium-green/70 border-b-1 last:border-none border-dark-green/20 dark:border-light-green hover:bg-white/60 dark:hover:bg-medium-green/90"
+            phx-mounted={
+              JS.transition(
+                {"ease-in duration-500", "opacity-0 p-0 h-0", "opacity-100"},
+                time: 500
+              )
+            }
           >
-            {render_slot(col, @row_item.(row))}
-          </td>
-          <td :if={@action != []} class="w-0 font-semibold">
-            <div class="flex gap-4">
-              <%= for action <- @action do %>
-                {render_slot(action, @row_item.(row))}
-              <% end %>
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            <td
+              :for={col <- @col}
+              phx-click={@row_click && @row_click.(row)}
+              class={"p-4 px-2 text-dark-green dark:text-white #{if @row_click, do: "hover:cursor-pointer"}"}
+            >
+              {render_slot(col, @row_item.(row))}
+            </td>
+            <td :if={@action != []} class="w-0 font-semibold">
+              <div class="flex gap-4">
+                <%= for action <- @action do %>
+                  {render_slot(action, @row_item.(row))}
+                <% end %>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
     """
   end
 

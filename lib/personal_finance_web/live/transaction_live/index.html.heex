@@ -127,8 +127,7 @@
     />
   <% end %>
 
-  <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
-    <h2 class="text-2xl font-semibold mb-4">Minhas Transações</h2>
+  <div class="w-full text-dark-green dark:text-offwhite">
     <.table id="transactions_table" rows={@streams.transaction_collection}>
       <:col :let={{_id, transaction}} label="Data">
         <%= if transaction.inserted_at do %>
@@ -148,7 +147,10 @@
         {transaction.category && transaction.category.name}
       </:col>
       <:col :let={{_id, transaction}} label="Tipo de Investimento">
-        {transaction.investment_type && transaction.investment_type.name}
+        {if(transaction.investment_type,
+          do: transaction.investment_type.name,
+          else: "-"
+        )}
       </:col>
       <:col :let={{_id, transaction}} label="Quantidade">
         {if transaction.investment_type && transaction.investment_type.name == "Cripto",
@@ -167,8 +169,8 @@
           <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
         </.link>
       </:action>
-      <:action :let={{id, transaction}}>
-        <.link phx-click={JS.push("delete", value: %{id: transaction.id}) |> hide("##{id}")}>
+      <:action :let={{_id, transaction}}>
+        <.link phx-click="delete" phx-value-id={transaction.id}>
           <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
         </.link>
       </:action>

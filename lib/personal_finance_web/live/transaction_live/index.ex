@@ -34,7 +34,12 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           investment_category_id: if(investment_category, do: investment_category.id, else: nil),
           investment_types: Enum.map(investment_types, fn type -> {type.name, type.id} end),
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
-          selected_category_id: nil
+          selected_category_id: nil,
+          show_pending_transactions_drawer: false
+        )
+        |> stream_configure(
+          :transaction_collection,
+          dom_id: &"transaction-#{&1.id}"
         )
         |> stream(:transaction_collection, Finance.list_transactions(current_scope, ledger))
 
@@ -54,7 +59,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       page_title: "Transações - #{ledger.name}",
       ledger: ledger,
       show_form_modal: false,
-      show_pending_transactions_drawer: false,
       transaction: nil,
       selected_category_id: nil
     )
@@ -69,7 +73,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       transaction: transaction,
       form_action: :new,
       show_form_modal: true,
-      show_pending_transactions_drawer: false,
       form:
         to_form(
           Finance.change_transaction(
@@ -100,7 +103,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
         transaction: transaction,
         form_action: :edit,
         show_form_modal: true,
-        show_pending_transactions_drawer: false,
         selected_category_id: selected_category_id,
         form:
           to_form(
@@ -182,8 +184,9 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   def handle_info({:saved, transaction}, socket) do
     {:noreply,
      socket
-     |> stream_insert(:transaction_collection, transaction)
+     |> stream_insert(:transaction_collection, transaction, at: 0)
      |> assign(show_form_modal: false, transaction: nil, form_action: nil)
+     |> put_flash(:info, "Transação salva com sucesso.")
      |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/transactions")}
   end
 

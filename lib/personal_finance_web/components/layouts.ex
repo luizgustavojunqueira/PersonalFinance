@@ -13,17 +13,20 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <div class="flex flex-col max-h-screen min-h-screen max-w-screen">
-      <.page_header current_scope={@current_scope} />
-      <main class="flex flex-row max-h-screen min-h-screen max-w-screen">
-        <%= if @show_sidebar do %>
-          <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
-        <% end %>
-        <div class=" w-full px-4 pb-4 overflow-y-auto">
+    <div class="flex h-screen max-h-screen overflow-hidden">
+      <%= if @show_sidebar do %>
+        <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
+      <% end %>
+
+      <div class="flex flex-col flex-1 max-h-screen">
+        <.page_header current_scope={@current_scope} class="flex-shrink-0" />
+
+        <main class="flex-1 overflow-y-auto px-4 pb-4">
           {render_slot(@inner_block)}
-        </div>
-        <.flash_group flash={@flash} />
-      </main>
+        </main>
+      </div>
+
+      <.flash_group flash={@flash} />
     </div>
     """
   end
@@ -109,7 +112,7 @@ defmodule PersonalFinanceWeb.Layouts do
       <button
         id="toggle-sidebar"
         phx-hook="ToggleSidebar"
-        class="toggle-btn flex items-center p-2 w-full"
+        class="toggle-btn flex items-center p-2 w-full min-h-[64px]"
       >
         <.icon name="hero-bars-3" class="open-icon size-6 " />
         <.icon name="hero-x-mark" class="close-icon size-6 hidden " />
@@ -182,7 +185,7 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def page_header(assigns) do
     ~H"""
-    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite">
+    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite min-h-[64px]">
       <li>
         <Layouts.theme_toggle />
       </li>
