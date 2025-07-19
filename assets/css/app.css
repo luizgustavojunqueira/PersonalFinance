@@ -22,27 +22,7 @@ The heroicons installation itself is managed by your mix.exs */
 }
 
 @theme {
-    /* Fundos do Light Mode */
-    --color-bg-lightmode-dark: #f8fafc; /* Fundo principal (Slate 50) */
-    --color-bg-lightmode-medium: #e2e8f0; /* Fundo de cards/modais (Slate 200) */
-    --color-bg-lightmode-light: #f1f5f9; /* Fundo de itens de lista/bordas (Slate 300) */
-
-    /* Textos do Light Mode */
-    --color-text-lightmode-dark: #1e293b; /* Texto de destaque/títulos (Slate 800) */
-    --color-text-lightmode-medium: #334155; /* Texto normal/parágrafo (Slate 700) */
-    --color-text-lightmode-light: #64748b; /* Texto sutil/secundário (Slate 500) */
-
-    /* Fundos do Dark Mode */
-    --color-bg-darkmode-dark: #0f172a; /* Fundo principal (Slate 900) */
-    --color-bg-darkmode-medium: #1e293b; /* Fundo de cards/modais (Slate 800) */
-    --color-bg-darkmode-light: #334155; /* Fundo de itens de lista/bordas (Slate 700) */
-
-    /* Textos do Dark Mode */
-    --color-text-darkmode-dark: #d3dbe6;
-    --color-text-darkmode-medium: #e2e8f0; /* Texto normal/parágrafo (Slate 200) */
-    --color-text-darkmode-light: #f8fafc; /* Texto de destaque/títulos (Slate 50) */
-
-    --color-offwhite: #E0F1EB;
+    --color-offwhite: #e0f1eb;
     --color-platinum: #dadcdd;
     --color-light-green: #81c6a7;
     --color-medium-green: #4bb183;
@@ -51,29 +31,6 @@ The heroicons installation itself is managed by your mix.exs */
 }
 
 @layer components {
-    /* Estilos globais */
-
-    /* .dark { */
-    /*     @apply bg-bg-lightmode-dark dark:bg-bg-darkmode-dark text-text-lightmode-light dark:text-text-darkmode-light; */
-    /* } */{}
-    /**/
-    /* .hover-dark { */
-    /*     @apply hover:bg-bg-lightmode-dark dark:hover:bg-bg-darkmode-dark hover:text-text-lightmode-light dark:hover:text-text-darkmode-light; */
-    /* } */
-    /**/
-    /* .medium { */
-    /*     @apply bg-bg-lightmode-medium dark:bg-bg-darkmode-medium text-text-lightmode-medium dark:text-text-darkmode-dark; */
-    /* } */
-    /**/
-    /* .hover-medium { */
-    /*     @apply hover:bg-bg-lightmode-medium dark:hover:bg-bg-darkmode-medium hover:text-text-lightmode-medium dark:hover:text-text-darkmode-dark; */
-    /* } */
-    /**/
-    /* .light { */
-    /*     @apply bg-bg-lightmode-light dark:bg-bg-darkmode-light text-text-lightmode-light dark:text-text-darkmode-medium; */
-    /* } */
-
-
     .btn-primary {
         @apply bg-accent/90 text-white rounded-md p-2 px-4 my-1 hover:bg-accent;
     }
@@ -83,49 +40,56 @@ The heroicons installation itself is managed by your mix.exs */
     }
 }
 
-#sidebar {
-width: 12rem;
+#sidebar.expanded {
+    width: 16rem;
 }
-#sidebar.collapsed {
-width: 3.5rem;
+#sidebar .open-icon {
+    display: block;
+}
+#sidebar.expanded .open-icon {
+    display: none;
+}
+#sidebar .close-icon {
+    display: none;
+}
+#sidebar.expanded .close-icon {
+    display: block;
+}
+
+#sidebar .sidebar-link {
+    justify-content: center;
+}
+#sidebar.expanded .sidebar-link {
+    justify-content: flex-start;
 }
 #sidebar .sidebar-text {
-opacity: 1;
-transition: opacity 0.3s;
+    display: none;
 }
-#sidebar.collapsed .sidebar-text {
-opacity: 0;
-}
-
-#toggle-sidebar.collapsed {
-justify-content: center;
-}
-
-#toggle-sidebar {
-justify-content: flex-end;
+#sidebar.expanded .sidebar-text {
+    display: inline;
 }
 
 ::-webkit-scrollbar {
-  width: 6px; /* Largura da scrollbar vertical */
-  height: 6px; /* Altura da scrollbar horizontal */
+    width: 6px; /* Largura da scrollbar vertical */
+    height: 6px; /* Altura da scrollbar horizontal */
 }
 
 ::-webkit-scrollbar-track {
-  border-radius: 6px; /* Borda arredondada para a pista */
+    border-radius: 6px; /* Borda arredondada para a pista */
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #22c55e; /* Cor do "polegar" (o elemento arrastável) - um verde vibrante */
-  border-radius: 6px; /* Borda arredondada para o polegar */
-  border: 1px solid #f0fdf4; /* Borda ao redor do polegar para dar espaço, usando a mesma cor da pista */
+    background: #22c55e; /* Cor do "polegar" (o elemento arrastável) - um verde vibrante */
+    border-radius: 6px; /* Borda arredondada para o polegar */
+    border: 1px solid #f0fdf4; /* Borda ao redor do polegar para dar espaço, usando a mesma cor da pista */
 }
 
 /* Opcional: Efeito hover no polegar */
 ::-webkit-scrollbar-thumb:hover {
-  background: #16a34a; /* Um verde um pouco mais escuro no hover */
+    background: #16a34a; /* Um verde um pouco mais escuro no hover */
 }
 
 /* Opcional: Canto da scrollbar (onde as scrollbars vertical e horizontal se encontram) */
 ::-webkit-scrollbar-corner {
-  background: #f0fdf4; /* Cor do canto */
+    background: #f0fdf4; /* Cor do canto */
 }

@@ -13,15 +13,13 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def app(assigns) do
     ~H"""
-    <div class="flex h-screen max-h-screen overflow-hidden">
+    <div class="flex flex-col h-screen max-h-screen overflow-hidden">
+      <.page_header current_scope={@current_scope} class="flex-shrink-0" />
       <%= if @show_sidebar do %>
         <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
       <% end %>
-
-      <div class="flex flex-col flex-1 max-h-screen">
-        <.page_header current_scope={@current_scope} class="flex-shrink-0" />
-
-        <main class="flex-1 overflow-y-auto px-4 pb-4">
+      <div class={"flex flex-row flex-1 max-h-screen max-w-screen #{if @show_sidebar, do: "md:pl-14"}"}>
+        <main class="flex-1 overflow-y-auto px-4 pb-4 ">
           {render_slot(@inner_block)}
         </main>
       </div>
@@ -107,33 +105,23 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div
       id="sidebar"
-      class="bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite overflow-hidden transition-all collapsed "
+      class="fixed top-16 z-50 h-screen bg-dark-green dark:bg-emerald-900/100 text-white transition-all duration-300 overflow-x-hidden
+         hidden md:block w-14
+         [&.expanded]:block [&.expanded]:w-64"
     >
-      <button
-        id="toggle-sidebar"
-        phx-hook="ToggleSidebar"
-        class="toggle-btn flex items-center p-2 w-full min-h-[64px]"
-      >
-        <.icon name="hero-bars-3" class="open-icon size-6 " />
-        <.icon name="hero-x-mark" class="close-icon size-6 hidden " />
-      </button>
-      <ul class="p-4 w-80 ">
-        <li class=" mb-4 ">
-          <.link
-            navigate={~p"/ledgers"}
-            class="flex items space-x-2 text-base-content hover:text-primary"
-          >
+      <ul class="mt-4 space-y-4 px-2">
+        <li>
+          <.link navigate={~p"/ledgers"} class="flex items-center gap-2 sidebar-link">
             <.icon name="hero-book-open" class="size-6" />
 
-            <span class="sidebar-text hidden md:inline">Ledgers</span>
+            <span class="sidebar-text hidden group-hover:inline">Ledgers</span>
           </.link>
         </li>
         <%= if @ledger do %>
           <li class=" mb-4 ">
             <.link
               navigate={~p"/ledgers/#{@ledger.id}/home"}
-              class="flex items
-            space-x-2 text-base-content hover:text-primary"
+              class="flex items-center gap-2 sidebar-link"
             >
               <.icon name="hero-home" class="size-6" />
               <span class="sidebar-text md:inline hidden">Home</span>
@@ -142,7 +130,7 @@ defmodule PersonalFinanceWeb.Layouts do
           <li class=" mb-4 ">
             <.link
               navigate={~p"/ledgers/#{@ledger.id}/transactions"}
-              class="flex items space-x-2 text-base-content hover:text-primary"
+              class="flex items-center gap-2 sidebar-link"
             >
               <.icon name="hero-clipboard-document-list" class="size-6" />
               <span class="sidebar-text hidden md:inline">Transações</span>
@@ -151,7 +139,7 @@ defmodule PersonalFinanceWeb.Layouts do
           <li class=" mb-4 ">
             <.link
               navigate={~p"/ledgers/#{@ledger.id}/profiles"}
-              class="flex items space-x-2 text-base-content hover:text-primary"
+              class="flex items-center gap-2 sidebar-link"
             >
               <.icon name="hero-users" class="size-6" />
               <span class="sidebar-text hidden md:inline">Perfis</span>
@@ -160,7 +148,7 @@ defmodule PersonalFinanceWeb.Layouts do
           <li class=" mb-4 ">
             <.link
               navigate={~p"/ledgers/#{@ledger.id}/categories"}
-              class="flex items space-x-2 text-base-content hover:text-primary"
+              class="flex items-center gap-2 sidebar-link"
             >
               <.icon name="hero-tag" class="size-6" />
               <span class="sidebar-text hidden md:inline">Categorias</span>
@@ -170,7 +158,7 @@ defmodule PersonalFinanceWeb.Layouts do
             <li class=" mb-4 ">
               <.link
                 navigate={~p"/ledgers/#{@ledger.id}/settings"}
-                class="flex items space-x-2 text-base-content hover:text-primary"
+                class="flex items-center gap-2 sidebar-link"
               >
                 <.icon name="hero-cog-6-tooth" class="size-6" />
                 <span class="sidebar-text hidden md:inline">Configurações</span>
@@ -185,29 +173,39 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def page_header(assigns) do
     ~H"""
-    <ul class="w-full flex items-center gap-4 px-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite min-h-[64px]">
-      <li>
-        <Layouts.theme_toggle />
-      </li>
-      <%= if @current_scope do %>
-        <li class="medium  rounded-full py-1 px-2">
-          {@current_scope.user.email}
+    <div class="flex items-center justify-between w-full:pl-2 pr-4 py-2 bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite min-h-[64px]">
+      <button
+        id="toggle-sidebar"
+        phx-hook="ToggleSidebar"
+        class="flex items-center justify-center w-10 h-10 bg-dark-green text-white rounded"
+      >
+        <.icon name="hero-bars-3" class="open-icon size-6" />
+        <.icon name="hero-x-mark" class="close-icon size-6 hidden" />
+      </button>
+      <ul class="w-full flex flex-row text-xs md:text-lg items-center gap-2 px-2 sm:gap-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite min-h-[64px]">
+        <li>
+          <Layouts.theme_toggle />
         </li>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/settings"}>Settings</.link>
-        </li>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/log-out"} method="delete">Log out</.link>
-        </li>
-      <% else %>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/register"}>Register</.link>
-        </li>
-        <li class="light hover-medium rounded-full py-1 px-2">
-          <.link href={~p"/users/log-in"}>Log in</.link>
-        </li>
-      <% end %>
-    </ul>
+        <%= if @current_scope do %>
+          <li class="medium  rounded-full py-1 px-2">
+            {@current_scope.user.email}
+          </li>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/settings"}>Settings</.link>
+          </li>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+          </li>
+        <% else %>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/register"}>Register</.link>
+          </li>
+          <li class="light hover-medium rounded-full py-1 px-2">
+            <.link href={~p"/users/log-in"}>Log in</.link>
+          </li>
+        <% end %>
+      </ul>
+    </div>
     """
   end
 end

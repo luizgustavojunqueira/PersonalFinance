@@ -114,7 +114,11 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
           <%= if @pending_recurrent_transactions == [] do %>
             <p class="text-gray-500">Nenhuma transação pendente.</p>
           <% else %>
-            <.table id="pending_transactions_table" rows={@pending_recurrent_transactions}>
+            <.table
+              id="pending_transactions_table"
+              rows={@pending_recurrent_transactions}
+              large={false}
+            >
               <:col :let={transaction} label="Descrição">
                 {transaction.description}
               </:col>

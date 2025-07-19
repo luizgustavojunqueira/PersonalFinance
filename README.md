@@ -18,8 +18,9 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
     - [x] Categories charts
     - [x] Show most recent transactions
     - [x] Show alert messages based on value spent on each category
-    - [ ] Customize categories colors
+    - [x] Customize categories colors
     - [ ] Responsive dashboard
+- [x] Mobile responsiveness improvements.
 - [ ] Add advanced search, filter, sort, and pagination features for transactions.
 - [ ] Add comprehensive test suite (unit, integration, LiveView tests).
 - [ ] Implement transaction import and export functionalities (CSV, JSON).
@@ -27,7 +28,6 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
 - [ ] Implement investment yield calculation.
 - [ ] Add dividend reinvestment tracking.
 - [ ] Define and enforce user roles and permissions for shared budgets.
-- [ ] Mobile responsiveness improvements.
 - [ ] Portfolio tracking
     - [ ] Track individual assets and their performanc (stocks, cryptocurrencies, fixed income).
     - [ ] Add personal notes and tags to assets.

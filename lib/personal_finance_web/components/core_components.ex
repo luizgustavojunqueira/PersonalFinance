@@ -345,8 +345,8 @@ defmodule PersonalFinanceWeb.CoreComponents do
   def header(assigns) do
     ~H"""
     <header class={[
-      @actions != [] && " flex items-center justify-between gap-6",
-      "pb-4 min-h-24 flex flex-row justify-between items-center m-2 mb-0",
+      @actions != [] && "gap-6",
+      "pb-4 min-h-24 flex flex-col md:flex-row justify-between items-center m-2 mb-0",
       @class
     ]}>
       <div>
@@ -469,6 +469,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
   attr :rows, :list, required: true
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
+  attr :large, :boolean, default: true
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -487,8 +488,8 @@ defmodule PersonalFinanceWeb.CoreComponents do
       end
 
     ~H"""
-    <div class="rounded-xl overflow-hidden">
-      <table class="w-full p-2">
+    <div class="relative w-full overflow-x-auto shadow-sm rounded-xl">
+      <table class={"w-full p-2 #{if @large do "min-w-7xl" end }"}>
         <thead class="p-2 bg-accent/70 text-white dark:bg-accent/30">
           <tr class="text-left">
             <th :for={col <- @col} class="p-2 py-2">{col[:label]}</th>

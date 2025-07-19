@@ -8,7 +8,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-row gap-4 px-4">
+    <div class="flex flex-col xl:flex-row gap-4 px-4">
       <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 h-full overflow-y-auto">
         <div class="bg-light-green/50 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 dark:text-white ">
           <div class="flex flex-col">
@@ -81,7 +81,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
       </div>
 
-      <div class="min-w-150 grid grid-rows-[2fr_1fr] gap-4 overflow-y-auto">
+      <div class="min-w-100 grid grid-rows-[2fr_1fr] gap-4 overflow-y-auto">
         <div class="bg-light-green/40 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green dark:text-white gap-4 h-fit ">
           <div class="flex flex-row justify-between items-center">
             Análise Mensal
@@ -101,13 +101,13 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
 
           <%= if @chart_type == :pie do %>
             <div id="pie" phx-hook="Chart">
-              <div id="pie-chart" class="min-w-150 min-h-120" phx-update="ignore" />
+              <div id="pie-chart" class="w-full h-96" phx-update="ignore" />
               <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
             </div>
           <% else %>
             <%= if @chart_type == :bars do %>
               <div id="bar" phx-hook="Chart">
-                <div id="bar-chart" class="min-w-150  min-h-120" phx-update="ignore" />
+                <div id="bar-chart" class="w-full h-96" phx-update="ignore" />
                 <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
               </div>
             <% end %>

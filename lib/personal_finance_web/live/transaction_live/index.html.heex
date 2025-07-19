@@ -130,7 +130,7 @@
   <div class="w-full text-dark-green dark:text-offwhite">
     <.table id="transactions_table" rows={@streams.transaction_collection}>
       <:col :let={{_id, transaction}} label="Tipo">
-        <span class={"p-1 px-2 rounded-lg text-white #{if transaction.type == :income, do: "bg-green-500", else: "bg-red-500"}"}>
+        <span class={"p-1 px-2 rounded-lg text-black #{if transaction.type == :income, do: "bg-green-300", else: "bg-red-300"}"}>
           {if transaction.type == :income, do: "Receita", else: "Despesa"}
         </span>
       </:col>
@@ -145,7 +145,7 @@
       <:col :let={{_id, transaction}} label="Perfil">
         <span
           class="p-1 px-2 rounded-lg text-white"
-          style={"background-color: #{transaction.profile && transaction.profile.color};"}
+          style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
         >
           {transaction.profile && transaction.profile.name}
         </span>
@@ -153,7 +153,7 @@
       <:col :let={{_id, transaction}} label="Categoria">
         <span
           class="p-1 px-2 rounded-lg text-white"
-          style={"background-color: #{transaction.category && transaction.category.color};"}
+          style={"background-color: #{transaction.category && transaction.category.color}99;"}
         >
           {transaction.category && transaction.category.name}
         </span>
