@@ -19,6 +19,7 @@
       <.input field={@form[:name]} type="text" label="Nome" />
       <.input field={@form[:description]} type="text" label="Descrição" />
       <.input field={@form[:percentage]} type="number" label="Porcentagem" />
+      <.input field={@form[:color]} type="color" label="Cor" />
     </.form_modal>
   <% end %>
 
@@ -37,7 +38,14 @@
       {category.name}
     </:col>
     <:col :let={{_id, category}} label="Descrição">{category.description}</:col>
-    <:col :let={{_id, category}} label="Categoria">
+    <:col :let={{_id, category}} label="Cor">
+      <span
+        class="inline-block w-7 h-4 rounded-xl border-2 border-black dark:border-white"
+        style={"background-color: #{category.color};"}
+      >
+      </span>
+    </:col>
+    <:col :let={{_id, category}} label="Porcentagem">
       {category.percentage}
     </:col>
 

@@ -6,6 +6,7 @@ defmodule PersonalFinance.Finance.Profile do
     field :name, :string
     field :description, :string, default: nil
     field :is_default, :boolean, default: false
+    field :color, :string, default: "#000000"
     belongs_to :ledger, PersonalFinance.Finance.Ledger
 
     timestamps(type: :utc_datetime)
@@ -14,7 +15,7 @@ defmodule PersonalFinance.Finance.Profile do
   @doc false
   def changeset(profile, attrs, ledger_id) do
     profile
-    |> cast(attrs, [:name, :description, :is_default])
+    |> cast(attrs, [:name, :description, :is_default, :color])
     |> validate_required([:name], message: "O nome é obrigatório.")
     |> validate_required([:description], message: "A descrição é obrigatória.")
     |> validate_inclusion(:is_default, [true, false],

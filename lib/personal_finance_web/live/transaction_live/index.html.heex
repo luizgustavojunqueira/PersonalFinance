@@ -129,6 +129,11 @@
 
   <div class="w-full text-dark-green dark:text-offwhite">
     <.table id="transactions_table" rows={@streams.transaction_collection}>
+      <:col :let={{_id, transaction}} label="Tipo">
+        <span class={"p-1 px-2 rounded-lg text-white #{if transaction.type == :income, do: "bg-green-500", else: "bg-red-500"}"}>
+          {if transaction.type == :income, do: "Receita", else: "Despesa"}
+        </span>
+      </:col>
       <:col :let={{_id, transaction}} label="Data">
         <%= if transaction.inserted_at do %>
           {DateUtils.format_date(transaction.date)}
@@ -138,13 +143,20 @@
       </:col>
       <:col :let={{_id, transaction}} label="Descrição">{transaction.description}</:col>
       <:col :let={{_id, transaction}} label="Perfil">
-        {transaction.profile && transaction.profile.name}
-      </:col>
-      <:col :let={{_id, transaction}} label="Tipo">
-        {if transaction.type == :income, do: "Receita", else: "Despesa"}
+        <span
+          class="p-1 px-2 rounded-lg text-white"
+          style={"background-color: #{transaction.profile && transaction.profile.color};"}
+        >
+          {transaction.profile && transaction.profile.name}
+        </span>
       </:col>
       <:col :let={{_id, transaction}} label="Categoria">
-        {transaction.category && transaction.category.name}
+        <span
+          class="p-1 px-2 rounded-lg text-white"
+          style={"background-color: #{transaction.category && transaction.category.color};"}
+        >
+          {transaction.category && transaction.category.name}
+        </span>
       </:col>
       <:col :let={{_id, transaction}} label="Tipo de Investimento">
         {if(transaction.investment_type,

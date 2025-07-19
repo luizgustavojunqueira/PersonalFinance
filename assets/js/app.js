@@ -118,6 +118,18 @@ Hooks.Copy = {
     },
 };
 
+Hooks.ColorPicker = {
+    mounted() {
+        const input = this.el;
+        const colorDisplay = document.getElementById(
+            input.dataset.colorDisplayId,
+        );
+        input.addEventListener("input", (event) => {
+            colorDisplay.style.backgroundColor = event.target.value;
+        });
+    },
+};
+
 const csrfToken = document
     .querySelector("meta[name='csrf-token']")
     .getAttribute("content");

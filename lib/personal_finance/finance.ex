@@ -29,6 +29,7 @@ defmodule PersonalFinance.Finance do
   def list_categories(%Scope{} = scope, %Ledger{} = ledger) do
     Category
     |> where([c], c.ledger_id == ^ledger.id)
+    |> order_by([c], desc: c.is_default, desc: c.is_fixed, asc: c.name)
     |> Repo.all()
   end
 

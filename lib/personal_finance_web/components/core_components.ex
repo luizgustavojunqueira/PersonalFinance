@@ -264,6 +264,40 @@ defmodule PersonalFinanceWeb.CoreComponents do
     """
   end
 
+  def input(%{type: "color"} = assigns) do
+    ~H"""
+    <fieldset class="fieldset mb-2 w-full">
+      <label class="flex flow row items-center gap-2">
+        <span :if={@label} class="text-dark-green dark:text-offwhite fieldset-label mb-1">
+          {@label}
+        </span>
+        <div class="relative w-12 h-12">
+          <input
+            type="color"
+            name={@name}
+            id={@id}
+            value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+            class="absolute inset-0 w-12 h-12 opacity-0 cursor-pointer"
+            phx-hook="ColorPicker"
+            data-color-display-id={"color-display-#{@id}"}
+            {@rest}
+          />
+          <div
+            id={"color-display-#{@id}"}
+            class={[
+              "w-12 h-12 rounded-full border-2 border-gray-300 shadow-md",
+              @errors != [] && "ring-2 ring-red-500"
+            ]}
+            style={"background-color: #{Phoenix.HTML.Form.normalize_value(@type, @value)}"}
+          >
+          </div>
+        </div>
+      </label>
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </fieldset>
+    """
+  end
+
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""

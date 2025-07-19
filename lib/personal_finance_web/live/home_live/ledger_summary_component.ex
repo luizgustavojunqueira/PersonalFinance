@@ -322,6 +322,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       %{
         id: category.id,
         name: category.name,
+        color: category.color,
         percentage: category.percentage,
         total: total,
         goal: goal,
@@ -374,7 +375,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                 name: category.name,
                 value: category.total,
                 itemStyle: %{
-                  color: "hsl(#{Enum.random(0..360)}, 70%, 50%)"
+                  color: category.color
                 }
               }
             end)

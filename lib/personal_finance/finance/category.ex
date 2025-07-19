@@ -9,6 +9,7 @@ defmodule PersonalFinance.Finance.Category do
     field :percentage, :float, default: 0.0
     field :is_default, :boolean, default: false
     field :is_fixed, :boolean, default: false
+    field :color, :string, default: "#000000"
     belongs_to :ledger, PersonalFinance.Finance.Ledger
 
     timestamps(type: :utc_datetime)
@@ -17,7 +18,7 @@ defmodule PersonalFinance.Finance.Category do
   @doc false
   def changeset(category, attrs, ledger_id) do
     category
-    |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed])
+    |> cast(attrs, [:name, :description, :percentage, :is_default, :is_fixed, :color])
     |> validate_required([:name], message: "O nome é obrigatório.")
     |> validate_required([:description], message: "A descrição é obrigatória.")
     |> validate_required([:percentage], message: "A porcentagem é obrigatória.")
