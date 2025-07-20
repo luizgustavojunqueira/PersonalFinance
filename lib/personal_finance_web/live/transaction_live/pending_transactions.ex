@@ -70,7 +70,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
     ~H"""
     <div class="fixed z-50 top-0 left-0 w-full h-full">
       <div
-        class="fixed top-0 right-0 h-full w-148 bg-offwhite dark:bg-gray-800 shadow-lg p-6 flex flex-col text-dark-green dark:text-offwhite z-50"
+        class="fixed top-0 right-0 h-full w-148 bg-base-200 shadow-lg p-6 flex flex-col z-50"
         phx-mounted={
           JS.transition(
             {"transition-all ease-out duration-300", "translate-x-full", "translate-x-0"},
@@ -89,7 +89,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
           <.button
             variant="custom"
             phx-click="toggle_pending_transactions_drawer"
-            class="text-gray-500 hover:text-gray-700"
+            class="btn btn-square"
           >
             <.icon name="hero-x-mark" class="w-10 h-10" />
           </.button>

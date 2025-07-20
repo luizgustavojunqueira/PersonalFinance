@@ -105,7 +105,7 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div
       id="sidebar"
-      class="fixed top-16 z-50 h-screen bg-base-100 transition-all duration-300 overflow-x-hidden
+      class="fixed top-16 z-50 h-screen bg-base-100 transition-all overflow-x-hidden
          hidden md:block w-14
          [&.expanded]:block [&.expanded]:w-64"
     >

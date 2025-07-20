@@ -3,10 +3,10 @@
     {@ledger.name} - Transações
     <:actions>
       <div class="flex flex-row gap-2">
-        <.button navigate={~p"/ledgers/#{@ledger.id}/transactions/new"}>
+        <.button variant="primary" navigate={~p"/ledgers/#{@ledger.id}/transactions/new"}>
           <.icon name="hero-plus" /> Adicionar Transação
         </.button>
-        <.button variant="primary" phx-click="toggle_pending_transactions_drawer">
+        <.button phx-click="toggle_pending_transactions_drawer">
           <.icon name="hero-clock" /> Transações Pendentes
         </.button>
       </div>
@@ -126,28 +126,6 @@
       current_scope={@current_scope}
     />
   <% end %>
-
-  <div class="collapse bg-base-100 border border-base-300">
-    <input type="radio" name="my-accordion-1" checked="checked" />
-    <div class="collapse-title font-semibold">How do I create an account?</div>
-    <div class="collapse-content text-sm">
-      Click the "Sign Up" button in the top right corner and follow the registration process.
-    </div>
-  </div>
-  <div class="collapse bg-base-100 border border-base-300">
-    <input type="radio" name="my-accordion-1" />
-    <div class="collapse-title font-semibold">I forgot my password. What should I do?</div>
-    <div class="collapse-content text-sm">
-      Click on "Forgot Password" on the login page and follow the instructions sent to your email.
-    </div>
-  </div>
-  <div class="collapse bg-base-100 border border-base-300">
-    <input type="radio" name="my-accordion-1" />
-    <div class="collapse-title font-semibold">How do I update my profile information?</div>
-    <div class="collapse-content text-sm">
-      Go to "My Account" settings and select "Edit Profile" to make changes.
-    </div>
-  </div>
 
   <div class="w-full text-dark-green dark:text-offwhite">
     <%= if @num_transactions == 0 do %>

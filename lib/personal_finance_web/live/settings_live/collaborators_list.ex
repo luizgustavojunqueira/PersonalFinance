@@ -24,7 +24,7 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
+    <div class="rounded-lg shadow-md p-6 w-full shadow-lg bg-base-100/50">
       <h2 class="text-2xl font-bold mb-4">
         Colaboradores
       </h2>

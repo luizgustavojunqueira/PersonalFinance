@@ -8,7 +8,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="rounded-lg shadow-md p-6 bg-light-green/50 w-full shadow-lg dark:bg-medium-green/25 text-dark-green dark:text-offwhite">
+    <div class="rounded-lg shadow-md p-6  w-full shadow-lg bg-base-100/50">
       <h2 class="text-2xl font-semibold mb-4">Transações Recorrentes</h2>
 
       <.form
@@ -91,6 +91,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
           <:action :let={{_id, entry}}>
             <.button
               variant="custom"
+              class="btn btn-link p-0"
               phx-click="toggle_status"
               phx-value-id={entry.id}
               phx-target={@myself}
@@ -106,12 +107,24 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
             </.button>
           </:action>
           <:action :let={{_id, entry}}>
-            <.button variant="custom" phx-click="edit" phx-value-id={entry.id} phx-target={@myself}>
+            <.button
+              variant="custom"
+              phx-click="edit"
+              phx-value-id={entry.id}
+              phx-target={@myself}
+              class="btn btn-link p-0"
+            >
               <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
             </.button>
           </:action>
           <:action :let={{_id, entry}}>
-            <.button variant="custom" phx-click="delete" phx-value-id={entry.id} phx-target={@myself}>
+            <.button
+              variant="custom"
+              phx-click="delete"
+              phx-value-id={entry.id}
+              phx-target={@myself}
+              class="btn btn-link p-0"
+            >
               <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
             </.button>
           </:action>

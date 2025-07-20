@@ -10,7 +10,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
     ~H"""
     <div class="flex flex-col xl:flex-row gap-4 px-4">
       <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 h-full overflow-y-auto">
-        <div class="bg-light-green/50 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 dark:text-white ">
+        <div class="bg-base-300 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 dark:text-white ">
           <div class="flex flex-col">
             Saldo Atual
             <span class="text-3xl font-bold text-black">
@@ -40,7 +40,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           </div>
         </div>
 
-        <div class="bg-medium-green/40 text-xl font-bold rounded-lg flex flex-col items-left text-dark-green gap-2 h-fit dark:text-white ">
+        <div class="bg-base-300 text-xl font-bold rounded-lg flex flex-col items-left text-dark-green gap-2 h-fit dark:text-white ">
           <div class="flex flex-col p-4">
             Transações Recentes
             <span class="text-sm text-gray-600">
@@ -56,7 +56,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="flex flex-col">
             <div
               :for={{id, transaction} <- @streams.recent_transactions}
-              class="flex flex-row justify-between items-center bg-light-green/40 p-4 gap-2 hover:bg-light-green/80 transition-colors text-dark-green dark:text-white "
+              class="flex flex-row justify-between items-center bg-base-100/50 p-4 gap-2 hover:bg-base-100 transition-colors text-dark-green dark:text-white "
               id={id}
             >
               <div class="flex flex-row gap-4 items-center">
@@ -81,8 +81,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
       </div>
 
-      <div class="min-w-100 grid grid-rows-[2fr_1fr] gap-4 overflow-y-auto">
-        <div class="bg-light-green/40 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green dark:text-white gap-4 h-fit ">
+      <div class="min-w-120 grid grid-rows-[2fr_1fr] gap-4 overflow-y-auto">
+        <div class="bg-base-300 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green dark:text-white gap-4 h-fit ">
           <div class="flex flex-row justify-between items-center">
             Análise Mensal
             <.form
@@ -115,7 +115,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
 
         <%= if !Enum.empty?(@messages) do %>
-          <div class="bg-light-green/40 text-dark-green dark:text-white rounded-xl p-4 shadow-sm space-y-4 h-fit">
+          <div class="bg-base-300 text-dark-green dark:text-white rounded-xl p-4 shadow-sm space-y-4 h-fit">
             <div class="flex items-center justify-between">
               <span class="text-xl font-semibold">Avisos</span>
             </div>

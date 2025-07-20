@@ -199,14 +199,14 @@ defmodule PersonalFinanceWeb.CoreComponents do
     <fieldset class="fieldset mb-2">
       <label>
         <input type="hidden" name={@name} value="false" disabled={@rest[:disabled]} />
-        <span class="fieldset-label text-dark-green dark:text-offwhite">
+        <span class="fieldset-legend">
           <input
             type="checkbox"
             id={@id}
             name={@name}
             value="true"
             checked={@checked}
-            class="checkbox checkbox-sm bg-white text-black "
+            class="checkbox checkbox-sm"
             {@rest}
           />{@label}
         </span>
@@ -218,16 +218,16 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
   def input(%{type: "select"} = assigns) do
     ~H"""
-    <fieldset class="fieldset mb-2 w-full">
+    <fieldset class="fieldset w-full">
       <label>
-        <span :if={@label} class="fieldset-label mb-1 text-nowrap text-dark-green dark:text-offwhite">
+        <span :if={@label} class="fieldset-legend">
           {@label}
         </span>
         <select
           id={@id}
           name={@name}
           class={[
-            "w-full bg-white text-black  p-2 rounded-lg mt-2 border-1 focus:outline- :",
+            "select w-full focus:outline- :",
             @errors != [] && "input-error"
           ]}
           multiple={@multiple}
@@ -237,7 +237,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           {Phoenix.HTML.Form.options_for_select(@options, @value)}
         </select>
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <.error :for={msg <- @errors} class="label">{msg}</.error>
     </fieldset>
     """
   end
@@ -246,20 +246,20 @@ defmodule PersonalFinanceWeb.CoreComponents do
     ~H"""
     <fieldset class="fieldset mb-2">
       <label>
-        <span :if={@label} class="fieldset-label mb-1 text-dark-green dark:text-offwhite">
+        <span :if={@label} class="fieldset-legend">
           {@label}
         </span>
         <textarea
           id={@id}
           name={@name}
           class={[
-            "w-full bg-white text-black  p-2 rounded-lg mt-2 border-1 textarea",
+            "textarea",
             @errors != [] && "textarea-error"
           ]}
           {@rest}
         >{Phoenix.HTML.Form.normalize_value("textarea", @value)}</textarea>
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <.error :for={msg <- @errors} class="label">>{msg}</.error>
     </fieldset>
     """
   end
@@ -301,7 +301,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <fieldset class="fieldset">
+    <fieldset class="fieldset w-full">
       <label>
         <legend :if={@label} class="fieldset-legend">
           {@label}
@@ -494,7 +494,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
     ~H"""
     <div class="relative w-full overflow-x-auto shadow-sm rounded-xl">
       <table class={"w-full p-2 #{if @large do "min-w-7xl" end }"}>
-        <thead class="p-2 bg-accent/70 text-white dark:bg-accent/30">
+        <thead class="p-2 bg-base-100">
           <tr class="text-left">
             <th :for={col <- @col} class="p-2 py-2">{col[:label]}</th>
             <th :if={@action != []} class="p-4 py-2">
@@ -506,7 +506,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            class="transition-colors bg-white/90 dark:bg-medium-green/70 border-b-1 last:border-none border-dark-green/20 dark:border-light-green hover:bg-white/60 dark:hover:bg-medium-green/90"
+            class={"transition-colors border-b-1 last:border-none bg-base-300 #{if @row_click, do: "hover:bg-base-300/50"}"}
             phx-mounted={
               JS.transition(
                 {"ease-in duration-500", "opacity-0 p-0 h-0", "opacity-100"},
@@ -517,7 +517,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
             <td
               :for={col <- @col}
               phx-click={@row_click && @row_click.(row)}
-              class={"p-4 px-2 text-dark-green dark:text-white #{if @row_click, do: "hover:cursor-pointer"}"}
+              class={"p-4 px-2 #{if @row_click, do: "hover:cursor-pointer "}"}
             >
               {render_slot(col, @row_item.(row))}
             </td>
@@ -616,7 +616,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
       {@rest}
     >
       <div
-        class="bg-offwhite text-dark-green dark:bg-dark-green dark:text-offwhite rounded-xl shadow-2xl p-6 w-full max-w-md"
+        class="bg-base-100 rounded-xl shadow-2xl p-6 w-full max-w-md"
         phx-mounted={
           JS.transition(
             {"transition-all ease-out duration-300",
@@ -629,11 +629,13 @@ defmodule PersonalFinanceWeb.CoreComponents do
         <h2 class="text-2xl font-semibold mb-4">{@title}</h2>
         <p class="mb-6">{@message}</p>
         <div class="flex justify-end gap-4">
-          <.button phx-click={@cancel_event} variant="custom">Cancelar</.button>
+          <.button phx-click={@cancel_event} variant="custom" class="btn btn-soft">
+            Cancelar
+          </.button>
           <.button
+            class="btn btn-primary"
             phx-click={@confirm_event}
             phx-value-id={@item_id}
-            variant="primary"
             phx-disable-with="Confirmando"
           >
             Confirmar
