@@ -26,7 +26,8 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
   defp apply_action(socket, :new, _params) do
     ledger = %Ledger{owner_id: socket.assigns.current_scope.user.id}
 
-    assign(socket,
+    socket
+    |> assign(
       page_title: "Ledgers",
       show_form_modal: true,
       show_delete_modal: false,
@@ -40,6 +41,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
           )
         )
     )
+    |> push_event("open_modal:modal_new_ledger", %{})
   end
 
   defp apply_action(socket, :edit, %{"id" => ledger_id}) do
@@ -50,7 +52,8 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
       |> put_flash(:error, "Ledger não encontrado.")
       |> push_navigate(to: ~p"/ledgers")
     else
-      assign(socket,
+      socket
+      |> assign(
         page_title: "Ledgers",
         show_form_modal: true,
         show_delete_modal: false,
@@ -64,6 +67,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
             )
           )
       )
+      |> push_event("open_modal:modal_new_ledger", %{})
     end
   end
 

@@ -26,7 +26,7 @@ config :personal_finance,
 
 # Configures the endpoint
 config :personal_finance, PersonalFinanceWeb.Endpoint,
-  url: [host: "192.168.1.20"],
+  url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: PersonalFinanceWeb.ErrorHTML, json: PersonalFinanceWeb.ErrorJSON],

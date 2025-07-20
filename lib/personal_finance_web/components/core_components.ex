@@ -301,24 +301,24 @@ defmodule PersonalFinanceWeb.CoreComponents do
   # All other inputs text, datetime-local, url, password, etc. are handled here...
   def input(assigns) do
     ~H"""
-    <fieldset class="fieldset mb-2 w-full">
+    <fieldset class="fieldset">
       <label>
-        <span :if={@label} class="text-dark-green dark:text-offwhite fieldset-label mb-1">
+        <legend :if={@label} class="fieldset-legend">
           {@label}
-        </span>
+        </legend>
         <input
           type={@type}
           name={@name}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
-            "w-full bg-white text-black p-2 rounded-lg mt-2 border-1 focus:outline- :",
+            "input w-full focus:outline- :",
             @errors != [] && "input-error"
           ]}
           {@rest}
         />
       </label>
-      <.error :for={msg <- @errors}>{msg}</.error>
+      <.error :for={msg <- @errors} class="label">{msg}</.error>
     </fieldset>
     """
   end
@@ -371,6 +371,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
   attr :title, :string, required: true, doc: "the title of the modal"
   attr :subtitle, :string, default: nil, doc: "the subtitle of the modal"
 
+  attr :id, :string,
+    default: "form-modal",
+    doc: "the id of the modal, used for targeting the modal dialog"
+
   attr :action, :atom,
     default: :new,
     values: [:new, :edit],
@@ -413,7 +417,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
       {@rest}
     >
       <div
-        class="bg-offwhite text-dark-green dark:bg-dark-green dark:text-offwhite rounded-xl shadow-2xl p-6 w-full max-w-2xl"
+        class="bg-base-200 rounded-xl shadow-2xl p-6 w-full max-w-2xl"
         phx-mounted={
           JS.transition(
             {"transition-all ease-out duration-300",

@@ -83,7 +83,7 @@ defmodule PersonalFinanceWeb.Layouts do
   """
   def theme_toggle(assigns) do
     ~H"""
-    <div class="card relative flex flex-row items-center  rounded-full light">
+    <div class="card relative flex flex-row items-center border-2 border-base-300 bg-base-300 rounded-full">
       <div class="absolute w-[33%] h-full rounded-full border-1 border-base-200 bg-base-100 brightness-200 left-0 [[data-theme=light]_&]:left-[33%] [[data-theme=dark]_&]:left-[66%] transition-[left]" />
 
       <button phx-click={JS.dispatch("phx:set-theme", detail: %{theme: "system"})} class="flex p-2">
@@ -105,7 +105,7 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div
       id="sidebar"
-      class="fixed top-16 z-50 h-screen bg-dark-green dark:bg-emerald-900/100 text-white transition-all duration-300 overflow-x-hidden
+      class="fixed top-16 z-50 h-screen bg-base-100 transition-all duration-300 overflow-x-hidden
          hidden md:block w-14
          [&.expanded]:block [&.expanded]:w-64"
     >
@@ -173,38 +173,67 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def page_header(assigns) do
     ~H"""
-    <div class="flex items-center justify-between w-full:pl-2 pr-4 py-2 bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite min-h-[64px]">
-      <button
-        id="toggle-sidebar"
-        phx-hook="ToggleSidebar"
-        class="flex items-center justify-center w-10 h-10 bg-dark-green text-white rounded"
-      >
-        <.icon name="hero-bars-3" class="open-icon size-6" />
-        <.icon name="hero-x-mark" class="close-icon size-6 hidden" />
-      </button>
-      <ul class="w-full flex flex-row text-xs md:text-lg items-center gap-2 px-2 sm:gap-4 sm:px-6 lg:px-8 py-1 sm:py-2 lg:py-3 justify-end bg-dark-green dark:bg-emerald-900/90 text-white dark:text-offwhite min-h-[64px]">
-        <li>
-          <Layouts.theme_toggle />
-        </li>
-        <%= if @current_scope do %>
-          <li class="medium  rounded-full py-1 px-2">
+    <div class="navbar bg-base-100 shadow-sm">
+      <div class="navbar-start">
+        <button id="toggle-sidebar" phx-hook="ToggleSidebar" class="btn btn-ghost btn-square">
+          <.icon name="hero-bars-3" class="open-icon size-6" />
+          <.icon name="hero-x-mark" class="close-icon size-6 hidden" />
+        </button>
+      </div>
+      <div class="navbar-end gap-4">
+        <Layouts.theme_toggle />
+        <div class="dropdown dropdown-end">
+          <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-5 w-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h8m-8 6h16"
+              />
+            </svg>
+          </div>
+          <ul
+            tabindex="0"
+            <ul
+            tabindex="0"
+            class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          >
+            <%= if @current_scope do %>
+              <li class="p-2">{@current_scope.user.email}</li>
+              <li>
+                <.link href={~p"/users/settings"}>Settings</.link>
+              </li>
+              <li>
+                <.link href={~p"/users/log-out"} method="delete">Log out</.link>
+              </li>
+            <% else %>
+              <li>
+                <.link href={~p"/users/register"}>Register</.link>
+              </li>
+              <li>
+                <.link href={~p"/users/log-in"}>Log in</.link>
+              </li>
+            <% end %>
+          </ul>
+        </div>
+        <div class="hidden lg:flex items-center gap-4">
+          <%= if @current_scope do %>
             {@current_scope.user.email}
-          </li>
-          <li class="light hover-medium rounded-full py-1 px-2">
             <.link href={~p"/users/settings"}>Settings</.link>
-          </li>
-          <li class="light hover-medium rounded-full py-1 px-2">
             <.link href={~p"/users/log-out"} method="delete">Log out</.link>
-          </li>
-        <% else %>
-          <li class="light hover-medium rounded-full py-1 px-2">
+          <% else %>
             <.link href={~p"/users/register"}>Register</.link>
-          </li>
-          <li class="light hover-medium rounded-full py-1 px-2">
             <.link href={~p"/users/log-in"}>Log in</.link>
-          </li>
-        <% end %>
-      </ul>
+          <% end %>
+        </div>
+      </div>
     </div>
     """
   end

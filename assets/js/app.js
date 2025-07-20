@@ -27,6 +27,23 @@ import topbar from "../vendor/topbar";
 
 let Hooks = {};
 
+Hooks.Modal = {
+    mounted() {
+        const id = this.el.id;
+        this.handleEvent(`open_modal:${id}`, () => {
+            console.log(id);
+            document.getElementById(id)?.showModal();
+        });
+        this.handleEvent(`close_modal:${id}`, () => {
+            document.getElementById(id)?.close();
+        });
+    },
+
+    updated() {
+        if (!this.el.open) this.el.showModal();
+    },
+};
+
 Hooks.ToggleSidebar = {
     mounted() {
         const sidebar = document.getElementById("sidebar");

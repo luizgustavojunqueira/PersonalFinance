@@ -10,6 +10,81 @@ https://tailwindcss.com/docs/configuration */
 The heroicons installation itself is managed by your mix.exs */
 @plugin "../vendor/heroicons";
 
+@plugin "../vendor/daisyui" {
+    themes: false;
+    exclude: rootscrollgutter;
+}
+
+@plugin "../vendor/daisyui-theme.js" {
+    name: "light";
+    default: true;
+    prefersdark: false;
+    color-scheme: "light";
+    --color-base-100: oklch(98% 0.018 155.826);
+    --color-base-200: oklch(96% 0.044 156.743);
+    --color-base-300: oklch(92% 0.084 155.995);
+    --color-base-content: oklch(39% 0.095 152.535);
+    --color-primary: oklch(87% 0 0);
+    --color-primary-content: oklch(14% 0 0);
+    --color-secondary: oklch(78% 0.115 274.713);
+    --color-secondary-content: oklch(25% 0.09 281.288);
+    --color-accent: oklch(86% 0.127 207.078);
+    --color-accent-content: oklch(30% 0.056 229.695);
+    --color-neutral: oklch(62% 0.194 149.214);
+    --color-neutral-content: oklch(98% 0.018 155.826);
+    --color-info: oklch(68% 0.169 237.323);
+    --color-info-content: oklch(97% 0.013 236.62);
+    --color-success: oklch(72% 0.219 149.579);
+    --color-success-content: oklch(98% 0.018 155.826);
+    --color-warning: oklch(70% 0.213 47.604);
+    --color-warning-content: oklch(98% 0.016 73.684);
+    --color-error: oklch(63% 0.237 25.331);
+    --color-error-content: oklch(97% 0.013 17.38);
+    --radius-selector: 1rem;
+    --radius-field: 0.5rem;
+    --radius-box: 1rem;
+    --size-selector: 0.28125rem;
+    --size-field: 0.25rem;
+    --border: 1.5px;
+    --depth: 1;
+    --noise: 0;
+}
+
+@plugin "../vendor/daisyui-theme.js" {
+    name: "dark";
+    default: false;
+    prefersdark: false;
+    color-scheme: "dark";
+    --color-base-100: oklch(26% 0.051 172.552);
+    --color-base-200: oklch(37% 0.077 168.94);
+    --color-base-300: oklch(43% 0.095 166.913);
+    --color-base-content: oklch(95% 0.052 163.051);
+    --color-primary: oklch(87% 0.15 154.449);
+    --color-primary-content: oklch(26% 0.065 152.934);
+    --color-secondary: oklch(84% 0.143 164.978);
+    --color-secondary-content: oklch(26% 0.051 172.552);
+    --color-accent: oklch(82% 0.119 306.383);
+    --color-accent-content: oklch(29% 0.149 302.717);
+    --color-neutral: oklch(59% 0.145 163.225);
+    --color-neutral-content: oklch(97% 0.021 166.113);
+    --color-info: oklch(70% 0.165 254.624);
+    --color-info-content: oklch(28% 0.091 267.935);
+    --color-success: oklch(77% 0.152 181.912);
+    --color-success-content: oklch(27% 0.046 192.524);
+    --color-warning: oklch(85% 0.199 91.936);
+    --color-warning-content: oklch(28% 0.066 53.813);
+    --color-error: oklch(71% 0.194 13.428);
+    --color-error-content: oklch(27% 0.105 12.094);
+    --radius-selector: 0rem;
+    --radius-field: 0.5rem;
+    --radius-box: 1rem;
+    --size-selector: 0.25rem;
+    --size-field: 0.25rem;
+    --border: 1px;
+    --depth: 1;
+    --noise: 0;
+}
+
 /* Add variants based on LiveView classes */
 @custom-variant phx-click-loading ([".phx-click-loading&", ".phx-click-loading &"]);
 @custom-variant phx-submit-loading ([".phx-submit-loading&", ".phx-submit-loading &"]);
@@ -19,25 +94,6 @@ The heroicons installation itself is managed by your mix.exs */
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-root-id] {
     display: contents;
-}
-
-@theme {
-    --color-offwhite: #e0f1eb;
-    --color-platinum: #dadcdd;
-    --color-light-green: #81c6a7;
-    --color-medium-green: #4bb183;
-    --color-accent: #1eac50;
-    --color-dark-green: #395b50;
-}
-
-@layer components {
-    .btn-primary {
-        @apply bg-accent/90 text-white rounded-md p-2 px-4 my-1 hover:bg-accent;
-    }
-
-    .btn {
-        @apply hover:cursor-pointer transition-colors;
-    }
 }
 
 #sidebar.expanded {

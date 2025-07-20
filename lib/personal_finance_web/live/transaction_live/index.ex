@@ -39,7 +39,14 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
           selected_category_id: nil,
           show_pending_transactions_drawer: false,
-          num_transactions: Enum.count(transactions)
+          num_transactions: Enum.count(transactions),
+          filter: %{
+            "category_id" => nil,
+            "profile_id" => nil,
+            "investment_type_id" => nil,
+            "start_date" => nil,
+            "end_date" => nil
+          }
         )
         |> stream_configure(
           :transaction_collection,
