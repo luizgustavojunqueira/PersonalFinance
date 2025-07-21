@@ -17,7 +17,12 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
        |> put_flash(:error, "Orçamento não encontrado.")
        |> push_navigate(to: ~p"/ledgers")}
     else
-      Finance.subscribe_finance(:transaction, ledger.id)
+      socket =
+        if not Map.get(socket.assigns, :subscribed, false) do
+          Finance.subscribe_finance(:transaction, ledger.id)
+          assign(socket, subscribed: true)
+        end
+
       categories = Finance.list_categories(current_scope, ledger)
 
       investment_category =
@@ -40,6 +45,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           selected_category_id: nil,
           show_pending_transactions_drawer: false,
           num_transactions: Enum.count(transactions),
+          collapse_open: false,
           filter: %{
             "category_id" => nil,
             "profile_id" => nil,
@@ -48,11 +54,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
             "end_date" => nil
           }
         )
-        |> stream_configure(
-          :transaction_collection,
-          dom_id: &"transaction-#{&1.id}"
-        )
-        |> stream(:transaction_collection, transactions)
 
       {:ok, socket |> apply_action(socket.assigns.live_action, params, ledger)}
     end
@@ -128,22 +129,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_event("delete", %{"id" => id}, socket) do
-    current_scope = socket.assigns.current_scope
-
-    transaction =
-      Finance.get_transaction(current_scope, id, socket.assigns.ledger)
-
-    case Finance.delete_transaction(current_scope, transaction) do
-      {:ok, _deleted} ->
-        {:noreply, socket}
-
-      {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Falha ao remover transação.")}
-    end
-  end
-
-  @impl true
   def handle_event("close_form", _params, socket) do
     {:noreply,
      socket
@@ -177,11 +162,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_event("save", %{"transaction" => transaction_params}, socket) do
-    save_transaction(socket, socket.assigns.form_action, transaction_params)
-  end
-
-  @impl true
   def handle_event("toggle_pending_transactions_drawer", _params, socket) do
     {:noreply,
      assign(socket,
@@ -192,34 +172,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_info({:saved, transaction}, socket) do
-    {:noreply,
-     socket
-     |> stream_insert(:transaction_collection, transaction, at: 0)
-     |> assign(show_form_modal: false, transaction: nil, form_action: nil)
-     |> assign(num_transactions: socket.assigns.num_transactions + 1)
-     |> put_flash(:info, "Transação salva com sucesso.")
-     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/transactions")}
-  end
-
-  @impl true
-  def handle_info({:deleted, transaction}, socket) do
-    {:noreply,
-     socket
-     |> put_flash(:info, "Transação removida com sucesso.")
-     |> assign(num_transactions: socket.assigns.num_transactions - 1)
-     |> stream_delete(:transaction_collection, transaction)}
-  end
-
-  @impl true
-  def handle_info(:transactions_updated, socket) do
-    transactions =
-      Finance.list_transactions(socket.assigns.current_scope, socket.assigns.ledger)
-
-    {:noreply,
-     socket
-     |> assign(num_transactions: Enum.count(transactions))
-     |> stream(:transaction_collection, transactions)}
+  def handle_event("save", %{"transaction" => transaction_params}, socket) do
+    save_transaction(socket, socket.assigns.form_action, transaction_params)
   end
 
   defp save_transaction(socket, :edit, transaction_params) do
@@ -267,6 +221,63 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
         IO.inspect(changeset, label: "Transaction Changeset Error")
         {:noreply, assign(socket, form: to_form(changeset))}
     end
+  end
+
+  @impl true
+  def handle_info({:apply_filter, filter}, socket) do
+    IO.inspect(filter, label: "Received filter params in parent")
+
+    send_update(PersonalFinanceWeb.TransactionLive.Transactions,
+      id: "transactions-list",
+      action: :update,
+      filter: filter
+    )
+
+    socket =
+      socket
+      |> assign(:filters, filter)
+
+    {:noreply, socket}
+  end
+
+  @impl true
+  def handle_info({:deleted, transaction}, socket) do
+    send_update(PersonalFinanceWeb.TransactionLive.Transactions,
+      id: "transactions-list",
+      action: :deleted,
+      transaction: transaction
+    )
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Transação removida com sucesso.")}
+  end
+
+  @impl true
+  def handle_info({:saved, transaction}, socket) do
+    IO.inspect(transaction.id, label: "Transaction saved in Index LiveView")
+
+    send_update(PersonalFinanceWeb.TransactionLive.Transactions,
+      id: "transactions-list",
+      action: :saved,
+      transaction: transaction
+    )
+
+    {:noreply,
+     socket
+     |> assign(show_form_modal: false, transaction: nil, form_action: nil)
+     |> put_flash(:info, "Transação salva com sucesso.")
+     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/transactions")}
+  end
+
+  @impl true
+  def handle_info(:transactions_updated, socket) do
+    send_update(PersonalFinanceWeb.TransactionLive.Transactions,
+      id: "transactions-list",
+      action: :update
+    )
+
+    {:noreply, socket}
   end
 
   defp parse_float(val) when is_float(val), do: val

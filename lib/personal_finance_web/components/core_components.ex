@@ -420,10 +420,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
         class="bg-base-200 rounded-xl shadow-2xl p-6 w-full max-w-2xl"
         phx-mounted={
           JS.transition(
-            {"transition-all ease-out duration-300",
+            {"transition-all ease-out duration-200",
              "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
              "opacity-100 translate-y-0 sm:scale-100"},
-            time: 300
+            time: 200
           )
         }
       >
@@ -507,12 +507,6 @@ defmodule PersonalFinanceWeb.CoreComponents do
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
             class={"transition-colors border-b-1 last:border-none bg-base-300 #{if @row_click, do: "hover:bg-base-300/50"}"}
-            phx-mounted={
-              JS.transition(
-                {"ease-in duration-500", "opacity-0 p-0 h-0", "opacity-100"},
-                time: 500
-              )
-            }
           >
             <td
               :for={col <- @col}
@@ -619,10 +613,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
         class="bg-base-100 rounded-xl shadow-2xl p-6 w-full max-w-md"
         phx-mounted={
           JS.transition(
-            {"transition-all ease-out duration-300",
+            {"transition-all ease-out duration-200",
              "opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95",
              "opacity-100 translate-y-0 sm:scale-100"},
-            time: 300
+            time: 200
           )
         }
       >

@@ -162,25 +162,55 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Retorna a lista de transações para um orçamento
+  Retorna a lista de transações para um orçamento, com filtros opcionais fornecidos em um mapa.
+
+  ## Parâmetros
+  - `scope`: O escopo da aplicação (%Scope{}).
+  - `ledger`: O ledger associado às transações (%Ledger{}).
+  - `filters`: (Opcional) Mapa com filtros, como %{category_id: id, profile_id: id, ...}.
+
+  ## Retorno
+  Lista de transações ordenadas por data (descendente) com associações pré-carregadas.
   """
-  def list_transactions(%Scope{} = scope, ledger, profile_id \\ nil) do
+  def list_transactions(%Scope{} = scope, %Ledger{} = ledger, filters \\ %{}) do
     query =
       from(t in Transaction,
+        where: t.ledger_id == ^ledger.id,
         order_by: [desc: t.date],
-        where: t.ledger_id == ^ledger.id
+        preload: [:category, :investment_type, :profile]
       )
 
     query =
-      if profile_id do
-        from(t in query, where: t.profile_id == ^profile_id)
-      else
-        query
-      end
+      if category_id = filters[:category_id] || filters["category_id"],
+        do: from(t in query, where: t.category_id == ^category_id),
+        else: query
 
-    query
-    |> Ecto.Query.preload([:category, :investment_type, :profile])
-    |> Repo.all()
+    query =
+      if profile_id = filters[:profile_id] || filters["profile_id"],
+        do: from(t in query, where: t.profile_id == ^profile_id),
+        else: query
+
+    query =
+      if investment_type_id = filters[:investment_type_id] || filters["investment_type_id"],
+        do: from(t in query, where: t.investment_type_id == ^investment_type_id),
+        else: query
+
+    query =
+      if type = filters[:type] || filters["type"],
+        do: from(t in query, where: t.type == ^type),
+        else: query
+
+    query =
+      if start_date = filters[:start_date] || filters["start_date"],
+        do: from(t in query, where: t.date >= ^start_date),
+        else: query
+
+    query =
+      if end_date = filters[:end_date] || filters["end_date"],
+        do: from(t in query, where: t.date <= ^end_date),
+        else: query
+
+    Repo.all(query)
   end
 
   @doc """

@@ -127,69 +127,25 @@
     />
   <% end %>
 
-  <div class="w-full text-dark-green dark:text-offwhite">
-    <%= if @num_transactions == 0 do %>
-      <p class="text-center text-gray-500">Nenhuma transação encontrada.</p>
-    <% else %>
-      <.table id="transactions_table" rows={@streams.transaction_collection}>
-        <:col :let={{_id, transaction}} label="Tipo">
-          <span class={"p-1 px-2 rounded-lg text-black #{if transaction.type == :income, do: "bg-green-300", else: "bg-red-300"}"}>
-            {if transaction.type == :income, do: "Receita", else: "Despesa"}
-          </span>
-        </:col>
-        <:col :let={{_id, transaction}} label="Data">
-          <%= if transaction.inserted_at do %>
-            {DateUtils.format_date(transaction.date)}
-          <% else %>
-            Data não disponível
-          <% end %>
-        </:col>
-        <:col :let={{_id, transaction}} label="Descrição">{transaction.description}</:col>
-        <:col :let={{_id, transaction}} label="Perfil">
-          <span
-            class="p-1 px-2 rounded-lg text-white"
-            style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
-          >
-            {transaction.profile && transaction.profile.name}
-          </span>
-        </:col>
-        <:col :let={{_id, transaction}} label="Categoria">
-          <span
-            class="p-1 px-2 rounded-lg text-white"
-            style={"background-color: #{transaction.category && transaction.category.color}99;"}
-          >
-            {transaction.category && transaction.category.name}
-          </span>
-        </:col>
-        <:col :let={{_id, transaction}} label="Tipo de Investimento">
-          {if(transaction.investment_type,
-            do: transaction.investment_type.name,
-            else: "-"
-          )}
-        </:col>
-        <:col :let={{_id, transaction}} label="Quantidade">
-          {if transaction.investment_type && transaction.investment_type.name == "Cripto",
-            do: CurrencyUtils.format_amount(transaction.amount, true),
-            else: CurrencyUtils.format_amount(transaction.amount, false)}
-        </:col>
-        <:col :let={{_id, transaction}} label="Valor Unitário">
-          {CurrencyUtils.format_money(transaction.value)}
-        </:col>
-        <:col :let={{_id, transaction}} label="Valor Total">
-          {CurrencyUtils.format_money(transaction.total_value)}
-        </:col>
-
-        <:action :let={{_id, transaction}}>
-          <.link navigate={~p"/ledgers/#{@ledger.id}/transactions/#{transaction.id}/edit"}>
-            <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
-          </.link>
-        </:action>
-        <:action :let={{_id, transaction}}>
-          <.link phx-click="delete" phx-value-id={transaction.id}>
-            <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
-          </.link>
-        </:action>
-      </.table>
-    <% end %>
+  <div class="flex flex-col gap-4 h-full">
+    <.live_component
+      module={PersonalFinanceWeb.TransactionLive.Filter}
+      id="transactions-list"
+      ledger={@ledger}
+      filter={@filter}
+      profiles={@profiles}
+      categories={@categories}
+      investment_types={@investment_types}
+      current_scope={@current_scope}
+      parent_pid={self()}
+    />
+    <.live_component
+      module={PersonalFinanceWeb.TransactionLive.Transactions}
+      id="transactions-list"
+      ledger={@ledger}
+      filter={@filter}
+      current_scope={@current_scope}
+      parent_pid={self()}
+    />
   </div>
 </Layouts.app>
