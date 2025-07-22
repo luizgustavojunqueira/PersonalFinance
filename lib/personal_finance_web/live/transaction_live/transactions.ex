@@ -10,27 +10,39 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
     {:ok,
      socket
      |> stream_configure(:transaction_collection, dom_id: &"transaction-#{&1.id}")
-     |> assign(:num_transactions, 0)}
+     |> assign(:num_transactions, 0)
+     |> assign(:current_page, 1)
+     |> assign(:page_size, 25)
+     |> assign(:total_pages, 1)}
   end
 
   @impl true
   def update(assigns, socket) do
     ledger = Map.get(assigns, :ledger) || socket.assigns.ledger
     current_scope = Map.get(assigns, :current_scope) || socket.assigns.current_scope
-
     filter_params = assigns[:filter]
 
     socket =
       case assigns[:action] do
         action when action in [:saved, :deleted, :update] ->
-          IO.inspect(action, label: "Applying action in Transactions component")
           apply_action(socket, action, assigns, filter_params)
 
         _ ->
-          transactions = Finance.list_transactions(current_scope, ledger, filter_params)
+          page_data =
+            Finance.list_transactions(
+              current_scope,
+              ledger,
+              filter_params || %{},
+              socket.assigns.current_page,
+              socket.assigns.page_size
+            )
+
+          transactions = page_data.entries
 
           socket
-          |> assign(:num_transactions, length(transactions))
+          |> assign(:num_transactions, page_data.total_entries)
+          |> assign(:total_pages, page_data.total_pages)
+          |> assign(:current_page, page_data.page_number)
           |> stream(:transaction_collection, transactions, reset: true)
       end
 
@@ -38,7 +50,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
   end
 
   defp apply_action(socket, :saved, assigns, _) do
-    IO.inspect(assigns.transaction, label: "Transaction saved in Transactions component")
     transaction = assigns.transaction
     filter = socket.assigns.filter
 
@@ -61,21 +72,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
   end
 
   defp apply_action(socket, :update, _assigns, filter_params) do
-    IO.inspect(filter_params, label: "Updating transactions with filter params")
-
-    transactions =
-      Finance.list_transactions(
-        socket.assigns.current_scope,
-        socket.assigns.ledger,
-        filter_params
-      )
-
-    socket
-    |> stream(
-      :transaction_collection,
-      transactions,
-      reset: true
-    )
+    socket |> assign(filter_params: filter_params) |> update_transactions(1)
   end
 
   defp transaction_matches_filters?(transaction, filters) do
@@ -170,6 +167,28 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
           </:action>
         </.table>
       <% end %>
+
+      <div class="mt-4 flex justify-between items-center">
+        <.button
+          phx-click="previous_page"
+          phx-target={@myself}
+          variant="custom"
+          class={"btn-primary btn-outline #{if @current_page <= 1, do: "btn-disabled", else: ""}"}
+        >
+          Anterior
+        </.button>
+        <span>
+          Página {@current_page} de {@total_pages}
+        </span>
+        <.button
+          phx-click="next_page"
+          phx-target={@myself}
+          variant="custom"
+          class={"btn-primary btn-outline #{if @current_page >= @total_pages, do: "btn-disabled", else: ""}"}
+        >
+          Próximo
+        </.button>
+      </div>
     </div>
     """
   end
@@ -188,5 +207,34 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, "Falha ao remover transação.")}
     end
+  end
+
+  @impl true
+  def handle_event("next_page", _, socket) do
+    new_page = socket.assigns.current_page + 1
+    {:noreply, update_transactions(socket, new_page)}
+  end
+
+  @impl true
+  def handle_event("previous_page", _, socket) do
+    new_page = socket.assigns.current_page - 1
+    {:noreply, update_transactions(socket, new_page)}
+  end
+
+  defp update_transactions(socket, new_page) do
+    page_data =
+      Finance.list_transactions(
+        socket.assigns.current_scope,
+        socket.assigns.ledger,
+        socket.assigns.filter_params,
+        new_page,
+        socket.assigns.page_size
+      )
+
+    socket
+    |> assign(:current_page, page_data.page_number)
+    |> assign(:total_pages, page_data.total_pages)
+    |> assign(:num_transactions, page_data.total_entries)
+    |> stream(:transaction_collection, page_data.entries, reset: true)
   end
 end

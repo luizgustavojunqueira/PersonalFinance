@@ -293,8 +293,6 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       |> Enum.concat(categories_messages)
       |> Enum.reject(&is_nil/1)
 
-    IO.inspect(messages)
-
     assign(socket, messages: messages)
   end
 

@@ -16,7 +16,10 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
       Finance.subscribe_finance(:transaction, ledger.id)
       Finance.subscribe_finance(:category, ledger.id)
 
-      transactions = Finance.list_transactions(current_scope, ledger)
+      data_transactions = Finance.list_transactions(current_scope, ledger)
+
+      transactions = data_transactions.entries
+
       categories = Finance.list_categories(current_scope, ledger)
 
       socket =
@@ -47,7 +50,12 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
 
     profile_id = if profile_id_str == "", do: nil, else: String.to_integer(profile_id_str)
 
-    transactions = Finance.list_transactions(current_scope, ledger, profile_id)
+    data_transactions =
+      Finance.list_transactions(current_scope, ledger, %{
+        "profile_id" => profile_id
+      })
+
+    transactions = data_transactions.entries
 
     {:noreply,
      assign(socket,
@@ -132,7 +140,9 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
     current_scope = socket.assigns.current_scope
     ledger = socket.assigns.ledger
 
-    updated_transactions = PersonalFinance.Finance.list_transactions(current_scope, ledger)
+    data_transactions = Finance.list_transactions(current_scope, ledger)
+
+    updated_transactions = data_transactions.entries
 
     {:noreply,
      assign(socket,

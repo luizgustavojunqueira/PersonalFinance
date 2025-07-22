@@ -32,9 +32,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
       profiles = Finance.list_profiles(socket.assigns.current_scope, ledger)
 
-      transactions =
-        Finance.list_transactions(current_scope, ledger)
-
       socket =
         socket
         |> assign(
@@ -44,8 +41,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
           selected_category_id: nil,
           show_pending_transactions_drawer: false,
-          num_transactions: Enum.count(transactions),
-          collapse_open: false,
           filter: %{
             "category_id" => nil,
             "profile_id" => nil,
@@ -225,8 +220,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
   @impl true
   def handle_info({:apply_filter, filter}, socket) do
-    IO.inspect(filter, label: "Received filter params in parent")
-
     send_update(PersonalFinanceWeb.TransactionLive.Transactions,
       id: "transactions-list",
       action: :update,
@@ -255,8 +248,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
   @impl true
   def handle_info({:saved, transaction}, socket) do
-    IO.inspect(transaction.id, label: "Transaction saved in Index LiveView")
-
     send_update(PersonalFinanceWeb.TransactionLive.Transactions,
       id: "transactions-list",
       action: :saved,

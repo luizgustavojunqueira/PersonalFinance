@@ -47,9 +47,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
 
     send(socket.assigns.parent_pid, {:apply_filter, filter})
 
-    IO.inspect(filter, label: "Resetting filters in TransactionLive.Filter")
-    IO.inspect(to_form(filter, as: :filter), label: "Filter form after reset")
-
     {:noreply,
      socket
      |> assign(form: to_form(filter, as: :filter))}

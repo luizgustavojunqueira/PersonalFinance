@@ -172,7 +172,15 @@ defmodule PersonalFinance.Finance do
   ## Retorno
   Lista de transações ordenadas por data (descendente) com associações pré-carregadas.
   """
-  def list_transactions(%Scope{} = scope, %Ledger{} = ledger, filters \\ %{}) do
+  def list_transactions(
+        %Scope{} = scope,
+        %Ledger{} = ledger,
+        filters \\ %{},
+        page \\ 1,
+        page_size \\ 10
+      ) do
+    offset = (page - 1) * page_size
+
     query =
       from(t in Transaction,
         where: t.ledger_id == ^ledger.id,
@@ -210,7 +218,24 @@ defmodule PersonalFinance.Finance do
         do: from(t in query, where: t.date <= ^end_date),
         else: query
 
-    Repo.all(query)
+    total_entries = Repo.aggregate(query, :count, :id)
+
+    query =
+      from(t in query,
+        limit: ^page_size,
+        offset: ^offset
+      )
+
+    transactions = Repo.all(query)
+
+    %{
+      entries: transactions,
+      page_number: page,
+      page_size: page_size,
+      total_entries: total_entries,
+      total_pages:
+        if(total_entries > 0, do: div(total_entries + page_size - 1, page_size), else: 1)
+    }
   end
 
   @doc """

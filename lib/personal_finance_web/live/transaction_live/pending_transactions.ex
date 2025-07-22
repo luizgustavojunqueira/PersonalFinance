@@ -28,8 +28,6 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
     ledger = socket.assigns.ledger
     current_scope = socket.assigns.current_scope
 
-    IO.inspect(id, label: "Confirming transaction with ID")
-
     case Finance.confirm_recurring_transaction(current_scope, ledger, id) do
       {:ok, _transaction} ->
         pending_recurrent_transactions =
