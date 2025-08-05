@@ -1,6 +1,7 @@
 defmodule PersonalFinanceWeb.SettingsLive.Index do
   use PersonalFinanceWeb, :live_view
 
+  alias PersonalFinance.Accounts.User
   alias PersonalFinance.Finance
 
   @impl true
@@ -31,16 +32,21 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
   end
 
   @impl true
-  def handle_info({:invite_sent, _invite}, socket) do
+  def handle_info({:user_added, %User{} = user}, socket) do
     Phoenix.LiveView.send_update(PersonalFinanceWeb.SettingsLive.CollaboratorsList,
       id: "collaborators-list"
     )
 
-    {:noreply, socket |> put_flash(:info, "Convite enviado com sucesso.")}
+    {:noreply, socket |> put_flash(:info, "Colaborador #{user.email} adicionado com sucesso.")}
   end
 
   @impl true
   def handle_info({:user_removed, _user}, socket) do
     {:noreply, socket |> put_flash(:info, "Colaborador removido com sucesso.")}
+  end
+
+  @impl true
+  def handle_info({:error, messsage}, socket) do
+    {:noreply, socket |> put_flash(:error, messsage)}
   end
 end

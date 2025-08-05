@@ -1,6 +1,5 @@
 defmodule PersonalFinance.Finance do
   alias PersonalFinance.Finance.LedgersUsers
-  alias PersonalFinance.Finance.LedgerInvite
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
 
@@ -355,18 +354,6 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Get ledger invites.
-  """
-  def list_ledger_invites(%Scope{} = scope, %Ledger{} = ledger, status) do
-    from(bi in LedgerInvite,
-      where: bi.ledger_id == ^ledger.id,
-      where: bi.status == ^status,
-      preload: [:inviter, :invited_user]
-    )
-    |> Repo.all()
-  end
-
-  @doc """
   Updates a ledger.
   """
   def update_ledger(%Scope{} = scope, %Ledger{} = ledger, attrs) do
@@ -422,6 +409,33 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
+  Add a user to a ledger.
+  """
+  def add_ledger_user(%Scope{} = scope, %Ledger{} = ledger, user_id) do
+    if ledger.owner_id != scope.user.id do
+      {:error, "You are not the owner of this ledger."}
+    else
+      existing_user =
+        from(bu in LedgersUsers,
+          where: bu.ledger_id == ^ledger.id and bu.user_id == ^user_id
+        )
+        |> Repo.one()
+
+      if existing_user do
+        {:error, "User already added to this ledger."}
+      else
+        %LedgersUsers{}
+        |> LedgersUsers.changeset(%{ledger_id: ledger.id, user_id: user_id})
+        |> Repo.insert()
+        |> case do
+          {:ok, ledgerUser} -> {:ok, Repo.preload(ledgerUser, :user).user}
+          {:error, changeset} -> {:error, changeset}
+        end
+      end
+    end
+  end
+
+  @doc """
   Remove a user from a ledger.
   """
   def remove_ledger_user(%Scope{} = scope, %Ledger{} = ledger, user_id) do
@@ -430,11 +444,6 @@ defmodule PersonalFinance.Finance do
     else
       from(bu in LedgersUsers,
         where: bu.ledger_id == ^ledger.id and bu.user_id == ^user_id
-      )
-      |> Repo.delete_all()
-
-      from(bi in LedgerInvite,
-        where: bi.ledger_id == ^ledger.id and bi.invited_user_id == ^user_id
       )
       |> Repo.delete_all()
 
@@ -585,100 +594,6 @@ defmodule PersonalFinance.Finance do
         {:ok, deleted_profile}
       else
         {:error, _} = error -> error
-      end
-    end
-  end
-
-  @doc """
-  Create a ledger invite
-  """
-  def create_ledger_invite(%Scope{} = scope, ledger, email) do
-    if ledger.owner_id != scope.user.id do
-      {:error, "You are not the owner of this ledger."}
-    else
-      token = :crypto.strong_rand_bytes(32) |> Base.url_encode64()
-      expires_at = NaiveDateTime.utc_now() |> NaiveDateTime.add(7 * 24 * 60 * 60, :second)
-
-      attrs = %{
-        ledger_id: ledger.id,
-        email: email,
-        token: token,
-        inviter_id: scope.user.id,
-        status: :pending,
-        expires_at: expires_at
-      }
-
-      %LedgerInvite{}
-      |> LedgerInvite.changeset(attrs)
-      |> Repo.insert()
-    end
-  end
-
-  @doc """
-  Get a ledger invite by token
-  """
-  def get_ledger_invite_by_token(token) do
-    Repo.get_by(LedgerInvite, token: token) |> Repo.preload([:ledger, :inviter, :invited_user])
-  end
-
-  @doc """
-  Accept a ledger invite
-  """
-  def accept_ledger_invite(user, %LedgerInvite{} = invite) do
-    if invite.status == :pending && user.email == invite.email &&
-         (is_nil(invite.expires_at) ||
-            NaiveDateTime.compare(NaiveDateTime.utc_now(), invite.expires_at) == :lt) do
-      Repo.transaction(fn ->
-        invite =
-          invite
-          |> LedgerInvite.changeset(%{status: :accepted, invited_user_id: user.id})
-          |> Repo.update!()
-
-        %LedgersUsers{}
-        |> LedgersUsers.changeset(%{
-          ledger_id: invite.ledger_id,
-          user_id: user.id
-        })
-        |> Repo.insert!()
-
-        {:ok, invite}
-      end)
-    else
-      {:error, "Invite is not valid or has expired."}
-    end
-  end
-
-  @doc """
-  Decline a ledger invite
-  """
-  def decline_ledger_invite(user, %LedgerInvite{} = invite) do
-    if invite.status == :pending && user.email == invite.email &&
-         (is_nil(invite.expires_at) ||
-            NaiveDateTime.compare(NaiveDateTime.utc_now(), invite.expires_at) == :lt) do
-      invite
-      |> LedgerInvite.changeset(%{status: :declined})
-      |> Repo.update()
-    else
-      {:error, "Invite is not valid or has expired."}
-    end
-  end
-
-  @doc """
-  Revoke a ledger invite
-  """
-  def revoke_ledger_invite(%Scope{} = scope, %Ledger{} = ledger, invite_id) do
-    if ledger.owner_id != scope.user.id do
-      {:error, "You are not the owner of this ledger."}
-    else
-      invite =
-        LedgerInvite
-        |> where([bi], bi.id == ^invite_id and bi.ledger_id == ^ledger.id)
-        |> Repo.one()
-
-      if invite do
-        Repo.delete(invite)
-      else
-        {:error, "Invite not found."}
       end
     end
   end

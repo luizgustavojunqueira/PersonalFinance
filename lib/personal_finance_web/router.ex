@@ -97,10 +97,6 @@ defmodule PersonalFinanceWeb.Router do
       live "/ledgers/:id/settings", SettingsLive.Index, :index
     end
 
-    post "/join/:token", InviteController, :join
-    post "/join/:token/decline", InviteController, :decline
-    get "/join/:token", InviteController, :show_invitation
-
     post "/users/update-password", UserSessionController, :update_password
   end
 
