@@ -1,4 +1,5 @@
 defmodule PersonalFinanceWeb.Router do
+  alias PersonalFinance.Accounts.User
   use PersonalFinanceWeb, :router
 
   import PersonalFinanceWeb.UserAuth
@@ -15,6 +16,10 @@ defmodule PersonalFinanceWeb.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+  end
+
+  pipeline :require_admin do
+    plug :require_admin_user
   end
 
   # Other scopes may use custom stacks.
@@ -39,10 +44,31 @@ defmodule PersonalFinanceWeb.Router do
     end
   end
 
-  ## Authentication routes
+  scope "/", PersonalFinanceWeb do
+    pipe_through [:browser]
+
+    live "/setup", UserLive.Setup, :new
+  end
+
+  scope "/admin", PersonalFinanceWeb do
+    pipe_through [
+      :browser,
+      :redirect_if_setup_required,
+      :require_authenticated_user,
+      :require_admin
+    ]
+
+    live_session :require_admin,
+      on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
+      live "/users", AdminLive.Users, :index
+      live "/users/new", AdminLive.Users, :new
+      live "/users/:id/edit", AdminLive.Users, :edit
+      live "/users/:id/delete", AdminLive.Users, :delete
+    end
+  end
 
   scope "/", PersonalFinanceWeb do
-    pipe_through [:browser, :require_authenticated_user]
+    pipe_through [:browser, :redirect_if_setup_required, :require_authenticated_user]
 
     live_session :require_authenticated_user,
       on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
@@ -79,16 +105,34 @@ defmodule PersonalFinanceWeb.Router do
   end
 
   scope "/", PersonalFinanceWeb do
-    pipe_through [:browser]
+    pipe_through [:browser, :redirect_if_setup_required]
 
     live_session :current_user,
       on_mount: [{PersonalFinanceWeb.UserAuth, :mount_current_scope}] do
-      live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
-      live "/users/log-in/:token", UserLive.Confirmation, :new
     end
 
     post "/users/log-in", UserSessionController, :create
     delete "/users/log-out", UserSessionController, :delete
+  end
+
+  defp require_admin_user(conn, _opts) do
+    if conn.assigns.current_scope && conn.assigns.current_scope.user &&
+         User.admin?(conn.assigns.current_scope.user) do
+      conn
+    else
+      conn
+      |> Phoenix.Controller.put_flash(:error, "You must be an admin to access this page.")
+      |> Phoenix.Controller.redirect(to: "/")
+      |> halt()
+    end
+  end
+
+  def redirect_if_setup_required(conn, _opts) do
+    if PersonalFinance.Accounts.first_user_setup_required?() and conn.request_path != "/setup" do
+      conn |> Phoenix.Controller.redirect(to: "/setup") |> halt()
+    else
+      conn
+    end
   end
 end

@@ -245,6 +245,14 @@ defmodule PersonalFinanceWeb.UserAuth do
     end
   end
 
+  def on_mount(:redirect_if_setup_required, _params, _session, socket) do
+    if PersonalFinance.Accounts.first_user_setup_required?() do
+      {:halt, Phoenix.LiveView.push_navigate(socket, to: ~p"/setup")}
+    else
+      {:cont, socket}
+    end
+  end
+
   defp mount_current_scope(socket, session) do
     Phoenix.Component.assign_new(socket, :current_scope, fn ->
       {user, _} =

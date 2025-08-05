@@ -1,8 +1,6 @@
 defmodule PersonalFinanceWeb.TransactionLive.Index do
   alias PersonalFinance.Finance.{Transaction}
   alias PersonalFinance.Finance
-  alias PersonalFinance.CurrencyUtils
-  alias PersonalFinance.DateUtils
   use PersonalFinanceWeb, :live_view
 
   @impl true

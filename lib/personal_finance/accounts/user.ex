@@ -10,7 +10,24 @@ defmodule PersonalFinance.Accounts.User do
     field :authenticated_at, :utc_datetime, virtual: true
     field :name, :string
 
+    field :role, Ecto.Enum,
+      values: [:user, :admin],
+      default: :user
+
     timestamps(type: :utc_datetime)
+  end
+
+  @doc """
+  A user changeset form admin creating uers.
+  """
+  def admin_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:email, :name, :password, :role])
+    |> validate_required([:email, :name, :password])
+    |> validate_email([])
+    |> validate_password([])
+    |> validate_length(:name, min: 1, max: 160)
+    |> validate_inclusion(:role, [:user, :admin], message: "Invalid role specified")
   end
 
   @doc """
@@ -132,4 +149,7 @@ defmodule PersonalFinance.Accounts.User do
     Bcrypt.no_user_verify()
     false
   end
+
+  def admin?(%__MODULE__{role: :admin}), do: true
+  def admin?(_), do: false
 end

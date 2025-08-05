@@ -401,7 +401,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
     doc: "the event to trigger when the form is closed"
 
   attr :parent_pid, :any,
-    default: self(),
+    default: nil,
     doc: "the parent process pid to target for events"
 
   attr :rest, :global,
@@ -446,6 +446,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
           for={@form}
           phx-submit={@submit_event}
           phx-change={@validate_event}
+          phx-target={@parent_pid}
           class="flex flex-col gap-4"
         >
           {render_slot(@inner_block, @form)}

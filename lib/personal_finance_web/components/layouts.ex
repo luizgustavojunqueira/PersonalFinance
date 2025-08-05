@@ -7,6 +7,7 @@ defmodule PersonalFinanceWeb.Layouts do
   application router. The "app" layout is rendered as component
   in regular views and live views.
   """
+  alias PersonalFinance.Accounts.User
   use PersonalFinanceWeb, :html
 
   embed_templates "layouts/*"
@@ -165,6 +166,15 @@ defmodule PersonalFinanceWeb.Layouts do
               </.link>
             </li>
           <% end %>
+        <% else %>
+          <%= if User.admin?(@current_scope.user)  do %>
+            <li class=" mb-4 ">
+              <.link navigate={~p"/admin/users"} class="flex items-center gap-2 sidebar-link">
+                <.icon name="hero-users" class="size-6" />
+                <span class="sidebar-text hidden md:inline">Users</span>
+              </.link>
+            </li>
+          <% end %>
         <% end %>
       </ul>
     </div>
@@ -215,9 +225,6 @@ defmodule PersonalFinanceWeb.Layouts do
               </li>
             <% else %>
               <li>
-                <.link href={~p"/users/register"}>Register</.link>
-              </li>
-              <li>
                 <.link href={~p"/users/log-in"}>Log in</.link>
               </li>
             <% end %>
@@ -229,7 +236,6 @@ defmodule PersonalFinanceWeb.Layouts do
             <.link href={~p"/users/settings"}>Settings</.link>
             <.link href={~p"/users/log-out"} method="delete">Log out</.link>
           <% else %>
-            <.link href={~p"/users/register"}>Register</.link>
             <.link href={~p"/users/log-in"}>Log in</.link>
           <% end %>
         </div>
