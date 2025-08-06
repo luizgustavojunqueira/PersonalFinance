@@ -30,8 +30,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
     send(socket.assigns.parent_pid, {:apply_filter, filter})
 
     {:noreply,
-     socket
-     |> assign(form: to_form(filter, as: :filter))}
+      socket
+      |> assign(form: to_form(filter, as: :filter))}
   end
 
   @impl true
@@ -48,18 +48,17 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
     send(socket.assigns.parent_pid, {:apply_filter, filter})
 
     {:noreply,
-     socket
-     |> assign(form: to_form(filter, as: :filter))}
+      socket
+      |> assign(form: to_form(filter, as: :filter))}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="collapse bg-base-300 border-base-300 border" id="filter-collapse">
-      <input type="checkbox" />
-      <div class="collapse-title font-semibold">
+    <details phx-mounted={JS.ignore_attributes(["open"])} class="collapse bg-base-300 " id="filter-collapse">
+      <summary class="collapse-title font-semibold">
         <.icon name="hero-funnel" class="inline-block mr-2" /> Filtros
-      </div>
+      </summary>
       <div class="collapse-content text-sm">
         <.form for={@form} phx-submit="filter" phx-target={@myself} class="flex flex-col gap-4">
           <div class="flex flex-col gap-2">
@@ -129,13 +128,13 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
               phx-target={@myself}
               phx-click="reset_filters"
               class="ml-2"
-            >
+              >
               <.icon name="hero-x-mark" /> Limpar Filtros
             </.button>
           </div>
         </.form>
       </div>
-    </div>
+    </details>
     """
   end
 
