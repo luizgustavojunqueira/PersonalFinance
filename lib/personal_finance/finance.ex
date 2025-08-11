@@ -272,6 +272,109 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
+  Importa múltiplas transações de um arquivo CSV.
+  """
+  def import_transactions(%Scope{} = scope, %Plug.Upload{path: path}) do
+    IO.inspect("Importing transactions from file: #{path}")
+    ledger = list_ledgers(scope) |> List.first()
+
+    if ledger == nil do
+      {:error, "No ledger found for the user."}
+    else
+
+      default_category = Category |> where([c], c.is_default == true and c.ledger_id == ^ledger.id) |> Repo.one()
+      default_profile = Profile |> where([p], p.is_default == true and p.ledger_id == ^ledger.id) |> Repo.one()
+
+      if !default_category || !default_profile do
+        {:error, "Default category or profile not found for the ledger."}
+      else
+        result =
+          path
+          |> File.stream!()
+          |> CSV.decode!(headers: true)
+          |> Enum.map(fn row ->
+            category =
+              if row["category"] && String.trim(row["category"]) != "" do
+                get_category_by_name(String.trim(row["category"]), scope, ledger) || default_category
+              else
+                default_category
+              end
+
+            profile =
+              if row["profile"] && String.trim(row["profile"]) != "" do
+                Profile
+                |> where([p], p.name == ^String.trim(row["profile"]) and p.ledger_id == ^ledger.id)
+                |> Repo.one() || default_profile
+              else
+                default_profile
+              end
+
+            transaction_attrs = %{
+              "description" =>
+                case row["description"] do
+                  nil -> "No description"
+                  "" -> "No description"
+                  desc -> String.trim(desc)
+                end,
+              "value" =>
+                row["value"]
+                |> String.replace("R$ ", "")
+                |> String.replace(".", "")
+                |> String.replace(",", ".")
+                |> parse_float()
+                |> Float.round(2),
+              "amount" =>
+                (row["amount"] || "1.0")
+                |> String.replace("R$ ", "")
+                |> String.replace(".", "")
+                |> String.replace(",", ".")
+                  |> parse_float(),
+              "total_value" =>
+                (row["value"]
+                |> String.replace("R$ ", "")
+                |> String.replace(".", "")
+                |> String.replace(",", ".")
+                |> parse_float()
+                 |> Float.round(2)) *
+                  ((row["amount"] || "1")
+                    |> String.replace(".", "")
+                    |> String.replace(",", ".")
+                    |> parse_float()),
+              "date" =>
+                row["date"]
+                |> String.split("/")
+                |> then(fn [d, m, y] ->
+                  Date.new!(String.to_integer(y), String.to_integer(m), String.to_integer(d))
+                end),
+              "category_id" => category.id,
+              "profile_id" => profile.id,
+              "ledger_id" => ledger.id,
+              "type" =>
+                case String.downcase(row["type"] || "") do
+                  "" -> :income
+                  "compra" -> :expense
+                  _ -> :expense
+                end
+            }
+            IO.inspect(transaction_attrs, label: "Transaction Attrs")
+            create_transaction(scope, transaction_attrs, ledger)
+          end)
+        successful_transactions =
+          Enum.filter(result, fn
+            {:ok, _} -> true
+            {:error, _} -> false
+          end)
+          |> Enum.map(fn {:ok, t} -> t end)
+
+        IO.inspect(successful_transactions)
+
+        {:ok, successful_transactions}
+      end
+    end
+
+  end
+
+  @doc """
   Atualiza uma transação.
   """
   def update_transaction(%Scope{} = scope, %Transaction{} = transaction, attrs) do
@@ -961,4 +1064,17 @@ defmodule PersonalFinance.Finance do
       message
     )
   end
+
+
+  defp parse_float(val) when is_float(val), do: val
+  defp parse_float(val) when is_integer(val), do: val * 1.0
+
+  defp parse_float(val) when is_binary(val) do
+    case Float.parse(val) do
+      {number, _} -> number
+      :error -> 0.0
+    end
+  end
+
+  defp parse_float(_), do: 0.0
 end

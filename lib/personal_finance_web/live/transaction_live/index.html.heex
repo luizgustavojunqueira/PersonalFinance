@@ -13,6 +13,17 @@
     </:actions>
   </.header>
 
+  <%= if @show_import_modal do %>
+    <.live_component
+      module={PersonalFinanceWeb.TransactionLive.Import}
+      id="import-transactions-modal"
+      ledger={@ledger}
+      current_scope={@current_scope}
+      parent_pid={self()}
+      on_close={JS.dispatch("close-modal", to: "#import-transactions-modal")}
+    />
+  <% end %>
+
   <%= if @show_form_modal do %>
     <.form_modal
       title="Transação"

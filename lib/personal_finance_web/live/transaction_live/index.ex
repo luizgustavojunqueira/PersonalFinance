@@ -39,6 +39,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
           selected_category_id: nil,
           show_pending_transactions_drawer: false,
+          show_import_modal: false,
           filter: %{
             "category_id" => nil,
             "profile_id" => nil,
@@ -159,6 +160,16 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     {:noreply,
      assign(socket,
        show_pending_transactions_drawer: not socket.assigns.show_pending_transactions_drawer,
+       transaction: nil,
+       form_action: nil
+     )}
+  end
+
+  @impl true
+  def handle_event("toggle_import_modal", _params, socket) do
+    {:noreply,
+     assign(socket,
+       show_import_modal: not socket.assigns.show_import_modal,
        transaction: nil,
        form_action: nil
      )}
