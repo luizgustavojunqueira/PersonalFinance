@@ -19,7 +19,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
   @impl true
   def handle_event("filter", %{"filter" => filter_params}, socket) do
     filter = %{
-      "profile_ud" => parse_id(filter_params["profile_id"]),
+      "profile_id" => parse_id(filter_params["profile_id"]),
       "type" => parse_text(filter_params["type"]),
       "category_id" => parse_id(filter_params["category_id"]),
       "investment_type_id" => parse_id(filter_params["investment_type_id"]),
@@ -30,8 +30,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
     send(socket.assigns.parent_pid, {:apply_filter, filter})
 
     {:noreply,
-      socket
-      |> assign(form: to_form(filter, as: :filter))}
+     socket
+     |> assign(form: to_form(filter, as: :filter))}
   end
 
   @impl true
@@ -48,14 +48,18 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
     send(socket.assigns.parent_pid, {:apply_filter, filter})
 
     {:noreply,
-      socket
-      |> assign(form: to_form(filter, as: :filter))}
+     socket
+     |> assign(form: to_form(filter, as: :filter))}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <details phx-mounted={JS.ignore_attributes(["open"])} class="collapse bg-base-300 " id="filter-collapse">
+    <details
+      phx-mounted={JS.ignore_attributes(["open"])}
+      class="collapse bg-base-300 "
+      id="filter-collapse"
+    >
       <summary class="collapse-title font-semibold">
         <.icon name="hero-funnel" class="inline-block mr-2" /> Filtros
       </summary>
@@ -128,7 +132,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
               phx-target={@myself}
               phx-click="reset_filters"
               class="ml-2"
-              >
+            >
               <.icon name="hero-x-mark" /> Limpar Filtros
             </.button>
           </div>

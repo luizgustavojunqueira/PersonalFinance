@@ -41,11 +41,13 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
         phx-submit="add_user"
         phx-target={@myself}
       >
-        <.input field={@invite_form[:user_id]} type="select" label="Usuário" options={@users} />
+        <div class="flex flex-col gap-2">
+          <.input field={@invite_form[:user_id]} type="select" label="Usuário" options={@users} />
 
-        <.button variant="primary" phx-disable-with="Salvando">
-          Adicionar Convidado
-        </.button>
+          <.button variant="primary" phx-disable-with="Salvando">
+            Adicionar Convidado
+          </.button>
+        </div>
       </.form>
     </div>
     """

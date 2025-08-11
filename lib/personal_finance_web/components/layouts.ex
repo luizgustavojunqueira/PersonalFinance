@@ -16,11 +16,13 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div class="flex flex-col h-screen max-h-screen overflow-hidden">
       <.page_header current_scope={@current_scope} class="flex-shrink-0" />
-      <%= if @show_sidebar do %>
-        <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
-      <% end %>
-      <div class={"flex flex-row flex-1 max-h-screen max-w-screen #{if @show_sidebar, do: "md:pl-14"}"}>
-        <main class="flex-1 overflow-y-auto px-4 pb-4 ">
+      
+      <div class="flex flex-row flex-1 min-h-0">
+        <%= if @show_sidebar do %>
+          <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
+        <% end %>
+        
+        <main class={"flex-1 overflow-y-auto px-4 pb-4 mt-15 #{if @show_sidebar, do: "md:ml-14"}"}>
           {render_slot(@inner_block)}
         </main>
       </div>
@@ -29,6 +31,7 @@ defmodule PersonalFinanceWeb.Layouts do
     </div>
     """
   end
+
 
   @doc """
   Shows the flash group with standard titles and content.
@@ -106,7 +109,7 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div
       id="sidebar"
-      class="fixed top-16 z-50 h-screen bg-base-100 transition-all overflow-x-hidden
+      class="fixed top-16 left-0 z-40 h-[calc(100vh-4rem)] bg-base-100 transition-all overflow-x-hidden
          hidden md:block w-14
          [&.expanded]:block [&.expanded]:w-64"
     >
@@ -183,7 +186,7 @@ defmodule PersonalFinanceWeb.Layouts do
 
   def page_header(assigns) do
     ~H"""
-    <div class="navbar bg-base-100 shadow-sm">
+    <div class="navbar bg-base-100 shadow-sm fixed top-0 left-0 right-0 z-50 h-16">
       <div class="navbar-start">
         <button id="toggle-sidebar" phx-hook="ToggleSidebar" class="btn btn-ghost btn-square">
           <.icon name="hero-bars-3" class="open-icon size-6" />
@@ -211,9 +214,7 @@ defmodule PersonalFinanceWeb.Layouts do
           </div>
           <ul
             tabindex="0"
-            <ul
-            tabindex="0"
-            class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+            class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-sm"
           >
             <%= if @current_scope do %>
               <li class="p-2">{@current_scope.user.email}</li>

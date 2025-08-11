@@ -103,7 +103,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="w-full">
+    <div>
       <%= if @num_transactions == 0 do %>
         <p class="text-center text-gray-500">Nenhuma transação encontrada.</p>
       <% else %>
@@ -154,7 +154,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
           <:col :let={{_id, transaction}} label="Valor Total">
             {CurrencyUtils.format_money(transaction.total_value)}
           </:col>
-
           <:action :let={{_id, transaction}}>
             <.link navigate={~p"/ledgers/#{@ledger.id}/transactions/#{transaction.id}/edit"}>
               <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
@@ -166,29 +165,29 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
             </.link>
           </:action>
         </.table>
+        
+        <div class="mt-4 flex justify-between items-center pt-4">
+          <.button
+            phx-click="previous_page"
+            phx-target={@myself}
+            variant="custom"
+            class={"btn-primary btn-outline #{if @current_page <= 1, do: "btn-disabled", else: ""}"}
+          >
+            Anterior
+          </.button>
+          <span >
+            Página {@current_page} de {@total_pages}
+          </span>
+          <.button
+            phx-click="next_page"
+            phx-target={@myself}
+            variant="custom"
+            class={"btn-primary btn-outline #{if @current_page >= @total_pages, do: "btn-disabled", else: ""}"}
+          >
+            Próximo
+          </.button>
+        </div>
       <% end %>
-
-      <div class="mt-4 flex justify-between items-center">
-        <.button
-          phx-click="previous_page"
-          phx-target={@myself}
-          variant="custom"
-          class={"btn-primary btn-outline #{if @current_page <= 1, do: "btn-disabled", else: ""}"}
-        >
-          Anterior
-        </.button>
-        <span>
-          Página {@current_page} de {@total_pages}
-        </span>
-        <.button
-          phx-click="next_page"
-          phx-target={@myself}
-          variant="custom"
-          class={"btn-primary btn-outline #{if @current_page >= @total_pages, do: "btn-disabled", else: ""}"}
-        >
-          Próximo
-        </.button>
-      </div>
     </div>
     """
   end
