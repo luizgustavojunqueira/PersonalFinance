@@ -281,9 +281,11 @@ defmodule PersonalFinance.Finance do
     if ledger == nil do
       {:error, "No ledger found for the user."}
     else
+      default_category =
+        Category |> where([c], c.is_default == true and c.ledger_id == ^ledger.id) |> Repo.one()
 
-      default_category = Category |> where([c], c.is_default == true and c.ledger_id == ^ledger.id) |> Repo.one()
-      default_profile = Profile |> where([p], p.is_default == true and p.ledger_id == ^ledger.id) |> Repo.one()
+      default_profile =
+        Profile |> where([p], p.is_default == true and p.ledger_id == ^ledger.id) |> Repo.one()
 
       if !default_category || !default_profile do
         {:error, "Default category or profile not found for the ledger."}
@@ -295,7 +297,8 @@ defmodule PersonalFinance.Finance do
           |> Enum.map(fn row ->
             category =
               if row["category"] && String.trim(row["category"]) != "" do
-                get_category_by_name(String.trim(row["category"]), scope, ledger) || default_category
+                get_category_by_name(String.trim(row["category"]), scope, ledger) ||
+                  default_category
               else
                 default_category
               end
@@ -303,7 +306,10 @@ defmodule PersonalFinance.Finance do
             profile =
               if row["profile"] && String.trim(row["profile"]) != "" do
                 Profile
-                |> where([p], p.name == ^String.trim(row["profile"]) and p.ledger_id == ^ledger.id)
+                |> where(
+                  [p],
+                  p.name == ^String.trim(row["profile"]) and p.ledger_id == ^ledger.id
+                )
                 |> Repo.one() || default_profile
               else
                 default_profile
@@ -328,18 +334,18 @@ defmodule PersonalFinance.Finance do
                 |> String.replace("R$ ", "")
                 |> String.replace(".", "")
                 |> String.replace(",", ".")
-                  |> parse_float(),
+                |> parse_float(),
               "total_value" =>
                 (row["value"]
-                |> String.replace("R$ ", "")
-                |> String.replace(".", "")
-                |> String.replace(",", ".")
-                |> parse_float()
+                 |> String.replace("R$ ", "")
+                 |> String.replace(".", "")
+                 |> String.replace(",", ".")
+                 |> parse_float()
                  |> Float.round(2)) *
                   ((row["amount"] || "1")
-                    |> String.replace(".", "")
-                    |> String.replace(",", ".")
-                    |> parse_float()),
+                   |> String.replace(".", "")
+                   |> String.replace(",", ".")
+                   |> parse_float()),
               "date" =>
                 row["date"]
                 |> String.split("/")
@@ -356,9 +362,11 @@ defmodule PersonalFinance.Finance do
                   _ -> :expense
                 end
             }
+
             IO.inspect(transaction_attrs, label: "Transaction Attrs")
             create_transaction(scope, transaction_attrs, ledger)
           end)
+
         successful_transactions =
           Enum.filter(result, fn
             {:ok, _} -> true
@@ -371,7 +379,6 @@ defmodule PersonalFinance.Finance do
         {:ok, successful_transactions}
       end
     end
-
   end
 
   @doc """
@@ -1064,7 +1071,6 @@ defmodule PersonalFinance.Finance do
       message
     )
   end
-
 
   defp parse_float(val) when is_float(val), do: val
   defp parse_float(val) when is_integer(val), do: val * 1.0

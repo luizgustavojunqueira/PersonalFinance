@@ -6,11 +6,11 @@
         <.button phx-click="toggle_import_modal">
           Importar Transações
         </.button>
-        <.button variant="primary" navigate={~p"/ledgers/#{@ledger.id}/transactions/new"}>
-          <.icon name="hero-plus" /> Adicionar Transação
-        </.button>
         <.button phx-click="toggle_pending_transactions_drawer">
           <.icon name="hero-clock" /> Transações Pendentes
+        </.button>
+        <.button variant="primary" navigate={~p"/ledgers/#{@ledger.id}/transactions/new"}>
+          <.icon name="hero-plus" /> Adicionar Transação
         </.button>
       </div>
     </:actions>
@@ -154,7 +154,7 @@
       parent_pid={self()}
     />
   </div>
-  
+
   <.live_component
     module={PersonalFinanceWeb.TransactionLive.Transactions}
     id="transactions-list"
