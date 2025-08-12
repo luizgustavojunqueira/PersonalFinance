@@ -641,6 +641,64 @@ defmodule PersonalFinanceWeb.CoreComponents do
     """
   end
 
+  attr :id, :string, required: true
+  attr :show, :boolean, default: false
+  attr :on_close, JS, default: nil
+  attr :backdrop_close, :boolean, default: true
+  attr :class, :string, default: ""
+  attr :rest, :global, include: ~w(id phx-hook phx-click phx-submit phx-change)
+
+  slot :title
+  slot :inner_block, required: true
+  slot :actions
+
+  def modal(assigns) do
+    assigns = assign(assigns, :class_list, class_to_list(assigns.class))
+
+    ~H"""
+    <div
+      :if={@show}
+      id={@id}
+      class="fixed z-50 inset-0 flex items-center justify-center bg-black/60"
+      phx-mounted={JS.transition({"ease-out duration-300", "opacity-0", "opacity-100"}, time: 300)}
+      phx-remove={JS.transition({"ease-in duration-200", "opacity-100", "opacity-0"}, time: 200)}
+      {@rest}
+    >
+      <div
+        class="fixed inset-0"
+        phx-click={if @backdrop_close, do: @on_close}
+      />
+      <div
+        class={["bg-base-200 rounded-xl shadow-2xl p-6 w-full max-w-2xl", @class_list]}
+        phx-mounted={
+          JS.transition({"ease-out duration-300", "opacity-0 scale-95", "opacity-100 scale-100"},
+            time: 200
+          )
+        }
+      >
+        <div class="flex justify-between items-center mb-5">
+          <h2 :if={@title != []} class="text-2xl font-semibold">{render_slot(@title)}</h2>
+          <.button
+            phx-click={@on_close}
+            variant="custom"
+            class="text-red-600 hover:text-red-800 btn btn-ghost"
+          >
+            <.icon name="hero-x-mark" class="text-2xl" />
+          </.button>
+        </div>
+        {render_slot(@inner_block)}
+        <div :if={@actions != []} class="flex justify-end gap-2 mt-4">
+          {render_slot(@actions)}
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  defp class_to_list(class) when is_binary(class), do: String.split(class, " ", trim: true)
+  defp class_to_list(class) when is_list(class), do: class
+  defp class_to_list(_), do: []
+
   ## JS Commands
 
   def show(js \\ %JS{}, selector) do

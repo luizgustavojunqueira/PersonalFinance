@@ -155,7 +155,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
             {CurrencyUtils.format_money(transaction.total_value)}
           </:col>
           <:action :let={{_id, transaction}}>
-            <.link navigate={~p"/ledgers/#{@ledger.id}/transactions/#{transaction.id}/edit"}>
+            <.link phx-click="open_edit_transaction" phx-value-transaction_id={transaction.id}>
               <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
             </.link>
           </:action>
@@ -165,7 +165,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
             </.link>
           </:action>
         </.table>
-        
+
         <div class="mt-4 flex justify-between items-center pt-4">
           <.button
             phx-click="previous_page"
@@ -175,7 +175,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
           >
             Anterior
           </.button>
-          <span >
+          <span>
             Página {@current_page} de {@total_pages}
           </span>
           <.button
