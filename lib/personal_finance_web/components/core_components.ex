@@ -91,6 +91,11 @@ defmodule PersonalFinanceWeb.CoreComponents do
   attr :rest, :global, include: ~w(href navigate patch)
   attr :variant, :string, values: ~w(primary custom)
   attr :class, :any, default: nil
+
+  attr :disabled, :boolean,
+    default: false,
+    doc: "the disabled flag for the button"
+
   slot :inner_block, required: true
 
   def button(%{rest: rest} = assigns) do
@@ -117,6 +122,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
     else
       ~H"""
       <button
+        disabled={@disabled}
         class={[
           "btn",
           @combined_class

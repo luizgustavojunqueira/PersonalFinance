@@ -3,7 +3,7 @@
     {@ledger.name} - Transações
     <:actions>
       <div class="flex flex-row gap-2">
-        <.button phx-click="toggle_import_modal">
+        <.button phx-click="open_import">
           Importar Transações
         </.button>
         <.button phx-click="toggle_pending_transactions_drawer">
@@ -29,16 +29,14 @@
     investment_types={@investment_types}
   />
 
-  <%= if @show_import_modal do %>
-    <.live_component
-      module={PersonalFinanceWeb.TransactionLive.Import}
-      id="import-transactions-modal"
-      ledger={@ledger}
-      current_scope={@current_scope}
-      parent_pid={self()}
-      on_close={JS.dispatch("close-modal", to: "#import-transactions-modal")}
-    />
-  <% end %>
+  <.live_component
+    module={PersonalFinanceWeb.TransactionLive.Import}
+    id="import-transactions-modal"
+    show={@open_modal == :import_transactions}
+    ledger={@ledger}
+    current_scope={@current_scope}
+    parent_pid={self()}
+  />
 
   <%= if @show_pending_transactions_drawer do %>
     <.live_component

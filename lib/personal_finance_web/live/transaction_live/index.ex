@@ -30,7 +30,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           categories: Enum.map(categories, fn category -> {category.name, category.id} end),
           investment_types: Enum.map(investment_types, fn type -> {type.name, type.id} end),
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
-          show_import_modal: false,
           transaction: nil,
           open_modal: nil,
           filter: %{
@@ -49,6 +48,11 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   @impl true
   def handle_params(_params, _url, socket) do
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("open_import", _, socket) do
+    {:noreply, assign(socket, open_modal: :import_transactions, transaction: nil)}
   end
 
   @impl true
@@ -85,15 +89,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     {:noreply,
      assign(socket,
        show_pending_transactions_drawer: not socket.assigns.show_pending_transactions_drawer,
-       transaction: nil
-     )}
-  end
-
-  @impl true
-  def handle_event("toggle_import_modal", _params, socket) do
-    {:noreply,
-     assign(socket,
-       show_import_modal: not socket.assigns.show_import_modal,
        transaction: nil
      )}
   end
