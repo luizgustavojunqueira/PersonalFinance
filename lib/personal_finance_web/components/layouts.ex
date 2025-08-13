@@ -16,12 +16,12 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div class="flex flex-col h-screen max-h-screen overflow-hidden">
       <.page_header current_scope={@current_scope} class="flex-shrink-0" />
-      
+
       <div class="flex flex-row flex-1 min-h-0">
         <%= if @show_sidebar do %>
           <.navigation_sidebar ledger={@ledger} current_scope={@current_scope} />
         <% end %>
-        
+
         <main class={"flex-1 overflow-y-auto px-4 pb-4 mt-15 #{if @show_sidebar, do: "md:ml-14"}"}>
           {render_slot(@inner_block)}
         </main>
@@ -31,7 +31,6 @@ defmodule PersonalFinanceWeb.Layouts do
     </div>
     """
   end
-
 
   @doc """
   Shows the flash group with standard titles and content.
@@ -48,7 +47,7 @@ defmodule PersonalFinanceWeb.Layouts do
     <div
       id={@id}
       aria-live="polite"
-      class="fixed bottom-0 left-0 right-0 z-50 flex flex-col items-center gap-2 p-4"
+      class="fixed bottom-0 left-0 right-0 w-0 z-50 flex flex-col items-center gap-2 p-4"
     >
       <.flash kind={:info} flash={@flash} />
       <.flash kind={:error} flash={@flash} />

@@ -56,13 +56,13 @@ defmodule PersonalFinanceWeb.CoreComponents do
       id={@id}
       phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
       role="alert"
-      class="toast toast-top toast-end z-50"
+      class="toast toast-bottom toast-end z-50"
       {@rest}
     >
       <div class={[
         "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap flex flex-row gap-2 items-center p-2 ml-4 rounded-lg",
-        @kind == :info && "alert-info bg-accent/70 text-white dark:bg-green-800",
-        @kind == :error && "alert-error bg-red-200 dark:bg-red-800"
+        @kind == :info && "alert alert-info ",
+        @kind == :error && "alert alert-error "
       ]}>
         <.icon :if={@kind == :info} name="hero-information-circle-mini" class="size-5 shrink-0" />
         <.icon :if={@kind == :error} name="hero-exclamation-circle-mini" class="size-5 shrink-0" />
