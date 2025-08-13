@@ -1,8 +1,8 @@
 defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
   use PersonalFinanceWeb, :live_component
 
-  alias PersonalFinance.CurrencyUtils
-  alias PersonalFinance.DateUtils
+  alias PersonalFinance.Utils.CurrencyUtils
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Finance
 
   @impl true

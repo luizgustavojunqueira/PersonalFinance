@@ -26,7 +26,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       socket =
         socket
         |> assign(
-          show_pending_transactions_drawer: false,
           categories: Enum.map(categories, fn category -> {category.name, category.id} end),
           investment_types: Enum.map(investment_types, fn type -> {type.name, type.id} end),
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),

@@ -1,4 +1,5 @@
 defmodule PersonalFinance.Finance do
+  alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Finance.LedgersUsers
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
@@ -327,25 +328,25 @@ defmodule PersonalFinance.Finance do
                 |> String.replace("R$ ", "")
                 |> String.replace(".", "")
                 |> String.replace(",", ".")
-                |> parse_float()
+                |> ParseUtils.parse_float()
                 |> Float.round(2),
               "amount" =>
                 (row["amount"] || "1.0")
                 |> String.replace("R$ ", "")
                 |> String.replace(".", "")
                 |> String.replace(",", ".")
-                |> parse_float(),
+                |> ParseUtils.parse_float(),
               "total_value" =>
                 (row["value"]
                  |> String.replace("R$ ", "")
                  |> String.replace(".", "")
                  |> String.replace(",", ".")
-                 |> parse_float()
+                 |> ParseUtils.parse_float()
                  |> Float.round(2)) *
                   ((row["amount"] || "1")
                    |> String.replace(".", "")
                    |> String.replace(",", ".")
-                   |> parse_float()),
+                   |> ParseUtils.parse_float()),
               "date" =>
                 row["date"]
                 |> String.split("/")
@@ -1071,16 +1072,4 @@ defmodule PersonalFinance.Finance do
       message
     )
   end
-
-  defp parse_float(val) when is_float(val), do: val
-  defp parse_float(val) when is_integer(val), do: val * 1.0
-
-  defp parse_float(val) when is_binary(val) do
-    case Float.parse(val) do
-      {number, _} -> number
-      :error -> 0.0
-    end
-  end
-
-  defp parse_float(_), do: 0.0
 end

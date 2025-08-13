@@ -1,8 +1,8 @@
 defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   use PersonalFinanceWeb, :live_component
 
-  alias PersonalFinance.DateUtils
-  alias PersonalFinance.CurrencyUtils
+  alias PersonalFinance.Utils.DateUtils
+  alias PersonalFinance.Utils.CurrencyUtils
   alias PersonalFinance.Balance
 
   @impl true

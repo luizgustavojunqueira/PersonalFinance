@@ -1,4 +1,4 @@
-defmodule PersonalFinance.DateUtils do
+defmodule PersonalFinance.Utils.DateUtils do
   def count_days_until(date) do
     today = Date.utc_today()
     Date.diff(date, today)

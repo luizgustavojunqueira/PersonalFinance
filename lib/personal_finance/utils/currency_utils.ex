@@ -1,4 +1,4 @@
-defmodule PersonalFinance.CurrencyUtils do
+defmodule PersonalFinance.Utils.CurrencyUtils do
   def format_money(nil), do: "R$ 0,00"
 
   def format_money(value) when is_float(value) or is_integer(value) do

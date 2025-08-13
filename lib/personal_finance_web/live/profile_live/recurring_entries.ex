@@ -1,7 +1,7 @@
 defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   use PersonalFinanceWeb, :live_component
 
-  alias PersonalFinance.DateUtils
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Finance.RecurringEntry
   alias PersonalFinance.Finance
 

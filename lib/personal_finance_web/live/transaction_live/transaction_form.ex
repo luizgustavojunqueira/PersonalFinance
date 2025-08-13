@@ -1,5 +1,6 @@
 defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
   use PersonalFinanceWeb, :live_component
+  alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Finance
   alias PersonalFinance.Finance.Transaction
 
@@ -36,8 +37,8 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
 
   @impl true
   def handle_event("validate", %{"transaction" => transaction_params}, socket) do
-    value = Map.get(transaction_params, "value") |> parse_float()
-    amount = Map.get(transaction_params, "amount") |> parse_float()
+    value = Map.get(transaction_params, "value") |> ParseUtils.parse_float()
+    amount = Map.get(transaction_params, "amount") |> ParseUtils.parse_float()
     total_value = value * amount
 
     params =
@@ -64,8 +65,8 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
 
   @impl true
   def handle_event("save", %{"transaction" => transaction_params}, socket) do
-    value = Map.get(transaction_params, "value") |> parse_float()
-    amount = Map.get(transaction_params, "amount") |> parse_float()
+    value = Map.get(transaction_params, "value") |> ParseUtils.parse_float()
+    amount = Map.get(transaction_params, "amount") |> ParseUtils.parse_float()
     total_value = value * amount
     params = Map.put(transaction_params, "total_value", total_value)
 
@@ -96,18 +97,6 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
       params
     )
   end
-
-  defp parse_float(val) when is_float(val), do: val
-  defp parse_float(val) when is_integer(val), do: val * 1.0
-
-  defp parse_float(val) when is_binary(val) do
-    case Float.parse(val) do
-      {number, _} -> number
-      :error -> 0.0
-    end
-  end
-
-  defp parse_float(_), do: 0.0
 
   @impl true
   def render(assigns) do
