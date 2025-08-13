@@ -7,7 +7,9 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
   def update(assigns, socket) do
     ledger = assigns.ledger
     current_scope = assigns.current_scope
-    transaction = assigns.transaction || %Transaction{ledger_id: ledger.id}
+
+    transaction =
+      assigns.transaction || %Transaction{ledger_id: ledger.id, date: Date.utc_today()}
 
     changeset =
       Finance.change_transaction(
@@ -37,7 +39,9 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
     value = Map.get(transaction_params, "value") |> parse_float()
     amount = Map.get(transaction_params, "amount") |> parse_float()
     total_value = value * amount
-    params = Map.put(transaction_params, "total_value", total_value)
+
+    params =
+      Map.put(transaction_params, "total_value", total_value)
 
     new_selected_category_id =
       Map.get(transaction_params, "category_id") || socket.assigns.selected_category_id

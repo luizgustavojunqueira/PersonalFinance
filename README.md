@@ -23,11 +23,12 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
 - [x] Mobile responsiveness improvements.
 - [ ] Add advanced search, filter, sort, and pagination features for transactions.
     - [x] Filter
+    - [x] Pagination
 - [x] Change user registration logic
 - [x] Change invites logic
 - [ ] Implement transaction import and export functionalities (CSV, JSON).
     - [x] Import CSV.
-    - [x] Export CSV.
+    - [ ] Export CSV.
 - [ ] Add comprehensive test suite (unit, integration, LiveView tests).
 - [ ] Integrate with external APIs to fetch real-time financial data (stocks, cryptocurrencies).
 - [ ] Implement investment yield calculation.
