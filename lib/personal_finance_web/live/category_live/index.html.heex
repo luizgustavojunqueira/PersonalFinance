@@ -33,7 +33,11 @@
     />
   <% end %>
 
-  <.table id="categories_table" rows={@streams.category_collection}>
+  <.table
+    id="categories_table"
+    rows={@streams.category_collection}
+    col_widths={["15%", "20%", "10%", "10%"]}
+  >
     <:col :let={{_id, category}} label="Nome">
       {category.name}
     </:col>

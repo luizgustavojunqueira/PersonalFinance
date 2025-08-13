@@ -30,7 +30,11 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
       <%= if @ledger_users == [] do %>
         <p class="text-gray-500">Nenhum colaborador adicionado.</p>
       <% else %>
-        <.table id="ledger_users_table" rows={@ledger_users}>
+        <.table
+          id="ledger_users_table"
+          rows={@ledger_users}
+          col_widths={["20%", "20%", "5%"]}
+        >
           <:col :let={user} label="Colaborador">
             {user.name} ({user.email})
           </:col>
@@ -43,7 +47,7 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
               <% end %>
             </span>
           </:col>
-          <:col :let={user} label="Ações">
+          <:action :let={user}>
             <%= if @ledger.owner_id != user.id && @ledger.owner_id == @current_scope.user.id do %>
               <.link
                 class="text-red-600 hover:text-red-800"
@@ -51,10 +55,10 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
                 phx-value-id={user.id}
                 phx-target={@myself}
               >
-                Remover
+                <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
               </.link>
             <% end %>
-          </:col>
+          </:action>
         </.table>
       <% end %>
     </div>

@@ -107,7 +107,11 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       <%= if @num_transactions == 0 do %>
         <p class="text-center text-gray-500">Nenhuma transação encontrada.</p>
       <% else %>
-        <.table id="transactions_table" rows={@streams.transaction_collection}>
+        <.table
+          id="transactions_table"
+          rows={@streams.transaction_collection}
+          col_widths={["5%", "7%", "15%", "10%", "10%", "15%", "10%", "10%", "10%"]}
+        >
           <:col :let={{_id, transaction}} label="Tipo">
             <span class={"p-1 px-2 rounded-lg text-black #{if transaction.type == :income, do: "bg-green-300", else: "bg-red-300"}"}>
               {if transaction.type == :income, do: "Receita", else: "Despesa"}
