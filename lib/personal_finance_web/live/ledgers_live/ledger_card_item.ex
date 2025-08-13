@@ -17,38 +17,40 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
       <div class="card-body">
         <h2 class="card-title w-full flex justify-between items-center">
           {@ledger.name}
-          <div class="dropdown">
-            <div
-              tabindex="0"
-              role="button"
-              class="btn m-1 p-0 bg-transparent hover:bg-transparent border-0 shadow-none"
-            >
-              <.icon name="hero-ellipsis-vertical" class="size-6" />
+          <%= if @ledger.owner.id == @current_scope.user.id do %>
+            <div class="dropdown">
+              <div
+                tabindex="0"
+                role="button"
+                class="btn m-1 p-0 bg-transparent hover:bg-transparent border-0 shadow-none"
+              >
+                <.icon name="hero-ellipsis-vertical" class="size-6" />
+              </div>
+              <ul
+                tabindex="0"
+                class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+              >
+                <li
+                  phx-click="edit_ledger"
+                  phx-value-id={@ledger.id}
+                  phx-target={@myself}
+                  class="flex items-center flex-row justify-start gap-2 text-blue-600 hover:text-blue-800 hover:cursor-pointer "
+                >
+                  <.link class="hero-pencil"></.link>
+                  <p>Editar</p>
+                </li>
+                <li
+                  phx-click="delete_ledger"
+                  phx-value-id={@ledger.id}
+                  phx-target={@myself}
+                  class="flex items-center flex-row justify-start gap-2 text-red-600 hover:text-red-800 hover:cursor-pointer "
+                >
+                  <.link class="hero-trash"></.link>
+                  <p>Apagar</p>
+                </li>
+              </ul>
             </div>
-            <ul
-              tabindex="0"
-              class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-            >
-              <li
-                phx-click="edit_ledger"
-                phx-value-id={@ledger.id}
-                phx-target={@myself}
-                class="flex items-center flex-row justify-start gap-2 text-blue-600 hover:text-blue-800 hover:cursor-pointer "
-              >
-                <.link class="hero-pencil"></.link>
-                <p>Editar</p>
-              </li>
-              <li
-                phx-click="delete_ledger"
-                phx-value-id={@ledger.id}
-                phx-target={@myself}
-                class="flex items-center flex-row justify-start gap-2 text-red-600 hover:text-red-800 hover:cursor-pointer "
-              >
-                <.link class="hero-trash"></.link>
-                <p>Apagar</p>
-              </li>
-            </ul>
-          </div>
+          <% end %>
         </h2>
         <p>
           {@ledger.description}
