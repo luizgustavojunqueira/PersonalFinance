@@ -468,19 +468,19 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
   @doc ~S"""
   Renders a table with generic styling.
-
   ## Examples
-
       <.table id="users" rows={@users}>
         <:col :let={user} label="id">{user.id}</:col>
         <:col :let={user} label="username">{user.username}</:col>
+        <:col :let={user} label="status">
+          <span class="badge">{user.status}</span>
+        </:col>
       </.table>
   """
   attr :id, :string, required: true
   attr :rows, :list, required: true
   attr :row_id, :any, default: nil, doc: "the function for generating the row id"
   attr :row_click, :any, default: nil, doc: "the function for handling phx-click on each row"
-  attr :large, :boolean, default: true
 
   attr :row_item, :any,
     default: &Function.identity/1,
@@ -503,46 +503,51 @@ defmodule PersonalFinanceWeb.CoreComponents do
     assigns = assign(assigns, col_widths: assigns[:col_widths] || [])
 
     ~H"""
-    <div class="relative w-full overflow-x-auto shadow-sm rounded-xl text-sm">
-      <table class="w-full table-auto p-2">
-        <thead class="p-2 bg-base-100">
+    <div class="relative w-full overflow-x-auto shadow-sm rounded-xl">
+      <table class="w-full p-2">
+        <thead class="bg-base-100">
           <tr class="text-left">
             <th
               :for={{col, idx} <- Enum.with_index(@col)}
-              class="p-2 py-2"
-              style={"width: #{Enum.at(@col_widths, idx, "auto")}"}
+              class="p-2"
+              style={
+                if Enum.at(@col_widths, idx), do: "width: #{Enum.at(@col_widths, idx)}", else: ""
+              }
             >
-              {col[:label]}
+              <div class="truncate" title={col[:label]}>{col[:label]}</div>
             </th>
             <th
               :if={@action != []}
-              class="p-4 py-2"
-              style={"width: #{Enum.at(@col_widths, length(@col), "auto")}"}
+              class="p-2 w-px"
             >
-              <div class="text-right">Ações</div>
+              <div class="text-right whitespace-nowrap">Ações</div>
             </th>
           </tr>
         </thead>
-        <tbody id={@id} phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}>
+        <tbody
+          id={@id}
+          phx-update={is_struct(@rows, Phoenix.LiveView.LiveStream) && "stream"}
+        >
           <tr
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
-            class={"transition-colors border-b-1 last:border-none bg-base-300 #{if @row_click, do: "hover:bg-base-300/50"}"}
+            phx-click={@row_click && @row_click.(row)}
+            class={"transition-colors border-b-1 last:border-none bg-base-300 #{if @row_click, do: "hover:bg-base-300/50 hover:cursor-pointer"}"}
           >
             <td
               :for={{col, idx} <- Enum.with_index(@col)}
-              phx-click={@row_click && @row_click.(row)}
-              class={"p-4 px-2 #{if @row_click, do: "hover:cursor-pointer"}"}
-              style={"width: #{Enum.at(@col_widths, idx, "auto")}"}
+              class="p-4 px-2"
+              style={
+                if Enum.at(@col_widths, idx), do: "width: #{Enum.at(@col_widths, idx)}", else: ""
+              }
             >
               {render_slot(col, @row_item.(row))}
             </td>
             <td
               :if={@action != []}
-              class="w-0 font-semibold"
-              style={"width: #{Enum.at(@col_widths, length(@col), "auto")}"}
+              class="p-2 w-px"
             >
-              <div class="flex gap-2 justify-end px-2">
+              <div class="flex justify-end gap-4 whitespace-nowrap">
                 <%= for action <- @action do %>
                   {render_slot(action, @row_item.(row))}
                 <% end %>

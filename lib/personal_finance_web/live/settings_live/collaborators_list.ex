@@ -33,7 +33,7 @@ defmodule PersonalFinanceWeb.SettingsLive.CollaboratorsList do
         <.table
           id="ledger_users_table"
           rows={@ledger_users}
-          col_widths={["20%", "20%", "5%"]}
+          col_widths={["30%", "20%", "5%"]}
         >
           <:col :let={user} label="Colaborador">
             {user.name} ({user.email})

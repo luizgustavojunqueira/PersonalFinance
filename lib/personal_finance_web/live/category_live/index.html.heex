@@ -37,30 +37,36 @@
     id="categories_table"
     rows={@streams.category_collection}
     col_widths={["15%", "20%", "10%", "10%"]}
+    row_item={
+      fn
+        {_id, struct} -> struct
+        struct -> struct
+      end
+    }
   >
-    <:col :let={{_id, category}} label="Nome">
+    <:col :let={category} label="Nome">
       {category.name}
     </:col>
-    <:col :let={{_id, category}} label="Descrição">{category.description}</:col>
-    <:col :let={{_id, category}} label="Cor">
+    <:col :let={category} label="Descrição">{category.description}</:col>
+    <:col :let={category} label="Cor">
       <span
         class="inline-block w-7 h-4 rounded-xl border-2 border-black dark:border-white"
         style={"background-color: #{category.color};"}
       >
       </span>
     </:col>
-    <:col :let={{_id, category}} label="Porcentagem">
+    <:col :let={category} label="Porcentagem">
       {category.percentage}
     </:col>
 
-    <:action :let={{_id, category}}>
+    <:action :let={category}>
       <%= if !category.is_default do %>
         <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/edit"}>
           <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
         </.link>
       <% end %>
     </:action>
-    <:action :let={{_id, category}}>
+    <:action :let={category}>
       <%= if !category.is_fixed do %>
         <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/delete"}>
           <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
