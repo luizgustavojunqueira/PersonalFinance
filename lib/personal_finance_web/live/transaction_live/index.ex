@@ -51,13 +51,15 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_event("open_import", _, socket) do
-    {:noreply, assign(socket, open_modal: :import_transactions, transaction: nil)}
+  def handle_event("open_modal", %{"modal" => modal}, socket) do
+    modal_atom = String.to_existing_atom(modal)
+    {:noreply, assign(socket, open_modal: modal_atom, transaction: nil)}
   end
 
   @impl true
-  def handle_event("open_new_transaction", _, socket) do
-    {:noreply, assign(socket, open_modal: :new_transaction, transaction: nil)}
+  def handle_event("close_modal", _, socket) do
+    IO.inspect(socket.assigns.open_modal, label: "Closing modal")
+    {:noreply, assign(socket, open_modal: nil, transaction: nil)}
   end
 
   @impl true
@@ -76,21 +78,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
          transaction: transaction
        )}
     end
-  end
-
-  @impl true
-  def handle_event("close_modal", _, socket) do
-    IO.inspect(socket.assigns.open_modal, label: "Closing modal")
-    {:noreply, assign(socket, open_modal: nil, transaction: nil)}
-  end
-
-  @impl true
-  def handle_event("toggle_pending_transactions_drawer", _params, socket) do
-    {:noreply,
-     assign(socket,
-       show_pending_transactions_drawer: not socket.assigns.show_pending_transactions_drawer,
-       transaction: nil
-     )}
   end
 
   @impl true

@@ -666,8 +666,8 @@ defmodule PersonalFinanceWeb.CoreComponents do
       :if={@show}
       id={@id}
       class="fixed z-50 inset-0 flex items-center justify-center bg-black/60"
-      phx-mounted={JS.transition({"ease-out duration-300", "opacity-0", "opacity-100"}, time: 300)}
-      phx-remove={JS.transition({"ease-in duration-200", "opacity-100", "opacity-0"}, time: 200)}
+      phx-mounted={JS.transition({"ease-out duration-200", "opacity-0", "opacity-100"}, time: 200)}
+      phx-remove={JS.transition({"ease-in duration-100", "opacity-100", "opacity-0"}, time: 100)}
       {@rest}
     >
       <div
@@ -677,9 +677,64 @@ defmodule PersonalFinanceWeb.CoreComponents do
       <div
         class={["bg-base-200 rounded-xl shadow-2xl p-6 w-full max-w-2xl", @class_list]}
         phx-mounted={
-          JS.transition({"ease-out duration-300", "opacity-0 scale-95", "opacity-100 scale-100"},
+          JS.transition({"ease-out duration-200", "opacity-0 scale-95", "opacity-100 scale-100"},
             time: 200
           )
+        }
+      >
+        <div class="flex justify-between items-center mb-5">
+          <h2 :if={@title != []} class="text-2xl font-semibold">{render_slot(@title)}</h2>
+          <.button
+            phx-click={@on_close}
+            variant="custom"
+            class="text-red-600 hover:text-red-800 btn btn-ghost"
+          >
+            <.icon name="hero-x-mark" class="text-2xl" />
+          </.button>
+        </div>
+        {render_slot(@inner_block)}
+        <div :if={@actions != []} class="flex justify-end gap-2 mt-4">
+          {render_slot(@actions)}
+        </div>
+      </div>
+    </div>
+    """
+  end
+
+  attr :id, :string, required: true
+  attr :show, :boolean, default: false
+  attr :on_close, JS, default: nil
+  attr :backdrop_close, :boolean, default: true
+  attr :class, :string, default: ""
+  attr :rest, :global, include: ~w(id phx-hook phx-click phx-submit phx-change)
+
+  slot :title
+  slot :inner_block, required: true
+  slot :actions
+
+  def side_modal(assigns) do
+    assigns = assign(assigns, :class_list, class_to_list(assigns.class))
+
+    ~H"""
+    <div
+      :if={@show}
+      id={@id}
+      class="fixed inset-0 z-50 flex justify-end bg-black/60"
+      phx-mounted={JS.transition({"ease-out duration-200", "opacity-0", "opacity-100"}, time: 200)}
+      phx-remove={JS.transition({"ease-in duration-100", "opacity-100", "opacity-0"}, time: 100)}
+      {@rest}
+    >
+      <div
+        class="fixed inset-0"
+        phx-click={if @backdrop_close, do: @on_close}
+      />
+      <div
+        class={[
+          "relative h-full w-full max-w-2xl bg-base-200 dark:bg-base-900 shadow-2xl p-6 overflow-y-auto",
+          @class_list
+        ]}
+        phx-mounted={
+          JS.transition({"ease-out duration-200", "translate-x-full", "translate-x-0"}, time: 200)
         }
       >
         <div class="flex justify-between items-center mb-5">
