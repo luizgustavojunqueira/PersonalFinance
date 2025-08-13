@@ -1,7 +1,8 @@
 defmodule PersonalFinance.Finance do
   alias PersonalFinance.Finance.LedgersUsers
   alias PersonalFinance.Repo
-  alias PersonalFinance.Accounts.Scope
+
+  alias PersonalFinance.Accounts.{User, Scope}
 
   alias PersonalFinance.Finance.{
     Transaction,
@@ -559,6 +560,20 @@ defmodule PersonalFinance.Finance do
 
       {:ok, "User removed from ledger."}
     end
+  end
+
+  @doc """
+  List users available to add to a ledger.
+  """
+  def list_available_ledger_users(%Scope{} = scope, %Ledger{} = ledger) do
+    from(u in User,
+      left_join: lu in LedgersUsers,
+      on: lu.user_id == u.id and lu.ledger_id == ^ledger.id,
+      left_join: l in Ledger,
+      on: l.id == ^ledger.id,
+      where: is_nil(lu.user_id) and u.id != l.owner_id
+    )
+    |> Repo.all()
   end
 
   @doc """
