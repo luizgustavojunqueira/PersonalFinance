@@ -107,29 +107,47 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       <%= if @num_transactions == 0 do %>
         <p class="text-center text-gray-500">Nenhuma transação encontrada.</p>
       <% else %>
-        <.table id="transactions_table" rows={@streams.transaction_collection}>
-          <:col :let={{_id, transaction}} label="Tipo">
+        <.table
+          id="transactions_table"
+          rows={@streams.transaction_collection}
+          col_widths={["7%", "7%", "15%", "10%", "10%", "15%", "10%", "10%", "10%"]}
+          row_item={
+            fn
+              {_id, struct} -> struct
+              struct -> struct
+            end
+          }
+        >
+          <:col
+            :let={transaction}
+            label="Tipo"
+          >
             <span class={"p-1 px-2 rounded-lg text-black #{if transaction.type == :income, do: "bg-green-300", else: "bg-red-300"}"}>
               {if transaction.type == :income, do: "Receita", else: "Despesa"}
             </span>
           </:col>
-          <:col :let={{_id, transaction}} label="Data">
+          <:col :let={transaction} label="Data">
             <%= if transaction.inserted_at do %>
               {DateUtils.format_date(transaction.date)}
             <% else %>
               Data não disponível
             <% end %>
           </:col>
-          <:col :let={{_id, transaction}} label="Descrição">{transaction.description}</:col>
-          <:col :let={{_id, transaction}} label="Perfil">
-            <span
-              class="p-1 px-2 rounded-lg text-white"
+          <:col :let={transaction} label="Descrição">
+            <div class="truncate max-w-[10rem]" title={transaction.description}>
+              {transaction.description}
+            </div>
+          </:col>
+          <:col :let={transaction} label="Perfil">
+            <div
+              class="p-1 px-2 rounded-lg text-white truncate max-w-[7rem] text-center"
               style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
+              title={transaction.profile && transaction.profile.name}
             >
               {transaction.profile && transaction.profile.name}
-            </span>
+            </div>
           </:col>
-          <:col :let={{_id, transaction}} label="Categoria">
+          <:col :let={transaction} label="Categoria">
             <span
               class="p-1 px-2 rounded-lg text-white"
               style={"background-color: #{transaction.category && transaction.category.color}99;"}
@@ -137,29 +155,29 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
               {transaction.category && transaction.category.name}
             </span>
           </:col>
-          <:col :let={{_id, transaction}} label="Tipo de Investimento">
+          <:col :let={transaction} label="Tipo de Investimento">
             {if(transaction.investment_type,
               do: transaction.investment_type.name,
               else: "-"
             )}
           </:col>
-          <:col :let={{_id, transaction}} label="Quantidade">
+          <:col :let={transaction} label="Quantidade">
             {if transaction.investment_type && transaction.investment_type.name == "Cripto",
               do: CurrencyUtils.format_amount(transaction.amount, true),
               else: CurrencyUtils.format_amount(transaction.amount, false)}
           </:col>
-          <:col :let={{_id, transaction}} label="Valor Unitário">
+          <:col :let={transaction} label="Valor Unitário">
             {CurrencyUtils.format_money(transaction.value)}
           </:col>
-          <:col :let={{_id, transaction}} label="Valor Total">
+          <:col :let={transaction} label="Valor Total">
             {CurrencyUtils.format_money(transaction.total_value)}
           </:col>
-          <:action :let={{_id, transaction}}>
+          <:action :let={transaction}>
             <.link phx-click="open_edit_transaction" phx-value-transaction_id={transaction.id}>
               <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
             </.link>
           </:action>
-          <:action :let={{_id, transaction}}>
+          <:action :let={transaction}>
             <.link phx-click="delete" phx-target={@myself} phx-value-id={transaction.id}>
               <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
             </.link>

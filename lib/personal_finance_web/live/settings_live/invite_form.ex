@@ -1,7 +1,6 @@
 defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
   use PersonalFinanceWeb, :live_component
 
-  alias PersonalFinance.Accounts
   alias PersonalFinance.Finance
 
   @impl true
@@ -21,7 +20,10 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
        invite_form: invite_form,
        users:
          Enum.map(
-           Accounts.list_users_except(assigns.current_scope.user.id),
+           Finance.list_available_ledger_users(
+             assigns.current_scope,
+             assigns.ledger
+           ),
            fn user -> {user.name, user.id} end
          )
      )}

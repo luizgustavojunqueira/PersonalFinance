@@ -17,36 +17,38 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
       <div class="card-body">
         <h2 class="card-title w-full flex justify-between items-center">
           {@ledger.name}
-          <button
-            class="btn btn-ghost"
-            popovertarget={"ledger-dropdown-#{@ledger.id}"}
-            style={"anchor-name:--anchor-#{@ledger.id}"}
-          >
-            <.icon name="hero-ellipsis-vertical" class="size-6" />
-          </button>
-          <ul
-            class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
-            popover
-            id={"ledger-dropdown-#{@ledger.id}"}
-            style={"position-anchor:--anchor-#{@ledger.id}"}
-          >
-            <li
-              phx-click="open_edit_modal"
-              phx-value-id={@ledger.id}
-              class="flex items-center flex-row justify-start gap-2 text-blue-600 hover:text-blue-800 hover:cursor-pointer "
+          <%= if @ledger.owner.id == @current_scope.user.id do %>
+            <button
+              class="btn btn-ghost"
+              popovertarget={"ledger-dropdown-#{@ledger.id}"}
+              style={"anchor-name:--anchor-#{@ledger.id}"}
             >
-              <.link class="hero-pencil"></.link>
-              <p>Editar</p>
-            </li>
-            <li
-              phx-click="open_delete_modal"
-              phx-value-id={@ledger.id}
-              class="flex items-center flex-row justify-start gap-2 text-red-600 hover:text-red-800 hover:cursor-pointer "
+              <.icon name="hero-ellipsis-vertical" class="size-6" />
+            </button>
+            <ul
+              class="dropdown menu w-52 rounded-box bg-base-100 shadow-sm"
+              popover
+              id={"ledger-dropdown-#{@ledger.id}"}
+              style={"position-anchor:--anchor-#{@ledger.id}"}
             >
-              <.link class="hero-trash"></.link>
-              <p>Apagar</p>
-            </li>
-          </ul>
+              <li
+                phx-click="open_edit_modal"
+                phx-value-id={@ledger.id}
+                class="flex items-center flex-row justify-start gap-2 text-blue-600 hover:text-blue-800 hover:cursor-pointer "
+              >
+                <.icon name="hero-pencil" />
+                <p>Editar</p>
+              </li>
+              <li
+                phx-click="open_delete_modal"
+                phx-value-id={@ledger.id}
+                class="flex items-center flex-row justify-start gap-2 text-red-600 hover:text-red-800 hover:cursor-pointer "
+              >
+                <.icon name="hero-trash" />
+                <p>Apagar</p>
+              </li>
+            </ul>
+          <% end %>
         </h2>
         <p>
           {@ledger.description}
