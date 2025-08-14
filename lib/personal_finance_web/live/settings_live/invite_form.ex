@@ -5,25 +5,15 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
 
   @impl true
   def update(assigns, socket) do
-    invite_form =
-      to_form(
-        %{
-          "user_id" => nil
-        },
-        as: :ledger_invite
-      )
-
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(selected_user_id: nil)
+     |> assign(invite_form: to_form(%{"user_id" => nil}, as: :ledger_invite))
      |> assign(
-       invite_form: invite_form,
        users:
          Enum.map(
-           Finance.list_available_ledger_users(
-             assigns.current_scope,
-             assigns.ledger
-           ),
+           Finance.list_available_ledger_users(assigns.current_scope, assigns.ledger),
            fn user -> {user.name, user.id} end
          )
      )}
@@ -37,22 +27,41 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
         Convidar
       </h2>
       <.form
-        title="Convidado"
         for={@invite_form}
         id="invite-form"
         phx-submit="add_user"
+        phx-change="validate_invite"
         phx-target={@myself}
       >
         <div class="flex flex-col gap-2">
-          <.input field={@invite_form[:user_id]} type="select" label="Usuário" options={@users} />
-
-          <.button variant="primary" phx-disable-with="Salvando">
+          <.input
+            field={@invite_form[:user_id]}
+            type="select"
+            label="Usuário"
+            options={@users}
+            prompt="Selecione um usuário"
+            #
+            <-
+            força
+            placeholder
+            inicialmente
+          />
+          <.button
+            variant="primary"
+            phx-disable-with="Salvando"
+            disabled={@selected_user_id in [nil, ""]}
+          >
             Adicionar Convidado
           </.button>
         </div>
       </.form>
     </div>
     """
+  end
+
+  @impl true
+  def handle_event("validate_invite", %{"ledger_invite" => %{"user_id" => id}}, socket) do
+    {:noreply, assign(socket, selected_user_id: id)}
   end
 
   @impl true
@@ -65,6 +74,14 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
 
         {:noreply,
          socket
+         |> assign(selected_user_id: nil)
+         |> assign(
+           users:
+             Enum.map(
+               Finance.list_available_ledger_users(socket.assigns.current_scope, ledger),
+               fn user -> {user.name, user.id} end
+             )
+         )
          |> assign(invite_form: to_form(%{"user_id" => nil}, as: :ledger_invite))}
 
       {:error, %Ecto.Changeset{} = changeset} ->

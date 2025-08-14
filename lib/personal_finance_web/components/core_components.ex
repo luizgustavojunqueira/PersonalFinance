@@ -179,9 +179,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
+  attr :disabled, :boolean, default: false, doc: "the disabled flag for inputs"
 
   attr :rest, :global,
-    include: ~w(accept autocomplete capture cols disabled form list max maxlength min minlength
+    include: ~w(accept autocomplete capture cols form list max maxlength min minlength
                 multiple pattern placeholder readonly required rows size step)
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
@@ -315,6 +316,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
         <input
           type={@type}
           name={@name}
+          disabled={@disabled}
           id={@id}
           value={Phoenix.HTML.Form.normalize_value(@type, @value)}
           class={[
@@ -783,6 +785,31 @@ defmodule PersonalFinanceWeb.CoreComponents do
   defp class_to_list(class) when is_binary(class), do: String.split(class, " ", trim: true)
   defp class_to_list(class) when is_list(class), do: class
   defp class_to_list(_), do: []
+
+  @doc """
+  Text label with ellipsis for long text.
+  """
+  attr :text, :string, required: true, doc: "the text to display in the label"
+  attr :class, :string, default: "", doc: "the additional classes to apply to the label"
+
+  attr :max_width, :string,
+    default: "max-w-xs",
+    doc: "the maximum width of the label, defaults to 'max-w-xs'"
+
+  def text_ellipsis(assigns) do
+    ~H"""
+    <p
+      class={[
+        "truncate",
+        @max_width,
+        @class
+      ]}
+      title={@text}
+    >
+      {@text}
+    </p>
+    """
+  end
 
   ## JS Commands
 

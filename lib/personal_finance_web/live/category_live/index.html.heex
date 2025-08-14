@@ -16,8 +16,18 @@
       form={@form}
       submit_label="Salvar"
     >
-      <.input field={@form[:name]} type="text" label="Nome" />
-      <.input field={@form[:description]} type="text" label="Descrição" />
+      <.input
+        field={@form[:name]}
+        type="text"
+        label="Nome"
+        disabled={@category != nil and @category.is_fixed}
+      />
+      <.input
+        field={@form[:description]}
+        type="text"
+        label="Descrição"
+        disabled={@category != nil and @category.is_fixed}
+      />
       <.input field={@form[:percentage]} type="number" label="Porcentagem" />
       <.input field={@form[:color]} type="color" label="Cor" />
     </.form_modal>
@@ -36,7 +46,7 @@
   <.table
     id="categories_table"
     rows={@streams.category_collection}
-    col_widths={["15%", "20%", "10%", "10%"]}
+    col_widths={["20%", "25%", "10%", "10%"]}
     row_item={
       fn
         {_id, struct} -> struct
@@ -45,9 +55,11 @@
     }
   >
     <:col :let={category} label="Nome">
-      {category.name}
+      <.text_ellipsis text={category.name} max_width="max-w-[15rem]" />
     </:col>
-    <:col :let={category} label="Descrição">{category.description}</:col>
+    <:col :let={category} label="Descrição">
+      <.text_ellipsis text={category.description} max_width="max-w-[20rem]" />
+    </:col>
     <:col :let={category} label="Cor">
       <span
         class="inline-block w-7 h-4 rounded-xl border-2 border-black dark:border-white"

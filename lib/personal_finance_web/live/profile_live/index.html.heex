@@ -48,8 +48,12 @@
       end
     }
   >
-    <:col :let={profile} label="Nome">{profile.name}</:col>
-    <:col :let={profile} label="Descrição">{profile.description}</:col>
+    <:col :let={profile} label="Nome">
+      <.text_ellipsis text={profile.name} max_width="max-w-[20rem]" />
+    </:col>
+    <:col :let={profile} label="Descrição">
+      <.text_ellipsis text={profile.description} max_width="max-w-[20rem]" />
+    </:col>
     <:col :let={profile} label="Cor">
       <span
         class="inline-block w-7 h-4 rounded-xl border-2 border-black dark:border-white"

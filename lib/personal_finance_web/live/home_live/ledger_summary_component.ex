@@ -62,10 +62,16 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
               <div class="flex flex-row gap-4 items-center">
                 <.icon name="hero-banknotes" class="text-2xl" />
                 <div class="flex flex-col ">
-                  <span class="text-lg font-semibold">{transaction.description}</span>
-                  <span class="text-sm font-semibold text-dark-green/70 dark:text-white/70">
-                    {transaction.profile.name}
-                  </span>
+                  <.text_ellipsis
+                    text={transaction.description}
+                    max_width="max-w-[200px]"
+                    class="text-lg font-semibold"
+                  />
+                  <.text_ellipsis
+                    text={transaction.profile.name}
+                    max_width="max-w-[200px]"
+                    class="text-sm font-semibold text-dark-green/70 dark:text-white/70"
+                  />
                 </div>
               </div>
               <div class="flex flex-col ">
@@ -329,10 +335,19 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
     end)
   end
 
+  defp truncate_text(text, max_length) do
+    if String.length(text) > max_length do
+      String.slice(text, 0, max_length - 3) <> "..."
+    else
+      text
+    end
+  end
+
   defp get_chart_data(categories_data, :pie) do
     option = %{
       tooltip: %{
-        trigger: "item"
+        trigger: "item",
+        formatter: "{b}: {c} ({d}%)"
       },
       legend: %{
         top: "0",
@@ -340,7 +355,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         textStyle: %{
           color: "#000",
           fontSize: 18
-        }
+        },
+        formatter: "{name}"
       },
       series: [
         %{
@@ -370,8 +386,9 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           data:
             Enum.map(categories_data, fn category ->
               %{
-                name: category.name,
+                name: truncate_text(category.name, 12),
                 value: category.total,
+                originalName: category.name,
                 itemStyle: %{
                   color: category.color
                 }
@@ -385,7 +402,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   end
 
   defp get_chart_data(categories_data, :bars) do
-    names = Enum.map(categories_data, & &1.name)
+    truncated_names = Enum.map(categories_data, &truncate_text(&1.name, 20))
     remaining_values = Enum.map(categories_data, & &1.remaining)
     total_values = Enum.map(categories_data, & &1.total)
     goal_values = Enum.map(categories_data, & &1.goal)
@@ -434,12 +451,13 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           axisTick: %{
             show: true
           },
-          data: names,
+          data: truncated_names,
           axisLabel: %{
             color: "#000",
             fontSize: 16,
             width: 100,
-            interval: 0
+            interval: 0,
+            formatter: "{value}"
           },
           axisLine: %{
             show: false

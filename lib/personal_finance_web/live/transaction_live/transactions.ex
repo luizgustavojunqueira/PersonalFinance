@@ -110,7 +110,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
         <.table
           id="transactions_table"
           rows={@streams.transaction_collection}
-          col_widths={["7%", "7%", "15%", "10%", "10%", "15%", "10%", "10%", "10%"]}
+          col_widths={["7%", "7%", "10%", "12%", "12%", "15%", "10%", "10%", "10%"]}
           row_item={
             fn
               {_id, struct} -> struct
@@ -134,32 +134,42 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
             <% end %>
           </:col>
           <:col :let={transaction} label="Descrição">
-            <div class="truncate max-w-[10rem]" title={transaction.description}>
-              {transaction.description}
-            </div>
+            <.text_ellipsis text={transaction.description} max_width="max-w-[10rem]" />
           </:col>
           <:col :let={transaction} label="Perfil">
             <div
-              class="p-1 px-2 rounded-lg text-white truncate max-w-[7rem] text-center"
+              class="rounded-lg text-white text-center w-fit"
               style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
-              title={transaction.profile && transaction.profile.name}
             >
-              {transaction.profile && transaction.profile.name}
+              <.text_ellipsis
+                class="p-1 px-2 "
+                text={transaction.profile && transaction.profile.name}
+                max_width="max-w-[10rem]"
+              />
             </div>
           </:col>
           <:col :let={transaction} label="Categoria">
-            <span
-              class="p-1 px-2 rounded-lg text-white"
+            <div
+              class="rounded-lg text-white text-center w-fit"
               style={"background-color: #{transaction.category && transaction.category.color}99;"}
             >
-              {transaction.category && transaction.category.name}
-            </span>
+              <.text_ellipsis
+                class="p-1 px-2 "
+                text={transaction.category && transaction.category.name}
+                max_width="max-w-[10rem]"
+              />
+            </div>
           </:col>
           <:col :let={transaction} label="Tipo de Investimento">
-            {if(transaction.investment_type,
-              do: transaction.investment_type.name,
-              else: "-"
-            )}
+            <.text_ellipsis
+              text={
+                if(transaction.investment_type,
+                  do: transaction.investment_type.name,
+                  else: "-"
+                )
+              }
+              max_width="max-w-[10rem]"
+            />
           </:col>
           <:col :let={transaction} label="Quantidade">
             {if transaction.investment_type && transaction.investment_type.name == "Cripto",
