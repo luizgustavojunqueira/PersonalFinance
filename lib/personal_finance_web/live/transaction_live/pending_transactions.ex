@@ -67,7 +67,11 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
   def render(assigns) do
     ~H"""
     <div>
-      <.side_modal id="recurring_entries_drawer" show={@show} on_close={JS.push("close_modal")}>
+      <.side_modal
+        id="recurring_entries_drawer"
+        show={@show}
+        on_close={JS.push("close_modal")}
+      >
         <:title>Próximas Transações recorrentes</:title>
 
         <div class="mb-4">
@@ -92,7 +96,6 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
             <.table
               id="pending_transactions_table"
               rows={@pending_recurrent_transactions}
-              large={false}
             >
               <:col :let={transaction} label="Descrição">
                 {transaction.description}

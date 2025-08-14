@@ -36,7 +36,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
                 phx-value-id={@ledger.id}
                 class="flex items-center flex-row justify-start gap-2 text-blue-600 hover:text-blue-800 hover:cursor-pointer "
               >
-                <.link class="hero-pencil"></.link>
+                <.icon name="hero-pencil" />
                 <p>Editar</p>
               </li>
               <li
@@ -44,7 +44,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
                 phx-value-id={@ledger.id}
                 class="flex items-center flex-row justify-start gap-2 text-red-600 hover:text-red-800 hover:cursor-pointer "
               >
-                <.link class="hero-trash"></.link>
+                <.icon name="hero-trash" />
                 <p>Apagar</p>
               </li>
             </ul>
