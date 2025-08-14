@@ -1,14 +1,14 @@
 defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   use PersonalFinanceWeb, :live_component
 
-  alias PersonalFinance.DateUtils
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Finance.RecurringEntry
   alias PersonalFinance.Finance
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="rounded-lg shadow-md p-6  w-full shadow-lg bg-base-100/50">
+    <div class="rounded-lg  p-6  w-full shadow-lg bg-base-100/50">
       <h2 class="text-2xl font-semibold mb-4">Transações Recorrentes</h2>
 
       <.form
@@ -47,10 +47,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
         </div>
 
         <div class="flex justify-end mt-4">
-          <.button
-            phx-disable-with="Salvando..."
-            class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-          >
+          <.button variant="primary" phx-disable-with="Salvando...">
             Salvar
           </.button>
         </div>

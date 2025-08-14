@@ -87,8 +87,6 @@ defmodule PersonalFinanceWeb.Router do
       live "/ledgers/:id/profiles/:profile_id/delete", ProfileLive.Index, :delete
       live "/ledgers/:id/profiles/:profile_id/settings", ProfileLive.Settings
       live "/ledgers/:id/transactions", TransactionLive.Index, :index
-      live "/ledgers/:id/transactions/new", TransactionLive.Index, :new
-      live "/ledgers/:id/transactions/:transaction_id/edit", TransactionLive.Index, :edit
       live "/ledgers/:id/categories", CategoryLive.Index, :index
       live "/ledgers/:id/categories/new", CategoryLive.Index, :new
       live "/ledgers/:id/categories/:category_id/edit", CategoryLive.Index, :edit

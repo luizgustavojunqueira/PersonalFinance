@@ -2,34 +2,39 @@
   <.header>
     {@current_scope.user.name} - Ledgers
     <:actions>
-      <.button variant="primary" navigate={~p"/ledgers/new"}>
+      <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_ledger}>
         <.icon name="hero-plus" /> Adicionar Ledger
       </.button>
     </:actions>
   </.header>
 
-  <%= if @show_form_modal do %>
-    <.form_modal
-      title="Ledger"
-      subtitle="Preencha os detalhes do ledger"
-      action={@form_action}
-      form={@form}
-      submit_label="Salvar"
-    >
-      <.input field={@form[:name]} type="text" label="Nome" />
-      <.input field={@form[:description]} type="text" label="Descrição" />
-    </.form_modal>
-  <% end %>
+  <.live_component
+    module={PersonalFinanceWeb.LedgersLive.LedgerForm}
+    id="ledger-form-modal"
+    show={@open_modal in [:new_ledger, :edit_ledger]}
+    action={if @open_modal == :new_ledger, do: :new, else: :edit}
+    ledger={@ledger}
+    current_scope={@current_scope}
+    parent_pid={self()}
+  />
 
-  <%= if @show_delete_modal do %>
-    <.confirmation_modal
-      title="Excluir Orçamento"
-      message={"Tem certeza de que deseja excluir o orçamento \"#{@ledger.name}\"?"}
-      confirm_event="delete"
-      cancel_event="close_confirmation"
-      item_id={@ledger.id}
-    />
-  <% end %>
+  <.modal
+    id="delete-ledger-modal"
+    show={@open_modal == :delete_ledger}
+  >
+    <:title>
+      Excluir Orçamento
+    </:title>
+    Tem certeza de que deseja excluir o orçamento "{@ledger.name}"?
+    <:actions>
+      <.button variant="primary" phx-click="delete" phx-value-id={@ledger.id}>
+        Excluir
+      </.button>
+      <.button phx-click="close_modal">
+        Cancelar
+      </.button>
+    </:actions>
+  </.modal>
 
   <div id="ledgers" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
     <.live_component

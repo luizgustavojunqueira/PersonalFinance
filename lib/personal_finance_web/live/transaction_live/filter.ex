@@ -1,4 +1,5 @@
 defmodule PersonalFinanceWeb.TransactionLive.Filter do
+  alias PersonalFinance.Utils.ParseUtils
   use PersonalFinanceWeb, :live_component
 
   @impl true
@@ -19,12 +20,12 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
   @impl true
   def handle_event("filter", %{"filter" => filter_params}, socket) do
     filter = %{
-      "profile_id" => parse_id(filter_params["profile_id"]),
-      "type" => parse_text(filter_params["type"]),
-      "category_id" => parse_id(filter_params["category_id"]),
-      "investment_type_id" => parse_id(filter_params["investment_type_id"]),
-      "start_date" => parse_text(filter_params["start_date"]),
-      "end_date" => parse_text(filter_params["end_date"])
+      "profile_id" => ParseUtils.parse_id(filter_params["profile_id"]),
+      "type" => ParseUtils.parse_text(filter_params["type"]),
+      "category_id" => ParseUtils.parse_id(filter_params["category_id"]),
+      "investment_type_id" => ParseUtils.parse_id(filter_params["investment_type_id"]),
+      "start_date" => ParseUtils.parse_text(filter_params["start_date"]),
+      "end_date" => ParseUtils.parse_text(filter_params["end_date"])
     }
 
     send(socket.assigns.parent_pid, {:apply_filter, filter})
@@ -140,29 +141,5 @@ defmodule PersonalFinanceWeb.TransactionLive.Filter do
       </div>
     </details>
     """
-  end
-
-  defp parse_id(""), do: nil
-  defp parse_id(nil), do: nil
-
-  defp parse_id(id) when is_binary(id) do
-    case Integer.parse(id) do
-      {number, _} -> number
-      :error -> nil
-    end
-  end
-
-  defp parse_id(id) when is_integer(id), do: id
-  defp parse_id(_), do: nil
-
-  defp parse_text(""), do: nil
-  defp parse_text(nil), do: nil
-
-  defp parse_text(text) when is_binary(text) do
-    String.trim(text)
-  end
-
-  defp parse_text(atom) when is_atom(atom) do
-    atom
   end
 end

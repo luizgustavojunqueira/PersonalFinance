@@ -1,8 +1,8 @@
 defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
   use PersonalFinanceWeb, :live_component
 
-  alias PersonalFinance.CurrencyUtils
-  alias PersonalFinance.DateUtils
+  alias PersonalFinance.Utils.CurrencyUtils
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Finance
 
   @impl true
@@ -17,9 +17,9 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
      socket
      |> assign(assigns)
      |> assign(
+       form: to_form(%{}, as: :months),
        pending_recurrent_transactions: pending_recurrent_transactions,
-       page_title: "Transações Pendentes",
-       form: to_form(%{}, as: :months)
+       page_title: "Transações Pendentes"
      )}
   end
 
@@ -66,32 +66,9 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="fixed z-50 top-0 left-0 w-full h-full">
-      <div
-        class="fixed top-0 right-0 h-full w-148 bg-base-200 shadow-lg p-6 flex flex-col z-50"
-        phx-mounted={
-          JS.transition(
-            {"transition-all ease-out duration-300", "translate-x-full", "translate-x-0"},
-            time: 300
-          )
-        }
-        phx-remove={
-          JS.transition(
-            {"transition-all ease-out duration-300", "translate-x-0", "translate-x-full"},
-            time: 300
-          )
-        }
-      >
-        <div class="flex justify-between items-center mb-6">
-          <h3 class="text-xl font-bold">Próximas Transações Recorrentes</h3>
-          <.button
-            variant="custom"
-            phx-click="toggle_pending_transactions_drawer"
-            class="btn btn-square"
-          >
-            <.icon name="hero-x-mark" class="w-10 h-10" />
-          </.button>
-        </div>
+    <div>
+      <.side_modal id="recurring_entries_drawer" show={@show} on_close={JS.push("close_modal")}>
+        <:title>Próximas Transações recorrentes</:title>
 
         <div class="mb-4">
           <.form for={@form} class="mt-1" phx-change="update_months" phx-target={@myself}>
@@ -145,7 +122,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
             </.table>
           <% end %>
         </div>
-      </div>
+      </.side_modal>
     </div>
     """
   end

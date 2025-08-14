@@ -3,13 +3,13 @@
     {@ledger.name} - Transações
     <:actions>
       <div class="flex flex-row gap-2">
-        <.button phx-click="open_import">
+        <.button phx-click="open_modal" phx-value-modal={:import_transactions}>
           Importar Transações
         </.button>
-        <.button phx-click="toggle_pending_transactions_drawer">
+        <.button phx-click="open_modal" phx-value-modal={:pending_transactions}>
           <.icon name="hero-clock" /> Transações Pendentes
         </.button>
-        <.button variant="primary" phx-click="open_new_transaction">
+        <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_transaction}>
           <.icon name="hero-plus" /> Adicionar Transação
         </.button>
       </div>
@@ -35,17 +35,15 @@
     show={@open_modal == :import_transactions}
     ledger={@ledger}
     current_scope={@current_scope}
-    parent_pid={self()}
   />
 
-  <%= if @show_pending_transactions_drawer do %>
-    <.live_component
-      module={PersonalFinanceWeb.TransactionLive.PendingTransactions}
-      id="pending-transactions-drawer"
-      ledger={@ledger}
-      current_scope={@current_scope}
-    />
-  <% end %>
+  <.live_component
+    module={PersonalFinanceWeb.TransactionLive.PendingTransactions}
+    id="pending-transactions-drawer"
+    ledger={@ledger}
+    current_scope={@current_scope}
+    show={@open_modal == :pending_transactions}
+  />
 
   <div class="mb-4">
     <.live_component
