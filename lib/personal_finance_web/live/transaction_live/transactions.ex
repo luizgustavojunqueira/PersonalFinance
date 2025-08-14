@@ -145,7 +145,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
           </:col>
           <:col :let={{_id, transaction}} label="Quantidade">
             {if transaction.investment_type && transaction.investment_type.name == "Cripto",
-              do: Utils.CurrencyUtils.format_amount(transaction.amount, true),
+              do: CurrencyUtils.format_amount(transaction.amount, true),
               else: CurrencyUtils.format_amount(transaction.amount, false)}
           </:col>
           <:col :let={{_id, transaction}} label="Valor Unitário">
