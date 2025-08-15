@@ -96,22 +96,6 @@ The heroicons installation itself is managed by your mix.exs */
     display: contents;
 }
 
-#sidebar.expanded {
-    width: 16rem;
-}
-#sidebar .open-icon {
-    display: block;
-}
-#sidebar.expanded .open-icon {
-    display: none;
-}
-#sidebar .close-icon {
-    display: none;
-}
-#sidebar.expanded .close-icon {
-    display: block;
-}
-
 #sidebar .sidebar-link {
     justify-content: center;
 }
@@ -148,4 +132,17 @@ The heroicons installation itself is managed by your mix.exs */
 /* Opcional: Canto da scrollbar (onde as scrollbars vertical e horizontal se encontram) */
 ::-webkit-scrollbar-corner {
     background: #f0fdf4; /* Cor do canto */
+}
+
+@keyframes progress-bar-fill {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+.animate-progress {
+    animation: progress-bar-fill linear forwards;
 }

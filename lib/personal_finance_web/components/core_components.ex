@@ -43,6 +43,11 @@ defmodule PersonalFinanceWeb.CoreComponents do
   attr :flash, :map, default: %{}, doc: "the map of flash messages to display"
   attr :title, :string, default: nil
   attr :kind, :atom, values: [:info, :error], doc: "used for styling and flash lookup"
+
+  attr :auto_close, :integer,
+    default: 5000,
+    doc: "the time in milliseconds to automatically close the flash message"
+
   attr :rest, :global, doc: "the arbitrary HTML attributes to add to the flash container"
 
   slot :inner_block, doc: "the optional inner block that renders the flash message"
@@ -54,10 +59,12 @@ defmodule PersonalFinanceWeb.CoreComponents do
     <div
       :if={msg = render_slot(@inner_block) || Phoenix.Flash.get(@flash, @kind)}
       id={@id}
-      phx-click={JS.push("lv:clear-flash", value: %{key: @kind}) |> hide("##{@id}")}
+      phx-click={JS.push("lv:clear-flash", value: %{key: @kind})}
       role="alert"
       class="toast toast-bottom toast-end z-50"
       {@rest}
+      phx-hook="FlashAutoClose"
+      data-auto-close={@auto_close}
     >
       <div class={[
         "alert w-80 sm:w-96 max-w-80 sm:max-w-96 text-wrap flex flex-row gap-2 items-center p-2 ml-4 rounded-lg",
@@ -74,6 +81,22 @@ defmodule PersonalFinanceWeb.CoreComponents do
         <button type="button" class="group self-start cursor-pointer" aria-label={gettext("close")}>
           <.icon name="hero-x-mark-solid" class="size-5 opacity-40 group-hover:opacity-70" />
         </button>
+
+        <div
+          :if={@auto_close}
+          class="absolute bottom-0 h-1 w-80 sm:w-96 max-w-80 sm:max-w-96 bg-base-300/50"
+        >
+          <div
+            class={[
+              "h-full origin-left",
+              @kind == :info && "bg-info",
+              @kind == :error && "bg-error",
+              @auto_close && "animate-progress"
+            ]}
+            style={"animation-duration: #{@auto_close}ms;"}
+          >
+          </div>
+        </div>
       </div>
     </div>
     """

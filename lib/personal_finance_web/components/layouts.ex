@@ -47,10 +47,10 @@ defmodule PersonalFinanceWeb.Layouts do
     <div
       id={@id}
       aria-live="polite"
-      class="fixed bottom-0 left-0 right-0 w-0 z-50 flex flex-col items-center gap-2 p-4"
+      class="fixed bottom-0 right-0 z-50 flex flex-col items-end gap-2 p-4"
     >
-      <.flash kind={:info} flash={@flash} />
-      <.flash kind={:error} flash={@flash} />
+      <.flash kind={:info} flash={@flash} auto_close={2000} />
+      <.flash kind={:error} flash={@flash} auto_close={5000} />
 
       <.flash
         id="client-error"
