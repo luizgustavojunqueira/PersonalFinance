@@ -42,6 +42,12 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
 
   @impl true
   def handle_info({:user_removed, _user}, socket) do
+    Phoenix.LiveView.send_update(PersonalFinanceWeb.SettingsLive.InviteForm,
+      id: "invite-form",
+      ledger: socket.assigns.ledger,
+      current_scope: socket.assigns.current_scope
+    )
+
     {:noreply, socket |> put_flash(:info, "Colaborador removido com sucesso.")}
   end
 

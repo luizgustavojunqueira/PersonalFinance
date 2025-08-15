@@ -4,6 +4,18 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
   alias PersonalFinance.Finance
   alias PersonalFinance.Finance.Transaction
 
+  defp format_float_for_input(float_val) when is_float(float_val) do
+    :erlang.float_to_binary(float_val, [:compact, {:decimals, 8}])
+    |> IO.iodata_to_binary()
+    |> String.trim_trailing(".0")
+  end
+
+  defp format_float_for_input(int_val) when is_integer(int_val) do
+    to_string(int_val)
+  end
+
+  defp format_float_for_input(other), do: other
+
   @impl true
   def update(assigns, socket) do
     ledger = assigns.ledger
@@ -19,6 +31,14 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
         ledger,
         %{}
       )
+
+    formatted_value = format_float_for_input(changeset.data.value)
+    formatted_amount = format_float_for_input(changeset.data.amount)
+
+    changeset =
+      changeset
+      |> Ecto.Changeset.put_change(:value, formatted_value)
+      |> Ecto.Changeset.put_change(:amount, formatted_amount)
 
     investment_category =
       Finance.get_category_by_name("Investimento", current_scope, ledger.id)
