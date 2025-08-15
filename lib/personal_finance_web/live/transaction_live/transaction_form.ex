@@ -21,7 +21,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
       )
 
     investment_category =
-      Finance.get_category_by_name("Investimento", current_scope, ledger)
+      Finance.get_category_by_name("Investimento", current_scope, ledger.id)
 
     socket =
       socket

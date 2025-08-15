@@ -58,9 +58,9 @@ defmodule PersonalFinance.Finance do
   @doc """
   Returns a category by name for a ledger.
   """
-  def get_category_by_name(name, %Scope{} = scope, ledger) do
+  def get_category_by_name(name, %Scope{} = scope, ledger_id) do
     Category
-    |> where([c], c.name == ^name and c.ledger_id == ^ledger.id)
+    |> where([c], c.name == ^name and c.ledger_id == ^ledger_id)
     |> Repo.one()
   end
 
@@ -303,7 +303,7 @@ defmodule PersonalFinance.Finance do
           |> Enum.map(fn row ->
             category =
               if row["category"] && String.trim(row["category"]) != "" do
-                get_category_by_name(String.trim(row["category"]), scope, ledger) ||
+                get_category_by_name(String.trim(row["category"]), scope, ledger.id) ||
                   default_category
               else
                 default_category

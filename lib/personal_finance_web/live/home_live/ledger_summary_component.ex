@@ -299,30 +299,31 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   defp format_categories(categories, transactions, monthly_income) do
     categories
     |> Enum.sort()
-    |> Enum.reject(fn category ->
-      category.name == "Sem Categoria"
-    end)
+    |> Enum.reject(&(&1.name == "Sem Categoria"))
     |> Enum.map(fn category ->
-      total =
-        Enum.reduce(transactions, 0.0, fn t, acc ->
-          if t.category_id == category.id, do: acc + t.total_value, else: acc
+      {total_expenses, total_incomes} =
+        Enum.reduce(transactions, {0.0, 0.0}, fn t, {exp_acc, inc_acc} ->
+          if t.category_id == category.id do
+            case t.type do
+              :expense -> {exp_acc + t.total_value, inc_acc}
+              :income -> {exp_acc, inc_acc + t.total_value}
+              _ -> {exp_acc, inc_acc}
+            end
+          else
+            {exp_acc, inc_acc}
+          end
         end)
 
-      total = Float.round(total, 2)
-      goal = Float.round(category.percentage * monthly_income / 100, 2)
-
-      remaining =
-        if(category.name == "Sem Categoria",
-          do: 0.0,
-          else: Float.round(goal - total, 2)
-        )
+      goal = Float.round(category.percentage * monthly_income / 100, 2) + total_incomes
+      remaining = Float.round(goal - total_expenses, 2)
 
       %{
         id: category.id,
         name: category.name,
         color: category.color,
         percentage: category.percentage,
-        total: total,
+        total: Float.round(total_expenses, 2),
+        total_incomes: Float.round(total_incomes, 2),
         goal: goal,
         remaining: remaining
       }

@@ -1,4 +1,5 @@
 defmodule PersonalFinance.Balance do
+  alias PersonalFinance.Finance
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
 
@@ -18,16 +19,34 @@ defmodule PersonalFinance.Balance do
         profile_id \\ nil,
         {date_start, date_end} \\ {nil, nil}
       ) do
+    category_id =
+      if type == :expense do
+        nil
+      else
+        Finance.get_category_by_name("Sem Categoria", scope, ledger_id)
+        |> case do
+          nil -> nil
+          category -> category.id
+        end
+      end
+
     base_query =
       from(t in Transaction,
         where: t.ledger_id == ^ledger_id and t.type == ^type,
         select: sum(t.total_value)
       )
 
+    query_with_category =
+      if category_id do
+        from(t in base_query, where: t.category_id == ^category_id)
+      else
+        base_query
+      end
+
     query_with_profile =
       if(profile_id,
-        do: from(t in base_query, where: t.profile_id == ^profile_id),
-        else: base_query
+        do: from(t in query_with_category, where: t.profile_id == ^profile_id),
+        else: query_with_category
       )
 
     query_with_date =
