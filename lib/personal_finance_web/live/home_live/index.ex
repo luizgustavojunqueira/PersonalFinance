@@ -51,9 +51,15 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
     profile_id = if profile_id_str == "", do: nil, else: String.to_integer(profile_id_str)
 
     data_transactions =
-      Finance.list_transactions(current_scope, ledger, %{
-        "profile_id" => profile_id
-      })
+      Finance.list_transactions(
+        current_scope,
+        ledger,
+        %{
+          "profile_id" => profile_id
+        },
+        0,
+        :all
+      )
 
     transactions = data_transactions.entries
 
