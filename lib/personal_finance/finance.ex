@@ -222,10 +222,11 @@ defmodule PersonalFinance.Finance do
     total_entries = Repo.aggregate(query, :count, :id)
 
     query =
-      from(t in query,
-        limit: ^page_size,
-        offset: ^offset
-      )
+      if page_size != :all do
+        from(t in query, limit: ^page_size, offset: ^offset)
+      else
+        query
+      end
 
     transactions = Repo.all(query)
 

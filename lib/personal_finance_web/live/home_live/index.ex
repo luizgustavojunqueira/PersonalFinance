@@ -16,7 +16,7 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
       Finance.subscribe_finance(:transaction, ledger.id)
       Finance.subscribe_finance(:category, ledger.id)
 
-      data_transactions = Finance.list_transactions(current_scope, ledger)
+      data_transactions = Finance.list_transactions(current_scope, ledger, %{}, 0, :all)
 
       transactions = data_transactions.entries
 
