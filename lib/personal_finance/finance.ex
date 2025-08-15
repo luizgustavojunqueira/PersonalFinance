@@ -180,8 +180,6 @@ defmodule PersonalFinance.Finance do
         page \\ 1,
         page_size \\ 10
       ) do
-    offset = (page - 1) * page_size
-
     query =
       from(t in Transaction,
         where: t.ledger_id == ^ledger.id,
@@ -223,6 +221,7 @@ defmodule PersonalFinance.Finance do
 
     query =
       if page_size != :all do
+        offset = (page - 1) * page_size
         from(t in query, limit: ^page_size, offset: ^offset)
       else
         query
