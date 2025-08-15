@@ -229,13 +229,17 @@ defmodule PersonalFinance.Finance do
 
     transactions = Repo.all(query)
 
+    total_pages =
+      if page_size != :all && total_entries > 0,
+        do: div(total_entries + page_size - 1, page_size),
+        else: 1
+
     %{
       entries: transactions,
       page_number: page,
       page_size: page_size,
       total_entries: total_entries,
-      total_pages:
-        if(total_entries > 0, do: div(total_entries + page_size - 1, page_size), else: 1)
+      total_pages: total_pages
     }
   end
 
