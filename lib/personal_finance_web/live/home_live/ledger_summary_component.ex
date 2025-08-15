@@ -112,8 +112,14 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             </div>
           <% else %>
             <%= if @chart_type == :bars do %>
-              <div id="bar" phx-hook="Chart">
-                <div id="bar-chart" class="w-full h-96" phx-update="ignore" />
+              <div id="bar" phx-hook="Chart" class="w-full">
+                <div
+                  id="bar-chart"
+                  class="w-full h-96 min-h-96"
+                  phx-update="ignore"
+                  style="overflow: visible;"
+                >
+                </div>
                 <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
               </div>
             <% end %>
@@ -404,7 +410,19 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
 
   defp get_chart_data(categories_data, :bars) do
     truncated_names = Enum.map(categories_data, &truncate_text(&1.name, 20))
-    remaining_values = Enum.map(categories_data, & &1.remaining)
+
+    remaining_values =
+      Enum.map(categories_data, fn item ->
+        if item.remaining < 0 do
+          %{
+            value: item.remaining,
+            itemStyle: %{color: "#F44336"}
+          }
+        else
+          item.remaining
+        end
+      end)
+
     total_values = Enum.map(categories_data, & &1.total)
     goal_values = Enum.map(categories_data, & &1.goal)
 
@@ -414,20 +432,33 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         axisPointer: %{
           type: "shadow"
         },
-        formatter: "Categoria: {b0}<br/>Meta: {c2}<br/>Gasto: {c1}<br/>Restante: {c0}"
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderColor: "#ccc",
+        borderWidth: 1,
+        textStyle: %{
+          color: "#333",
+          fontSize: 13
+        },
+        formatter:
+          "{b0}<br/><span style='color:#9E9E9E'>●</span> Meta: R${c2}<br/><span style='color:#FF9800'>●</span> Gasto: R${c1}<br/><span style='color:#4CAF50'>●</span> Restante: R${c0}"
       },
       legend: %{
-        top: 0,
+        top: 10,
+        left: "center",
         data: ["Restante", "Gasto", "Meta"],
         textStyle: %{
-          color: "#000",
-          fontSize: 18
-        }
+          color: "#333",
+          fontSize: 14,
+          fontWeight: "500"
+        },
+        itemGap: 30,
+        icon: "roundRect"
       },
       grid: %{
-        left: "0%",
-        right: "10%",
-        bottom: "0%",
+        left: "5%",
+        right: "12%",
+        top: "15%",
+        bottom: "8%",
         containLabel: true
       },
       xAxis: [
@@ -435,15 +466,26 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           type: "value",
           axisLabel: %{
             formatter: "R$ {value}",
-            color: "#000",
-            fontSize: 12,
-            width: 100
+            color: "#666",
+            fontSize: 11,
+            fontFamily: "Arial, sans-serif"
+          },
+          axisLine: %{
+            show: true,
+            lineStyle: %{
+              color: "#ddd"
+            }
           },
           splitLine: %{
+            show: true,
             lineStyle: %{
-              color: "#eee",
-              type: "dotted"
+              color: "#f0f0f0",
+              type: "solid",
+              width: 1
             }
+          },
+          axisTick: %{
+            show: false
           }
         }
       ],
@@ -451,17 +493,24 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         %{
           type: "category",
           axisTick: %{
-            show: true
+            show: false
           },
           data: truncated_names,
           axisLabel: %{
-            color: "#000",
-            fontSize: 16,
-            width: 100,
+            color: "#333",
+            fontSize: 13,
+            fontWeight: "500",
             interval: 0,
-            formatter: "{value}"
+            margin: 12,
+            fontFamily: "Arial, sans-serif"
           },
           axisLine: %{
+            show: true,
+            lineStyle: %{
+              color: "#ddd"
+            }
+          },
+          splitLine: %{
             show: false
           }
         }
@@ -471,20 +520,26 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           name: "Restante",
           type: "bar",
           stack: "total_sum",
+          barWidth: "50%",
           itemStyle: %{
-            color: "#4CAF5099"
+            color: "#4CAF50",
+            borderRadius: [3, 3, 3, 3]
           },
           label: %{
             show: true,
             position: "insideRight",
-            formatter: nil,
-            color: "#111",
-            textShadowBlur: 5,
-            fontSize: 14,
+            formatter: "R${c}",
+            color: "#fff",
+            fontSize: 12,
+            fontWeight: "600",
+            textShadowBlur: 2,
             textShadowColor: "rgba(0, 0, 0, 0.3)"
           },
           emphasis: %{
-            focus: "series"
+            focus: "series",
+            itemStyle: %{
+              color: "#45a049"
+            }
           },
           data: remaining_values
         },
@@ -493,42 +548,53 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           type: "bar",
           stack: "total_sum",
           itemStyle: %{
-            color: "#FF9800"
+            color: "#FF9800",
+            borderRadius: [3, 3, 3, 3]
           },
           label: %{
             show: true,
             position: "insideLeft",
-            formatter: "R${@value}",
-            color: "#000",
-            textShadowBlur: 5,
-            fontSize: 14,
+            formatter: "R${c}",
+            color: "#fff",
+            fontSize: 12,
+            fontWeight: "600",
+            textShadowBlur: 2,
             textShadowColor: "rgba(0, 0, 0, 0.3)"
           },
           emphasis: %{
-            focus: "series"
+            focus: "series",
+            itemStyle: %{
+              color: "#f57c00"
+            }
           },
           data: total_values
         },
         %{
           name: "Meta",
           type: "bar",
+          barWidth: "35%",
           itemStyle: %{
-            color: "rgba(0,0,0,0.2)",
-            borderType: "dashed",
+            color: "#9E9E9E",
             borderColor: "#9E9E9E",
-            borderWidth: 1
+            borderRadius: 3
           },
           label: %{
             show: true,
-            position: "insideRight",
-            formatter: nil,
-            fontSize: 14,
-            color: "#000"
+            position: "right",
+            formatter: "R${c}",
+            fontSize: 11,
+            color: "#666",
+            fontWeight: "500",
+            offset: [5, 0]
           },
           emphasis: %{
-            focus: "series"
+            focus: "series",
+            itemStyle: %{
+              borderColor: "#757575",
+              borderWidth: 3
+            }
           },
-          z: 0,
+          z: -1,
           data: goal_values
         }
       ]
