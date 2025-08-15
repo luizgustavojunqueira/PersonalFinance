@@ -22,7 +22,7 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
-import * as echarts from "echarts";
+import * as echarts from "../vendor/echarts.min.js";
 import topbar from "../vendor/topbar";
 
 let Hooks = {};
