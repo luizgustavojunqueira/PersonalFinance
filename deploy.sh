@@ -23,7 +23,7 @@ fi
 
 # Parar containers existentes
 echo "⏸️  Parando containers..."
-docker-compose down
+docker compose down
 
 # Limpar imagens antigas (opcional)
 echo "🧹 Limpando imagens antigas..."
@@ -31,14 +31,14 @@ docker image prune -f
 
 # Rebuild e subir
 echo "🔨 Rebuilding e iniciando containers..."
-docker-compose up -d --build
+docker compose up -d --build
 
 # Aguardar um pouco para garantir que subiu
 sleep 5
 
 # Verificar status
 echo "📊 Status dos containers:"
-docker-compose ps
+docker compose ps
 
 # Testar se está funcionando
 echo "🔍 Testando aplicação..."
