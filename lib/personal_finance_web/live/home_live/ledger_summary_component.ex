@@ -417,6 +417,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         formatter: "Categoria: {b0}<br/>Meta: {c2}<br/>Gasto: {c1}<br/>Restante: {c0}"
       },
       legend: %{
+        top: 0,
         data: ["Restante", "Gasto", "Meta"],
         textStyle: %{
           color: "#000",
