@@ -2,46 +2,41 @@
   <.header>
     {@ledger.name} - Categorias
     <:actions>
-      <.button variant="primary" navigate={~p"/ledgers/#{@ledger.id}/categories/new"}>
+      <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_category}>
         <.icon name="hero-plus" /> Adicionar Categoria
       </.button>
     </:actions>
   </.header>
 
-  <%= if @show_form_modal do %>
-    <.form_modal
-      title="Categoria"
-      subtitle="Preencha os detalhes da categoria"
-      action={@form_action}
-      form={@form}
-      submit_label="Salvar"
-    >
-      <.input
-        field={@form[:name]}
-        type="text"
-        label="Nome"
-        disabled={@category != nil and @category.is_fixed}
-      />
-      <.input
-        field={@form[:description]}
-        type="text"
-        label="Descrição"
-        disabled={@category != nil and @category.is_fixed}
-      />
-      <.input field={@form[:percentage]} type="number" label="Porcentagem" />
-      <.input field={@form[:color]} type="color" label="Cor" />
-    </.form_modal>
-  <% end %>
+  <.live_component
+    module={PersonalFinanceWeb.CategoryLive.CategoryForm}
+    id="category-form-modal"
+    show={@open_modal in [:new_category, :edit_category]}
+    action={if @open_modal == :new_category, do: :new, else: :edit}
+    category={@category}
+    ledger={@ledger}
+    current_scope={@current_scope}
+  />
 
-  <%= if @show_delete_modal do %>
-    <.confirmation_modal
-      title="Excluir Categoria"
-      message={"Tem certeza de que deseja excluir a categoria \"#{@category.name}\"?"}
-      confirm_event="delete"
-      cancel_event="close_confirmation"
-      item_id={@category.id}
-    />
-  <% end %>
+  <.modal
+    id="delete-category-modal"
+    show={@open_modal == :delete_category}
+    on_close={JS.push("close_modal")}
+    class="mt-2"
+  >
+    <:title>
+      Excluir Categoria
+    </:title>
+    Tem certeza de que deseja excluir a categoria "{@category.name}"?
+    <:actions>
+      <.button variant="primary" phx-click="delete" phx-value-id={@category.id}>
+        Excluir
+      </.button>
+      <.button phx-click="close_modal">
+        Cancelar
+      </.button>
+    </:actions>
+  </.modal>
 
   <.table
     id="categories_table"
@@ -73,14 +68,14 @@
 
     <:action :let={category}>
       <%= if !category.is_default do %>
-        <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/edit"}>
-          <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+        <.link phx-click="open_edit_category" phx-value-category_id={category.id}>
+          <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
         </.link>
       <% end %>
     </:action>
     <:action :let={category}>
       <%= if !category.is_fixed do %>
-        <.link navigate={~p"/ledgers/#{@ledger.id}/categories/#{category.id}/delete"}>
+        <.link phx-click="open_delete_modal" phx-value-category_id={category.id}>
           <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
         </.link>
       <% end %>

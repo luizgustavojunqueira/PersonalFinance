@@ -45,11 +45,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_params(_params, _url, socket) do
-    {:noreply, socket}
-  end
-
-  @impl true
   def handle_event("open_modal", %{"modal" => modal}, socket) do
     modal_atom = String.to_existing_atom(modal)
     {:noreply, assign(socket, open_modal: modal_atom, transaction: nil)}
@@ -57,7 +52,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
   @impl true
   def handle_event("close_modal", _, socket) do
-    IO.inspect(socket.assigns.open_modal, label: "Closing modal")
     {:noreply, assign(socket, open_modal: nil, transaction: nil)}
   end
 
@@ -114,8 +108,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     {:noreply,
      socket
      |> assign(open_modal: nil, transaction: nil)
-     |> put_flash(:info, "Transação salva com sucesso.")
-     |> push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/transactions")}
+     |> put_flash(:info, "Transação salva com sucesso.")}
   end
 
   @impl true

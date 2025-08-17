@@ -1,6 +1,4 @@
 defmodule PersonalFinanceWeb.CategoryLive.Index do
-  alias PersonalFinance.Finance.Ledger
-  alias PersonalFinance.Finance.Category
   alias PersonalFinance.Finance
   use PersonalFinanceWeb, :live_view
 
@@ -20,89 +18,28 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
 
       socket =
         socket
-        |> assign(ledger: ledger)
+        |> assign(ledger: ledger, open_modal: nil, category: nil)
         |> stream(:category_collection, Finance.list_categories(current_scope, ledger))
 
-      {:ok, socket |> apply_action(socket.assigns.live_action, params, ledger)}
+      {:ok, socket}
     end
   end
 
   @impl true
-  def handle_params(params, _url, socket) do
-    socket = socket |> apply_action(socket.assigns.live_action, params, socket.assigns.ledger)
-
-    {:noreply, socket}
-  end
-
-  defp apply_action(socket, :index, _params, ledger) do
-    assign(socket,
-      page_title: "Categorias - #{ledger.name}",
-      ledger: ledger,
-      show_form_modal: false,
-      show_delete_modal: false,
-      category: nil
-    )
-  end
-
-  defp apply_action(socket, :new, _params, %Ledger{} = ledger) do
-    category = %Category{ledger_id: ledger.id}
-
-    assign(socket,
-      page_title: "Categorias - #{ledger.name}",
-      ledger: ledger,
-      show_form_modal: true,
-      show_delete_modal: false,
-      category: category,
-      form_action: :new,
-      form:
-        to_form(
-          Finance.change_category(
-            socket.assigns.current_scope,
-            category,
-            ledger
-          )
-        )
-    )
-  end
-
-  defp apply_action(socket, :edit, %{"category_id" => category_id}, %Ledger{} = ledger) do
-    category = Finance.get_category(socket.assigns.current_scope, category_id, ledger)
+  def handle_event("open_edit_category", %{"category_id" => category_id}, socket) do
+    category =
+      Finance.get_category(socket.assigns.current_scope, category_id, socket.assigns.ledger)
 
     if category == nil do
       socket
       |> put_flash(:error, "Categoria não encontrada.")
-      |> push_navigate(to: ~p"/ledgers/#{ledger.id}/categories")
     else
-      assign(socket,
-        page_title: "Categorias - #{ledger.name}",
-        show_form_modal: true,
-        show_delete_modal: false,
-        ledger: ledger,
-        category: category,
-        form_action: :edit,
-        form:
-          to_form(
-            Finance.change_category(
-              socket.assigns.current_scope,
-              category,
-              ledger
-            )
-          )
-      )
+      {:noreply,
+       assign(socket,
+         open_modal: :edit_category,
+         category: category
+       )}
     end
-  end
-
-  defp apply_action(socket, :delete, %{"category_id" => category_id}, %Ledger{} = ledger) do
-    category = Finance.get_category(socket.assigns.current_scope, category_id, ledger)
-
-    assign(socket,
-      page_title: "Categorias - #{ledger.name}",
-      ledger: ledger,
-      show_form_modal: false,
-      show_delete_modal: true,
-      category: category,
-      form_action: nil
-    )
   end
 
   @impl true
@@ -114,9 +51,9 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     case Finance.delete_category(current_scope, category) do
       {:ok, _deleted} ->
         {:noreply,
-         Phoenix.LiveView.push_patch(socket,
-           to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories"
-         )}
+         socket
+         |> assign(open_modal: nil, category: nil)
+         |> put_flash(:info, "Categoria removida com sucesso.")}
 
       {:error, _changeset} ->
         {:noreply, put_flash(socket, :error, "Falha ao remover categoria.")}
@@ -124,68 +61,31 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   end
 
   @impl true
-  def handle_event("close_form", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(show_form_modal: false, category: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories")}
+  def handle_event("open_modal", %{"modal" => modal}, socket) do
+    modal_atom = String.to_existing_atom(modal)
+    {:noreply, assign(socket, open_modal: modal_atom, transaction: nil)}
   end
 
   @impl true
-  def handle_event("close_confirmation", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(show_delete_modal: false, category: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories")}
+  def handle_event("close_modal", _, socket) do
+    {:noreply, assign(socket, open_modal: nil, transaction: nil)}
   end
 
   @impl true
-  def handle_event("save", %{"category" => category_params}, socket) do
-    save_category(socket, socket.assigns.form_action, category_params)
-  end
+  def handle_event("open_delete_modal", %{"category_id" => category_id}, socket) do
+    current_scope = socket.assigns.current_scope
 
-  @impl true
-  def handle_event("validate", %{"category" => category_params}, socket) do
-    changeset =
-      Finance.change_category(
-        socket.assigns.current_scope,
-        socket.assigns.category,
-        socket.assigns.ledger,
-        category_params
-      )
+    category =
+      Finance.get_category(current_scope, category_id, socket.assigns.ledger)
 
-    {:noreply,
-     assign(socket,
-       form: to_form(changeset, action: :validate)
-     )}
-  end
-
-  defp save_category(socket, :edit, category_params) do
-    case Finance.update_category(
-           socket.assigns.current_scope,
-           socket.assigns.category,
-           category_params
-         ) do
-      {:ok, _category} ->
-        {:noreply, socket}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset))}
-    end
-  end
-
-  defp save_category(socket, :new, category_params) do
-    case Finance.create_category(
-           socket.assigns.current_scope,
-           category_params,
-           socket.assigns.ledger
-         ) do
-      {:ok, _category} ->
-        {:noreply, socket}
-
-      {:error, %Ecto.Changeset{} = changeset} ->
-        IO.inspect(changeset, label: "Category Changeset Error")
-        {:noreply, assign(socket, form: to_form(changeset))}
+    if category do
+      {:noreply,
+       assign(socket,
+         open_modal: :delete_category,
+         category: category
+       )}
+    else
+      {:noreply, put_flash(socket, :error, "Category not found.")}
     end
   end
 
@@ -194,8 +94,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
     {:noreply,
      socket
      |> stream_insert(:category_collection, category)
-     |> assign(show_form_modal: false, category: nil, form_action: nil)
-     |> Phoenix.LiveView.push_patch(to: ~p"/ledgers/#{socket.assigns.ledger.id}/categories")}
+     |> assign(open_modal: false, category: nil)}
   end
 
   @impl true
