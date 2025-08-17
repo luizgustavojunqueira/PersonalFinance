@@ -26,10 +26,19 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
     - [x] Pagination
 - [x] Change user registration logic
 - [x] Change invites logic
+- [x] Configure self-hosted deploy
+- [x] UI/UX
+    - [x] Refactor modal components
+    - [x] Refactor table component for better responsiveness
+    - [x] General styles changes
 - [ ] Implement transaction import and export functionalities (CSV, JSON).
     - [x] Import CSV.
+        - [] Map invetment type fields
+        - [] Map fee field
+        - [] Map ticker field
     - [ ] Export CSV.
-- [ ] Add comprehensive test suite (unit, integration, LiveView tests).
+- [x] Configure self-hosted deploy
+- [ ] [Fixed Income section](docs/fixed_income.md)
 - [ ] Integrate with external APIs to fetch real-time financial data (stocks, cryptocurrencies).
 - [ ] Implement investment yield calculation.
 - [ ] Add dividend reinvestment tracking.
@@ -38,3 +47,4 @@ Built with Elixir and Phoenix, the project leverages Ecto for data persistence a
     - [ ] Track individual assets and their performanc (stocks, cryptocurrencies, fixed income).
     - [ ] Add personal notes and tags to assets.
     - [ ] Implement a review/analysis feature for assets.
+- [ ] Add comprehensive test suite (unit, integration, LiveView tests).
