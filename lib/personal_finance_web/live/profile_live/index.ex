@@ -28,12 +28,12 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
   @impl true
   def handle_event("open_modal", %{"modal" => modal}, socket) do
     modal_atom = String.to_existing_atom(modal)
-    {:noreply, assign(socket, open_modal: modal_atom, transaction: nil)}
+    {:noreply, assign(socket, open_modal: modal_atom, profile: nil)}
   end
 
   @impl true
   def handle_event("close_modal", _, socket) do
-    {:noreply, assign(socket, open_modal: nil, transaction: nil)}
+    {:noreply, assign(socket, open_modal: nil, profile: nil)}
   end
 
   @impl true

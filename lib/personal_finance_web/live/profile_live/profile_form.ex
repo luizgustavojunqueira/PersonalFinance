@@ -37,7 +37,7 @@ defmodule PersonalFinanceWeb.ProfileLive.ProfileForm do
         on_close={JS.push("close_modal")}
         class="mt-2"
       >
-        <:title>{if @action == :edit, do: "Editar Categoria", else: "Nova Categoria"}</:title>
+        <:title>{if @action == :edit, do: "Editar Perfil", else: "Novo Perfil"}</:title>
         <.form
           for={@form}
           id="profile-form"

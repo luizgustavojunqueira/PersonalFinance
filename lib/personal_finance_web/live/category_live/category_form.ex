@@ -57,7 +57,14 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
             label="Descrição"
             disabled={@category != nil and @category.is_fixed}
           />
-          <.input field={@form[:percentage]} type="number" label="Porcentagem" />
+          <.input
+            field={@form[:percentage]}
+            type="number"
+            label="Porcentagem"
+            step="0.01"
+            min="0"
+            max="100"
+          />
           <.input field={@form[:color]} type="color" label="Cor" />
 
           <div class="flex justify-center gap-2 mt-4">
