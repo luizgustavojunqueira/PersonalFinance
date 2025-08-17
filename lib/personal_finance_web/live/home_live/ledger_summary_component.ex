@@ -8,153 +8,195 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col xl:flex-row gap-4 px-4">
-      <div class="min-w-100 grid grid-rows-[1fr_2fr] gap-4 h-full overflow-y-auto">
-        <div class="bg-base-300 text-xl font-bold rounded-lg p-6 px-8 flex flex-col items-left text-dark-green gap-4 dark:text-white ">
-          <div class="flex flex-col">
-            Saldo Atual
-            <span class="text-3xl font-bold text-black">
-              {@balance.balance |> CurrencyUtils.format_money()}
-            </span>
-          </div>
+    <div class="flex flex-col xl:flex-row gap-6 px-4">
+      <div class="w-full xl:w-80 flex flex-col gap-6">
+        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-4 shadow-lg border border-base-200/50 backdrop-blur-sm">
+          <div class="space-y-6">
+            <div class="relative">
+              <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl blur opacity-30">
+              </div>
+              <div class="relative bg-white/50 dark:bg-black/20 rounded-xl p-2 border border-white/20">
+                <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Saldo Atual</h3>
+                <span class="text-3xl font-black bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                  {@balance.balance |> CurrencyUtils.format_money()}
+                </span>
+              </div>
+            </div>
 
-          <div class="flex flex-col">
-            Saldo Mensal
-            <div class="flex flex-col gap-1">
-              <span class="text-xl font-bold text-green-600 dark:text-green-400">
-                + {@month_balance.total_incomes |> CurrencyUtils.format_money()}
-              </span>
-              <span class="text-xl font-bold text-red-600 dark:text-red-400">
-                - {@month_balance.total_expenses |> CurrencyUtils.format_money()}
-              </span>
-              <span class={[
-                "text-3xl font-bold",
-                if(@month_balance.balance < 0,
-                  do: " text-red-700",
-                  else: " text-green-700"
-                )
-              ]}>
-                {@month_balance.balance |> CurrencyUtils.format_money()}
-              </span>
+            <div>
+              <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Saldo Mensal</h3>
+              <div class="space-y-2">
+                <div class="flex justify-between items-center py-2 px-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <span class="text-sm font-medium text-green-700 dark:text-green-300">Receitas</span>
+                  <span class="text-lg font-bold text-green-600 dark:text-green-400">
+                    + {@month_balance.total_incomes |> CurrencyUtils.format_money()}
+                  </span>
+                </div>
+                <div class="flex justify-between items-center py-2 px-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
+                  <span class="text-sm font-medium text-red-700 dark:text-red-300">Despesas</span>
+                  <span class="text-lg font-bold text-red-600 dark:text-red-400">
+                    - {@month_balance.total_expenses |> CurrencyUtils.format_money()}
+                  </span>
+                </div>
+                <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
+                  <div class="flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Total</span>
+                    <span class={[
+                      "text-2xl font-black",
+                      if(@month_balance.balance < 0,
+                        do: "text-red-600 dark:text-red-400",
+                        else: "text-green-600 dark:text-green-400"
+                      )
+                    ]}>
+                      {@month_balance.balance |> CurrencyUtils.format_money()}
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        <div class="bg-base-300 text-xl font-bold rounded-lg flex flex-col items-left text-dark-green gap-2 h-fit dark:text-white ">
-          <div class="flex flex-col p-4">
-            Transações Recentes
-            <span class="text-sm text-gray-600">
+        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-lg border border-base-200/50 backdrop-blur-sm flex-1">
+          <div class="p-6 pb-4 border-b border-base-200/50">
+            <div class="flex justify-between items-center">
+              <h3 class="text-xl font-bold text-gray-800 dark:text-white">Transações Recentes</h3>
               <.link
-                class="text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-600"
+                class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center w-full justify-end hover:gap-2 duration-200"
                 navigate={~p"/ledgers/#{@ledger.id}/transactions"}
               >
-                Ver todas
+                Ver todas <.icon name="hero-arrow-right" class="w-4 h-4" />
               </.link>
-            </span>
+            </div>
           </div>
 
-          <div class="flex flex-col">
+          <div class="divide-y divide-base-200/30">
             <div
               :for={{id, transaction} <- @streams.recent_transactions}
-              class="flex flex-row justify-between items-center bg-base-100/50 p-4 gap-2 hover:bg-base-100 transition-colors text-dark-green dark:text-white "
+              class="flex items-center justify-between p-6 hover:bg-white/30 dark:hover:bg-black/20 transition-all duration-200 group cursor-pointer"
               id={id}
             >
-              <div class="flex flex-row gap-4 items-center">
-                <.icon name="hero-banknotes" class="text-2xl" />
-                <div class="flex flex-col ">
+              <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all">
+                  <.icon name="hero-banknotes" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                </div>
+                <div class="min-w-0 flex-1">
                   <.text_ellipsis
                     text={transaction.description}
-                    max_width="max-w-[200px]"
-                    class="text-lg font-semibold"
+                    max_width="max-w-[120px] sm:max-w-[250px] lg:max-w-[120px]"
+                    class="text-base font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
                   />
                   <.text_ellipsis
                     text={transaction.profile.name}
-                    max_width="max-w-[200px]"
-                    class="text-sm font-semibold text-dark-green/70 dark:text-white/70"
+                    max_width="max-w-[120px] sm:max-w-[250px] lg:max-w-[120px]"
+                    class="text-sm text-gray-500 dark:text-gray-400"
                   />
                 </div>
               </div>
-              <div class="flex flex-col ">
-                <span class="text-lg font-bold ">
+              <div class="text-right">
+                <div class="text-base font-bold text-gray-900 dark:text-white">
                   {CurrencyUtils.format_money(transaction.total_value)}
-                </span>
-                <span class="text-sm text-dark-green/70 dark:text-white/70">
+                </div>
+                <div class="text-xs text-gray-500 dark:text-gray-400">
                   {DateUtils.format_date(transaction.date)}
-                </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="min-w-120 grid grid-rows-[2fr_1fr] gap-4 overflow-y-auto">
-        <div class="bg-base-300 text-xl font-bold rounded-lg p-4 flex flex-col items-left text-dark-green dark:text-white gap-4 h-fit ">
-          <div class="flex flex-row justify-between items-center">
-            Análise Mensal
-            <.form
-              id="chart_select_form"
-              for={@form_chart}
-              phx-change="select_chart_type"
-              phx-target={@myself}
-            >
-              <.input
-                type="select"
-                field={@form_chart[:chart_type]}
-                options={[{"Barras", :bars}, {"Pizza", :pie}]}
-              />
-            </.form>
+      <div class="flex-1 flex flex-col gap-6">
+        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-xl border border-base-200/50 backdrop-blur-sm flex-1">
+          <div class="p-6 pb-4 border-b border-base-200/30">
+            <div class="flex justify-between items-center">
+              <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                Análise Mensal
+              </h3>
+              <.form
+                id="chart_select_form"
+                for={@form_chart}
+                phx-change="select_chart_type"
+                phx-target={@myself}
+                class="relative"
+              >
+                <.input
+                  type="select"
+                  field={@form_chart[:chart_type]}
+                  options={[{"Barras", :bars}, {"Pizza", :pie}]}
+                  class="bg-white/50 dark:bg-black/20 border-white/30 dark:border-white/10 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all"
+                />
+              </.form>
+            </div>
           </div>
 
-          <%= if @chart_type == :pie do %>
-            <div id="pie" phx-hook="Chart">
-              <div id="pie-chart" class="w-full h-96" phx-update="ignore" />
-              <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
-            </div>
-          <% else %>
-            <%= if @chart_type == :bars do %>
-              <div id="bar" phx-hook="Chart" class="w-full">
-                <div
-                  id="bar-chart"
-                  class="w-full h-96 min-h-96"
-                  phx-update="ignore"
-                  style="overflow: visible;"
-                >
+          <div class="p-6">
+            <div class="relative bg-white/30 dark:bg-black/10 rounded-2xl p-6 min-h-[400px] backdrop-blur-sm border border-white/20">
+              <%= if @chart_type == :pie do %>
+                <div id="pie" phx-hook="Chart" class="h-full">
+                  <div id="pie-chart" class="w-full h-[400px]" phx-update="ignore" />
+                  <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
                 </div>
-                <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
-              </div>
-            <% end %>
-          <% end %>
+              <% else %>
+                <%= if @chart_type == :bars do %>
+                  <div id="bar" phx-hook="Chart" class="h-full">
+                    <div
+                      id="bar-chart"
+                      class="w-full h-[400px]"
+                      phx-update="ignore"
+                      style="overflow: visible;"
+                    />
+                    <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
+                  </div>
+                <% end %>
+              <% end %>
+            </div>
+          </div>
         </div>
 
         <%= if !Enum.empty?(@messages) do %>
-          <div class="bg-base-300 text-dark-green dark:text-white rounded-xl p-4 shadow-sm space-y-4 h-fit">
-            <div class="flex items-center justify-between">
-              <span class="text-xl font-semibold">Avisos</span>
+          <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-6 shadow-lg border border-base-200/50 backdrop-blur-sm">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
+                <.icon name="hero-bell" class="w-5 h-5 text-amber-600 dark:text-amber-400" />
+              </div>
+              <h3 class="text-lg font-bold text-gray-800 dark:text-white">Avisos</h3>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-3">
               <div
                 :for={message <- @messages}
-                class="flex items-center gap-3 bg-white/60 dark:bg-white/10 rounded-lg p-3 hover:bg-white/80 dark:hover:bg-white/20 transition-colors"
+                class="flex items-start gap-3 bg-white/40 dark:bg-black/20 rounded-xl p-4 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-200 border border-white/20 group"
               >
-                <.icon
-                  name={
-                    case message.type do
-                      :info -> "hero-information-circle"
-                      :warning -> "hero-exclamation-circle"
-                      :error -> "hero-x-circle"
-                    end
-                  }
-                  class={
-                  "w-5 h-5 " <>
-                    case message.type do
-                      :info -> "text-blue-500 dark:text-blue-400"
-                      :warning -> "text-yellow-500 dark:text-yellow-400"
-                      :error -> "text-red-500 dark:text-red-400"
-                    end
-                }
-                />
-                <span class="text-sm font-medium">{message.text}</span>
+                <div class={[
+                  "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
+                  case message.type do
+                    :info -> "bg-blue-500/20 group-hover:bg-blue-500/30"
+                    :warning -> "bg-yellow-500/20 group-hover:bg-yellow-500/30"
+                    :error -> "bg-red-500/20 group-hover:bg-red-500/30"
+                  end
+                ]}>
+                  <.icon
+                    name={
+                      case message.type do
+                        :info -> "hero-information-circle"
+                        :warning -> "hero-exclamation-triangle"
+                        :error -> "hero-x-circle"
+                      end
+                    }
+                    class={[
+                      "w-4 h-4",
+                      case message.type do
+                        :info -> "text-blue-600 dark:text-blue-400"
+                        :warning -> "text-yellow-600 dark:text-yellow-400"
+                        :error -> "text-red-600 dark:text-red-400"
+                      end
+                    ]}
+                  />
+                </div>
+                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
+                  {message.text}
+                </span>
               </div>
             </div>
           </div>
@@ -309,17 +351,23 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   end
 
   defp format_categories(categories, transactions, monthly_income) do
+    month_start = Date.beginning_of_month(Date.utc_today())
+
     categories
     |> Enum.sort()
     |> Enum.reject(&(&1.name == "Sem Categoria"))
     |> Enum.map(fn category ->
       {total_expenses, total_incomes} =
         Enum.reduce(transactions, {0.0, 0.0}, fn t, {exp_acc, inc_acc} ->
-          if t.category_id == category.id do
-            case t.type do
-              :expense -> {exp_acc + t.total_value, inc_acc}
-              :income -> {exp_acc, inc_acc + t.total_value}
-              _ -> {exp_acc, inc_acc}
+          if Date.compare(t.date, month_start) != :lt do
+            if t.category_id == category.id do
+              case t.type do
+                :expense -> {exp_acc + t.total_value, inc_acc}
+                :income -> {exp_acc, inc_acc + t.total_value}
+                _ -> {exp_acc, inc_acc}
+              end
+            else
+              {exp_acc, inc_acc}
             end
           else
             {exp_acc, inc_acc}

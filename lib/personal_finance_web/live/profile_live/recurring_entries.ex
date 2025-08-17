@@ -1,6 +1,7 @@
 defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   use PersonalFinanceWeb, :live_component
 
+  alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Finance.RecurringEntry
   alias PersonalFinance.Finance
@@ -32,7 +33,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
             field={@form[:frequency]}
             type="select"
             label="Frequência"
-            options={[:monthly, :yearly]}
+            options={[{"Mensal", :monthly}, {"Anual", :yearly}]}
             required
           />
         </div>
@@ -46,7 +47,10 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
           <.input field={@form[:category_id]} type="select" label="Categoria" options={@categories} />
         </div>
 
-        <div class="flex justify-end mt-4">
+        <div class="flex gap-2 justify-end mt-4">
+          <.button variant="custom" class="btn-secondary" phx-click="reset_form" phx-target={@myself}>
+            Limpar
+          </.button>
           <.button variant="primary" phx-disable-with="Salvando...">
             Salvar
           </.button>
@@ -140,6 +144,16 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
         assigns.profile.id
       )
 
+    changeset =
+      Finance.change_recurring_entry(
+        assigns.current_scope,
+        %Finance.RecurringEntry{
+          ledger_id: assigns.ledger.id,
+          profile_id: assigns.profile.id
+        },
+        assigns.ledger
+      )
+
     socket =
       socket
       |> assign(assigns)
@@ -149,22 +163,30 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
             {category.name, category.id}
           end),
         form_action: :create,
-        form:
-          to_form(
-            Finance.change_recurring_entry(
-              assigns.current_scope,
-              %Finance.RecurringEntry{
-                ledger_id: assigns.ledger.id,
-                profile_id: assigns.profile.id
-              },
-              assigns.ledger
-            )
-          ),
+        form: to_form(changeset),
         num_recurring_entries: Enum.count(recurring_entries)
       )
       |> stream(:recurring_entries, recurring_entries)
 
     {:ok, socket}
+  end
+
+  @impl true
+  def handle_event("reset_form", _, socket) do
+    changeset =
+      Finance.change_recurring_entry(
+        socket.assigns.current_scope,
+        %Finance.RecurringEntry{
+          ledger_id: socket.assigns.ledger.id,
+          profile_id: socket.assigns.profile.id
+        },
+        socket.assigns.ledger
+      )
+
+    {:noreply,
+     socket
+     |> assign(form_action: :create)
+     |> assign(form: to_form(changeset))}
   end
 
   @impl true
@@ -217,6 +239,14 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
         recurring_entry,
         socket.assigns.ledger
       )
+
+    formatted_value = ParseUtils.format_float_for_input(changeset.data.value)
+    formatted_amount = ParseUtils.format_float_for_input(changeset.data.amount)
+
+    changeset =
+      changeset
+      |> Ecto.Changeset.put_change(:value, formatted_value)
+      |> Ecto.Changeset.put_change(:amount, formatted_amount)
 
     {:noreply,
      socket
