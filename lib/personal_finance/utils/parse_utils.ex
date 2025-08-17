@@ -34,4 +34,16 @@ defmodule PersonalFinance.Utils.ParseUtils do
   def parse_text(atom) when is_atom(atom) do
     atom
   end
+
+  def format_float_for_input(float_val) when is_float(float_val) do
+    :erlang.float_to_binary(float_val, [:compact, {:decimals, 8}])
+    |> IO.iodata_to_binary()
+    |> String.trim_trailing(".0")
+  end
+
+  def format_float_for_input(int_val) when is_integer(int_val) do
+    to_string(int_val)
+  end
+
+  def format_float_for_input(other), do: other
 end

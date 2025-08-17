@@ -80,15 +80,9 @@ defmodule PersonalFinanceWeb.Router do
       live "/ledgers/:id/home", HomeLive.Index, :index
       live "/ledgers/:id/home/new_user", HomeLive.Index, :new
       live "/ledgers/:id/profiles", ProfileLive.Index, :index
-      live "/ledgers/:id/profiles/new", ProfileLive.Index, :new
-      live "/ledgers/:id/profiles/:profile_id/edit", ProfileLive.Index, :edit
-      live "/ledgers/:id/profiles/:profile_id/delete", ProfileLive.Index, :delete
       live "/ledgers/:id/profiles/:profile_id/settings", ProfileLive.Settings
       live "/ledgers/:id/transactions", TransactionLive.Index, :index
       live "/ledgers/:id/categories", CategoryLive.Index, :index
-      live "/ledgers/:id/categories/new", CategoryLive.Index, :new
-      live "/ledgers/:id/categories/:category_id/edit", CategoryLive.Index, :edit
-      live "/ledgers/:id/categories/:category_id/delete", CategoryLive.Index, :delete
 
       live "/ledgers/:id/settings", SettingsLive.Index, :index
     end
