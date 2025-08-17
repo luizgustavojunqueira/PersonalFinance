@@ -650,6 +650,7 @@ defmodule PersonalFinance.Finance do
   def list_profiles(%Scope{} = scope, ledger) do
     Profile
     |> where([p], p.ledger_id == ^ledger.id)
+    |> order_by([p], desc: p.is_default, desc: p.name)
     |> Repo.all()
   end
 

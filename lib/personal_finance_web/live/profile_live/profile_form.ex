@@ -1,5 +1,5 @@
-defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
-  alias PersonalFinance.Finance.Category
+defmodule PersonalFinanceWeb.ProfileLive.ProfileForm do
+  alias PersonalFinance.Finance.Profile
   alias PersonalFinance.Finance
   use PersonalFinanceWeb, :live_component
 
@@ -8,13 +8,13 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
     ledger = assigns.ledger
     current_scope = assigns.current_scope
 
-    category =
-      assigns.category || %Category{ledger_id: ledger.id}
+    profile =
+      assigns.profile || %Profile{ledger_id: ledger.id}
 
     changeset =
-      Finance.change_category(
+      Finance.change_profile(
         current_scope,
-        category,
+        profile,
         ledger,
         %{}
       )
@@ -22,7 +22,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
     socket =
       socket
       |> assign(assigns)
-      |> assign(form: to_form(changeset, as: :category))
+      |> assign(form: to_form(changeset, as: :profile))
 
     {:ok, socket}
   end
@@ -40,26 +40,14 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
         <:title>{if @action == :edit, do: "Editar Categoria", else: "Nova Categoria"}</:title>
         <.form
           for={@form}
-          id="category-form"
+          id="profile-form"
           phx-submit="save"
           phx-change="validate"
           phx-target={@myself}
         >
-          <.input
-            field={@form[:name]}
-            type="text"
-            label="Nome"
-            disabled={@category != nil and @category.is_fixed}
-          />
-          <.input
-            field={@form[:description]}
-            type="text"
-            label="Descrição"
-            disabled={@category != nil and @category.is_fixed}
-          />
-          <.input field={@form[:percentage]} type="number" label="Porcentagem" />
+          <.input field={@form[:name]} type="text" label="Nome" />
+          <.input field={@form[:description]} type="text" label="Descrição" />
           <.input field={@form[:color]} type="color" label="Cor" />
-
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"
@@ -76,13 +64,13 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
   end
 
   @impl true
-  def handle_event("validate", %{"category" => category_params}, socket) do
+  def handle_event("validate", %{"profile" => profile_params}, socket) do
     changeset =
-      Finance.change_category(
+      Finance.change_profile(
         socket.assigns.current_scope,
-        socket.assigns.category || %Category{ledger_id: socket.assigns.ledger.id},
+        socket.assigns.profile || %Profile{ledger_id: socket.assigns.ledger.id},
         socket.assigns.ledger,
-        category_params
+        profile_params
       )
 
     {:noreply,
@@ -92,10 +80,10 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
   end
 
   @impl true
-  def handle_event("save", %{"category" => category_params}, socket) do
-    case save_category(socket, socket.assigns.action, category_params) do
-      {:ok, category} ->
-        send(self(), {:saved, category})
+  def handle_event("save", %{"profile" => profile_params}, socket) do
+    case save_profile(socket, socket.assigns.action, profile_params) do
+      {:ok, profile} ->
+        send(self(), {:saved, profile})
         {:noreply, assign(socket, show: false)}
 
       {:error, changeset} ->
@@ -103,19 +91,19 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
     end
   end
 
-  defp save_category(socket, :new, category_params) do
-    Finance.create_category(
+  defp save_profile(socket, :new, profile_params) do
+    Finance.create_profile(
       socket.assigns.current_scope,
-      category_params,
+      profile_params,
       socket.assigns.ledger
     )
   end
 
-  defp save_category(socket, :edit, category_params) do
-    Finance.update_category(
+  defp save_profile(socket, :edit, profile_params) do
+    Finance.update_profile(
       socket.assigns.current_scope,
-      socket.assigns.category,
-      category_params
+      socket.assigns.profile,
+      profile_params
     )
   end
 end

@@ -8,7 +8,7 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="rounded-lg  p-6  w-full shadow-lg bg-base-100/50">
+    <div class="rounded-lg flex flex-col gap-4  p-6  w-full shadow-lg bg-base-100/50">
       <h2 class="text-2xl font-semibold mb-4">Transações Recorrentes</h2>
 
       <.form

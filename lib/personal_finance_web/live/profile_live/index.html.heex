@@ -2,35 +2,41 @@
   <.header>
     {@ledger.name} - Perfis
     <:actions>
-      <.button variant="primary" navigate={~p"/ledgers/#{@ledger.id}/profiles/new"}>
+      <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_profile}>
         <.icon name="hero-plus" /> Adicionar Perfil
       </.button>
     </:actions>
   </.header>
 
-  <%= if @show_form_modal do %>
-    <.form_modal
-      title="Perfil"
-      subtitle="Preencha os detalhes do perfil"
-      action={@form_action}
-      form={@form}
-      submit_label="Salvar"
-    >
-      <.input field={@form[:name]} type="text" label="Nome" />
-      <.input field={@form[:description]} type="text" label="Descrição" />
-      <.input field={@form[:color]} type="color" label="Cor" />
-    </.form_modal>
-  <% end %>
+  <.live_component
+    module={PersonalFinanceWeb.ProfileLive.ProfileForm}
+    id="profile-form-modal"
+    show={@open_modal in [:new_profile, :edit_profile]}
+    action={if @open_modal == :new_profile, do: :new, else: :edit}
+    profile={@profile}
+    ledger={@ledger}
+    current_scope={@current_scope}
+  />
 
-  <%= if @show_delete_modal do %>
-    <.confirmation_modal
-      title="Excluir Perfil"
-      message={"Tem certeza de que deseja excluir o perfil \"#{@profile.name}\"?"}
-      confirm_event="delete"
-      cancel_event="close_confirmation"
-      item_id={@profile.id}
-    />
-  <% end %>
+  <.modal
+    id="delete-profile-modal"
+    show={@open_modal == :delete_profile}
+    on_close={JS.push("close_modal")}
+    class="mt-2"
+  >
+    <:title>
+      Excluir Perfil
+    </:title>
+    Tem certeza de que deseja excluir o perfil "{@profile.name}"?
+    <:actions>
+      <.button variant="primary" phx-click="delete" phx-value-id={@profile.id}>
+        Excluir
+      </.button>
+      <.button phx-click="close_modal">
+        Cancelar
+      </.button>
+    </:actions>
+  </.modal>
 
   <.table
     id="profiles-table"
@@ -65,19 +71,19 @@
     <:action :let={profile}>
       <%= if profile.is_default do %>
         <%= if @ledger.owner.id == @current_scope.user.id do %>
-          <.link navigate={~p"/ledgers/#{@ledger.id}/profiles/#{profile.id}/edit"}>
-            <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+          <.link phx-click="open_edit_profile" phx-value-profile_id={profile.id}>
+            <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
           </.link>
         <% end %>
       <% else %>
-        <.link navigate={~p"/ledgers/#{@ledger.id}/profiles/#{profile.id}/edit"}>
-          <.icon name="hero-pencil" class="text-blue-600 hover:text-blue-800" />
+        <.link phx-click="open_edit_profile" phx-value-profile_id={profile.id}>
+          <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
         </.link>
       <% end %>
     </:action>
     <:action :let={profile}>
       <%= if !profile.is_default do %>
-        <.link navigate={~p"/ledgers/#{@ledger.id}/profiles/#{profile.id}/delete"}>
+        <.link phx-click="open_delete_modal" phx-value-profile_id={profile.id}>
           <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
         </.link>
       <% end %>
