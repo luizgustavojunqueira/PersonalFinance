@@ -94,7 +94,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                 </div>
               </div>
               <div class="text-right">
-                <div class="text-base font-bold text-gray-900 dark:text-white">
+                <div class={"text-base font-bold text-gray-900 dark:text-white #{if transaction.type == :expense, do: "text-red-600 dark:text-red-400", else: "text-green-600 dark:text-green-400"}"}>
                   {CurrencyUtils.format_money(transaction.total_value)}
                 </div>
                 <div class="text-xs text-gray-500 dark:text-gray-400">
