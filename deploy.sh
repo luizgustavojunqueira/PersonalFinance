@@ -36,7 +36,7 @@ echo "🧹 Limpando imagens antigas..."
 docker image prune -f
 
 echo "🔨 Rebuilding e iniciando containers..."
-docker compose build --no-cache
+DOCKER_BUILDKIT=1 docker compose build
 docker compose up -d
 
 sleep 5
