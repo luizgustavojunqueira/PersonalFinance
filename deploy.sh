@@ -30,14 +30,14 @@ if [[ $? -ne 0 ]]; then
 fi
 
 echo "⏸️  Parando containers..."
-docker compose down
+docker compose down web
 
 echo "🧹 Limpando imagens antigas..."
-docker image prune -f
+docker image prune -f web
 
 echo "🔨 Rebuilding e iniciando containers..."
-DOCKER_BUILDKIT=1 docker compose build
-docker compose up -d
+DOCKER_BUILDKIT=1 docker compose build web
+docker compose up -d web
 
 sleep 5
 
