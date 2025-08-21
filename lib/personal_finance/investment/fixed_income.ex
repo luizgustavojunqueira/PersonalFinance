@@ -21,7 +21,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
     field :current_balance, :float
     field :last_yield_date, :date
 
-    belongs_to :profile, PersonalFinance.Accounts.Profile
+    belongs_to :profile, PersonalFinance.Finance.Profile
     belongs_to :ledger, PersonalFinance.Finance.Ledger
     has_many :fixed_income_transactions, PersonalFinance.Investment.FixedIncomeTransaction
 

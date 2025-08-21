@@ -1,0 +1,14 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
+  <.header>
+    {@ledger.name} - Renda Fixa
+  </.header>
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+    <%= for fixed_income <- @fixed_incomes do %>
+      <.live_component
+        module={PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard}
+        id={"fixed-income-#{fixed_income.id}"}
+        fixed_income={fixed_income}
+      />
+    <% end %>
+  </div>
+</Layouts.app>

@@ -12,6 +12,18 @@ defmodule PersonalFinance.Investment do
   import Ecto.Query
 
   @doc """
+  List fixed incomes for a given ledger.
+  """
+  def list_fixed_incomes(%Ledger{} = ledger) do
+    from(fi in FixedIncome,
+      where: fi.ledger_id == ^ledger.id,
+      order_by: [desc: fi.inserted_at]
+    )
+    |> Repo.all()
+    |> Repo.preload(:profile)
+  end
+
+  @doc """
   Create a fixed income changeset with the given attributes and ledger ID.
   """
   def change_fixed_income(
@@ -20,7 +32,7 @@ defmodule PersonalFinance.Investment do
         attrs,
         profile_id
       ) do
-    attrs_with_profile = Map.put(attrs, :profile_id, profile_id)
+    attrs_with_profile = Map.put(attrs, "profile_id", profile_id)
 
     fixed_income
     |> FixedIncome.changeset(attrs_with_profile, ledger.id)
@@ -321,7 +333,7 @@ defmodule PersonalFinance.Investment do
   end
 
   def generate_daily_yield(%FixedIncome{} = fixed_income, days_invested \\ 1) do
-    cdi_annual = 0.13
+    cdi_annual = 0.1465
 
     cdi_daily_rate = :math.pow(1 + cdi_annual, 1 / 252) - 1
 

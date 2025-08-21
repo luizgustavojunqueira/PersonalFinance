@@ -157,6 +157,15 @@ defmodule PersonalFinanceWeb.Layouts do
               <span class="sidebar-text hidden md:inline">Categorias</span>
             </.link>
           </li>
+          <li class=" mb-4 ">
+            <.link
+              navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
+              class="flex items-center gap-2 sidebar-link"
+            >
+              <.icon name="hero-currency-dollar" class="size-6" />
+              <span class="sidebar-text hidden md:inline">Renda Fixa</span>
+            </.link>
+          </li>
           <%= if @ledger.owner_id == @current_scope.user.id do %>
             <li class=" mb-4 ">
               <.link
