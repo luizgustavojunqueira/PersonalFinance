@@ -23,7 +23,20 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
        assign(socket,
          page_title: "Renda Fixa - #{ledger.name}",
          ledger: ledger,
+         open_modal: nil,
          fixed_incomes: fixed_incomes
        )}
     end
   end
+
+  @impl true
+  def handle_event("open_modal", %{"modal" => modal}, socket) do
+    modal_atom = String.to_existing_atom(modal)
+    {:noreply, assign(socket, open_modal: modal_atom, category: nil)}
+  end
+
+  @impl true
+  def handle_event("close_modal", _, socket) do
+    {:noreply, assign(socket, open_modal: nil, category: nil)}
+  end
+end

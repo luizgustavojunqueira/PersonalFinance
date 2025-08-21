@@ -1,7 +1,23 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <.header>
     {@ledger.name} - Renda Fixa
+    <:actions>
+      <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_fixed_income}>
+        <.icon name="hero-plus" /> Adicionar Renda Fixa
+      </.button>
+    </:actions>
   </.header>
+
+  <.live_component
+    module={PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm}
+    id="fixed-income-form-modal"
+    show={@open_modal in [:new_fixed_income, :edit_fixed_income]}
+    action={if @open_modal == :new_fixed_income, do: :new, else: :edit}
+    ledger={@ledger}
+    fixed_income={nil}
+    current_scope={@current_scope}
+  />
+
   <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
     <%= for fixed_income <- @fixed_incomes do %>
       <.live_component
