@@ -14,7 +14,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
       values: [:cdi, :ipca, :selic, :fixed_yearly, :fixed_monthly]
 
     field :yield_frequency, Ecto.Enum,
-      values: [:monthly, :quarterly, :semi_annually, :annually, :at_maturity]
+      values: [:daily, :monthly, :quarterly, :semi_annually, :annually, :at_maturity]
 
     field :is_tax_exempt, :boolean, default: false
     field :initial_investment, :float

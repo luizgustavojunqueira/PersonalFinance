@@ -133,11 +133,18 @@ defmodule PersonalFinance.Investment do
   @doc """
   Updates the cached balance of a fixed income investment.
   """
-  def update_balance(%FixedIncome{} = fixed_income) do
+  def update_balance(%FixedIncome{} = fixed_income, %FixedIncomeTransaction{} = fi_transaction) do
     new_balance = calculate_balance(fixed_income)
 
     fixed_income
-    |> FixedIncome.system_changeset(%{current_balance: new_balance})
+    |> FixedIncome.system_changeset(%{
+      current_balance: new_balance,
+      last_yield_date:
+        if(fi_transaction.type == :yield,
+          do: fi_transaction.date,
+          else: fixed_income.last_yield_date
+        )
+    })
     |> Repo.update()
   end
 
@@ -155,7 +162,7 @@ defmodule PersonalFinance.Investment do
              create_fixed_income_transaction(attrs, fixed_income, ledger, profile_id),
            {:ok, _general_transaction} <-
              create_corresponding_general_transaction(fi_transaction, ledger),
-           {:ok, _updated_fi} <- update_balance(fixed_income) do
+           {:ok, _updated_fi} <- update_balance(fixed_income, fi_transaction) do
         fi_transaction
       else
         {:error, changeset} -> Repo.rollback(changeset)
@@ -271,6 +278,75 @@ defmodule PersonalFinance.Investment do
     case Repo.get(FixedIncome, fixed_income_id) do
       nil -> "Investimento"
       fi -> fi.name
+    end
+  end
+
+  def generate_yield(%FixedIncome{} = fixed_income, %Ledger{} = ledger) do
+    IO.inspect(fixed_income.yield_frequency)
+
+    fixed_income.yield_frequency
+    |> case do
+      :daily ->
+        with yield <- generate_daily_yield(fixed_income) do
+          attrs = %{
+            type: :yield,
+            value: Decimal.from_float(yield),
+            date: Date.utc_today(),
+            description: "Rendimento diário",
+            is_automatic: true
+          }
+
+          create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
+        end
+
+      :monthly ->
+        diff = business_days_between(fixed_income.last_yield_date, Date.utc_today())
+
+        yield =
+          generate_daily_yield(fixed_income, diff)
+
+        attrs = %{
+          type: :yield,
+          value: Decimal.from_float(yield),
+          date: Date.utc_today(),
+          description: "Rendimento mensal",
+          is_automatic: true
+        }
+
+        create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
+
+      _ ->
+        {:error, "Unsupported yield frequency"}
+    end
+  end
+
+  def generate_daily_yield(%FixedIncome{} = fixed_income, days_invested \\ 1) do
+    cdi_annual = 0.13
+
+    cdi_daily_rate = :math.pow(1 + cdi_annual, 1 / 252) - 1
+
+    investment_percentage = Decimal.to_float(fixed_income.remuneration_rate) / 100
+
+    investment_daily_rate = cdi_daily_rate * investment_percentage
+
+    accumulated_factor = :math.pow(1 + investment_daily_rate, days_invested) - 1
+
+    current_balance = fixed_income.current_balance
+    current_balance * accumulated_factor
+  end
+
+  def business_days_between(from, to) do
+    Date.range(from, to)
+    |> Enum.count(&business_day?/1)
+  end
+
+  defp business_day?(%Date{} = date) do
+    case Date.day_of_week(date) do
+      # sábado
+      6 -> false
+      # domingo
+      7 -> false
+      _ -> true
     end
   end
 end
