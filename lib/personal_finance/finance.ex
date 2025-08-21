@@ -65,6 +65,15 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
+  Returns the investment cateogry for a ledger.
+  """
+  def get_investment_category(%Scope{} = scope, ledger_id) do
+    Category
+    |> where([c], c.is_investment == true and c.ledger_id == ^ledger_id)
+    |> Repo.one()
+  end
+
+  @doc """
   Returns the total value of transactions for a specific category.
   """
   def get_total_value_by_category(category_id, transactions) do
@@ -610,7 +619,8 @@ defmodule PersonalFinance.Finance do
         "name" => "Investimento",
         "description" => "Transações de investimento",
         "is_default" => false,
-        "is_fixed" => true
+        "is_fixed" => true,
+        "is_investment" => true
       }
     ]
 

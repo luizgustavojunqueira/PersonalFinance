@@ -3,7 +3,6 @@ defmodule PersonalFinance.Utils.CurrencyUtils do
 
   def format_money(value) when is_float(value) or is_integer(value) do
     formatted_value = :erlang.float_to_binary(value, decimals: 2)
-    IO.inspect(formatted_value, label: "Formatted Value")
 
     parts = String.split(formatted_value, ".")
 

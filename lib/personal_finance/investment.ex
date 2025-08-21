@@ -193,7 +193,7 @@ defmodule PersonalFinance.Investment do
   end
 
   defp create_general_investment_transaction(fixed_income, ledger) do
-    investment_category = Finance.get_category_by_name("Investimento", %Scope{}, ledger.id)
+    investment_category = Finance.get_investment_category(%Scope{}, ledger.id)
 
     attrs = %{
       "description" => "Investimento em #{fixed_income.name}",
@@ -237,7 +237,7 @@ defmodule PersonalFinance.Investment do
           :withdraw -> :income
         end
 
-      investment_category = Finance.get_category_by_name("Investimento", %Scope{}, ledger.id)
+      investment_category = Finance.get_investment_category(%Scope{}, ledger.id)
 
       attrs = %{
         "description" => description,
