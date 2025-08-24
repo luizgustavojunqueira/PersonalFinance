@@ -3,29 +3,16 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
 
   alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Utils.CurrencyUtils
-  alias PersonalFinance.Investment
-
-  @impl true
-  def mount(socket) do
-    {:ok, socket}
-  end
 
   @impl true
   def update(assigns, socket) do
-    fixed_income = assigns.fixed_income || socket.assigns.fixed_income
-
-    socket =
-      socket
-      |> assign(assigns)
-      |> assign(fixed_income: fixed_income)
-
-    {:ok, socket}
+    {:ok, assign(socket, assigns)}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="card bg-base-100 w-full shadow-lg">
+    <div id={@id} class="card bg-base-100 w-full shadow-lg">
       <div class="card-body">
         <div class="flex items-start justify-between gap-4">
           <div>
@@ -119,13 +106,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
                 <% end %>
               </div>
             </div>
-          </div>
-        </div>
-
-        <div class="card-actions justify-end mt-4">
-          <div class="flex gap-2">
-            <button class="btn btn-ghost btn-sm">Editar</button>
-            <button class="btn btn-primary btn-sm">Ver Detalhes</button>
           </div>
         </div>
       </div>

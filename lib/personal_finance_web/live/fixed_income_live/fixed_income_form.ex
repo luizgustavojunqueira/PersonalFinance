@@ -85,7 +85,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
             <div>
               <.input
                 field={@form[:initial_investment]}
-                type="text"
+                type="number"
                 label="Valor (R$)"
                 required
                 autocomplete="off"

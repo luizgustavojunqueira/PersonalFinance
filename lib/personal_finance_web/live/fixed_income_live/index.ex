@@ -3,8 +3,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
 
   alias PersonalFinance.Investment
   alias PersonalFinance.Finance
-  alias PersonalFinance.Utils.DateUtils
-  alias PersonalFinance.Utils.CurrencyUtils
 
   @impl true
   def mount(params, _session, socket) do
@@ -17,14 +15,21 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
        |> put_flash(:error, "Orçamento não encontrado.")
        |> push_navigate(to: ~p"/ledgers")}
     else
+      socket =
+        if not Map.get(socket.assigns, :subscribed, false) do
+          Finance.subscribe_finance(:fixed_income, ledger.id)
+          assign(socket, subscribed: true)
+        end
+
       fixed_incomes = Investment.list_fixed_incomes(ledger)
 
       {:ok,
-       assign(socket,
+       socket
+       |> stream(:fixed_income_collection, fixed_incomes)
+       |> assign(
          page_title: "Renda Fixa - #{ledger.name}",
          ledger: ledger,
-         open_modal: nil,
-         fixed_incomes: fixed_incomes
+         open_modal: nil
        )}
     end
   end
@@ -32,11 +37,21 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
   @impl true
   def handle_event("open_modal", %{"modal" => modal}, socket) do
     modal_atom = String.to_existing_atom(modal)
-    {:noreply, assign(socket, open_modal: modal_atom, category: nil)}
+    socket = assign(socket, open_modal: modal_atom, fixed_income: nil)
+    {:noreply, socket}
   end
 
   @impl true
   def handle_event("close_modal", _, socket) do
-    {:noreply, assign(socket, open_modal: nil, category: nil)}
+    {:noreply, assign(socket, open_modal: nil)}
+  end
+
+  @impl true
+  def handle_info({:saved, fixed_income}, socket) do
+    {:noreply,
+     socket
+     |> assign(open_modal: nil)
+     |> stream_insert(:fixed_income_collection, fixed_income)
+     |> put_flash(:info, "Renda Fixa salva com sucesso.")}
   end
 end

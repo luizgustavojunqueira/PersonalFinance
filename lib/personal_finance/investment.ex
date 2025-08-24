@@ -7,6 +7,7 @@ defmodule PersonalFinance.Investment do
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
   alias PersonalFinance.Finance.{Ledger}
+  alias PersonalFinance.Finance
   alias PersonalFinance.Investment.{FixedIncome, FixedIncomeTransaction}
 
   import Ecto.Query
@@ -17,10 +18,10 @@ defmodule PersonalFinance.Investment do
   def list_fixed_incomes(%Ledger{} = ledger) do
     from(fi in FixedIncome,
       where: fi.ledger_id == ^ledger.id,
-      order_by: [desc: fi.inserted_at]
+      order_by: [desc: fi.inserted_at],
+      preload: [:profile]
     )
     |> Repo.all()
-    |> Repo.preload(:profile)
   end
 
   @doc """
@@ -72,6 +73,8 @@ defmodule PersonalFinance.Investment do
              create_initial_deposit_transaction(fixed_income, ledger),
            {:ok, _general_transaction} <-
              create_general_investment_transaction(fixed_income, ledger) do
+        fixed_income = Repo.preload(fixed_income, :profile)
+        Finance.broadcast(:fixed_income, ledger.id, {:saved, fixed_income})
         fixed_income
       else
         {:error, changeset} -> Repo.rollback(changeset)
@@ -106,9 +109,16 @@ defmodule PersonalFinance.Investment do
   Updates a fixed income investment (limited fields for user updates).
   """
   def update_fixed_income(%FixedIncome{} = fixed_income, attrs) do
-    fixed_income
-    |> FixedIncome.update_changeset(attrs)
-    |> Repo.update()
+    with {:ok, updated_fi} <-
+           fixed_income
+           |> FixedIncome.update_changeset(attrs)
+           |> Repo.update() do
+      updated_fi = Repo.preload(updated_fi, :profile)
+      Finance.broadcast(:fixed_income, updated_fi.ledger_id, {:saved, updated_fi})
+      {:ok, updated_fi}
+    else
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   @doc """
@@ -148,16 +158,23 @@ defmodule PersonalFinance.Investment do
   def update_balance(%FixedIncome{} = fixed_income, %FixedIncomeTransaction{} = fi_transaction) do
     new_balance = calculate_balance(fixed_income)
 
-    fixed_income
-    |> FixedIncome.system_changeset(%{
-      current_balance: new_balance,
-      last_yield_date:
-        if(fi_transaction.type == :yield,
-          do: fi_transaction.date,
-          else: fixed_income.last_yield_date
-        )
-    })
-    |> Repo.update()
+    with {:ok, _updated_fi} <-
+           fixed_income
+           |> FixedIncome.system_changeset(%{
+             current_balance: new_balance,
+             last_yield_date:
+               if(fi_transaction.type == :yield,
+                 do: fi_transaction.date,
+                 else: fixed_income.last_yield_date
+               )
+           })
+           |> Repo.update() do
+      fixed_income = Repo.preload(fixed_income, :profile)
+      Finance.broadcast(:fixed_income, fixed_income.ledger_id, {:saved, fixed_income})
+      {:ok, fixed_income}
+    else
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   @doc """
@@ -195,8 +212,16 @@ defmodule PersonalFinance.Investment do
   end
 
   defp create_fixed_income_record(attrs, ledger, profile_id) do
-    change_fixed_income(%FixedIncome{}, ledger, attrs, profile_id)
-    |> Repo.insert()
+    with {:ok, fixed_income = %FixedIncome{}} <-
+           change_fixed_income(%FixedIncome{}, ledger, attrs, profile_id)
+           |> Repo.insert() do
+      preloaded_fixed_income = Repo.preload(fixed_income, :profile)
+      Finance.broadcast(:fixed_income, ledger.id, {:saved, preloaded_fixed_income})
+
+      {:ok, fixed_income}
+    else
+      {:error, changeset} -> {:error, changeset}
+    end
   end
 
   defp create_initial_deposit_transaction(fixed_income, ledger) do
@@ -230,13 +255,13 @@ defmodule PersonalFinance.Investment do
   end
 
   defp create_fixed_income_transaction(attrs, fixed_income, ledger, profile_id) do
-    change_fixed_income_transaction(
-      %FixedIncomeTransaction{},
-      fixed_income,
-      ledger,
-      attrs,
-      profile_id
-    )
+    attrs =
+      attrs
+      |> Map.put(:fixed_income_id, fixed_income.id)
+      |> Map.put(:ledger_id, ledger.id)
+      |> Map.put(:profile_id, profile_id)
+
+    Investment.FixedIncomeTransaction.system_changeset(%FixedIncomeTransaction{}, attrs)
     |> Repo.insert()
   end
 
@@ -325,7 +350,10 @@ defmodule PersonalFinance.Investment do
           is_automatic: true
         }
 
-        create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
+          create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
+        else
+          {:ok, nil}
+        end
 
       _ ->
         {:error, "Unsupported yield frequency"}
