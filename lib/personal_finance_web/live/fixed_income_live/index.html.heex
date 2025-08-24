@@ -14,7 +14,7 @@
     show={@open_modal in [:new_fixed_income, :edit_fixed_income]}
     action={if @open_modal == :new_fixed_income, do: :new, else: :edit}
     ledger={@ledger}
-    fixed_income={nil}
+    fixed_income={@fixed_income}
     current_scope={@current_scope}
   />
 

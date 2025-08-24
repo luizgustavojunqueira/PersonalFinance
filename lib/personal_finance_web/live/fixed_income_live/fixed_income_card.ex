@@ -107,6 +107,15 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
               </div>
             </div>
           </div>
+          <div class="col-span-2 mt-4 flex justify-end">
+            <.button
+              variant="primary"
+              phx-click="open_edit_modal"
+              phx-value-id={@fixed_income.id}
+            >
+              <.icon name="hero-pencil" /> Editar
+            </.button>
+          </div>
         </div>
       </div>
     </div>

@@ -29,7 +29,8 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
        |> assign(
          page_title: "Renda Fixa - #{ledger.name}",
          ledger: ledger,
-         open_modal: nil
+         open_modal: nil,
+         fixed_income: nil
        )}
     end
   end
@@ -39,6 +40,23 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
     modal_atom = String.to_existing_atom(modal)
     socket = assign(socket, open_modal: modal_atom, fixed_income: nil)
     {:noreply, socket}
+  end
+
+  @impl true
+  def handle_event("open_edit_modal", %{"id" => fixed_income_id}, socket) do
+    ledger = socket.assigns.ledger
+
+    fixed_income = Investment.get_fixed_income(fixed_income_id, ledger.id)
+
+    if fixed_income do
+      {:noreply,
+       assign(socket,
+         open_modal: :edit_fixed_income,
+         fixed_income: fixed_income
+       )}
+    else
+      {:noreply, put_flash(socket, :error, "Renda Fixa não encontrada.")}
+    end
   end
 
   @impl true

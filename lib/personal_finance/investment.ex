@@ -3,7 +3,6 @@ defmodule PersonalFinance.Investment do
   Context for managing investment operations, particularly fixed income investments.
   """
 
-  alias PersonalFinance.Investment
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
   alias PersonalFinance.Finance.{Ledger}
@@ -83,30 +82,18 @@ defmodule PersonalFinance.Investment do
   end
 
   @doc """
-  Gets a fixed income by ID, scoped to the user's profile.
+  Gets a fixed income by ID.
   """
-  def get_fixed_income(id, profile_id) do
+  def get_fixed_income(id, ledger_id) do
     from(fi in FixedIncome,
-      where: fi.id == ^id and fi.profile_id == ^profile_id,
-      preload: [:profile, :ledger]
+      where: fi.id == ^id and fi.ledger_id == ^ledger_id,
+      preload: [:profile]
     )
     |> Repo.one()
   end
 
   @doc """
-  Lists all fixed income investments for a profile.
-  """
-  def list_fixed_incomes(profile_id) do
-    from(fi in FixedIncome,
-      where: fi.profile_id == ^profile_id,
-      order_by: [desc: fi.inserted_at],
-      preload: [:ledger]
-    )
-    |> Repo.all()
-  end
-
-  @doc """
-  Updates a fixed income investment (limited fields for user updates).
+  Updates a fixed income investment.
   """
   def update_fixed_income(%FixedIncome{} = fixed_income, attrs) do
     with {:ok, updated_fi} <-
@@ -261,7 +248,7 @@ defmodule PersonalFinance.Investment do
       |> Map.put(:ledger_id, ledger.id)
       |> Map.put(:profile_id, profile_id)
 
-    Investment.FixedIncomeTransaction.system_changeset(%FixedIncomeTransaction{}, attrs)
+    FixedIncomeTransaction.system_changeset(%FixedIncomeTransaction{}, attrs)
     |> Repo.insert()
   end
 
@@ -326,7 +313,7 @@ defmodule PersonalFinance.Investment do
     |> Enum.each(fn fi -> generate_yield(fi, ledger) end)
   end
 
-  def generate_yield(%FixedIncome{} = fixed_income, %Ledger{} = ledger) do
+  defp generate_yield(%FixedIncome{} = fixed_income, %Ledger{} = ledger) do
     total_days_since_start = Date.diff(Date.utc_today(), fixed_income.start_date)
 
     fixed_income.yield_frequency
