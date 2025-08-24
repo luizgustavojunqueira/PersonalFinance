@@ -40,11 +40,6 @@ defmodule PersonalFinanceWeb.SettingsLive.InviteForm do
             label="Usuário"
             options={@users}
             prompt="Selecione um usuário"
-            #
-            <-
-            força
-            placeholder
-            inicialmente
           />
           <.button
             variant="primary"
