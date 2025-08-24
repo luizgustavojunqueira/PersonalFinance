@@ -3,7 +3,7 @@ defmodule PersonalFinance.Investment do
   Context for managing investment operations, particularly fixed income investments.
   """
 
-  alias PersonalFinance.Finance
+  alias PersonalFinance.Investment
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
   alias PersonalFinance.Finance.{Ledger}
@@ -318,13 +318,28 @@ defmodule PersonalFinance.Investment do
     end
   end
 
+  def generate_yields(%Ledger{} = ledger) do
+    from(fi in FixedIncome,
+      where: fi.ledger_id == ^ledger.id
+    )
+    |> Repo.all()
+    |> Enum.each(fn fi -> generate_yield(fi, ledger) end)
+  end
+
   def generate_yield(%FixedIncome{} = fixed_income, %Ledger{} = ledger) do
-    IO.inspect(fixed_income.yield_frequency)
+    total_days_since_start = Date.diff(Date.utc_today(), fixed_income.start_date)
 
     fixed_income.yield_frequency
     |> case do
       :daily ->
-        with yield <- generate_daily_yield(fixed_income) do
+        with yield <-
+               compute_yield(
+                 fixed_income.current_balance,
+                 fixed_income.remuneration_rate,
+                 1,
+                 total_days_since_start,
+                 0.149
+               ) do
           attrs = %{
             type: :yield,
             value: Decimal.from_float(yield),
@@ -337,18 +352,33 @@ defmodule PersonalFinance.Investment do
         end
 
       :monthly ->
-        diff = business_days_between(fixed_income.last_yield_date, Date.utc_today())
+        if fixed_income.last_yield_date == nil or
+             Date.diff(
+               Date.utc_today(),
+               fixed_income.last_yield_date || fixed_income.start_date
+             ) >= 30 do
+          diff =
+            business_days_between(
+              fixed_income.last_yield_date || fixed_income.start_date,
+              Date.utc_today()
+            )
 
-        yield =
-          generate_daily_yield(fixed_income, diff)
+          yield =
+            compute_yield(
+              fixed_income.current_balance,
+              fixed_income.remuneration_rate,
+              diff,
+              total_days_since_start,
+              0.149
+            )
 
-        attrs = %{
-          type: :yield,
-          value: Decimal.from_float(yield),
-          date: Date.utc_today(),
-          description: "Rendimento mensal",
-          is_automatic: true
-        }
+          attrs = %{
+            type: :yield,
+            value: Decimal.from_float(yield),
+            date: Date.utc_today(),
+            description: "Rendimento mensal",
+            is_automatic: true
+          }
 
           create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
         else
@@ -358,21 +388,6 @@ defmodule PersonalFinance.Investment do
       _ ->
         {:error, "Unsupported yield frequency"}
     end
-  end
-
-  def generate_daily_yield(%FixedIncome{} = fixed_income, days_invested \\ 1) do
-    cdi_annual = 0.1465
-
-    cdi_daily_rate = :math.pow(1 + cdi_annual, 1 / 252) - 1
-
-    investment_percentage = Decimal.to_float(fixed_income.remuneration_rate) / 100
-
-    investment_daily_rate = cdi_daily_rate * investment_percentage
-
-    accumulated_factor = :math.pow(1 + investment_daily_rate, days_invested) - 1
-
-    current_balance = fixed_income.current_balance
-    current_balance * accumulated_factor
   end
 
   def business_days_between(from, to) do
@@ -388,5 +403,28 @@ defmodule PersonalFinance.Investment do
       7 -> false
       _ -> true
     end
+  end
+
+  def compute_yield(
+        current_balance,
+        remuneration_rate,
+        days_to_compute,
+        total_days_since_start,
+        cdi_annual
+      ) do
+    daily_cdi_rate = :math.pow(1 + cdi_annual, 1 / 252) - 1
+    daily_rate = daily_cdi_rate * (Decimal.to_float(remuneration_rate) / 100)
+    gross_yield = current_balance * daily_rate * days_to_compute
+
+    tax_rate =
+      cond do
+        total_days_since_start <= 180 -> 0.225
+        total_days_since_start <= 360 -> 0.20
+        total_days_since_start <= 720 -> 0.175
+        true -> 0.15
+      end
+
+    net_yield = gross_yield * (1 - tax_rate)
+    Float.round(net_yield, 2)
   end
 end
