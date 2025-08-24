@@ -137,12 +137,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
         Finance.import_transactions(socket.assigns.current_scope, %Plug.Upload{path: path})
       end)
 
-    IO.inspect(results, label: "Results from consume_uploaded_entries")
-
     case results do
       [transactions] when is_list(transactions) ->
-        IO.inspect(transactions, label: "Imported Transactions")
-
         send_update(Transactions,
           id: "transactions-list",
           action: :update,
@@ -173,8 +169,6 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
          |> assign(:imported_count, 0)}
 
       _ ->
-        IO.inspect(results, label: "Unexpected results structure")
-
         {:noreply,
          socket
          |> assign(:importing, false)

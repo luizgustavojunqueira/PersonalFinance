@@ -290,7 +290,6 @@ defmodule PersonalFinance.Finance do
   Importa múltiplas transações de um arquivo CSV.
   """
   def import_transactions(%Scope{} = scope, %Plug.Upload{path: path}) do
-    IO.inspect("Importing transactions from file: #{path}")
     ledger = list_ledgers(scope) |> List.first()
 
     if ledger == nil do
@@ -378,7 +377,6 @@ defmodule PersonalFinance.Finance do
                 end
             }
 
-            IO.inspect(transaction_attrs, label: "Transaction Attrs")
             create_transaction(scope, transaction_attrs, ledger)
           end)
 
@@ -388,8 +386,6 @@ defmodule PersonalFinance.Finance do
             {:error, _} -> false
           end)
           |> Enum.map(fn {:ok, t} -> t end)
-
-        IO.inspect(successful_transactions)
 
         {:ok, successful_transactions}
       end
@@ -1084,18 +1080,10 @@ defmodule PersonalFinance.Finance do
   * {:deleted, %Resource{}}
   """
   def subscribe_finance(resource, ledger_id) do
-    IO.inspect(
-      "Subscribing to finance notifications for resource: #{resource} and ledger_id: #{ledger_id}"
-    )
-
     Phoenix.PubSub.subscribe(PersonalFinance.PubSub, "finance:#{ledger_id}:#{resource}")
   end
 
-  defp broadcast(resource, ledger_id, message) do
-    IO.inspect(
-      "Broadcasting finance notification for resource: #{resource}, ledger_id: #{ledger_id}"
-    )
-
+  def broadcast(resource, ledger_id, message) do
     Phoenix.PubSub.broadcast(
       PersonalFinance.PubSub,
       "finance:#{ledger_id}:#{resource}",
