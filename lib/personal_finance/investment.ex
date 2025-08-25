@@ -50,8 +50,8 @@ defmodule PersonalFinance.Investment do
       ) do
     attrs_with_relations =
       attrs
-      |> Map.put(:fixed_income_id, fixed_income.id)
-      |> Map.put(:profile_id, profile_id)
+      |> Map.put("fixed_income_id", fixed_income.id)
+      |> Map.put("profile_id", profile_id)
 
     fi_transaction
     |> FixedIncomeTransaction.changeset(attrs_with_relations, ledger.id)
@@ -238,11 +238,11 @@ defmodule PersonalFinance.Investment do
 
   defp create_initial_deposit_transaction(fixed_income, ledger) do
     attrs = %{
-      type: :deposit,
-      value: fixed_income.initial_investment,
-      date: fixed_income.start_date,
-      description: "Investimento inicial",
-      is_automatic: true
+      "type" => :deposit,
+      "value" => fixed_income.initial_investment,
+      "date" => fixed_income.start_date,
+      "description" => "Investimento inicial",
+      "is_automatic" => false
     }
 
     create_fixed_income_transaction(attrs, fixed_income, ledger, fixed_income.profile_id)
@@ -269,12 +269,20 @@ defmodule PersonalFinance.Investment do
   defp create_fixed_income_transaction(attrs, fixed_income, ledger, profile_id) do
     attrs =
       attrs
-      |> Map.put(:fixed_income_id, fixed_income.id)
-      |> Map.put(:ledger_id, ledger.id)
-      |> Map.put(:profile_id, profile_id)
+      |> Map.put("fixed_income_id", fixed_income.id)
+      |> Map.put("ledger_id", ledger.id)
+      |> Map.put("profile_id", profile_id)
+      |> Map.put("date", Map.get(attrs, "date") || Date.utc_today())
 
-    FixedIncomeTransaction.system_changeset(%FixedIncomeTransaction{}, attrs)
-    |> Repo.insert()
+    with {:ok, fi_transaction} <-
+           FixedIncomeTransaction.system_changeset(%FixedIncomeTransaction{}, attrs)
+           |> Repo.insert() do
+      Finance.broadcast(:fixed_income_transaction, ledger.id, {:saved, fi_transaction})
+      {:ok, fi_transaction}
+    else
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   defp create_corresponding_general_transaction(fi_transaction, ledger) do
@@ -353,11 +361,11 @@ defmodule PersonalFinance.Investment do
                  0.149
                ) do
           attrs = %{
-            type: :yield,
-            value: Decimal.from_float(yield),
-            date: Date.utc_today(),
-            description: "Rendimento diário",
-            is_automatic: true
+            "type" => :yield,
+            "value" => Decimal.from_float(yield),
+            "date" => Date.utc_today(),
+            "description" => "Rendimento diário",
+            "is_automatic" => true
           }
 
           create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
@@ -385,11 +393,11 @@ defmodule PersonalFinance.Investment do
             )
 
           attrs = %{
-            type: :yield,
-            value: Decimal.from_float(yield),
-            date: Date.utc_today(),
-            description: "Rendimento mensal",
-            is_automatic: true
+            "type" => :yield,
+            "value" => Decimal.from_float(yield),
+            "date" => Date.utc_today(),
+            "description" => "Rendimento mensal",
+            "is_automatic" => true
           }
 
           create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)

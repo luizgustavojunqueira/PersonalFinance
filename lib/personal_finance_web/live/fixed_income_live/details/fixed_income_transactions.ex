@@ -24,7 +24,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
     socket =
       case assigns[:action] do
         action when action in [:saved] ->
-          transaction = assigns.transaction
+          transaction = assigns.fixed_income_transaction
 
           socket
           |> stream_insert(:transaction_collection, transaction, at: 0)
@@ -53,7 +53,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
   @impl true
   def render(assigns) do
     ~H"""
-    <div>
+    <div id={@id}>
       <%= if @num_transactions == 0 do %>
         <p class="text-center text-gray-500">Nenhuma transação encontrada.</p>
       <% else %>
@@ -133,5 +133,13 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
     |> assign(:total_pages, page_data.total_pages)
     |> assign(:num_transactions, page_data.total_entries)
     |> stream(:transaction_collection, page_data.entries, reset: true)
+  end
+
+  def handle_info({:saved, fi_transaction}, socket) do
+    {:noreply,
+     socket
+     |> assign(open_modal: nil)
+     |> stream_insert(:transaction_collection, fi_transaction)
+     |> put_flash(:info, "Transação salva com sucesso.")}
   end
 end
