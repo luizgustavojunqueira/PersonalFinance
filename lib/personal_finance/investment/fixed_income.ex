@@ -9,6 +9,9 @@ defmodule PersonalFinance.Investment.FixedIncome do
     field :start_date, :date
     field :end_date, :date
     field :remuneration_rate, :decimal
+    field :is_active, :boolean, default: true
+    field :total_tax_deducted, :decimal, default: 0.0
+    field :total_yield, :decimal, default: 0.0
 
     field :remuneration_basis, Ecto.Enum,
       values: [:cdi, :ipca, :selic, :fixed_yearly, :fixed_monthly]
@@ -43,7 +46,8 @@ defmodule PersonalFinance.Investment.FixedIncome do
       :initial_investment,
       :current_balance,
       :last_yield_date,
-      :profile_id
+      :profile_id,
+      :is_active
     ])
     |> validate_required(
       [
@@ -70,7 +74,14 @@ defmodule PersonalFinance.Investment.FixedIncome do
 
   def system_changeset(fixed_income, attrs) do
     fixed_income
-    |> cast(attrs, [:current_balance, :last_yield_date])
+    |> cast(attrs, [
+      :current_balance,
+      :last_yield_date,
+      :is_active,
+      :total_tax_deducted,
+      :total_yield,
+      :start_date
+    ])
     |> validate_number(:current_balance,
       greater_than_or_equal_to: 0
     )

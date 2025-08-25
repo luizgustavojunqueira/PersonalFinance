@@ -111,18 +111,18 @@ defmodule PersonalFinance.Investment do
   @doc """
   Calculates the current balance of a fixed income based on its transactions.
   """
-  def calculate_balance(%FixedIncome{id: id}) do
+  def calculate_balance(%FixedIncome{id: id, start_date: date}) do
     query =
       from t in FixedIncomeTransaction,
         where: t.fixed_income_id == ^id,
+        where: t.date >= ^date,
         select: %{
           deposits:
             sum(fragment("CASE WHEN ? IN ('deposit') THEN ? ELSE 0 END", t.type, t.value)),
           withdrawals:
             sum(fragment("CASE WHEN ? IN ('withdraw') THEN ? ELSE 0 END", t.type, t.value)),
           yields: sum(fragment("CASE WHEN ? IN ('yield') THEN ? ELSE 0 END", t.type, t.value)),
-          fees_and_taxes:
-            sum(fragment("CASE WHEN ? IN ('tax', 'fee') THEN ? ELSE 0 END", t.type, t.value))
+          yield_taxes: sum(fragment("CASE WHEN ? IN ('yield') THEN ? ELSE 0 END", t.type, t.tax))
         }
 
     result = Repo.one(query)
@@ -130,31 +130,62 @@ defmodule PersonalFinance.Investment do
     deposits = Decimal.new(result.deposits || 0)
     withdrawals = Decimal.new(result.withdrawals || 0)
     yields = Decimal.new(result.yields || 0)
-    fees_and_taxes = Decimal.new(result.fees_and_taxes || 0)
+    yield_taxes = Decimal.new(result.yield_taxes || 0)
 
-    deposits
-    |> Decimal.add(yields)
-    |> Decimal.sub(withdrawals)
-    |> Decimal.sub(fees_and_taxes)
-    |> Decimal.to_float()
+    balance =
+      deposits
+      |> Decimal.add(yields)
+      |> Decimal.sub(withdrawals)
+      |> Decimal.sub(yield_taxes)
+      |> Decimal.to_float()
+
+    %{
+      balance: Float.round(balance, 2),
+      yields: Decimal.to_float(yields),
+      yield_taxes: Decimal.to_float(yield_taxes)
+    }
   end
 
   @doc """
   Updates the cached balance of a fixed income investment.
   """
   def update_balance(%FixedIncome{} = fixed_income, %FixedIncomeTransaction{} = fi_transaction) do
-    new_balance = calculate_balance(fixed_income)
+    values = calculate_balance(fixed_income)
+
+    attrs =
+      %{
+        current_balance: values.balance,
+        total_tax_deducted: values.yield_taxes,
+        total_yield: values.yields,
+        last_yield_date:
+          if(fi_transaction.type == :yield,
+            do: fi_transaction.date,
+            else: fixed_income.last_yield_date
+          )
+      }
+      |> Map.merge(
+        cond do
+          values.balance == 0 ->
+            %{is_active: false}
+
+          values.balance > 0 and not fixed_income.is_active ->
+            %{
+              is_active: true,
+              start_date: fi_transaction.date,
+              initial_investment: values.balance,
+              last_yield_date: nil,
+              total_yield: 0,
+              total_tax_deducted: 0
+            }
+
+          true ->
+            %{}
+        end
+      )
 
     with {:ok, _updated_fi} <-
            fixed_income
-           |> FixedIncome.system_changeset(%{
-             current_balance: new_balance,
-             last_yield_date:
-               if(fi_transaction.type == :yield,
-                 do: fi_transaction.date,
-                 else: fixed_income.last_yield_date
-               )
-           })
+           |> FixedIncome.system_changeset(attrs)
            |> Repo.update() do
       fixed_income = Repo.preload(fixed_income, :profile)
       Finance.broadcast(:fixed_income, fixed_income.ledger_id, {:saved, fixed_income})
