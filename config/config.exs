@@ -44,6 +44,18 @@ config :personal_finance, PersonalFinanceWeb.Endpoint,
 # at the `config/runtime.exs`.
 config :personal_finance, PersonalFinance.Mailer, adapter: Swoosh.Adapters.Local
 
+config :personal_finance, Oban,
+  repo: PersonalFinance.Repo,
+  plugins: [
+    {
+      Oban.Plugins.Cron,
+      crontab: [
+        {"* * * * *", PersonalFinance.Workers.YieldsWorker}
+      ]
+    }
+  ],
+  queues: [yields: 10]
+
 # Configure esbuild (the version is required)
 config :esbuild,
   version: "0.17.11",

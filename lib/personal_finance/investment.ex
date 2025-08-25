@@ -462,9 +462,7 @@ defmodule PersonalFinance.Investment do
 
   defp business_day?(%Date{} = date) do
     case Date.day_of_week(date) do
-      # sábado
       6 -> false
-      # domingo
       7 -> false
       _ -> true
     end
