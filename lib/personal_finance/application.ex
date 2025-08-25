@@ -8,6 +8,7 @@ defmodule PersonalFinance.Application do
       PersonalFinance.Repo,
       {Ecto.Migrator,
        repos: Application.fetch_env!(:personal_finance, :ecto_repos), skip: skip_migrations?()},
+      {Oban, Application.fetch_env!(:personal_finance, Oban)},
       {DNSCluster, query: Application.get_env(:personal_finance, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: PersonalFinance.PubSub},
       # Start a worker by calling: PersonalFinance.Worker.start_link(arg)
