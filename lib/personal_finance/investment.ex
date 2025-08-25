@@ -352,23 +352,36 @@ defmodule PersonalFinance.Investment do
     fixed_income.yield_frequency
     |> case do
       :daily ->
-        with yield <-
-               compute_yield(
-                 fixed_income.current_balance,
-                 fixed_income.remuneration_rate,
-                 1,
-                 total_days_since_start,
-                 0.149
-               ) do
-          attrs = %{
-            "type" => :yield,
-            "value" => Decimal.from_float(yield),
-            "date" => Date.utc_today(),
-            "description" => "Rendimento diário",
-            "is_automatic" => true
-          }
+        if fixed_income.last_yield_date == nil or
+             Date.diff(
+               Date.utc_today(),
+               fixed_income.last_yield_date || fixed_income.start_date
+             ) >= 1 do
+          with yield <-
+                 compute_yield(
+                   fixed_income.current_balance,
+                   fixed_income.remuneration_rate,
+                   1,
+                   total_days_since_start,
+                   0.149
+                 ) do
+            if yield.gross <= 0.00 do
+              {:ok, nil}
+            else
+              attrs = %{
+                "type" => :yield,
+                "value" => Decimal.from_float(yield.gross),
+                "tax" => Decimal.from_float(yield.tax),
+                "date" => Date.utc_today(),
+                "description" => "Rendimento diário",
+                "is_automatic" => true
+              }
 
-          create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
+              create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
+            end
+          end
+        else
+          {:ok, nil}
         end
 
       :monthly ->
@@ -394,7 +407,8 @@ defmodule PersonalFinance.Investment do
 
           attrs = %{
             "type" => :yield,
-            "value" => Decimal.from_float(yield),
+            "value" => Decimal.from_float(yield.gross),
+            "tax" => Decimal.from_float(yield.tax),
             "date" => Date.utc_today(),
             "description" => "Rendimento mensal",
             "is_automatic" => true
@@ -444,7 +458,9 @@ defmodule PersonalFinance.Investment do
         true -> 0.15
       end
 
-    net_yield = gross_yield * (1 - tax_rate)
-    Float.round(net_yield, 2)
+    %{
+      gross: Float.round(gross_yield, 2),
+      tax: Float.round(gross_yield * tax_rate, 2)
+    }
   end
 end

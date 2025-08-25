@@ -60,7 +60,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
         <.table
           id="fixed_income_transactions_table"
           rows={@streams.transaction_collection}
-          col_widths={["5%", "5%", "5%"]}
+          col_widths={["5%", "5%", "5%", "5%", "5%"]}
           row_item={
             fn
               {_id, struct} -> struct
@@ -74,9 +74,30 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
           <:col :let={transaction} label="Descrição">
             <.text_ellipsis text={transaction.description} max_width="max-w-[15rem]" />
           </:col>
-          <:col :let={transaction} label="Valor">
+          <:col :let={transaction} label="Valor Bruto">
             <span class={"font-bold #{if transaction.type in [:deposit, :yield] do "text-green-700 dark:text-green-300" else "text-red-600 dark:text-red-300" end}"}>
               {CurrencyUtils.format_money(Decimal.to_float(transaction.value))}
+            </span>
+          </:col>
+
+          <:col :let={transaction} label="IR">
+            <span class={"font-bold #{if transaction.type == :yield do "text-red-600 dark:text-red-300" else "" end}"}>
+              <%= if transaction.tax == nil or Decimal.equal?(transaction.tax, 0) do %>
+                -
+              <% else %>
+                {CurrencyUtils.format_money(Decimal.to_float(transaction.tax))}
+              <% end %>
+            </span>
+          </:col>
+          <:col :let={transaction} label="Valor Líquido">
+            <span class={"font-bold #{if transaction.type in [:deposit, :yield] do "text-green-700 dark:text-green-300" else "text-red-600 dark:text-red-300" end}"}>
+              <%= if transaction.tax == nil or Decimal.equal?(transaction.tax, 0) do %>
+                {CurrencyUtils.format_money(Decimal.to_float(transaction.value))}
+              <% else %>
+                {CurrencyUtils.format_money(
+                  Decimal.to_float(Decimal.sub(transaction.value, transaction.tax))
+                )}
+              <% end %>
             </span>
           </:col>
           >

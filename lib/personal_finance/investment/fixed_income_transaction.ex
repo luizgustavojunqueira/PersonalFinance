@@ -10,6 +10,7 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
     field :yield_rate, :decimal
     field :is_automatic, :boolean, default: false
     field :reference_period, :string
+    field :tax, :decimal
 
     belongs_to :profile, PersonalFinance.Accounts.Profile
     belongs_to :fixed_income, PersonalFinance.Investment.FixedIncome
@@ -60,7 +61,8 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
       :fixed_income_id,
       :profile_id,
       :transaction_id,
-      :ledger_id
+      :ledger_id,
+      :tax
     ])
     |> validate_required(
       [:type, :value, :date, :fixed_income_id, :profile_id, :ledger_id],
