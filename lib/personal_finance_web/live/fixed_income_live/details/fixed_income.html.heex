@@ -1,0 +1,12 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
+  <.header>
+    {@ledger.name} - Renda Fixa ({@fixed_income.name})
+  </.header>
+
+  <.live_component
+    module={PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions}
+    id="fixed-income-transactions"
+    ledger={@ledger}
+    fixed_income={@fixed_income}
+  />
+</Layouts.app>

@@ -189,13 +189,38 @@ defmodule PersonalFinance.Investment do
   @doc """
   Gets transactions for a fixed income investment.
   """
-  def list_transactions(%FixedIncome{id: fixed_income_id}, profile_id) do
-    from(t in FixedIncomeTransaction,
-      where: t.fixed_income_id == ^fixed_income_id and t.profile_id == ^profile_id,
-      order_by: [desc: t.date, desc: t.inserted_at],
-      preload: [:transaction]
-    )
-    |> Repo.all()
+  def list_transactions(%FixedIncome{id: fixed_income_id}, page \\ 1, page_size \\ 10) do
+    query =
+      from(t in FixedIncomeTransaction,
+        where: t.fixed_income_id == ^fixed_income_id,
+        order_by: [desc: t.date, desc: t.inserted_at],
+        preload: [:transaction]
+      )
+
+    total_entries = Repo.aggregate(query, :count, :id)
+
+    query =
+      if page_size != :all do
+        offset = (page - 1) * page_size
+        from(t in query, limit: ^page_size, offset: ^offset)
+      else
+        query
+      end
+
+    entries = Repo.all(query)
+
+    total_pages =
+      if page_size != :all && total_entries > 0,
+        do: div(total_entries + page_size - 1, page_size),
+        else: 1
+
+    %{
+      entries: entries,
+      page_number: page,
+      page_size: page_size,
+      total_entries: total_entries,
+      total_pages: total_pages
+    }
   end
 
   defp create_fixed_income_record(attrs, ledger, profile_id) do

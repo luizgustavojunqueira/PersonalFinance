@@ -27,6 +27,7 @@
       :for={{id, fixed_income} <- @streams.fixed_income_collection}
       module={PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard}
       id={id}
+      ledger={@ledger}
       fixed_income={fixed_income}
     />
   </div>

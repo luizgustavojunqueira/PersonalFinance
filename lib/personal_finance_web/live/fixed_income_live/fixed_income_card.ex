@@ -12,7 +12,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
   @impl true
   def render(assigns) do
     ~H"""
-    <div id={@id} class="card bg-base-100 w-full shadow-lg">
+    <div id={@id} class="card bg-base-100 w-full shadow-lg hover:shadow-xl transition-shadow">
       <div class="card-body">
         <div class="flex items-start justify-between gap-4">
           <div>
@@ -107,7 +107,13 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
               </div>
             </div>
           </div>
-          <div class="col-span-2 mt-4 flex justify-end">
+          <div class="col-span-2 mt-4 flex justify-end gap-2">
+            <.link
+              class="btn btn-secondary"
+              navigate={~p"/ledgers/#{@ledger.id}/fixed_income/#{@fixed_income.id}"}
+            >
+              Ver
+            </.link>
             <.button
               variant="primary"
               phx-click="open_edit_modal"
