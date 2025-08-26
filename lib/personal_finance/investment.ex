@@ -3,11 +3,12 @@ defmodule PersonalFinance.Investment do
   Context for managing investment operations, particularly fixed income investments.
   """
 
+  alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
   alias PersonalFinance.Finance.{Ledger}
   alias PersonalFinance.Finance
-  alias PersonalFinance.Investment.{FixedIncome, FixedIncomeTransaction}
+  alias PersonalFinance.Investment.{FixedIncome, FixedIncomeTransaction, MarketRate}
 
   import Ecto.Query
 
@@ -380,6 +381,17 @@ defmodule PersonalFinance.Investment do
   defp generate_yield(%FixedIncome{} = fixed_income, %Ledger{} = ledger) do
     total_days_since_start = Date.diff(Date.utc_today(), fixed_income.start_date)
 
+    today_cdi_rate =
+      MarketRate
+      |> where([mr], mr.type == :cdi and mr.date <= ^Date.utc_today())
+      |> limit(1)
+      |> Repo.one()
+
+    daily_cdi_rate =
+      if today_cdi_rate,
+        do: Decimal.to_float(today_cdi_rate.value) / 100,
+        else: 0.149 / 100 / 252
+
     fixed_income.yield_frequency
     |> case do
       :daily ->
@@ -392,9 +404,9 @@ defmodule PersonalFinance.Investment do
                  compute_yield(
                    fixed_income.current_balance,
                    fixed_income.remuneration_rate,
-                   1,
                    total_days_since_start,
-                   0.149
+                   :cdi,
+                   daily_cdi_rate
                  ) do
             if yield.gross <= 0.00 do
               {:ok, nil}
@@ -411,41 +423,6 @@ defmodule PersonalFinance.Investment do
               create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
             end
           end
-        else
-          {:ok, nil}
-        end
-
-      :monthly ->
-        if fixed_income.last_yield_date == nil or
-             Date.diff(
-               Date.utc_today(),
-               fixed_income.last_yield_date || fixed_income.start_date
-             ) >= 30 do
-          diff =
-            business_days_between(
-              fixed_income.last_yield_date || fixed_income.start_date,
-              Date.utc_today()
-            )
-
-          yield =
-            compute_yield(
-              fixed_income.current_balance,
-              fixed_income.remuneration_rate,
-              diff,
-              total_days_since_start,
-              0.149
-            )
-
-          attrs = %{
-            "type" => :yield,
-            "value" => Decimal.from_float(yield.gross),
-            "tax" => Decimal.from_float(yield.tax),
-            "date" => Date.utc_today(),
-            "description" => "Rendimento mensal",
-            "is_automatic" => true
-          }
-
-          create_transaction(fixed_income, attrs, ledger, fixed_income.profile_id)
         else
           {:ok, nil}
         end
@@ -471,13 +448,12 @@ defmodule PersonalFinance.Investment do
   def compute_yield(
         current_balance,
         remuneration_rate,
-        days_to_compute,
         total_days_since_start,
-        cdi_annual
+        :cdi,
+        daily_cdi_rate
       ) do
-    daily_cdi_rate = :math.pow(1 + cdi_annual, 1 / 252) - 1
     daily_rate = daily_cdi_rate * (Decimal.to_float(remuneration_rate) / 100)
-    gross_yield = current_balance * daily_rate * days_to_compute
+    gross_yield = current_balance * daily_rate
 
     tax_rate =
       cond do
@@ -491,5 +467,67 @@ defmodule PersonalFinance.Investment do
       gross: Float.round(gross_yield, 2),
       tax: Float.round(gross_yield * tax_rate, 2)
     }
+  end
+
+  def fetch_and_store_market_rates(type) do
+    with {:ok, rates} <- fetch_market_rates(type) do
+      Enum.each(rates, fn {type, date, value} ->
+        attrs = %{
+          "type" => type,
+          "value" => Decimal.from_float(value),
+          "date" => ParseUtils.parse_date(date)
+        }
+
+        %PersonalFinance.Investment.MarketRate{}
+        |> PersonalFinance.Investment.MarketRate.changeset(attrs)
+        |> Repo.insert()
+      end)
+
+      :ok
+    else
+      {:error, reason} -> {:error, reason}
+    end
+  end
+
+  defp fetch_market_rates(type) when type in [:cdi, :ipca, :selic] do
+    url =
+      case type do
+        :cdi -> "https://api.bcb.gov.br/dados/serie/bcdata.sgs.12/dados/ultimos/1?formato=json"
+        :ipca -> "https://api.bcb.gov.br/dados/serie/bcdata.sgs.433/dados/ultimos/1?formato=json"
+        :selic -> "https://api.bcb.gov.br/dados/serie/bcdata.sgs.11/dados/ultimos/1?formato=json"
+      end
+
+    case Req.get(url) do
+      {:ok, %Req.Response{status: 200, body: body}} ->
+        case body do
+          [%{"valor" => value, "data" => date} | _] ->
+            {:ok, [{type, date, ParseUtils.parse_float(value)}]}
+
+          _ ->
+            {:error, "Unexpected response format for #{type}"}
+        end
+
+      {:ok, %Req.Response{status: status}} ->
+        {:error, "Failed to fetch market rate for #{type}, status: #{status}"}
+
+      {:error, reason} ->
+        {:error, "HTTP request failed for #{type}: #{inspect(reason)}"}
+    end
+  end
+
+  defp fetch_market_rates(nil) do
+    types = [:cdi, :ipca, :selic]
+
+    results =
+      types
+      |> Enum.map(&fetch_market_rates/1)
+
+    if Enum.all?(results, fn res -> match?({:ok, _}, res) end) do
+      {:ok,
+       results
+       |> Enum.flat_map(fn {:ok, rates} -> rates end)}
+    else
+      {:error, "Failed to fetch some market rates"}
+    end
   end
 end

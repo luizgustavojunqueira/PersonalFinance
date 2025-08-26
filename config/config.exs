@@ -50,11 +50,12 @@ config :personal_finance, Oban,
     {
       Oban.Plugins.Cron,
       crontab: [
-        {"* * * * *", PersonalFinance.Workers.YieldsWorker}
+        {"0 5 * * *", PersonalFinance.Workers.MarketRatesWorker},
+        {"10 5 * * *", PersonalFinance.Workers.YieldsWorker}
       ]
     }
   ],
-  queues: [yields: 10]
+  queues: [yields: 10, market_rates: 5]
 
 # Configure esbuild (the version is required)
 config :esbuild,

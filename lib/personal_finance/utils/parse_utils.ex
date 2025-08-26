@@ -46,4 +46,12 @@ defmodule PersonalFinance.Utils.ParseUtils do
   end
 
   def format_float_for_input(other), do: other
+
+  def parse_date(date) when is_binary(date) do
+    [day, month, year] = String.split(date, "/")
+    Date.from_iso8601!("#{year}-#{month}-#{day}")
+  end
+
+  def parse_date(%Date{} = date), do: date
+  def parse_date(value), do: raise(ArgumentError, "Invalid date format: #{inspect(value)}")
 end
