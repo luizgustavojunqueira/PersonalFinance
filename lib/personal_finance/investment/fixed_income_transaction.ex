@@ -5,7 +5,7 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
   schema "fixed_income_transactions" do
     field :type, Ecto.Enum, values: [:deposit, :withdraw, :yield, :tax, :fee]
     field :value, :decimal
-    field :date, :date
+    field :date, :utc_datetime
     field :description, :string
     field :yield_rate, :decimal
     field :is_automatic, :boolean, default: false

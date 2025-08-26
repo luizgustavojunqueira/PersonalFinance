@@ -1,4 +1,5 @@
 defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
+  alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Investment
   alias PersonalFinance.Investment.{FixedIncome}
 
@@ -109,7 +110,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
 
             <div>
               <.input
-                field={@form[:start_date]}
+                field={@form[:start_date_input]}
                 type="date"
                 label="Data"
                 required
@@ -139,7 +140,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
                 field={@form[:end_date]}
                 type="date"
                 label="Data de Vencimento"
-                disabled={@action != :edit}
+                disabled={@action == :edit}
               />
             </div>
           </div>

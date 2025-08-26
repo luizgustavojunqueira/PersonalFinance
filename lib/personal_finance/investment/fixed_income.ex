@@ -6,8 +6,9 @@ defmodule PersonalFinance.Investment.FixedIncome do
     field :name, :string
     field :institution, :string
     field :type, Ecto.Enum, values: [:cdb]
-    field :start_date, :date
-    field :end_date, :date
+    field :start_date, :utc_datetime
+    field :start_date_input, :date, virtual: true
+    field :end_date, :utc_datetime
     field :remuneration_rate, :decimal
     field :is_active, :boolean, default: true
     field :total_tax_deducted, :decimal, default: 0.0
@@ -22,7 +23,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
     field :is_tax_exempt, :boolean, default: false
     field :initial_investment, :float
     field :current_balance, :float
-    field :last_yield_date, :date
+    field :last_yield_date, :utc_datetime
 
     belongs_to :profile, PersonalFinance.Finance.Profile
     belongs_to :ledger, PersonalFinance.Finance.Ledger
@@ -37,7 +38,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
       :name,
       :institution,
       :type,
-      :start_date,
+      :start_date_input,
       :end_date,
       :remuneration_rate,
       :remuneration_basis,
@@ -54,7 +55,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
         :name,
         :institution,
         :type,
-        :start_date,
+        :start_date_input,
         :remuneration_rate,
         :remuneration_basis,
         :yield_frequency,
@@ -63,6 +64,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
       ],
       message: "Este campo é obrigatório"
     )
+    |> convert_date_to_datetime()
     |> common_validations()
     |> put_change(:ledger_id, ledger_id)
     |> unique_constraint(:name,
@@ -76,6 +78,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
     fixed_income
     |> cast(attrs, [
       :current_balance,
+      :initial_investment,
       :last_yield_date,
       :is_active,
       :total_tax_deducted,
@@ -108,4 +111,25 @@ defmodule PersonalFinance.Investment.FixedIncome do
       initial_investment -> put_change(changeset, :current_balance, initial_investment)
     end
   end
+
+  defp convert_date_to_datetime(%Ecto.Changeset{valid?: true} = changeset) do
+    case get_change(changeset, :start_date_input) do
+      %Date{} = date ->
+        datetime =
+          DateTime.new!(date, Time.utc_now(), "Etc/UTC")
+          |> DateTime.truncate(:second)
+
+        changeset
+        |> put_change(:start_date, datetime)
+        |> validate_required([:start_date])
+
+      nil ->
+        changeset
+
+      _ ->
+        changeset
+    end
+  end
+
+  defp convert_date_to_datetime(changeset), do: changeset
 end

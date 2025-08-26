@@ -40,7 +40,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
 
         <div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <div>
-            <span class="text-gray-600 font-medium">Tipo</span>
+            <span class="text-gray-600/70 font-medium">Tipo</span>
             <div class="font-medium">
               <% type = @fixed_income.type |> Atom.to_string() |> String.upcase() %>
               <% base = @fixed_income.remuneration_basis |> Atom.to_string() |> String.upcase() %>
@@ -49,35 +49,35 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
           </div>
 
           <div>
-            <span class="text-gray-600 font-medium">Remuneração</span>
+            <span class="text-gray-600/70 font-medium">Remuneração</span>
             <div class="font-medium">
               {CurrencyUtils.format_rate(@fixed_income.remuneration_rate)}
             </div>
           </div>
 
           <div>
-            <span class="text-gray-600 font-medium">Rentabilidade</span>
+            <span class="text-gray-600/70 font-medium">Rentabilidade</span>
             <div class="font-medium">
               {format_frequency(@fixed_income.yield_frequency)}
             </div>
           </div>
 
           <div>
-            <span class="text-gray-600 font-medium">Início</span>
+            <span class="text-gray-600/70 font-medium">Início</span>
             <div class="font-medium">{DateUtils.format_date(@fixed_income.start_date)}</div>
           </div>
 
           <div class="col-span-2 mt-2">
             <div class="grid grid-cols-2 gap-x-4 gap-y-1">
               <div>
-                <span class="text-gray-600 text-xs">Investimento inicial</span>
+                <span class="text-gray-600/70 font-medium">Investimento inicial</span>
                 <div class="font-medium text-sm">
                   {CurrencyUtils.format_money(@fixed_income.initial_investment)}
                 </div>
               </div>
 
               <div>
-                <span class="text-gray-600 text-xs">Saldo atual</span>
+                <span class="text-gray-600/70 font-medium">Saldo atual</span>
                 <div class="font-semibold text-sm">
                   {CurrencyUtils.format_money(@fixed_income.current_balance)}
                 </div>

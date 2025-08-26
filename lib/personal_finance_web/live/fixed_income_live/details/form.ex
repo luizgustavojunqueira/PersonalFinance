@@ -99,13 +99,15 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
 
   @impl true
   def handle_event("save", %{"fixed_income_transaction" => fi_params}, socket) do
+    IO.inspect(fi_params, label: "FI PARAMS")
+
     case Investment.create_transaction(
            socket.assigns.fixed_income,
            fi_params,
            socket.assigns.ledger,
            1
          ) do
-      {:ok, fi_transaction} ->
+      {:ok, _fi_transaction} ->
         {:noreply, assign(socket, show: false)}
 
       {:error, changeset} ->

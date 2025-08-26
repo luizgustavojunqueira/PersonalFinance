@@ -530,4 +530,19 @@ defmodule PersonalFinance.Investment do
       {:error, "Failed to fetch some market rates"}
     end
   end
+
+  def get_total_invested(ledger_id) do
+    from(fi in FixedIncome,
+      where: fi.ledger_id == ^ledger_id and fi.is_active == true,
+      select: %{
+        total_invested: sum(fi.initial_investment),
+        total_balance: sum(fi.current_balance)
+      }
+    )
+    |> Repo.one()
+    |> case do
+      nil -> %{total_invested: 0.0, total_balance: 0.0}
+      result -> result
+    end
+  end
 end

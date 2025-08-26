@@ -54,4 +54,25 @@ defmodule PersonalFinance.Utils.ParseUtils do
 
   def parse_date(%Date{} = date), do: date
   def parse_date(value), do: raise(ArgumentError, "Invalid date format: #{inspect(value)}")
+
+  def parse_datetime(nil), do: nil
+  def parse_datetime(""), do: nil
+
+  def parse_datetime(date) when is_binary(date) do
+    cond do
+      String.match?(date, ~r/^\d{4}-\d{2}-\d{2}$/) ->
+        {:ok, date} = Date.from_iso8601(date)
+        DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+
+      String.match?(date, ~r/^\d{2}[-\/]\d{2}[-\/]\d{4}$/) ->
+        [day, month, year] = String.split(date, ~r/[-\/]/)
+        {:ok, date} = Date.from_iso8601("#{year}-#{month}-#{day}")
+        DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+
+      true ->
+        raise ArgumentError, "Invalid datetime format: #{inspect(date)}"
+    end
+  end
+
+  def parse_datetime(%DateTime{} = datetime), do: datetime
 end
