@@ -142,8 +142,8 @@ defmodule PersonalFinance.Investment do
 
     %{
       balance: Float.round(balance, 2),
-      yields: Decimal.to_float(yields),
-      yield_taxes: Decimal.to_float(yield_taxes)
+      yields: if(balance == 0.00, do: 0.00, else: Decimal.to_float(yields)),
+      yield_taxes: if(balance == 0.00, do: 0.00, else: Decimal.to_float(yield_taxes))
     }
   end
 
@@ -304,7 +304,12 @@ defmodule PersonalFinance.Investment do
       |> Map.put("fixed_income_id", fixed_income.id)
       |> Map.put("ledger_id", ledger.id)
       |> Map.put("profile_id", profile_id)
-      |> Map.put("date", Map.get(attrs, "date") || Date.utc_today())
+      |> Map.put(
+        "date",
+        Map.get(attrs, "date") ||
+          DateTime.new!(Date.utc_today(), Time.utc_now(), "Etc/UTC")
+          |> DateTime.truncate(:second)
+      )
 
     with {:ok, fi_transaction} <-
            FixedIncomeTransaction.system_changeset(%FixedIncomeTransaction{}, attrs)
@@ -399,7 +404,7 @@ defmodule PersonalFinance.Investment do
              Date.diff(
                Date.utc_today(),
                fixed_income.last_yield_date || fixed_income.start_date
-             ) >= 1 do
+             ) >= 0 do
           with yield <-
                  compute_yield(
                    fixed_income.current_balance,
@@ -415,7 +420,7 @@ defmodule PersonalFinance.Investment do
                 "type" => :yield,
                 "value" => Decimal.from_float(yield.gross),
                 "tax" => Decimal.from_float(yield.tax),
-                "date" => Date.utc_today(),
+                "date" => DateTime.new!(Date.utc_today(), Time.utc_now(), "Etc/UTC"),
                 "description" => "Rendimento diário",
                 "is_automatic" => true
               }

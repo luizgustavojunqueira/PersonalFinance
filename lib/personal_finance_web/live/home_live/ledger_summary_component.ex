@@ -10,7 +10,6 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   def render(assigns) do
     ~H"""
     <div class="flex flex-col xl:grid xl:grid-cols-4 gap-6 px-4">
-      <!-- Transações Recentes (Left 1/4) -->
       <div class="w-full xl:col-span-1 flex flex-col gap-6">
         <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-4 shadow-lg border border-base-200/50 backdrop-blur-sm">
           <div class="space-y-4">
@@ -107,8 +106,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           </div>
         </div>
       </div>
-      
-    <!-- Análise Mensal (Middle 2/4) -->
+
       <div class="w-full xl:col-span-2 flex flex-col gap-6">
         <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-xl border border-base-200/50 backdrop-blur-sm flex-1 max-h-fit">
           <div class="p-4 pb-2 border-b border-base-200/30">
@@ -210,11 +208,11 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-lg border border-base-200/50 backdrop-blur-sm flex-1 max-h-fit">
           <div class="p-4 pb-2 border-b border-base-200/50">
             <div class="flex justify-between items-center">
-              <h3 class="text-lg font-bold text-gray-800 dark:text-white">
+              <h3 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                 Renda Fixa
               </h3>
               <.link
-                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center w-full justify-end hover:gap-2 duration-200"
+                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center justify-end hover:gap-2 duration-200"
                 navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
               >
                 Ver todos <.icon name="hero-arrow-right" class="w-3 h-3" />
