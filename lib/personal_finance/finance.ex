@@ -1079,14 +1079,14 @@ defmodule PersonalFinance.Finance do
   * {:saved, %Resource{}}
   * {:deleted, %Resource{}}
   """
-  def subscribe_finance(resource, ledger_id) do
-    Phoenix.PubSub.subscribe(PersonalFinance.PubSub, "finance:#{ledger_id}:#{resource}")
+  def subscribe_finance(resource, ledger_id, extra \\ "") do
+    Phoenix.PubSub.subscribe(PersonalFinance.PubSub, "finance:#{ledger_id}:#{resource}#{extra}")
   end
 
-  def broadcast(resource, ledger_id, message) do
+  def broadcast(resource, ledger_id, message, extra \\ "") do
     Phoenix.PubSub.broadcast(
       PersonalFinance.PubSub,
-      "finance:#{ledger_id}:#{resource}",
+      "finance:#{ledger_id}:#{resource}#{extra}",
       message
     )
   end

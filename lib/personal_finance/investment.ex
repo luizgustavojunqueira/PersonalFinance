@@ -317,7 +317,13 @@ defmodule PersonalFinance.Investment do
     with {:ok, fi_transaction} <-
            FixedIncomeTransaction.system_changeset(%FixedIncomeTransaction{}, attrs)
            |> Repo.insert() do
-      Finance.broadcast(:fixed_income_transaction, ledger.id, {:saved, fi_transaction})
+      Finance.broadcast(
+        :fixed_income_transaction,
+        ledger.id,
+        {:saved, fi_transaction},
+        fixed_income.id
+      )
+
       {:ok, fi_transaction}
     else
       {:error, changeset} ->

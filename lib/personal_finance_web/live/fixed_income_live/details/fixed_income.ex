@@ -18,7 +18,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
     else
       socket =
         if not Map.get(socket.assigns, :subscribed, false) do
-          Finance.subscribe_finance(:fixed_income_transaction, ledger.id)
+          Finance.subscribe_finance(:fixed_income_transaction, ledger.id, fixed_income.id)
           assign(socket, subscribed: true)
         end
 
