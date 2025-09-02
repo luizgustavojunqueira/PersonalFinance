@@ -69,7 +69,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
           }
         >
           <:col :let={transaction} label="Data">
-            {DateUtils.format_date(transaction.date)}
+            {DateUtils.format_date(transaction.date, :with_time)}
           </:col>
           <:col :let={transaction} label="Descrição">
             <.text_ellipsis text={transaction.description} max_width="max-w-[15rem]" />

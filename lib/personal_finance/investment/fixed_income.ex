@@ -11,8 +11,8 @@ defmodule PersonalFinance.Investment.FixedIncome do
     field :end_date, :utc_datetime
     field :remuneration_rate, :decimal
     field :is_active, :boolean, default: true
-    field :total_tax_deducted, :decimal, default: 0.0
-    field :total_yield, :decimal, default: 0.0
+    field :total_tax_deducted, :decimal, default: Decimal.new("0.0")
+    field :total_yield, :decimal, default: Decimal.new("0.0")
 
     field :remuneration_basis, Ecto.Enum,
       values: [:cdi, :ipca, :selic, :fixed_yearly, :fixed_monthly]

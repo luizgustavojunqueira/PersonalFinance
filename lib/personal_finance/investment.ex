@@ -184,13 +184,16 @@ defmodule PersonalFinance.Investment do
         end
       )
 
-    with {:ok, _updated_fi} <-
+    with {:ok, updated_fi} <-
            fixed_income
            |> FixedIncome.system_changeset(attrs)
            |> Repo.update() do
-      fixed_income = Repo.preload(fixed_income, :profile)
-      Finance.broadcast(:fixed_income, fixed_income.ledger_id, {:saved, fixed_income})
-      {:ok, fixed_income}
+      fresh_fixed_income =
+        Repo.get!(FixedIncome, updated_fi.id)
+        |> Repo.preload(:profile)
+
+      Finance.broadcast(:fixed_income, fresh_fixed_income.ledger_id, {:saved, fresh_fixed_income})
+      {:ok, fresh_fixed_income}
     else
       {:error, changeset} -> {:error, changeset}
     end
