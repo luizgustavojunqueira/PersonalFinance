@@ -1,0 +1,29 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
+  <.header>
+    {@ledger.name} - Renda Fixa ({@fixed_income.name})
+    <:actions>
+      <.button
+        variant="primary"
+        phx-click="open_modal"
+        phx-value-modal={:new_fixed_income_transaction}
+      >
+        <.icon name="hero-plus" /> Adicionar Transação
+      </.button>
+    </:actions>
+  </.header>
+
+  <.live_component
+    module={PersonalFinanceWeb.FixedIncomeLive.Details.Form}
+    id="fixed-income-transaction-form-modal"
+    show={@open_modal in [:new_fixed_income_transaction]}
+    ledger={@ledger}
+    fixed_income={@fixed_income}
+  />
+
+  <.live_component
+    module={PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions}
+    id="fixed-income-transactions"
+    ledger={@ledger}
+    fixed_income={@fixed_income}
+  />
+</Layouts.app>

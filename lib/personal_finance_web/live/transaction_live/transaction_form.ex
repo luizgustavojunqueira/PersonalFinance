@@ -28,8 +28,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
       |> Ecto.Changeset.put_change(:value, formatted_value)
       |> Ecto.Changeset.put_change(:amount, formatted_amount)
 
-    investment_category =
-      Finance.get_category_by_name("Investimento", current_scope, ledger.id)
+    investment_category = Finance.get_investment_category(current_scope, ledger.id)
 
     socket =
       socket

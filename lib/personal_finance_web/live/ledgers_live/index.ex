@@ -12,8 +12,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
       |> assign(
         page_title: "Ledgers",
         ledger: nil,
-        open_modal: nil,
-        form_action: nil
+        open_modal: nil
       )
 
     {:ok, socket}
@@ -60,15 +59,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
 
   @impl true
   def handle_event("close_modal", _, socket) do
-    IO.inspect(socket.assigns.open_modal, label: "Closing modal")
     {:noreply, assign(socket, open_modal: nil, transaction: nil)}
-  end
-
-  @impl true
-  def handle_event("close_form", _params, socket) do
-    {:noreply,
-     socket
-     |> assign(open_modal: nil, ledger: nil, form_action: nil)}
   end
 
   @impl true
@@ -101,6 +92,6 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
      socket
      |> put_flash(:info, "Ledger salvo com sucesso.")
      |> stream_insert(:ledger_collection, ledger)
-     |> assign(open_modal: nil, category: nil, form_action: nil)}
+     |> assign(open_modal: nil)}
   end
 end

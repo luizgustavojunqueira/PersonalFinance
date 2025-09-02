@@ -34,7 +34,8 @@ defmodule PersonalFinance.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
-{:csv, "~> 3.2"},
+      {:oban, "~> 2.0"},
+      {:csv, "~> 3.2"},
       {:bcrypt_elixir, "~> 3.0"},
       {:phoenix, "~> 1.8.0-rc.0", override: true},
       {:phoenix_ecto, "~> 4.5"},
@@ -55,6 +56,7 @@ defmodule PersonalFinance.MixProject do
        compile: false,
        depth: 1},
       {:swoosh, "~> 1.16"},
+      {:igniter, "~> 0.6.28"},
       {:req, "~> 0.5"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},

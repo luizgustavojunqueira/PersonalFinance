@@ -3,7 +3,6 @@ defmodule PersonalFinance.Utils.CurrencyUtils do
 
   def format_money(value) when is_float(value) or is_integer(value) do
     formatted_value = :erlang.float_to_binary(value, decimals: 2)
-    IO.inspect(formatted_value, label: "Formatted Value")
 
     parts = String.split(formatted_value, ".")
 
@@ -26,5 +25,22 @@ defmodule PersonalFinance.Utils.CurrencyUtils do
     else
       :erlang.float_to_binary(value, [:compact, decimals: 2])
     end
+  end
+
+  def format_rate(nil), do: "-"
+
+  def format_rate(%Decimal{} = d) do
+    d
+    |> Decimal.mult(100)
+    |> Decimal.round(2)
+    |> Decimal.div(100)
+    |> Decimal.to_string(:normal)
+    |> then(&(&1 <> "%"))
+  end
+
+  def format_rate(v) when is_number(v) do
+    v
+    |> Decimal.new()
+    |> format_rate()
   end
 end

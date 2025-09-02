@@ -75,7 +75,6 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerForm do
         {:noreply, socket}
 
       {:error, changeset} ->
-        IO.inspect(changeset, label: "Ledger Changeset Error")
         {:noreply, assign(socket, form: to_form(changeset))}
     end
   end

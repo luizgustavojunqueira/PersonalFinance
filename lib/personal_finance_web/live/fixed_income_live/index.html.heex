@@ -1,0 +1,34 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
+  <.header>
+    {@ledger.name} - Renda Fixa
+    <:actions>
+      <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_fixed_income}>
+        <.icon name="hero-plus" /> Adicionar Renda Fixa
+      </.button>
+    </:actions>
+  </.header>
+
+  <.live_component
+    module={PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm}
+    id="fixed-income-form-modal"
+    show={@open_modal in [:new_fixed_income, :edit_fixed_income]}
+    action={if @open_modal == :new_fixed_income, do: :new, else: :edit}
+    ledger={@ledger}
+    fixed_income={@fixed_income}
+    current_scope={@current_scope}
+  />
+
+  <div
+    id="fixed_incomes"
+    phx-update="stream"
+    class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+  >
+    <.live_component
+      :for={{id, fixed_income} <- @streams.fixed_income_collection}
+      module={PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard}
+      id={id}
+      ledger={@ledger}
+      fixed_income={fixed_income}
+    />
+  </div>
+</Layouts.app>

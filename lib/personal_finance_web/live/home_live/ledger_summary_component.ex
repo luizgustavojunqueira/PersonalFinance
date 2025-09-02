@@ -1,4 +1,5 @@
 defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
+  alias PersonalFinance.Investment
   use PersonalFinanceWeb, :live_component
 
   alias PersonalFinance.Utils.DateUtils
@@ -8,41 +9,41 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col xl:flex-row gap-6 px-4">
-      <div class="w-full xl:w-80 flex flex-col gap-6">
+    <div class="flex flex-col xl:grid xl:grid-cols-4 gap-6 px-4">
+      <div class="w-full xl:col-span-1 flex flex-col gap-6">
         <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-4 shadow-lg border border-base-200/50 backdrop-blur-sm">
-          <div class="space-y-6">
+          <div class="space-y-4">
             <div class="relative">
               <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl blur opacity-30">
               </div>
               <div class="relative bg-white/50 dark:bg-black/20 rounded-xl p-2 border border-white/20">
-                <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-2">Saldo Atual</h3>
-                <span class="text-3xl font-black bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Saldo Atual</h3>
+                <span class="text-xl font-black bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                   {@balance.balance |> CurrencyUtils.format_money()}
                 </span>
               </div>
             </div>
 
             <div>
-              <h3 class="text-sm font-medium text-gray-600 dark:text-gray-400 mb-3">Saldo Mensal</h3>
+              <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Saldo Mensal</h3>
               <div class="space-y-2">
                 <div class="flex justify-between items-center py-2 px-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <span class="text-sm font-medium text-green-700 dark:text-green-300">Receitas</span>
-                  <span class="text-lg font-bold text-green-600 dark:text-green-400">
+                  <span class="text-xs font-medium text-green-700 dark:text-green-300">Receitas</span>
+                  <span class="text-sm font-bold text-green-600 dark:text-green-400">
                     + {@month_balance.total_incomes |> CurrencyUtils.format_money()}
                   </span>
                 </div>
                 <div class="flex justify-between items-center py-2 px-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                  <span class="text-sm font-medium text-red-700 dark:text-red-300">Despesas</span>
-                  <span class="text-lg font-bold text-red-600 dark:text-red-400">
+                  <span class="text-xs font-medium text-red-700 dark:text-red-300">Despesas</span>
+                  <span class="text-sm font-bold text-red-600 dark:text-red-400">
                     - {@month_balance.total_expenses |> CurrencyUtils.format_money()}
                   </span>
                 </div>
                 <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
                   <div class="flex justify-between items-center">
-                    <span class="text-sm font-medium text-gray-600 dark:text-gray-400">Total</span>
+                    <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Total</span>
                     <span class={[
-                      "text-2xl font-black",
+                      "text-lg font-black",
                       if(@month_balance.balance < 0,
                         do: "text-red-600 dark:text-red-400",
                         else: "text-green-600 dark:text-green-400"
@@ -58,14 +59,14 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
 
         <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-lg border border-base-200/50 backdrop-blur-sm flex-1">
-          <div class="p-6 pb-4 border-b border-base-200/50">
+          <div class="p-4 pb-2 border-b border-base-200/50">
             <div class="flex justify-between items-center">
-              <h3 class="text-xl font-bold text-gray-800 dark:text-white">Transações Recentes</h3>
+              <h3 class="text-lg font-bold text-gray-800 dark:text-white">Transações Recentes</h3>
               <.link
-                class="text-sm font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center w-full justify-end hover:gap-2 duration-200"
+                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center w-full justify-end hover:gap-2 duration-200"
                 navigate={~p"/ledgers/#{@ledger.id}/transactions"}
               >
-                Ver todas <.icon name="hero-arrow-right" class="w-4 h-4" />
+                Ver todas <.icon name="hero-arrow-right" class="w-3 h-3" />
               </.link>
             </div>
           </div>
@@ -73,28 +74,28 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="divide-y divide-base-200/30">
             <div
               :for={{id, transaction} <- @streams.recent_transactions}
-              class="flex items-center justify-between p-6 hover:bg-white/30 dark:hover:bg-black/20 transition-all duration-200 group cursor-pointer"
+              class="flex items-center justify-between p-4 hover:bg-white/30 dark:hover:bg-black/20 transition-all duration-200 group cursor-pointer"
               id={id}
             >
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all">
-                  <.icon name="hero-banknotes" class="w-6 h-6 text-blue-600 dark:text-blue-400" />
+              <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all">
+                  <.icon name="hero-banknotes" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <.text_ellipsis
                     text={transaction.description}
-                    max_width="max-w-[120px] sm:max-w-[250px] lg:max-w-[120px]"
-                    class="text-base font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                    max_width="max-w-[100px] sm:max-w-[200px] lg:max-w-[100px]"
+                    class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
                   />
                   <.text_ellipsis
                     text={transaction.profile.name}
-                    max_width="max-w-[120px] sm:max-w-[250px] lg:max-w-[120px]"
-                    class="text-sm text-gray-500 dark:text-gray-400"
+                    max_width="max-w-[100px] sm:max-w-[200px] lg:max-w-[100px]"
+                    class="text-xs text-gray-500 dark:text-gray-400"
                   />
                 </div>
               </div>
               <div class="text-right">
-                <div class={"text-base font-bold text-gray-900 dark:text-white #{if transaction.type == :expense, do: "text-red-600 dark:text-red-400", else: "text-green-600 dark:text-green-400"}"}>
+                <div class={"text-sm font-bold text-gray-900 dark:text-white #{if transaction.type == :expense, do: "text-red-600 dark:text-red-400", else: "text-green-600 dark:text-green-400"}"}>
                   {CurrencyUtils.format_money(transaction.total_value)}
                 </div>
                 <div class="text-xs text-gray-500 dark:text-gray-400">
@@ -106,11 +107,11 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
       </div>
 
-      <div class="flex-1 flex flex-col gap-6">
-        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-xl border border-base-200/50 backdrop-blur-sm flex-1">
-          <div class="p-6 pb-4 border-b border-base-200/30">
+      <div class="w-full xl:col-span-2 flex flex-col gap-6">
+        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-xl border border-base-200/50 backdrop-blur-sm flex-1 max-h-fit">
+          <div class="p-4 pb-2 border-b border-base-200/30">
             <div class="flex justify-between items-center">
-              <h3 class="text-2xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+              <h3 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                 Análise Mensal
               </h3>
               <.form
@@ -124,17 +125,17 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                   type="select"
                   field={@form_chart[:chart_type]}
                   options={[{"Barras", :bars}, {"Pizza", :pie}]}
-                  class="bg-white/50 dark:bg-black/20 border-white/30 dark:border-white/10 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all"
+                  class="bg-white/50 dark:bg-black/20 border-white/30 dark:border-white/10 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all"
                 />
               </.form>
             </div>
           </div>
 
-          <div class="p-6">
-            <div class="relative bg-white/30 dark:bg-black/10 rounded-2xl p-6 min-h-[400px] backdrop-blur-sm border border-white/20">
+          <div class="p-4">
+            <div class="relative bg-white/30 dark:bg-black/10 rounded-2xl p-4 min-h-[300px] backdrop-blur-sm border border-white/20">
               <%= if @chart_type == :pie do %>
                 <div id="pie" phx-hook="Chart" class="h-full">
-                  <div id="pie-chart" class="w-full h-[400px]" phx-update="ignore" />
+                  <div id="pie-chart" class="w-full h-[300px]" phx-update="ignore" />
                   <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
                 </div>
               <% else %>
@@ -142,7 +143,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                   <div id="bar" phx-hook="Chart" class="h-full">
                     <div
                       id="bar-chart"
-                      class="w-full h-[400px]"
+                      class="w-full h-[300px]"
                       phx-update="ignore"
                       style="overflow: visible;"
                     />
@@ -155,21 +156,21 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
 
         <%= if !Enum.empty?(@messages) do %>
-          <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-6 shadow-lg border border-base-200/50 backdrop-blur-sm">
-            <div class="flex items-center gap-3 mb-4">
-              <div class="w-8 h-8 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                <.icon name="hero-bell" class="w-5 h-5 text-amber-600 dark:text-amber-400" />
+          <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-4 shadow-lg border border-base-200/50 backdrop-blur-sm">
+            <div class="flex items-center gap-2 mb-2">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
+                <.icon name="hero-bell" class="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 class="text-lg font-bold text-gray-800 dark:text-white">Avisos</h3>
+              <h3 class="text-sm font-bold text-gray-800 dark:text-white">Avisos</h3>
             </div>
 
-            <div class="space-y-3">
+            <div class="space-y-2">
               <div
                 :for={message <- @messages}
-                class="flex items-start gap-3 bg-white/40 dark:bg-black/20 rounded-xl p-4 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-200 border border-white/20 group"
+                class="flex items-start gap-2 bg-white/40 dark:bg-black/20 rounded-xl p-3 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-200 border border-white/20 group"
               >
                 <div class={[
-                  "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5",
+                  "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
                   case message.type do
                     :info -> "bg-blue-500/20 group-hover:bg-blue-500/30"
                     :warning -> "bg-yellow-500/20 group-hover:bg-yellow-500/30"
@@ -185,7 +186,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                       end
                     }
                     class={[
-                      "w-4 h-4",
+                      "w-3 h-3",
                       case message.type do
                         :info -> "text-blue-600 dark:text-blue-400"
                         :warning -> "text-yellow-600 dark:text-yellow-400"
@@ -194,13 +195,69 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                     ]}
                   />
                 </div>
-                <span class="text-sm font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
+                <span class="text-xs font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
                   {message.text}
                 </span>
               </div>
             </div>
           </div>
         <% end %>
+      </div>
+
+      <div class="w-full xl:col-span-1 flex flex-col gap-6">
+        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-lg border border-base-200/50 backdrop-blur-sm flex-1 max-h-fit">
+          <div class="p-4 pb-2 border-b border-base-200/50">
+            <div class="flex justify-between items-center">
+              <h3 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+                Renda Fixa
+              </h3>
+              <.link
+                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center justify-end hover:gap-2 duration-200"
+                navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
+              >
+                Ver todos <.icon name="hero-arrow-right" class="w-3 h-3" />
+              </.link>
+            </div>
+          </div>
+
+          <div class="p-4 space-y-4">
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
+                  Total Investido
+                </span>
+                <span class="text-sm font-bold text-gray-900 dark:text-white">
+                  {CurrencyUtils.format_money(@total_invested)}
+                </span>
+              </div>
+              <div class="flex justify-between items-center">
+                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
+                  Valor Atual
+                </span>
+                <span class="text-sm font-bold text-green-600 dark:text-green-400">
+                  {CurrencyUtils.format_money(@current_value)}
+                </span>
+              </div>
+            </div>
+
+            <div class="space-y-2">
+              <div class="relative bg-white/30 dark:bg-black/10 rounded-xl p-2 min-h-[150px] backdrop-blur-sm border border-white/20">
+                <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
+                  Composição da Renda Fixa
+                </h4>
+                <div id="fixed-income-composition-chart" class="w-full h-[120px]" phx-update="ignore" />
+                <div id="fixed-income-composition-data" hidden>
+                  {Jason.encode!(%{"mock" => "data"})}
+                </div>
+              </div>
+              <div class="relative bg-white/30 dark:bg-black/10 rounded-xl p-2 min-h-[150px] backdrop-blur-sm border border-white/20">
+                <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Patrimônio</h4>
+                <div id="patrimony-chart" class="w-full h-[120px]" phx-update="ignore" />
+                <div id="patrimony-data" hidden>{Jason.encode!(%{"mock" => "data"})}</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     """
@@ -225,6 +282,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
      socket
      |> assign(assigns)
      |> assign_balance()
+     |> assign_investment_data()
      |> assign_chart_data()
      |> assign_messages()
      |> stream(:recent_transactions, assigns.transactions |> Enum.take(5))}
@@ -260,6 +318,17 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       balance: new_balance,
       month_balance: new_month_balance,
       monthly_incomes: new_month_balance.total_incomes
+    )
+  end
+
+  defp assign_investment_data(socket) do
+    ledger = socket.assigns.ledger
+
+    investment_data = Investment.get_total_invested(ledger.id)
+
+    assign(socket,
+      total_invested: investment_data.total_invested,
+      current_value: investment_data.total_balance
     )
   end
 

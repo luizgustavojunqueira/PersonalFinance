@@ -260,6 +260,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
             "select w-full focus:outline- :",
             @errors != [] && "input-error"
           ]}
+          disabled={@disabled}
           multiple={@multiple}
           {@rest}
         >
