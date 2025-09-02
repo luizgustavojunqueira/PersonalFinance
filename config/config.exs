@@ -50,8 +50,8 @@ config :personal_finance, Oban,
     {
       Oban.Plugins.Cron,
       crontab: [
-        {"0 5 * * *", PersonalFinance.Workers.MarketRatesWorker},
-        {"10 5 * * *", PersonalFinance.Workers.YieldsWorker}
+        {"0 21 * * *", PersonalFinance.Workers.MarketRatesWorker},
+        {"5 21 * * *", PersonalFinance.Workers.YieldsWorker}
       ]
     }
   ],
