@@ -17,7 +17,8 @@ defmodule PersonalFinance.Balance do
         ledger_id,
         type,
         profile_id \\ nil,
-        {date_start, date_end} \\ {nil, nil}
+        {date_start, date_end} \\ {nil, nil},
+        all_categories \\ false
       ) do
     category_id =
       if type == :expense do
@@ -37,7 +38,7 @@ defmodule PersonalFinance.Balance do
       )
 
     query_with_category =
-      if category_id do
+      if not all_categories and category_id do
         from(t in base_query, where: t.category_id == ^category_id)
       else
         base_query
@@ -75,16 +76,20 @@ defmodule PersonalFinance.Balance do
     month_start = Date.beginning_of_month(today)
     month_end = Date.end_of_month(today)
 
-    total_incomes =
+    total_incomes_all_categories =
+      get_sum_transactions(scope, ledger_id, :income, profile_id, {month_start, month_end}, true)
+
+    total_incomes_no_category =
       get_sum_transactions(scope, ledger_id, :income, profile_id, {month_start, month_end})
 
     total_expenses =
       get_sum_transactions(scope, ledger_id, :expense, profile_id, {month_start, month_end})
 
     %{
-      total_incomes: total_incomes,
+      total_incomes: total_incomes_no_category,
+      total_incomes_all_categories: total_incomes_all_categories,
       total_expenses: total_expenses,
-      balance: total_incomes - total_expenses
+      balance: total_incomes_no_category - total_expenses
     }
   end
 

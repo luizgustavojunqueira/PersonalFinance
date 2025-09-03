@@ -15,7 +15,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
         fixed_income,
         ledger,
         %{},
-        1
+        fixed_income.profile_id
       )
 
     socket =
@@ -91,7 +91,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
         socket.assigns.fixed_income,
         socket.assigns.ledger,
         fi_params,
-        1
+        socket.assigns.fixed_income.profile_id
       )
 
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
@@ -103,7 +103,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
            socket.assigns.fixed_income,
            fi_params,
            socket.assigns.ledger,
-           1
+           socket.assigns.fixed_income.profile_id
          ) do
       {:ok, _fi_transaction} ->
         {:noreply, assign(socket, show: false)}
