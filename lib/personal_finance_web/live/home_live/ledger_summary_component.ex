@@ -30,7 +30,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                 <div class="flex justify-between items-center py-2 px-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <span class="text-xs font-medium text-green-700 dark:text-green-300">Receitas</span>
                   <span class="text-sm font-bold text-green-600 dark:text-green-400">
-                    + {@month_balance.total_incomes |> CurrencyUtils.format_money()}
+                    + {@month_balance.total_incomes_all_categories |> CurrencyUtils.format_money()}
                   </span>
                 </div>
                 <div class="flex justify-between items-center py-2 px-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
