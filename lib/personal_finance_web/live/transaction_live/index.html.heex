@@ -2,7 +2,7 @@
   <.header>
     {@ledger.name} - Transações
     <:actions>
-      <div class="flex flex-row gap-2">
+      <div class="flex flex-col md:flex-row  gap-2">
         <.button phx-click="open_modal" phx-value-modal={:import_transactions}>
           Importar Transações
         </.button>
@@ -16,55 +16,57 @@
     </:actions>
   </.header>
 
-  <.live_component
-    module={PersonalFinanceWeb.TransactionLive.TransactionForm}
-    id="transaction-form-modal"
-    show={@open_modal in [:new_transaction, :edit_transaction]}
-    action={if @open_modal == :new_transaction, do: :new, else: :edit}
-    transaction={@transaction}
-    ledger={@ledger}
-    current_scope={@current_scope}
-    profiles={@profiles}
-    categories={@categories}
-    investment_types={@investment_types}
-  />
-
-  <.live_component
-    module={PersonalFinanceWeb.TransactionLive.Import}
-    id="import-transactions-modal"
-    show={@open_modal == :import_transactions}
-    ledger={@ledger}
-    current_scope={@current_scope}
-  />
-
-  <.live_component
-    module={PersonalFinanceWeb.TransactionLive.PendingTransactions}
-    id="pending-transactions-drawer"
-    ledger={@ledger}
-    current_scope={@current_scope}
-    show={@open_modal == :pending_transactions}
-  />
-
-  <div class="mb-4">
+  <div class="flex flex-col">
     <.live_component
-      module={PersonalFinanceWeb.TransactionLive.Filter}
-      id="transactions-filter"
+      module={PersonalFinanceWeb.TransactionLive.TransactionForm}
+      id="transaction-form-modal"
+      show={@open_modal in [:new_transaction, :edit_transaction]}
+      action={if @open_modal == :new_transaction, do: :new, else: :edit}
+      transaction={@transaction}
       ledger={@ledger}
-      filter={@filter}
+      current_scope={@current_scope}
       profiles={@profiles}
       categories={@categories}
       investment_types={@investment_types}
+    />
+
+    <.live_component
+      module={PersonalFinanceWeb.TransactionLive.Import}
+      id="import-transactions-modal"
+      show={@open_modal == :import_transactions}
+      ledger={@ledger}
+      current_scope={@current_scope}
+    />
+
+    <.live_component
+      module={PersonalFinanceWeb.TransactionLive.PendingTransactions}
+      id="pending-transactions-drawer"
+      ledger={@ledger}
+      current_scope={@current_scope}
+      show={@open_modal == :pending_transactions}
+    />
+
+    <div class="mb-4">
+      <.live_component
+        module={PersonalFinanceWeb.TransactionLive.Filter}
+        id="transactions-filter"
+        ledger={@ledger}
+        filter={@filter}
+        profiles={@profiles}
+        categories={@categories}
+        investment_types={@investment_types}
+        current_scope={@current_scope}
+        parent_pid={self()}
+      />
+    </div>
+
+    <.live_component
+      module={PersonalFinanceWeb.TransactionLive.Transactions}
+      id="transactions-list"
+      ledger={@ledger}
+      filter={@filter}
       current_scope={@current_scope}
       parent_pid={self()}
     />
   </div>
-
-  <.live_component
-    module={PersonalFinanceWeb.TransactionLive.Transactions}
-    id="transactions-list"
-    ledger={@ledger}
-    filter={@filter}
-    current_scope={@current_scope}
-    parent_pid={self()}
-  />
 </Layouts.app>
