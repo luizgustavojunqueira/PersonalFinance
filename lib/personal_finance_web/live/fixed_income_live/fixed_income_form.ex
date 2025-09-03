@@ -1,4 +1,5 @@
 defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
+  alias PersonalFinance.Finance
   alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Investment
   alias PersonalFinance.Investment.{FixedIncome}
@@ -17,12 +18,15 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
           FixedIncome.update_changeset(fixed_income, %{})
 
         :new ->
-          Investment.change_fixed_income(fixed_income, ledger, %{}, 1)
+          Investment.change_fixed_income(fixed_income, ledger, %{})
       end
+
+    profiles = Finance.list_profiles(assigns.current_scope, ledger)
 
     socket =
       socket
       |> assign(assigns)
+      |> assign(:profiles, Enum.map(profiles, fn profile -> {profile.name, profile.id} end))
       |> assign(form: to_form(changeset, as: :fixed_income))
       |> assign(action: action)
 
@@ -71,6 +75,16 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
                 type="select"
                 label="Tipo"
                 options={[{"CDB", :cdb}]}
+                disabled={@action == :edit}
+              />
+            </div>
+
+            <div>
+              <.input
+                field={@form[:profile_id]}
+                type="select"
+                label="Perfil"
+                options={@profiles}
                 disabled={@action == :edit}
               />
             </div>
@@ -171,8 +185,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
           Investment.change_fixed_income(
             socket.assigns.fixed_income || %FixedIncome{ledger_id: socket.assigns.ledger.id},
             socket.assigns.ledger,
-            fixed_income_params,
-            1
+            fixed_income_params
           )
       end
 
@@ -193,7 +206,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
         end
 
       :new ->
-        case Investment.create_fixed_income(fixed_income_params, socket.assigns.ledger, 1) do
+        case Investment.create_fixed_income(fixed_income_params, socket.assigns.ledger) do
           {:ok, fixed_income} ->
             send(self(), {:saved, fixed_income})
             {:noreply, assign(socket, show: false)}

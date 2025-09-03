@@ -30,13 +30,10 @@ defmodule PersonalFinance.Investment do
   def change_fixed_income(
         %FixedIncome{} = fixed_income,
         %Ledger{} = ledger,
-        attrs,
-        profile_id
+        attrs
       ) do
-    attrs_with_profile = Map.put(attrs, "profile_id", profile_id)
-
     fixed_income
-    |> FixedIncome.changeset(attrs_with_profile, ledger.id)
+    |> FixedIncome.changeset(attrs, ledger.id)
   end
 
   @doc """
@@ -66,9 +63,9 @@ defmodule PersonalFinance.Investment do
   2. Creates an initial deposit transaction for the fixed income
   3. Creates a general ledger transaction for the investment
   """
-  def create_fixed_income(attrs, %Ledger{} = ledger, profile_id) do
+  def create_fixed_income(attrs, %Ledger{} = ledger) do
     Repo.transaction(fn ->
-      with {:ok, fixed_income} <- create_fixed_income_record(attrs, ledger, profile_id),
+      with {:ok, fixed_income} <- create_fixed_income_record(attrs, ledger),
            {:ok, _initial_transaction} <-
              create_initial_deposit_transaction(fixed_income, ledger),
            {:ok, _general_transaction} <-
@@ -258,9 +255,9 @@ defmodule PersonalFinance.Investment do
     }
   end
 
-  defp create_fixed_income_record(attrs, ledger, profile_id) do
+  defp create_fixed_income_record(attrs, ledger) do
     with {:ok, fixed_income = %FixedIncome{}} <-
-           change_fixed_income(%FixedIncome{}, ledger, attrs, profile_id)
+           change_fixed_income(%FixedIncome{}, ledger, attrs)
            |> Repo.insert() do
       preloaded_fixed_income = Repo.preload(fixed_income, :profile)
       Finance.broadcast(:fixed_income, ledger.id, {:saved, preloaded_fixed_income})

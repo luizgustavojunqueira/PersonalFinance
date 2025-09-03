@@ -33,6 +33,8 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
       :profile_id,
       :transaction_id
     ])
+    |> put_change(:ledger_id, ledger_id)
+    |> put_change(:is_automatic, false)
     |> validate_required(
       [:type, :value, :date, :fixed_income_id, :profile_id],
       message: "Este campo é obrigatório"
@@ -41,12 +43,11 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
       message: "Tipo de transação inválido"
     )
     |> validate_number(:value, greater_than: 0, message: "O valor deve ser maior que zero")
+    |> validate_max_withdraw()
     |> validate_length(:description,
       max: 255,
       message: "A descrição deve ter no máximo 255 caracteres"
     )
-    |> put_change(:ledger_id, ledger_id)
-    |> put_change(:is_automatic, false)
   end
 
   def system_changeset(fixed_income_transaction, attrs) do
@@ -68,6 +69,33 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
       [:type, :value, :date, :fixed_income_id, :profile_id, :ledger_id],
       message: "Este campo é obrigatório"
     )
+    |> validate_max_withdraw()
     |> put_change(:is_automatic, true)
+  end
+
+  defp validate_max_withdraw(changeset) do
+    changeset
+    |> validate_change(:type, fn :type, type ->
+      if type == :withdraw do
+        fixed_income_id = get_field(changeset, :fixed_income_id)
+        value = get_field(changeset, :value)
+        ledger_id = get_field(changeset, :ledger_id)
+
+        if fixed_income_id && value do
+          current_balance =
+            PersonalFinance.Investment.get_fixed_income(fixed_income_id, ledger_id).current_balance
+
+          if Decimal.cmp(value, Decimal.from_float(current_balance)) == :gt do
+            [value: "O valor do resgate não pode ser maior que o saldo atual"]
+          else
+            []
+          end
+        else
+          []
+        end
+      else
+        []
+      end
+    end)
   end
 end
