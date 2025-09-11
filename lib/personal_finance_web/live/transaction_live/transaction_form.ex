@@ -201,11 +201,18 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
             />
           </div>
           <.input
-            field={@form[:date]}
+            field={@form[:date_input]}
             id="input-date"
             type="date"
             label="Data"
             placeholder="Ex: 2023-10-01"
+          />
+          <.input
+            field={@form[:time_input]}
+            id="input-time"
+            type="time"
+            label="Horário"
+            placeholder="Ex: 14:30"
           />
           <div class="flex justify-center gap-2 mt-4">
             <.button

@@ -38,8 +38,8 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
           />
         </div>
         <div class="flex justify-between items-center mb-4 gap-4">
-          <.input field={@form[:start_date]} type="date" label="Data de Início" required />
-          <.input field={@form[:end_date]} type="date" label="Data de Término" />
+          <.input field={@form[:start_date_input]} type="date" label="Data de Início" required />
+          <.input field={@form[:end_date_input]} type="date" label="Data de Término" />
         </div>
         <div class="flex justify-between items-center mb-4 gap-4">
           <.input field={@form[:amount]} type="number" label="Quantidade" step="0.01" required />

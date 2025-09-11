@@ -1,4 +1,5 @@
 defmodule PersonalFinance.Balance do
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Finance
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
@@ -73,8 +74,8 @@ defmodule PersonalFinance.Balance do
 
   def get_balance(%Scope{} = scope, ledger_id, :monthly, profile_id) do
     today = Date.utc_today()
-    month_start = Date.beginning_of_month(today)
-    month_end = Date.end_of_month(today)
+    month_start = Date.beginning_of_month(today) |> DateUtils.to_date_time()
+    month_end = Date.end_of_month(today) |> DateUtils.to_end_of_day_datetime()
 
     total_incomes_all_categories =
       get_sum_transactions(scope, ledger_id, :income, profile_id, {month_start, month_end}, true)

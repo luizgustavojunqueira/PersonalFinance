@@ -7,8 +7,10 @@ defmodule PersonalFinance.Finance.RecurringEntry do
     field :description, :string
     field :amount, :float
     field :value, :float
-    field :start_date, :date
-    field :end_date, :date
+    field :start_date, :utc_datetime
+    field :start_date_input, :date, virtual: true
+    field :end_date, :utc_datetime
+    field :end_date_input, :date, virtual: true
     field :frequency, Ecto.Enum, values: [:monthly, :yearly], default: :monthly
     field :type, Ecto.Enum, values: [:income, :expense], default: :expense
     field :is_active, :boolean, default: true
@@ -27,8 +29,8 @@ defmodule PersonalFinance.Finance.RecurringEntry do
       :description,
       :amount,
       :value,
-      :start_date,
-      :end_date,
+      :start_date_input,
+      :end_date_input,
       :frequency,
       :type,
       :is_active,
@@ -36,15 +38,51 @@ defmodule PersonalFinance.Finance.RecurringEntry do
       :category_id
     ])
     |> validate_required([
-      :amount,
-      :value,
-      :start_date,
+      :start_date_input,
       :frequency,
       :type,
       :is_active
     ])
     |> put_change(:ledger_id, ledger_id)
+    |> convert_date_to_datetime(:start_date_input, :start_date, :day_start)
+    |> convert_date_to_datetime(:end_date_input, :end_date, :day_end)
+    |> validate_required(:start_date, message: "Data de início é obrigatória")
+    |> validate_required(:value, message: "O valor é obrigatório")
+    |> validate_number(:value, greater_than: 0, message: "O valor deve ser maior que zero")
+    |> validate_required(:amount, message: "A quantidade é obrigatória")
+    |> validate_number(:amount, greater_than: 0, message: "A quantidade deve ser maior que zero")
     |> validate_required(:description, message: "Descrição é obrigatória")
     |> validate_length(:description, max: 255, message: "Descrição muito longa")
   end
+
+  defp convert_date_to_datetime(
+         %Ecto.Changeset{valid?: true} = changeset,
+         input,
+         output,
+         time
+       ) do
+    case get_change(changeset, input) do
+      %Date{} = date ->
+        time =
+          case time do
+            :day_start -> Time.new!(0, 0, 0)
+            :day_end -> Time.new!(23, 59, 59)
+          end
+
+        datetime =
+          DateTime.new!(date, time, "Etc/UTC")
+          |> DateTime.truncate(:second)
+
+        changeset
+        |> put_change(output, datetime)
+
+      nil ->
+        changeset
+
+      _ ->
+        changeset
+    end
+  end
+
+  defp convert_date_to_datetime(changeset, _, _, _), do: changeset
 end
