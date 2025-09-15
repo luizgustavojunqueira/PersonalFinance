@@ -38,21 +38,30 @@ defmodule PersonalFinance.Finance.RecurringEntry do
       :category_id
     ])
     |> validate_required([
-      :start_date_input,
-      :frequency,
-      :type,
       :is_active
     ])
     |> put_change(:ledger_id, ledger_id)
     |> convert_date_to_datetime(:start_date_input, :start_date, :day_start)
     |> convert_date_to_datetime(:end_date_input, :end_date, :day_end)
+    |> validate_required(:start_date_input, message: "Data de início é obrigatória")
     |> validate_required(:start_date, message: "Data de início é obrigatória")
+    |> validate_required(:frequency, message: "A frequência é obrigatória")
+    |> validate_inclusion(:frequency, [:monthly, :yearly], message: "Frequência inválida")
+    |> validate_required(:type, message: "O tipo é obrigatório")
+    |> validate_inclusion(:type, [:income, :expense], message: "Tipo inválido")
     |> validate_required(:value, message: "O valor é obrigatório")
     |> validate_number(:value, greater_than: 0, message: "O valor deve ser maior que zero")
     |> validate_required(:amount, message: "A quantidade é obrigatória")
     |> validate_number(:amount, greater_than: 0, message: "A quantidade deve ser maior que zero")
     |> validate_required(:description, message: "Descrição é obrigatória")
     |> validate_length(:description, max: 255, message: "Descrição muito longa")
+    |> validate_end_date_after_start_date()
+  end
+
+  def toggle_status_changeset(recurring_entry) do
+    recurring_entry
+    |> change()
+    |> put_change(:is_active, !recurring_entry.is_active)
   end
 
   defp convert_date_to_datetime(
@@ -78,11 +87,47 @@ defmodule PersonalFinance.Finance.RecurringEntry do
 
       nil ->
         changeset
+        |> put_change(output, nil)
+
+      "" ->
+        changeset
+        |> put_change(output, nil)
 
       _ ->
         changeset
     end
   end
 
-  defp convert_date_to_datetime(changeset, _, _, _), do: changeset
+  defp convert_date_to_datetime(changeset, _input, output, _time) do
+    if output == :end_date do
+      case get_field(changeset, :end_date_input) do
+        nil -> put_change(changeset, output, nil)
+        "" -> put_change(changeset, output, nil)
+        _ -> changeset
+      end
+    else
+      changeset
+    end
+  end
+
+  defp validate_end_date_after_start_date(changeset) do
+    start_date = get_field(changeset, :start_date)
+    end_date = get_field(changeset, :end_date)
+
+    case {start_date, end_date} do
+      {%DateTime{} = start_dt, %DateTime{} = end_dt} ->
+        if DateTime.compare(end_dt, start_dt) == :lt do
+          add_error(
+            changeset,
+            :end_date_input,
+            "Data de término deve ser posterior à data de início"
+          )
+        else
+          changeset
+        end
+
+      _ ->
+        changeset
+    end
+  end
 end

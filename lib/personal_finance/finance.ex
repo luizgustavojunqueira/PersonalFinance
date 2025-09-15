@@ -783,13 +783,13 @@ defmodule PersonalFinance.Finance do
   def update_recurring_entry(%Scope{} = scope, %RecurringEntry{} = recurring_entry, attrs) do
     changeset =
       recurring_entry
-      |> RecurringEntry.changeset(attrs, recurring_entry.ledger.id)
+      |> RecurringEntry.changeset(attrs, recurring_entry.ledger_id)
 
     case Repo.update(changeset) do
       {:ok, updated_recurring_entry} ->
         updated_recurring_entry =
           updated_recurring_entry
-          |> Repo.preload(:category)
+          |> Repo.preload([:category, :profile, :ledger])
 
         broadcast(
           :recurring_entry,
@@ -851,11 +851,9 @@ defmodule PersonalFinance.Finance do
   Toggle the status of a recurring entry.
   """
   def toggle_recurring_entry_status(%Scope{} = scope, %RecurringEntry{} = recurring_entry) do
-    new_status = not recurring_entry.is_active
-
     changeset =
       recurring_entry
-      |> RecurringEntry.changeset(%{is_active: new_status}, recurring_entry.ledger.id)
+      |> RecurringEntry.toggle_status_changeset()
 
     case Repo.update(changeset) do
       {:ok, updated_recurring_entry} ->
