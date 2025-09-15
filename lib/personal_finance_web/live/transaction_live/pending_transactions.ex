@@ -41,7 +41,9 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
          socket
          |> assign(pending_recurrent_transactions: pending_recurrent_transactions)}
 
-      {:error, _changeset} ->
+      {:error, changeset} ->
+        IO.inspect(changeset, label: "Error confirming recurring transaction")
+
         {:noreply,
          socket
          |> put_flash(:error, "Erro ao confirmar transação recorrente.")}

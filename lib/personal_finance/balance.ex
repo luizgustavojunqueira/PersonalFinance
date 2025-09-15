@@ -90,7 +90,7 @@ defmodule PersonalFinance.Balance do
       total_incomes: total_incomes_no_category,
       total_incomes_all_categories: total_incomes_all_categories,
       total_expenses: total_expenses,
-      balance: total_incomes_no_category - total_expenses
+      balance: total_incomes_all_categories - total_expenses
     }
   end
 

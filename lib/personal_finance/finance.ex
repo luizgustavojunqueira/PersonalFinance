@@ -887,8 +887,6 @@ defmodule PersonalFinance.Finance do
       )
       |> Repo.all()
 
-    current_month_start = Date.beginning_of_month(today_date) |> DateTime.new!(~T[00:00:00])
-
     lookback_period_start =
       Date.add(today_date, -30)
       |> DateTime.new!(~T[00:00:00])
@@ -907,24 +905,32 @@ defmodule PersonalFinance.Finance do
         select: %{recurring_entry_id: t.recurring_entry_id, date: t.date}
       )
       |> Repo.all()
-      |> Enum.map(
-        &{&1.recurring_entry_id, (&1.date |> DateTime.to_date()).month,
-         (&1.date |> DateTime.to_date()).year}
-      )
+      |> Enum.map(fn transaction ->
+        date = DateTime.to_date(transaction.date)
+        {transaction.recurring_entry_id, date.month, date.year}
+      end)
       |> MapSet.new()
 
     Enum.flat_map(recurring_entries, fn %RecurringEntry{} = entry ->
       next_occurrence_dates =
-        calculate_next_occurrence_dates(entry, today, check_until, months)
+        calculate_next_occurrence_dates(entry, lookback_period_start, check_until)
 
       Enum.filter(next_occurrence_dates, fn datetime ->
         date = DateTime.to_date(datetime)
 
-        not Enum.any?(generated_transactions_in_period, fn {id, month, year} ->
-          id == entry.id and
-            year == date.year and
-            (entry.frequency == :yearly or (entry.frequency == :monthly and month == date.month))
-        end) and DateTime.compare(datetime, current_month_start) == :gt
+        transaction_exists =
+          MapSet.member?(generated_transactions_in_period, {entry.id, date.month, date.year})
+
+        transaction_exists =
+          if entry.frequency == :yearly do
+            Enum.any?(generated_transactions_in_period, fn {id, _month, year} ->
+              id == entry.id and year == date.year
+            end)
+          else
+            transaction_exists
+          end
+
+        not transaction_exists
       end)
       |> Enum.map(fn datetime ->
         %{
@@ -939,8 +945,8 @@ defmodule PersonalFinance.Finance do
           recurring_entry: entry
         }
       end)
-      |> Enum.sort_by(& &1.date_expected, DateTime)
     end)
+    |> Enum.sort_by(& &1.date_expected, DateTime)
   end
 
   @doc """
@@ -948,121 +954,120 @@ defmodule PersonalFinance.Finance do
   """
   defp calculate_next_occurrence_dates(
          %RecurringEntry{} = entry,
-         today,
-         check_until,
-         max_occurrences
+         period_start,
+         check_until
        ) do
-    today_date = DateTime.to_date(today)
-    current_date = max_date(today_date, entry.start_date)
-
-    occurrences =
-      case entry.frequency do
-        :monthly ->
-          first_occurrence =
-            case Date.new(current_date.year, current_date.month, entry.start_date.day) do
-              {:ok, date} ->
-                datetime = DateTime.new!(date, ~T[00:00:00])
-
-                if DateTime.compare(datetime, today) in [:gt, :eq] do
-                  datetime
-                else
-                  next_month_date =
-                    case Date.new(date.year, date.month + 1, entry.start_date.day) do
-                      {:ok, next_date} -> next_date
-                      {:error, _} -> Date.add(date, 30)
-                    end
-
-                  DateTime.new!(next_month_date, ~T[00:00:00])
-                end
-
-              {:error, _} ->
-                end_of_month_date =
-                  Date.end_of_month(
-                    Date.add(current_date, 30 - current_date.day + entry.start_date.day - 1)
-                  )
-
-                DateTime.new!(end_of_month_date, ~T[00:00:00])
-            end
-
-          Stream.unfold({first_occurrence, 0}, fn
-            {datetime, n} when n < max_occurrences ->
-              if DateTime.compare(datetime, check_until) == :lt and
-                   DateTime.compare(datetime, entry.end_date) == :lt do
-                date = DateTime.to_date(datetime)
-
-                next_datetime =
-                  case Date.new(date.year, date.month + 1, entry.start_date.day) do
-                    {:ok, next_date} -> DateTime.new!(next_date, ~T[00:00:00])
-                    {:error, _} -> DateTime.add(datetime, 30, :day)
-                  end
-
-                {datetime, {next_datetime, n + 1}}
-              else
-                nil
-              end
-
-            _ ->
-              nil
-          end)
-          |> Enum.to_list()
-
-        :yearly ->
-          max_occurrences = 1
-
-          first_occurrence =
-            case Date.new(current_date.year, entry.start_date.month, entry.start_date.day) do
-              {:ok, date} ->
-                datetime = DateTime.new!(date, ~T[00:00:00])
-
-                if DateTime.compare(datetime, today) in [:gt, :eq] do
-                  datetime
-                else
-                  next_year_date =
-                    case Date.new(date.year + 1, date.month, date.day) do
-                      {:ok, next_date} -> next_date
-                      {:error, _} -> Date.add(date, 365)
-                    end
-
-                  DateTime.new!(next_year_date, ~T[00:00:00])
-                end
-
-              {:error, _} ->
-                end_of_month_date =
-                  Date.end_of_month(
-                    Date.add(current_date, 365 - current_date.day + entry.start_date.day - 1)
-                  )
-
-                DateTime.new!(end_of_month_date, ~T[00:00:00])
-            end
-
-          Stream.unfold({first_occurrence, 0}, fn
-            {datetime, n} when n < max_occurrences ->
-              if DateTime.compare(datetime, check_until) == :lt and
-                   Date.compare(DateTime.to_date(datetime), entry.end_date) == :lt do
-                date = DateTime.to_date(datetime)
-
-                next_datetime =
-                  case Date.new(date.year + 1, date.month, date.day) do
-                    {:ok, next_date} -> DateTime.new!(next_date, ~T[00:00:00])
-                    {:error, _} -> DateTime.add(datetime, 365, :day)
-                  end
-
-                {datetime, {next_datetime, n + 1}}
-              else
-                nil
-              end
-
-            _ ->
-              nil
-          end)
-          |> Enum.to_list()
+    start_date =
+      case entry.start_date do
+        %DateTime{} = dt -> DateTime.to_date(dt)
+        %Date{} = d -> d
       end
 
-    occurrences
+    end_date =
+      case entry.end_date do
+        %DateTime{} = dt -> DateTime.to_date(dt)
+        %Date{} = d -> d
+        nil -> nil
+      end
+
+    period_start_date = DateTime.to_date(period_start)
+    check_until_date = DateTime.to_date(check_until)
+
+    case entry.frequency do
+      :monthly ->
+        calculate_monthly_occurrences(start_date, end_date, period_start_date, check_until_date)
+
+      :yearly ->
+        calculate_yearly_occurrences(start_date, end_date, period_start_date, check_until_date)
+    end
   end
 
-  defp max_date(date1, date2) do
-    if Date.compare(date1, date2) == :gt, do: date1, else: date2
+  defp calculate_monthly_occurrences(start_date, end_date, period_start_date, check_until_date) do
+    first_occurrence_date = find_first_monthly_occurrence(start_date, period_start_date)
+
+    Stream.unfold(first_occurrence_date, fn current_date ->
+      if Date.compare(current_date, check_until_date) == :lt and
+           (is_nil(end_date) or Date.compare(current_date, end_date) != :gt) do
+        next_date = add_months(current_date, 1, start_date.day)
+        {DateTime.new!(current_date, ~T[00:00:00]), next_date}
+      else
+        nil
+      end
+    end)
+    |> Enum.to_list()
+  end
+
+  defp calculate_yearly_occurrences(start_date, end_date, period_start_date, check_until_date) do
+    first_occurrence_date = find_first_yearly_occurrence(start_date, period_start_date)
+
+    Stream.unfold(first_occurrence_date, fn current_date ->
+      if Date.compare(current_date, check_until_date) == :lt and
+           (is_nil(end_date) or Date.compare(current_date, end_date) != :gt) do
+        next_date = add_years(current_date, 1)
+        {DateTime.new!(current_date, ~T[00:00:00]), next_date}
+      else
+        nil
+      end
+    end)
+    |> Enum.to_list()
+  end
+
+  defp find_first_monthly_occurrence(start_date, period_start_date) do
+    if Date.compare(start_date, period_start_date) != :lt do
+      start_date
+    else
+      months_diff = months_between(start_date, period_start_date)
+
+      candidate_date = add_months(start_date, months_diff, start_date.day)
+
+      if Date.compare(candidate_date, period_start_date) == :lt do
+        add_months(candidate_date, 1, start_date.day)
+      else
+        candidate_date
+      end
+    end
+  end
+
+  defp find_first_yearly_occurrence(start_date, period_start_date) do
+    if Date.compare(start_date, period_start_date) != :lt do
+      start_date
+    else
+      years_diff = period_start_date.year - start_date.year
+      candidate_date = add_years(start_date, years_diff)
+
+      if Date.compare(candidate_date, period_start_date) == :lt do
+        add_years(candidate_date, 1)
+      else
+        candidate_date
+      end
+    end
+  end
+
+  defp add_months(date, months_to_add, target_day) do
+    new_year = date.year + div(date.month + months_to_add - 1, 12)
+    new_month = rem(date.month + months_to_add - 1, 12) + 1
+
+    case Date.new(new_year, new_month, target_day) do
+      {:ok, new_date} ->
+        new_date
+
+      {:error, _} ->
+        Date.end_of_month(Date.new!(new_year, new_month, 1))
+    end
+  end
+
+  defp add_years(date, years_to_add) do
+    case Date.new(date.year + years_to_add, date.month, date.day) do
+      {:ok, new_date} ->
+        new_date
+
+      {:error, _} ->
+        Date.new!(date.year + years_to_add, date.month, 28)
+    end
+  end
+
+  defp months_between(start_date, end_date) do
+    (end_date.year - start_date.year) * 12 + (end_date.month - start_date.month)
   end
 
   @doc """
@@ -1082,6 +1087,8 @@ defmodule PersonalFinance.Finance do
         "amount" => recurring_entry.amount,
         "total_value" => recurring_entry.value * recurring_entry.amount,
         "date" => DateTime.utc_now(),
+        "date_input" => Date.utc_today(),
+        "time_input" => Time.utc_now() |> Time.truncate(:second),
         "category_id" => recurring_entry.category_id,
         "profile_id" => recurring_entry.profile_id,
         "ledger_id" => ledger.id,
