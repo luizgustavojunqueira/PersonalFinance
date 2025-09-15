@@ -127,8 +127,8 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
             </span>
           </:col>
           <:col :let={transaction} label="Data">
-            <%= if transaction.inserted_at do %>
-              {DateUtils.format_date(transaction.date)}
+            <%= if transaction.date do %>
+              {DateUtils.to_local_time_with_date(transaction.date) |> DateUtils.format_date()}
             <% else %>
               Data não disponível
             <% end %>

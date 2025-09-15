@@ -21,29 +21,27 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
         phx-target={@myself}
       >
         <div class="flex justify-between items-center mb-4 gap-4">
-          <.input field={@form[:description]} type="text" label="Descrição" required />
+          <.input field={@form[:description]} type="text" label="Descrição" />
           <.input
             field={@form[:type]}
             type="select"
             label="Tipo"
             options={[{"Receita", :income}, {"Despesa", :expense}]}
-            required
           />
           <.input
             field={@form[:frequency]}
             type="select"
             label="Frequência"
             options={[{"Mensal", :monthly}, {"Anual", :yearly}]}
-            required
           />
         </div>
         <div class="flex justify-between items-center mb-4 gap-4">
-          <.input field={@form[:start_date]} type="date" label="Data de Início" required />
-          <.input field={@form[:end_date]} type="date" label="Data de Término" />
+          <.input field={@form[:start_date_input]} type="date" label="Data de Início" />
+          <.input field={@form[:end_date_input]} type="date" label="Data de Término" />
         </div>
         <div class="flex justify-between items-center mb-4 gap-4">
-          <.input field={@form[:amount]} type="number" label="Quantidade" step="0.01" required />
-          <.input field={@form[:value]} type="number" label="Valor" step="0.01" required />
+          <.input field={@form[:amount]} type="number" label="Quantidade" step="0.01" />
+          <.input field={@form[:value]} type="number" label="Valor" step="0.01" />
           <.input field={@form[:category_id]} type="select" label="Categoria" options={@categories} />
         </div>
 
@@ -58,7 +56,13 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
       </.form>
       <%= if @num_recurring_entries > 0 do %>
         <.table id="recurring_entries_table" rows={@streams.recurring_entries}>
-          <:col :let={{_id, entry}} label="Descrição">{entry.description}</:col>
+          <:col :let={{_id, entry}} label="Descrição">
+            <.text_ellipsis
+              class="p-1 px-2 "
+              text={entry.description}
+              max_width="max-w-[15rem]"
+            />
+          </:col>
           <:col :let={{_id, entry}} label="Tipo">
             {if entry.type == :income do
               "Receita"
@@ -67,7 +71,13 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
             end}
           </:col>
 
-          <:col :let={{_id, entry}} label="Categoria">{entry.category.name}</:col>
+          <:col :let={{_id, entry}} label="Categoria">
+            <.text_ellipsis
+              class="p-1 px-2 "
+              text={entry.category && entry.category.name}
+              max_width="max-w-[10rem]"
+            />
+          </:col>
           <:col :let={{_id, entry}} label="Data de Início">
             {DateUtils.format_date(entry.start_date)}
           </:col>
@@ -202,6 +212,14 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
         params
       )
 
+    formatted_value = ParseUtils.format_float_for_input(changeset.data.value)
+    formatted_amount = ParseUtils.format_float_for_input(changeset.data.amount)
+
+    changeset =
+      changeset
+      |> Ecto.Changeset.put_change(:value, formatted_value)
+      |> Ecto.Changeset.put_change(:amount, formatted_amount)
+
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
@@ -212,19 +230,22 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
 
     case Finance.toggle_recurring_entry_status(socket.assigns.current_scope, recurring_entry) do
       {:ok, updated_entry} ->
+        send(
+          socket.assigns.parent_pid,
+          {:put_flash, :info, "Status da transação recorrente atualizado com sucesso."}
+        )
+
         {:noreply,
          socket
-         |> put_flash(:info, "Status da transação recorrente atualizado com sucesso.")
          |> stream_insert(:recurring_entries, updated_entry)}
 
       {:error, changeset} ->
-        {:noreply,
-         socket
-         |> put_flash(
-           :error,
-           "Erro ao atualizar status da transação recorrente: #{changeset.errors[:base]}"
-         )
-         |> assign(form: to_form(changeset))}
+        send(
+          socket.assigns.parent_pid,
+          {:put_flash, :error, "Erro ao atualizar status da transação recorrente."}
+        )
+
+        {:noreply, socket}
     end
   end
 
@@ -232,6 +253,19 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
   def handle_event("edit", %{"id" => id}, socket) do
     recurring_entry =
       Finance.get_recurring_entry(socket.assigns.current_scope, socket.assigns.ledger.id, id)
+
+    start_date_input =
+      case recurring_entry.start_date do
+        %DateTime{} = dt -> DateTime.to_date(dt)
+        _ -> nil
+      end
+
+    end_date_input =
+      case recurring_entry.end_date do
+        %DateTime{} = dt -> DateTime.to_date(dt)
+        nil -> nil
+        _ -> nil
+      end
 
     changeset =
       Finance.change_recurring_entry(
@@ -247,6 +281,8 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
       changeset
       |> Ecto.Changeset.put_change(:value, formatted_value)
       |> Ecto.Changeset.put_change(:amount, formatted_amount)
+      |> Ecto.Changeset.put_change(:start_date_input, start_date_input)
+      |> Ecto.Changeset.put_change(:end_date_input, end_date_input)
 
     {:noreply,
      socket
@@ -267,16 +303,24 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
            recurring_entry
          ) do
       {:ok, _} ->
+        send(
+          socket.assigns.parent_pid,
+          {:put_flash, :info, "Transação recorrente removida com sucesso."}
+        )
+
         {:noreply,
          socket
-         |> put_flash(:info, "Transação recorrente removida com sucesso.")
          |> assign(num_recurring_entries: socket.assigns.num_recurring_entries - 1)
          |> stream_delete(:recurring_entries, recurring_entry)}
 
       {:error, changeset} ->
+        send(
+          socket.assigns.parent_pid,
+          {:put_flash, :error, "Erro ao remover transação recorrente."}
+        )
+
         {:noreply,
          socket
-         |> put_flash(:error, "Erro ao remover transação recorrente: #{changeset.errors[:base]}")
          |> assign(form: to_form(changeset))}
     end
   end
@@ -293,6 +337,11 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
            socket.assigns.ledger
          ) do
       {:ok, recurring_entry} ->
+        send(
+          socket.assigns.parent_pid,
+          {:put_flash, :info, "Transação recorrente criada com sucesso."}
+        )
+
         {:noreply,
          socket
          |> assign(
@@ -309,7 +358,6 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
              ),
            num_recurring_entries: socket.assigns.num_recurring_entries + 1
          )
-         |> put_flash(:info, "Transação recorrente salva com sucesso.")
          |> stream_insert(:recurring_entries, recurring_entry)}
 
       {:error, changeset} ->
@@ -331,6 +379,11 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
            params
          ) do
       {:ok, updated_entry} ->
+        send(
+          socket.assigns.parent_pid,
+          {:put_flash, :info, "Transação recorrente atualizada com sucesso."}
+        )
+
         {:noreply,
          socket
          |> assign(
@@ -346,7 +399,6 @@ defmodule PersonalFinanceWeb.ProfileLive.RecurringEntries do
                )
              )
          )
-         |> put_flash(:info, "Transação recorrente atualizada com sucesso.")
          |> stream_insert(:recurring_entries, updated_entry)}
 
       {:error, changeset} ->

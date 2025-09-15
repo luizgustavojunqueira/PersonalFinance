@@ -41,10 +41,10 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
          socket
          |> assign(pending_recurrent_transactions: pending_recurrent_transactions)}
 
-      {:error, _changeset} ->
+      {:error, changeset} ->
+        send(socket.assigns.parent_pid, {:put_flash, :error, "Erro ao confirmar transação."})
         {:noreply,
-         socket
-         |> put_flash(:error, "Erro ao confirmar transação recorrente.")}
+         socket}
     end
   end
 

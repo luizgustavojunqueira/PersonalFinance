@@ -72,9 +72,9 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
       {:ok, _deleted} ->
         {:noreply,
          socket
+         |> assign(ledger: nil, open_modal: nil)
          |> put_flash(:info, "Ledger excluído com sucesso.")
-         |> stream_delete(:ledger_collection, ledger)
-         |> Phoenix.LiveView.push_patch(to: ~p"/ledgers")}
+         |> stream_delete(:ledger_collection, ledger)}
 
       {:error, _changeset} ->
         {:noreply,

@@ -3,6 +3,7 @@ defmodule PersonalFinance.Investment do
   Context for managing investment operations, particularly fixed income investments.
   """
 
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Repo
   alias PersonalFinance.Accounts.Scope
@@ -283,6 +284,8 @@ defmodule PersonalFinance.Investment do
   defp create_general_investment_transaction(fixed_income, ledger) do
     investment_category = Finance.get_investment_category(%Scope{}, ledger.id)
 
+    dateTime = DateTime.new!(Date.utc_today(), Time.utc_now(), "Etc/UTC")
+
     attrs = %{
       "description" => "Investimento em #{fixed_income.name}",
       "value" => fixed_income.initial_investment,
@@ -290,7 +293,8 @@ defmodule PersonalFinance.Investment do
       "amount" => 1,
       "type" => :expense,
       "category_id" => investment_category.id,
-      "date" => fixed_income.start_date,
+      "date_input" => dateTime |> DateTime.to_date(),
+      "time_input" => dateTime |> DateUtils.to_local_time_with_date(),
       "ledger_id" => ledger.id,
       "profile_id" => fixed_income.profile_id
     }

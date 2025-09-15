@@ -29,4 +29,9 @@ defmodule PersonalFinanceWeb.ProfileLive.Settings do
       end
     end
   end
+
+  @impl true
+  def handle_info({:put_flash, type, message}, socket) do
+    {:noreply, socket |> put_flash(type, message)}
+  end
 end

@@ -1,4 +1,5 @@
 defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
+  alias PersonalFinance.Utils.DateUtils
   use PersonalFinanceWeb, :live_component
   alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Finance
@@ -10,7 +11,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
     current_scope = assigns.current_scope
 
     transaction =
-      assigns.transaction || %Transaction{ledger_id: ledger.id, date: Date.utc_today()}
+      assigns.transaction || %Transaction{ledger_id: ledger.id}
 
     changeset =
       Finance.change_transaction(
@@ -27,6 +28,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
       changeset
       |> Ecto.Changeset.put_change(:value, formatted_value)
       |> Ecto.Changeset.put_change(:amount, formatted_amount)
+      |> maybe_set_current_datetime(assigns.action)
 
     investment_category = Finance.get_investment_category(current_scope, ledger.id)
 
@@ -41,6 +43,37 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
 
     {:ok, socket}
   end
+
+  defp maybe_set_current_datetime(changeset, :new) do
+    now_utc = DateTime.utc_now()
+    local_datetime = PersonalFinance.Utils.DateUtils.to_local_time_with_date(now_utc)
+    current_date = NaiveDateTime.to_date(local_datetime)
+    current_time = NaiveDateTime.to_time(local_datetime)
+    current_time = %Time{current_time | second: 0, microsecond: {0, 0}}
+
+    changeset
+    |> Ecto.Changeset.put_change(:date_input, current_date)
+    |> Ecto.Changeset.put_change(:time_input, current_time)
+  end
+
+  defp maybe_set_current_datetime(changeset, :edit) do
+    case Ecto.Changeset.get_field(changeset, :date) do
+      %DateTime{} = datetime ->
+        local_datetime = PersonalFinance.Utils.DateUtils.to_local_time_with_date(datetime)
+        local_date = NaiveDateTime.to_date(local_datetime)
+        local_time = NaiveDateTime.to_time(local_datetime)
+
+        changeset
+        |> Ecto.Changeset.put_change(:date_input, local_date)
+        |> Ecto.Changeset.put_change(:time_input, local_time)
+
+      _ ->
+        changeset
+    end
+  end
+
+  # Para outros casos, não faz nada
+  defp maybe_set_current_datetime(changeset, _), do: changeset
 
   @impl true
   def handle_event("validate", %{"transaction" => transaction_params}, socket) do
@@ -200,13 +233,22 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
               placeholder="Ex: 10.00"
             />
           </div>
-          <.input
-            field={@form[:date]}
-            id="input-date"
-            type="date"
-            label="Data"
-            placeholder="Ex: 2023-10-01"
-          />
+          <div class="flex flex-row gap-2">
+            <.input
+              field={@form[:date_input]}
+              id="input-date"
+              type="date"
+              label="Data"
+              placeholder="Ex: 2023-10-01"
+            />
+            <.input
+              field={@form[:time_input]}
+              id="input-time"
+              type="time"
+              label="Horário"
+              placeholder="Ex: 14:30"
+            />
+          </div>
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"
