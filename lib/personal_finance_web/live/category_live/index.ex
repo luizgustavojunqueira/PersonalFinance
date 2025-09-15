@@ -93,6 +93,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   def handle_info({:saved, category}, socket) do
     {:noreply,
      socket
+     |> put_flash(:info, "Categoria salva com sucesso.")
      |> stream_insert(:category_collection, category)
      |> assign(open_modal: false, category: nil)}
   end
@@ -101,6 +102,7 @@ defmodule PersonalFinanceWeb.CategoryLive.Index do
   def handle_info({:deleted, category}, socket) do
     {:noreply,
      socket
+     |> put_flash(:info, "Categoria removida com sucesso.")
      |> stream_delete(:category_collection, category)}
   end
 end

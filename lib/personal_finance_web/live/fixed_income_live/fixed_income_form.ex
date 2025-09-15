@@ -57,7 +57,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
                 field={@form[:name]}
                 type="text"
                 label="Nome"
-                required
               />
             </div>
 
@@ -104,7 +103,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
                 field={@form[:initial_investment]}
                 type="number"
                 label="Valor (R$)"
-                required
                 autocomplete="off"
                 disabled={@action == :edit}
               />
@@ -117,7 +115,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
                 label="Taxa de Remuneração (%)"
                 step="0.01"
                 min="0"
-                required
                 disabled={@action == :edit}
               />
             </div>
@@ -127,7 +124,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
                 field={@form[:start_date_input]}
                 type="date"
                 label="Data"
-                required
                 disabled={@action == :edit}
               />
             </div>

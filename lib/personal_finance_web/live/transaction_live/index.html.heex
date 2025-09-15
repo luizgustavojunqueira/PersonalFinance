@@ -43,6 +43,7 @@
       id="pending-transactions-drawer"
       ledger={@ledger}
       current_scope={@current_scope}
+      parent_pid={self()}
       show={@open_modal == :pending_transactions}
     />
 

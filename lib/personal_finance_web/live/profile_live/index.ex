@@ -106,6 +106,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
   def handle_info({:saved, profile}, socket) do
     {:noreply,
      socket
+     |> put_flash(:info, "Perfil salvo com sucesso.")
      |> stream_insert(:profile_collection, profile)
      |> assign(open_modal: false, profile: nil)}
   end
@@ -114,6 +115,7 @@ defmodule PersonalFinanceWeb.ProfileLive.Index do
   def handle_info({:deleted, profile}, socket) do
     {:noreply,
      socket
+     |> put_flash(:info, "Perfil removido com sucesso.")
      |> stream_delete(:profile_collection, profile)}
   end
 end

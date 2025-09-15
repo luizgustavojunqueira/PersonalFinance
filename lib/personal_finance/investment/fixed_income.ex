@@ -50,20 +50,6 @@ defmodule PersonalFinance.Investment.FixedIncome do
       :profile_id,
       :is_active
     ])
-    |> validate_required(
-      [
-        :name,
-        :institution,
-        :type,
-        :start_date_input,
-        :remuneration_rate,
-        :remuneration_basis,
-        :yield_frequency,
-        :initial_investment,
-        :profile_id
-      ],
-      message: "Este campo é obrigatório"
-    )
     |> convert_date_to_datetime()
     |> common_validations()
     |> put_change(:ledger_id, ledger_id)
@@ -98,6 +84,58 @@ defmodule PersonalFinance.Investment.FixedIncome do
 
   defp common_validations(changeset) do
     changeset
+    |> validate_required(:name, message: "O nome é obrigatório")
+    |> validate_required(:institution, message: "A instituição é obrigatória")
+    |> validate_required(:type, message: "O tipo de investimento é obrigatório")
+    |> validate_required(:remuneration_rate, message: "A taxa de remuneração é obrigatória")
+    |> validate_required(:remuneration_basis, message: "A base de remuneração é obrigatória")
+    |> validate_required(:yield_frequency, message: "A frequência de rentabilidade é obrigatória")
+    |> validate_required(:initial_investment, message: "O valor inicial é obrigatório")
+    |> validate_required(:start_date_input, message: "A data de início é obrigatória")
+    |> validate_required(:start_date, message: "A data de início é obrigatória")
+    |> validate_required(:profile_id, message: "O perfil é obrigatório")
+    |> validate_inclusion(:is_tax_exempt, [true, false],
+      message: "Informe se o investimento é isento de imposto"
+    )
+    |> validate_inclusion(:type, [:cdb], message: "Tipo de investimento inválido")
+    |> validate_number(:remuneration_rate,
+      greater_than: 0,
+      message: "A taxa de remuneração deve ser maior que zero"
+    )
+    |> validate_number(:initial_investment,
+      greater_than: 0,
+      message: "O valor inicial deve ser maior que zero"
+    )
+    |> validate_number(:current_balance,
+      greater_than_or_equal_to: 0,
+      message: "O saldo atual não pode ser negativo"
+    )
+    |> validate_inclusion(
+      :remuneration_basis,
+      [:cdi, :ipca, :selic, :fixed_yearly, :fixed_monthly],
+      message: "Base de remuneração inválida"
+    )
+    |> validate_inclusion(
+      :yield_frequency,
+      [:daily, :monthly, :quarterly, :semi_annually, :annually, :at_maturity],
+      message: "Frequência de rentabilidade inválida"
+    )
+    |> validate_change(:end_date, fn :end_date, end_date ->
+      case get_field(changeset, :start_date) do
+        nil ->
+          []
+
+        start_date when is_nil(end_date) ->
+          []
+
+        start_date ->
+          if DateTime.compare(end_date, start_date) == :lt do
+            [end_date: "A data de término deve ser após a data de início"]
+          else
+            []
+          end
+      end
+    end)
     |> validate_length(:name, max: 100, message: "O nome deve ter no máximo 100 caracteres")
     |> validate_length(:institution,
       max: 100,
