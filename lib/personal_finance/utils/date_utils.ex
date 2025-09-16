@@ -84,4 +84,12 @@ defmodule PersonalFinance.Utils.DateUtils do
         {utc_time, date}
     end
   end
+
+  @doc """
+  Converte DateTime em UTC para Time e Date no horário local (UTC-4), considerando mudança de dia, retornando uma tupla {Date, Time}.
+  """
+  def utc_datetime_to_local_date_time(%DateTime{} = dt) do
+    local_dt = to_local_time_with_date(dt)
+    {NaiveDateTime.to_date(local_dt), NaiveDateTime.to_time(local_dt)}
+  end
 end

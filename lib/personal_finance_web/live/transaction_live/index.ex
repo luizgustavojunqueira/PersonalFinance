@@ -34,6 +34,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           filter: %{
             "category_id" => nil,
             "profile_id" => nil,
+            "type" => nil,
             "investment_type_id" => nil,
             "start_date" => nil,
             "end_date" => nil
@@ -74,6 +75,23 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
+  def handle_event("export_transactions", _, socket) do
+    params = %{
+      ledger_id: socket.assigns.ledger.id,
+      filter: socket.assigns.filter
+    }
+
+    token = Phoenix.Token.sign(PersonalFinanceWeb.Endpoint, "export", params, max_age: 600)
+
+    export_url = ~p"/transactions/export?token=#{token}"
+
+    {:noreply,
+     socket
+     |> put_flash(:info, "Iniciando download...")
+     |> push_event("open-url", %{url: export_url})}
+  end
+
+  @impl true
   def handle_info({:apply_filter, filter}, socket) do
     send_update(PersonalFinanceWeb.TransactionLive.Transactions,
       id: "transactions-list",
@@ -81,7 +99,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
       filter: filter
     )
 
-    {:noreply, assign(socket, :filters, filter)}
+    {:noreply, assign(socket, :filter, filter)}
   end
 
   @impl true
