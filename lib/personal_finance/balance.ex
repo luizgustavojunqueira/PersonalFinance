@@ -114,7 +114,7 @@ defmodule PersonalFinance.Balance do
 
   def get_balance(%Scope{} = scope, ledger_id, :all, profile_id) do
     total_incomes =
-      get_sum_transactions(scope, ledger_id, :income, profile_id)
+      get_sum_transactions(scope, ledger_id, :income, profile_id, {nil, nil}, true)
 
     total_expenses =
       get_sum_transactions(scope, ledger_id, :expense, profile_id)
