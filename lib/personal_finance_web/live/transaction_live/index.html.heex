@@ -3,8 +3,11 @@
     {@ledger.name} - Transações
     <:actions>
       <div class="flex flex-col md:flex-row  gap-2">
+        <.button phx-click="export_transactions" >
+          Exportar
+        </.button>
         <.button phx-click="open_modal" phx-value-modal={:import_transactions}>
-          Importar Transações
+          Importar
         </.button>
         <.button phx-click="open_modal" phx-value-modal={:pending_transactions}>
           <.icon name="hero-clock" /> Transações Pendentes

@@ -1,4 +1,5 @@
 defmodule PersonalFinance.Finance do
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Finance.LedgersUsers
   alias PersonalFinance.Repo
@@ -287,6 +288,54 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
+  Export a list of transactions to CSV format.
+  """
+  def export_transactions(ledger_id, filters \\ %{}) do
+    ledger =
+      Ledger
+      |> Repo.get(ledger_id)
+
+    transactions = list_transactions(%Scope{}, ledger, filters, 1, :all).entries
+
+    headers = [
+      "date",
+      "time",
+      "description",
+      "value",
+      "amount",
+      "total_value",
+      "category",
+      "profile",
+      "type"
+    ]
+
+    rows =
+      Enum.map(transactions, fn t ->
+        {date, time} = DateUtils.utc_datetime_to_local_date_time(t.date)
+
+        [
+          Date.to_string(date),
+          Time.to_string(time),
+          t.description,
+          Float.to_string(t.value, decimals: 2),
+          Float.to_string(t.amount, decimals: 2),
+          Float.to_string(t.total_value, decimals: 2),
+          t.category.name,
+          t.profile.name,
+          Atom.to_string(t.type)
+        ]
+      end)
+
+    csv_content =
+      [headers | rows]
+      |> CSV.encode()
+      |> Enum.to_list()
+      |> to_string()
+
+    {:ok, csv_content}
+  end
+
+  @doc """
   Importa múltiplas transações de um arquivo CSV.
   """
   def import_transactions(%Scope{} = scope, %Plug.Upload{path: path}) do
@@ -339,40 +388,38 @@ defmodule PersonalFinance.Finance do
               "value" =>
                 row["value"]
                 |> String.replace("R$ ", "")
-                |> String.replace(".", "")
                 |> String.replace(",", ".")
                 |> ParseUtils.parse_float()
                 |> Float.round(2),
               "amount" =>
                 (row["amount"] || "1.0")
-                |> String.replace("R$ ", "")
-                |> String.replace(".", "")
                 |> String.replace(",", ".")
                 |> ParseUtils.parse_float(),
               "total_value" =>
                 (row["value"]
                  |> String.replace("R$ ", "")
-                 |> String.replace(".", "")
                  |> String.replace(",", ".")
                  |> ParseUtils.parse_float()
                  |> Float.round(2)) *
                   ((row["amount"] || "1")
-                   |> String.replace(".", "")
                    |> String.replace(",", ".")
                    |> ParseUtils.parse_float()),
-              "date" =>
+              "date_input" =>
                 row["date"]
-                |> String.split("/")
-                |> then(fn [d, m, y] ->
+                |> String.split("-")
+                |> then(fn [y, m, d] ->
                   Date.new!(String.to_integer(y), String.to_integer(m), String.to_integer(d))
                 end),
+              "time_input" =>
+                row["time"] ||
+                  "00:00",
               "category_id" => category.id,
               "profile_id" => profile.id,
               "ledger_id" => ledger.id,
               "type" =>
                 case String.downcase(row["type"] || "") do
-                  "" -> :income
-                  "compra" -> :expense
+                  "income" -> :income
+                  "expense" -> :expense
                   _ -> :expense
                 end
             }
