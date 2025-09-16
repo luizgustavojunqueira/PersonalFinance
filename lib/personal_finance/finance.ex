@@ -305,6 +305,7 @@ defmodule PersonalFinance.Finance do
       "amount",
       "total_value",
       "category",
+      "investment_type",
       "profile",
       "type"
     ]
@@ -321,6 +322,7 @@ defmodule PersonalFinance.Finance do
           Float.to_string(t.amount, decimals: 2),
           Float.to_string(t.total_value, decimals: 2),
           t.category.name,
+          if(t.investment_type, do: t.investment_type.name, else: ""),
           t.profile.name,
           Atom.to_string(t.type)
         ]
@@ -378,6 +380,15 @@ defmodule PersonalFinance.Finance do
                 default_profile
               end
 
+            investment_type =
+              if row["investment_type"] && String.trim(row["investment_type"]) != "" do
+                InvestmentType
+                |> where([it], it.name == ^String.trim(row["investment_type"]))
+                |> Repo.one()
+              else
+                nil
+              end
+
             transaction_attrs = %{
               "description" =>
                 case row["description"] do
@@ -415,6 +426,7 @@ defmodule PersonalFinance.Finance do
                   "00:00",
               "category_id" => category.id,
               "profile_id" => profile.id,
+              "investment_type_id" => if(investment_type, do: investment_type.id, else: nil),
               "ledger_id" => ledger.id,
               "type" =>
                 case String.downcase(row["type"] || "") do
