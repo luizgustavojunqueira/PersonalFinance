@@ -20,6 +20,35 @@
     fixed_income={@fixed_income}
   />
 
+  <div class="bg-base-100 rounded-lg shadow-lg p-4 mb-6">
+    <h2 class="text-lg font-semibold text-base-content mb-4">Resumo do Investimento</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="p-3 bg-base-200 rounded-lg">
+        <p class="text-sm font-medium text-base-content">Total Investido</p>
+        <p class="text-xl font-bold text-base-content">
+          {CurrencyUtils.format_money(@total_invested)}
+        </p>
+      </div>
+
+      <div class="p-3 bg-base-200 rounded-lg">
+        <p class="text-sm font-medium text-base-content">Total Rendido</p>
+        <p class="text-xl font-bold text-success">{CurrencyUtils.format_money(@total_yield)}</p>
+      </div>
+
+      <div class="p-3 bg-base-200 rounded-lg">
+        <p class="text-sm font-medium text-base-content">Total de Impostos</p>
+        <p class="text-xl font-bold text-error">{CurrencyUtils.format_money(@total_tax)}</p>
+      </div>
+
+      <div class="p-3 bg-base-200 rounded-lg">
+        <p class="text-sm font-medium text-base-content">Valor Atual Líquido</p>
+        <p class="text-xl font-bold text-base-content">
+          {CurrencyUtils.format_money(@total_value)}
+        </p>
+      </div>
+    </div>
+  </div>
+
   <.live_component
     module={PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions}
     id="fixed-income-transactions"
