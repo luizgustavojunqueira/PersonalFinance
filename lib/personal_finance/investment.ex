@@ -349,6 +349,7 @@ defmodule PersonalFinance.Investment do
         end
 
       investment_category = Finance.get_investment_category(%Scope{}, ledger.id)
+      dateTime = DateTime.new!(Date.utc_today(), Time.utc_now(), "Etc/UTC")
 
       attrs = %{
         "description" => description,
@@ -357,7 +358,8 @@ defmodule PersonalFinance.Investment do
         "total_value" => Decimal.to_float(fi_transaction.value),
         "type" => general_type,
         "category_id" => investment_category.id,
-        "date" => fi_transaction.date,
+        "date_input" => dateTime |> DateTime.to_date(),
+        "time_input" => dateTime |> DateUtils.to_local_time_with_date(),
         "ledger_id" => ledger.id,
         "profile_id" => fi_transaction.profile_id
       }
@@ -547,17 +549,53 @@ defmodule PersonalFinance.Investment do
   end
 
   def get_total_invested(ledger_id) do
-    from(fi in FixedIncome,
-      where: fi.ledger_id == ^ledger_id and fi.is_active == true,
-      select: %{
-        total_invested: sum(fi.initial_investment),
-        total_balance: sum(fi.current_balance)
-      }
-    )
-    |> Repo.one()
-    |> case do
-      nil -> %{total_invested: 0.0, total_balance: 0.0}
-      result -> result
-    end
+    total_balance =
+      from(fi in FixedIncome,
+        where: fi.ledger_id == ^ledger_id and fi.is_active == true,
+        select: %{
+          total_balance: sum(fi.current_balance)
+        }
+      )
+      |> Repo.one()
+      |> case do
+        nil -> 0.0
+        result -> result.total_balance || 0.0
+      end
+
+    {total_deposited, total_withdrawed} =
+      from(t in FixedIncomeTransaction,
+        where: t.ledger_id == ^ledger_id,
+        select: %{
+          total_deposited:
+            sum(fragment("CASE WHEN ? = 'deposit' THEN ? ELSE 0 END", t.type, t.value)),
+          total_withdrawed:
+            sum(fragment("CASE WHEN ? = 'withdraw' THEN ? ELSE 0 END", t.type, t.value))
+        }
+      )
+      |> Repo.one()
+      |> case do
+        nil -> {0.0, 0.0}
+        result -> {result.total_deposited || 0.0, result.total_withdrawed || 0.0}
+      end
+
+    %{
+      total_invested:
+        Decimal.to_float(total_deposited || 0.0) -
+          Decimal.to_float(total_withdrawed || 0.0),
+      total_balance: total_balance
+    }
+  end
+
+  def get_details(%FixedIncome{} = fixed_income) do
+    balance_info = calculate_balance(fixed_income)
+
+    {
+      fixed_income.initial_investment +
+        balance_info.yields -
+        balance_info.yield_taxes,
+      balance_info.yields,
+      balance_info.yield_taxes,
+      balance_info.balance
+    }
   end
 end
