@@ -1,6 +1,7 @@
 defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
   alias PersonalFinance.Investment
   alias PersonalFinance.Investment.{FixedIncomeTransaction}
+  alias PersonalFinance.Utils.CurrencyUtils
 
   use PersonalFinanceWeb, :live_component
 
@@ -59,13 +60,21 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
               options={[{"Depósito", :deposit}, {"Resgate", :withdraw}]}
             />
 
-            <.input
-              field={@form[:value]}
-              type="number"
-              label="Valor (R$)"
-              required
-              autocomplete="off"
-            />
+            <div class="form-control w-full max-w-xs">
+              <.input
+                field={@form[:value]}
+                type="number"
+                label={"Valor " <>
+                  if @form[:type].value == :withdraw do
+                    "(Máx. #{CurrencyUtils.format_money(@fixed_income.current_balance)})"
+                  else
+                    ""
+                  end}
+                required
+                autocomplete="off"
+                class="input input-bordered input-primary w-full"
+              />
+            </div>
           </div>
 
           <div class="flex justify-center gap-2 mt-4">
