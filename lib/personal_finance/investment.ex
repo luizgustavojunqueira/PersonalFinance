@@ -388,11 +388,16 @@ defmodule PersonalFinance.Investment do
   end
 
   def generate_yields(%Ledger{} = ledger) do
-    from(fi in FixedIncome,
-      where: fi.ledger_id == ^ledger.id
-    )
-    |> Repo.all()
-    |> Enum.each(fn fi -> generate_yield(fi, ledger) end)
+    if Date.utc_today() |> business_day?() do
+      from(fi in FixedIncome,
+        where: fi.ledger_id == ^ledger.id
+      )
+      |> Repo.all()
+      |> Enum.each(fn fi -> generate_yield(fi, ledger) end)
+    else
+      IO.inspect("Hoje não é um dia útil, rendimentos não serão calculados.")
+      {:ok, nil}
+    end
   end
 
   defp generate_yield(%FixedIncome{} = fixed_income, %Ledger{} = ledger) do
