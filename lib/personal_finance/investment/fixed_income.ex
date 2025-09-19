@@ -9,6 +9,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
     field :start_date, :utc_datetime
     field :start_date_input, :date, virtual: true
     field :end_date, :utc_datetime
+    field :end_date_input, :date, virtual: true
     field :remuneration_rate, :decimal
     field :is_active, :boolean, default: true
     field :total_tax_deducted, :decimal, default: Decimal.new("0.0")
@@ -39,7 +40,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
       :institution,
       :type,
       :start_date_input,
-      :end_date,
+      :end_date_input,
       :remuneration_rate,
       :remuneration_basis,
       :yield_frequency,
@@ -50,7 +51,8 @@ defmodule PersonalFinance.Investment.FixedIncome do
       :profile_id,
       :is_active
     ])
-    |> convert_date_to_datetime()
+    |> convert_date_to_datetime(:start_date_input, :start_date)
+    |> convert_date_to_datetime(:end_date_input, :end_date)
     |> common_validations()
     |> put_change(:ledger_id, ledger_id)
     |> unique_constraint(:name,
@@ -78,7 +80,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
 
   def update_changeset(fixed_income, attrs) do
     fixed_income
-    |> cast(attrs, [:name, :institution, :end_date])
+    |> cast(attrs, [:name, :institution, :end_date_input])
     |> common_validations()
   end
 
@@ -125,7 +127,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
         nil ->
           []
 
-        start_date when is_nil(end_date) ->
+        _start_date when is_nil(end_date) ->
           []
 
         start_date ->
@@ -150,16 +152,19 @@ defmodule PersonalFinance.Investment.FixedIncome do
     end
   end
 
-  defp convert_date_to_datetime(%Ecto.Changeset{valid?: true} = changeset) do
-    case get_change(changeset, :start_date_input) do
+  defp convert_date_to_datetime(
+         %Ecto.Changeset{valid?: true} = changeset,
+         input,
+         output
+       ) do
+    case get_change(changeset, input) do
       %Date{} = date ->
         datetime =
           DateTime.new!(date, Time.utc_now(), "Etc/UTC")
           |> DateTime.truncate(:second)
 
         changeset
-        |> put_change(:start_date, datetime)
-        |> validate_required([:start_date])
+        |> put_change(output, datetime)
 
       nil ->
         changeset
@@ -169,5 +174,5 @@ defmodule PersonalFinance.Investment.FixedIncome do
     end
   end
 
-  defp convert_date_to_datetime(changeset), do: changeset
+  defp convert_date_to_datetime(changeset, _, _), do: changeset
 end
