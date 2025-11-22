@@ -232,16 +232,35 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
           length(items) == socket.assigns.per_page
       end
 
-    assign(socket,
-      page: metadata.page,
-      has_more: has_more,
-      loading: false,
-      item_ids: new_item_ids,
-      item_id_set: updated_id_set,
-      current_items_count: length(new_item_ids),
-      total_items: Map.get(metadata, :total_items, socket.assigns.total_items + length(items)),
-      total_pages: Map.get(metadata, :total_pages, socket.assigns.total_pages)
-    )
+    total_items = Map.get(metadata, :total_items, socket.assigns.total_items + length(items))
+    current_items_count = MapSet.size(updated_id_set)
+
+    socket =
+      assign(socket,
+        page: metadata.page,
+        has_more: has_more,
+        loading: false,
+        item_ids: new_item_ids,
+        item_id_set: updated_id_set,
+        current_items_count: current_items_count,
+        total_items: total_items,
+        total_pages: Map.get(metadata, :total_pages, socket.assigns.total_pages)
+      )
+
+    maybe_sync_missing_items(socket)
+  end
+
+  defp maybe_sync_missing_items(socket) do
+    cond do
+      socket.assigns.has_more ->
+        socket
+
+      socket.assigns.current_items_count >= socket.assigns.total_items ->
+        socket
+
+      true ->
+        sync_with_full_dataset(socket)
+    end
   end
 
   defp handle_insert(socket, item) do
@@ -334,6 +353,69 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
     Enum.reduce(items, socket, fn item, acc_socket ->
       stream_insert(acc_socket, stream_atom, item, at: -1)
     end)
+  end
+
+  defp sync_with_full_dataset(socket) do
+    %{
+      loader_mfa: {module, function, base_args},
+      filters: filters,
+      stream_atom: stream_atom,
+      item_id_set: id_set,
+      item_ids: item_ids
+    } = socket.assigns
+
+    args = base_args ++ [%{page: 1, per_page: :all, filters: filters}]
+
+    case apply(module, function, args) do
+      %{items: items} when is_list(items) ->
+        total_items = length(items)
+        per_page = socket.assigns.per_page
+        total_pages =
+          cond do
+            per_page in [nil, :all] -> 1
+            per_page > 0 -> div(total_items + per_page - 1, per_page)
+            true -> socket.assigns.total_pages
+          end
+
+        {missing_items, updated_id_set} =
+          Enum.reduce(items, {[], id_set}, fn item, {acc, set} ->
+            if MapSet.member?(set, item.id) do
+              {acc, set}
+            else
+              {[item | acc], MapSet.put(set, item.id)}
+            end
+          end)
+
+        missing_items = Enum.reverse(missing_items)
+
+        if missing_items == [] do
+          assign(socket,
+            current_items_count: MapSet.size(updated_id_set),
+            total_items: max(socket.assigns.total_items, total_items),
+            total_pages: total_pages
+          )
+        else
+          new_item_ids = item_ids ++ Enum.map(missing_items, & &1.id)
+
+          socket
+          |> stream_batch_insert(stream_atom, missing_items)
+          |> assign(
+            item_ids: new_item_ids,
+            item_id_set: updated_id_set,
+            current_items_count: MapSet.size(updated_id_set),
+            total_items: max(socket.assigns.total_items, total_items),
+            total_pages: total_pages
+          )
+        end
+
+      _ ->
+        socket
+    end
+  rescue
+    exception ->
+      IO.inspect(exception, label: "Error syncing missing items")
+      IO.inspect(__STACKTRACE__, label: "Stacktrace")
+      socket
   end
 
   defp maybe_init_stream(socket) do

@@ -30,6 +30,7 @@ import { ColorPicker } from "./hooks/color_picker.js";
 import { Copy } from "./hooks/copy.js";
 import { ToggleSidebar } from "./hooks/toggle_sidebar.js";
 import { Modal } from "./hooks/modal.js";
+import { InfiniteScroll } from "./hooks/infinite_scroll.js";
 
 const hooks = {
   Chart,
@@ -37,7 +38,8 @@ const hooks = {
   ColorPicker,
   Copy,
   ToggleSidebar,
-  Modal
+  Modal,
+  InfiniteScroll,
 }
 
 const csrfToken = document
