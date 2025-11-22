@@ -3,9 +3,13 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
 
   alias PersonalFinance.Accounts.User
   alias PersonalFinance.Finance
+  alias PersonalFinance.Finance.Category
+  alias PersonalFinance.Finance.Profile
   alias PersonalFinanceWeb.CategoryLive.CategoriesPanel
+  alias PersonalFinanceWeb.SettingsLive.ProfilesPanel
 
   @categories_panel_id "settings-categories"
+  @profiles_panel_id "settings-profiles"
 
   @impl true
   def mount(params, _session, socket) do
@@ -26,11 +30,13 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
          |> push_navigate(to: ~p"/ledgers")}
       else
         Finance.subscribe_finance(:category, ledger.id)
+        Finance.subscribe_finance(:profile, ledger.id)
 
         socket =
           socket
           |> assign(page_title: "Configurações", ledger: ledger)
           |> assign(:categories_panel_id, @categories_panel_id)
+          |> assign(:profiles_panel_id, @profiles_panel_id)
 
         {:ok, socket}
       end
@@ -63,7 +69,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
   end
 
   @impl true
-  def handle_info({:saved, category}, socket) do
+  def handle_info({:saved, %Category{} = category}, socket) do
     send_update(CategoriesPanel,
       id: socket.assigns.categories_panel_id,
       action: :saved,
@@ -74,7 +80,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
   end
 
   @impl true
-  def handle_info({:deleted, category}, socket) do
+  def handle_info({:deleted, %Category{} = category}, socket) do
     send_update(CategoriesPanel,
       id: socket.assigns.categories_panel_id,
       action: :deleted,
@@ -82,5 +88,38 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
     )
 
     {:noreply, put_flash(socket, :info, "Categoria removida com sucesso.")}
+  end
+
+  @impl true
+  def handle_info({:saved, %Profile{} = profile}, socket) do
+    send_update(ProfilesPanel,
+      id: socket.assigns.profiles_panel_id,
+      action: :profile_saved,
+      profile: profile,
+      ledger: socket.assigns.ledger,
+      current_scope: socket.assigns.current_scope,
+      parent_pid: self()
+    )
+
+    {:noreply, put_flash(socket, :info, "Perfil salvo com sucesso.")}
+  end
+
+  @impl true
+  def handle_info({:deleted, %Profile{} = profile}, socket) do
+    send_update(ProfilesPanel,
+      id: socket.assigns.profiles_panel_id,
+      action: :profile_deleted,
+      profile: profile,
+      ledger: socket.assigns.ledger,
+      current_scope: socket.assigns.current_scope,
+      parent_pid: self()
+    )
+
+    {:noreply, put_flash(socket, :info, "Perfil removido com sucesso.")}
+  end
+
+  @impl true
+  def handle_info({:put_flash, type, message}, socket) when type in [:info, :error] do
+    {:noreply, put_flash(socket, type, message)}
   end
 end

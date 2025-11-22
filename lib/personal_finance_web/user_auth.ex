@@ -208,7 +208,7 @@ defmodule PersonalFinanceWeb.UserAuth do
   Or use the `live_session` of your router to invoke the on_mount callback:
 
       live_session :authenticated, on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
-        live "/profile", ProfileLive, :index
+        live "/ledgers/:id/settings", SettingsLive.Index, :index
       end
   """
   def on_mount(:mount_current_scope, _params, session, socket) do

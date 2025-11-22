@@ -815,7 +815,7 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
-  Deletes a profile and resets transactions to default profile.
+  Deletes a profile, resets transactions to default profile and removes related recurring entries.
   """
   def delete_profile(%Scope{} = scope, %Profile{} = profile) do
     if profile.is_default do
@@ -831,15 +831,32 @@ defmodule PersonalFinance.Finance do
       )
       |> Repo.update_all(set: [profile_id: default_profile.id])
 
-      broadcast(:transaction, profile.ledger_id, :transactions_updated)
+      recurring_entries =
+        RecurringEntry
+        |> where([re], re.profile_id == ^profile.id and re.ledger_id == ^profile.ledger_id)
+        |> Repo.all()
+        |> Repo.preload(:ledger)
 
-      with {:ok, deleted_profile} <- Repo.delete(profile) do
+      with :ok <- delete_related_recurring_entries(scope, recurring_entries),
+           {:ok, deleted_profile} <- Repo.delete(profile) do
+        broadcast(:transaction, profile.ledger_id, :transactions_updated)
         broadcast(:profile, profile.ledger_id, {:deleted, deleted_profile})
         {:ok, deleted_profile}
       else
         {:error, _} = error -> error
       end
     end
+  end
+
+  defp delete_related_recurring_entries(_scope, []), do: :ok
+
+  defp delete_related_recurring_entries(scope, recurring_entries) do
+    Enum.reduce_while(recurring_entries, :ok, fn entry, _acc ->
+      case delete_recurring_entry(scope, entry) do
+        {:ok, _} -> {:cont, :ok}
+        {:error, reason} -> {:halt, {:error, reason}}
+      end
+    end)
   end
 
   @doc """
