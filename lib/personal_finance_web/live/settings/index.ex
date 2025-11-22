@@ -3,6 +3,9 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
 
   alias PersonalFinance.Accounts.User
   alias PersonalFinance.Finance
+  alias PersonalFinanceWeb.CategoryLive.CategoriesPanel
+
+  @categories_panel_id "settings-categories"
 
   @impl true
   def mount(params, _session, socket) do
@@ -22,9 +25,12 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
          |> put_flash(:error, "Página não encontrada.")
          |> push_navigate(to: ~p"/ledgers")}
       else
+        Finance.subscribe_finance(:category, ledger.id)
+
         socket =
           socket
           |> assign(page_title: "Configurações", ledger: ledger)
+          |> assign(:categories_panel_id, @categories_panel_id)
 
         {:ok, socket}
       end
@@ -54,5 +60,27 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
   @impl true
   def handle_info({:error, messsage}, socket) do
     {:noreply, socket |> put_flash(:error, messsage)}
+  end
+
+  @impl true
+  def handle_info({:saved, category}, socket) do
+    send_update(CategoriesPanel,
+      id: socket.assigns.categories_panel_id,
+      action: :saved,
+      category: category
+    )
+
+    {:noreply, put_flash(socket, :info, "Categoria salva com sucesso.")}
+  end
+
+  @impl true
+  def handle_info({:deleted, category}, socket) do
+    send_update(CategoriesPanel,
+      id: socket.assigns.categories_panel_id,
+      action: :deleted,
+      category: category
+    )
+
+    {:noreply, put_flash(socket, :info, "Categoria removida com sucesso.")}
   end
 end

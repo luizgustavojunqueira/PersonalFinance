@@ -3,20 +3,32 @@
     {@ledger.name} - Configurações
   </.header>
 
-  <div class="grid gap-6 grid-cols-1 md:grid-cols-[minmax(0,33.333%)_minmax(0,66.666%)]">
-    <.live_component
-      module={PersonalFinanceWeb.SettingsLive.InviteForm}
-      id="invite-form"
-      ledger={@ledger}
-      current_scope={@current_scope}
-      parent_pid={self()}
-    />
-    <.live_component
-      module={PersonalFinanceWeb.SettingsLive.CollaboratorsList}
-      id="collaborators-list"
-      ledger={@ledger}
-      current_scope={@current_scope}
-      parent_pid={self()}
-    />
-  </div>
+  <.live_component
+    module={PersonalFinanceWeb.Components.TabPanel}
+    id="settings-tabs"
+    tabs={[
+      %{
+        id: :access,
+        label: "Acesso",
+        icon: "hero-user-group",
+        component: PersonalFinanceWeb.SettingsLive.AccessPanel,
+        assigns: %{
+          ledger: @ledger,
+          current_scope: @current_scope,
+          parent_pid: self()
+        }
+      },
+      %{
+        id: :categories,
+        label: "Categorias",
+        icon: "hero-tag",
+        component: PersonalFinanceWeb.CategoryLive.CategoriesPanel,
+        component_id: @categories_panel_id,
+        assigns: %{
+          ledger: @ledger,
+          current_scope: @current_scope
+        }
+      }
+    ]}
+  />
 </Layouts.app>
