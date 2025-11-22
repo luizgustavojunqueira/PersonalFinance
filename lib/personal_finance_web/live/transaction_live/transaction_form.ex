@@ -1,5 +1,4 @@
 defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
-  alias PersonalFinance.Utils.DateUtils
   use PersonalFinanceWeb, :live_component
   alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Finance
