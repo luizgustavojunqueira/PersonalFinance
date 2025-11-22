@@ -22,6 +22,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
     socket =
       socket
       |> assign(assigns)
+      |> assign(:close_target, Map.get(assigns, :close_target))
       |> assign(form: to_form(changeset, as: :category))
 
     {:ok, socket}
@@ -34,7 +35,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
       <.modal
         show={@show}
         id={@id}
-        on_close={JS.push("close_modal")}
+        on_close={JS.push("close_modal", target: @close_target || @myself)}
         class="mt-2"
       >
         <:title>{if @action == :edit, do: "Editar Categoria", else: "Nova Categoria"}</:title>
