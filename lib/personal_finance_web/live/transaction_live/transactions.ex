@@ -1,221 +1,145 @@
 defmodule PersonalFinanceWeb.TransactionLive.Transactions do
   use PersonalFinanceWeb, :live_component
 
-  alias PersonalFinance.Utils.DateUtils
-  alias PersonalFinance.Utils.CurrencyUtils
+  alias PersonalFinance.Utils.{CurrencyUtils, DateUtils, ParseUtils}
   alias PersonalFinance.Finance
+  alias PersonalFinanceWeb.Components.InfiniteScroll
+
+  @default_page_size 25
 
   @impl true
   def mount(socket) do
     {:ok,
      socket
-     |> stream_configure(:transaction_collection, dom_id: &"transaction-#{&1.id}")
-     |> assign(:num_transactions, 0)
-     |> assign(:current_page, 1)
-     |> assign(:page_size, 25)
-     |> assign(:total_pages, 1)}
+     |> assign(:page_size, @default_page_size)
+     |> assign(:filter, %{})
+     |> assign(:profiles, [])
+     |> assign(:categories, [])
+     |> assign(:investment_types, [])}
   end
 
   @impl true
   def update(assigns, socket) do
-    ledger = Map.get(assigns, :ledger) || socket.assigns.ledger
-    current_scope = Map.get(assigns, :current_scope) || socket.assigns.current_scope
-    filter_params = assigns[:filter]
+    page_size = Map.get(assigns, :page_size, socket.assigns[:page_size] || @default_page_size)
 
     socket =
-      case assigns[:action] do
-        action when action in [:saved, :deleted, :update] ->
-          apply_action(socket, action, assigns, filter_params)
-
-        _ ->
-          page_data =
-            Finance.list_transactions(
-              current_scope,
-              ledger,
-              filter_params || %{},
-              socket.assigns.current_page,
-              socket.assigns.page_size
-            )
-
-          transactions = page_data.entries
-
-          socket
-          |> assign(:num_transactions, page_data.total_entries)
-          |> assign(:total_pages, page_data.total_pages)
-          |> assign(:current_page, page_data.page_number)
-          |> stream(:transaction_collection, transactions, reset: true)
-      end
-
-    {:ok, socket |> assign(assigns) |> assign(ledger: ledger, filter_params: filter_params)}
-  end
-
-  defp apply_action(socket, :saved, assigns, _) do
-    transaction = assigns.transaction
-    filter = socket.assigns.filter
-
-    if transaction_matches_filters?(transaction, filter) do
       socket
-      |> stream_insert(:transaction_collection, transaction, at: 0)
-      |> assign(:num_transactions, socket.assigns.num_transactions + 1)
-    else
-      socket
-    end
-  end
+      |> assign(:page_size, page_size)
+      |> assign_new(:filter, fn -> %{} end)
+      |> assign_new(:profiles, fn -> [] end)
+      |> assign_new(:categories, fn -> [] end)
+      |> assign_new(:investment_types, fn -> [] end)
+      |> assign(assigns)
+      |> assign(:scroll_id, build_scroll_id(assigns, socket))
 
-  defp apply_action(socket, :deleted, assigns, _) do
-    socket
-    |> stream_delete(
-      :transaction_collection,
-      assigns.transaction
-    )
-    |> assign(num_transactions: socket.assigns.num_transactions - 1)
-  end
+    socket = handle_action(assigns, socket)
 
-  defp apply_action(socket, :update, _assigns, filter_params) do
-    socket |> assign(filter_params: filter_params) |> update_transactions(1)
-  end
-
-  defp transaction_matches_filters?(transaction, filters) do
-    Enum.all?(filters, fn
-      {"category_id", id} when not is_nil(id) ->
-        transaction.category_id == String.to_integer(id)
-
-      {"profile_id", id} when not is_nil(id) ->
-        transaction.profile_id == String.to_integer(id)
-
-      {"investment_type_id", id} when not is_nil(id) ->
-        transaction.investment_type_id == String.to_integer(id)
-
-      {"type", type} when not is_nil(type) ->
-        Atom.to_string(transaction.type) == type
-
-      {"start_date", date} when not is_nil(date) ->
-        transaction.date >= Date.from_iso8601!(date)
-
-      {"end_date", date} when not is_nil(date) ->
-        transaction.date <= Date.from_iso8601!(date)
-
-      _ ->
-        true
-    end)
+    {:ok, socket}
   end
 
   @impl true
   def render(assigns) do
     ~H"""
     <div>
-      <%= if @num_transactions == 0 do %>
-        <p class="text-center text-gray-500">Nenhuma transação encontrada.</p>
-      <% else %>
-        <.table
-          id="transactions_table"
-          rows={@streams.transaction_collection}
-          col_widths={["7%", "7%", "10%", "12%", "12%", "15%", "10%", "10%", "10%"]}
-          row_item={
-            fn
-              {_id, struct} -> struct
-              struct -> struct
-            end
-          }
-        >
-          <:col
-            :let={transaction}
-            label="Tipo"
+      <.live_component
+        module={InfiniteScroll}
+        id={@scroll_id}
+        stream_name="transaction_collection"
+        loader_mfa={{__MODULE__, :fetch_transactions, [@current_scope, @ledger]}}
+        per_page={@page_size}
+        wrapper_class="flex flex-col gap-4"
+        filter_config={filter_config(assigns)}
+        initial_filters={@filter}
+        filter_change_target={@parent_pid || self()}
+        filter_change_message={:transactions_filter_changed}
+      >
+        <:content :let={transactions_stream}>
+          <.table
+            id="transactions_table"
+            rows={transactions_stream}
+            col_widths={["7%", "7%", "10%", "12%", "12%", "15%", "10%", "10%", "10%"]}
+            row_item={
+              fn
+                {_, struct} -> struct
+                struct -> struct
+              end
+            }
           >
-            <span class={"p-1 px-2 rounded-lg text-black #{if transaction.type == :income, do: "bg-green-300", else: "bg-red-300"}"}>
-              {if transaction.type == :income, do: "Receita", else: "Despesa"}
-            </span>
-          </:col>
-          <:col :let={transaction} label="Data">
-            <%= if transaction.date do %>
-              {DateUtils.to_local_time_with_date(transaction.date) |> DateUtils.format_date()}
-            <% else %>
-              Data não disponível
-            <% end %>
-          </:col>
-          <:col :let={transaction} label="Descrição">
-            <.text_ellipsis text={transaction.description} max_width="max-w-[10rem]" />
-          </:col>
-          <:col :let={transaction} label="Perfil">
-            <div
-              class="rounded-lg text-white text-center w-fit"
-              style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
-            >
+            <:col :let={transaction} label="Tipo">
+              <span class={[
+                "p-1 px-2 rounded-lg text-black",
+                if(transaction.type == :income, do: "bg-green-300", else: "bg-red-300")
+              ]}>
+                {if transaction.type == :income, do: "Receita", else: "Despesa"}
+              </span>
+            </:col>
+            <:col :let={transaction} label="Data">
+              <%= if transaction.date do %>
+                {DateUtils.to_local_time_with_date(transaction.date) |> DateUtils.format_date()}
+              <% else %>
+                Data não disponível
+              <% end %>
+            </:col>
+            <:col :let={transaction} label="Descrição">
+              <.text_ellipsis text={transaction.description} max_width="max-w-[10rem]" />
+            </:col>
+            <:col :let={transaction} label="Perfil">
+              <div
+                class="rounded-lg text-white text-center w-fit"
+                style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
+              >
+                <.text_ellipsis
+                  class="p-1 px-2"
+                  text={transaction.profile && transaction.profile.name}
+                  max_width="max-w-[10rem]"
+                />
+              </div>
+            </:col>
+            <:col :let={transaction} label="Categoria">
+              <div
+                class="rounded-lg text-white text-center w-fit"
+                style={"background-color: #{transaction.category && transaction.category.color}99;"}
+              >
+                <.text_ellipsis
+                  class="p-1 px-2"
+                  text={transaction.category && transaction.category.name}
+                  max_width="max-w-[10rem]"
+                />
+              </div>
+            </:col>
+            <:col :let={transaction} label="Tipo de Investimento">
               <.text_ellipsis
-                class="p-1 px-2 "
-                text={transaction.profile && transaction.profile.name}
+                text={if transaction.investment_type, do: transaction.investment_type.name, else: "-"}
                 max_width="max-w-[10rem]"
               />
-            </div>
-          </:col>
-          <:col :let={transaction} label="Categoria">
-            <div
-              class="rounded-lg text-white text-center w-fit"
-              style={"background-color: #{transaction.category && transaction.category.color}99;"}
-            >
-              <.text_ellipsis
-                class="p-1 px-2 "
-                text={transaction.category && transaction.category.name}
-                max_width="max-w-[10rem]"
-              />
-            </div>
-          </:col>
-          <:col :let={transaction} label="Tipo de Investimento">
-            <.text_ellipsis
-              text={
-                if(transaction.investment_type,
-                  do: transaction.investment_type.name,
-                  else: "-"
-                )
-              }
-              max_width="max-w-[10rem]"
-            />
-          </:col>
-          <:col :let={transaction} label="Quantidade">
-            {if transaction.investment_type && transaction.investment_type.name == "Cripto",
-              do: CurrencyUtils.format_amount(transaction.amount, true),
-              else: CurrencyUtils.format_amount(transaction.amount, false)}
-          </:col>
-          <:col :let={transaction} label="Valor Unitário">
-            {CurrencyUtils.format_money(transaction.value)}
-          </:col>
-          <:col :let={transaction} label="Valor Total">
-            {CurrencyUtils.format_money(transaction.total_value)}
-          </:col>
-          <:action :let={transaction}>
-            <.link phx-click="open_edit_transaction" phx-value-transaction_id={transaction.id}>
-              <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
-            </.link>
-          </:action>
-          <:action :let={transaction}>
-            <.link phx-click="delete" phx-target={@myself} phx-value-id={transaction.id}>
-              <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
-            </.link>
-          </:action>
-        </.table>
-
-        <div class="mt-4 flex justify-between items-center pt-4">
-          <.button
-            phx-click="previous_page"
-            phx-target={@myself}
-            variant="custom"
-            class={"btn-primary btn-outline #{if @current_page <= 1, do: "btn-disabled", else: ""}"}
-          >
-            Anterior
-          </.button>
-          <span>
-            Página {@current_page} de {@total_pages}
-          </span>
-          <.button
-            phx-click="next_page"
-            phx-target={@myself}
-            variant="custom"
-            class={"btn-primary btn-outline #{if @current_page >= @total_pages, do: "btn-disabled", else: ""}"}
-          >
-            Próximo
-          </.button>
-        </div>
-      <% end %>
+            </:col>
+            <:col :let={transaction} label="Quantidade">
+              {if transaction.investment_type && transaction.investment_type.name == "Cripto",
+                do: CurrencyUtils.format_amount(transaction.amount, true),
+                else: CurrencyUtils.format_amount(transaction.amount, false)}
+            </:col>
+            <:col :let={transaction} label="Valor Unitário">
+              {CurrencyUtils.format_money(transaction.value)}
+            </:col>
+            <:col :let={transaction} label="Valor Total">
+              {CurrencyUtils.format_money(transaction.total_value)}
+            </:col>
+            <:action :let={transaction}>
+              <.link phx-click="open_edit_transaction" phx-value-transaction_id={transaction.id}>
+                <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
+              </.link>
+            </:action>
+            <:action :let={transaction}>
+              <.link phx-click="delete" phx-target={@myself} phx-value-id={transaction.id}>
+                <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
+              </.link>
+            </:action>
+          </.table>
+        </:content>
+        <:empty_slot>
+          <div class="text-center py-4 text-gray-500">Nenhuma transação encontrada.</div>
+        </:empty_slot>
+      </.live_component>
     </div>
     """
   end
@@ -236,32 +160,203 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
     end
   end
 
-  @impl true
-  def handle_event("next_page", _, socket) do
-    new_page = socket.assigns.current_page + 1
-    {:noreply, update_transactions(socket, new_page)}
-  end
-
-  @impl true
-  def handle_event("previous_page", _, socket) do
-    new_page = socket.assigns.current_page - 1
-    {:noreply, update_transactions(socket, new_page)}
-  end
-
-  defp update_transactions(socket, new_page) do
-    page_data =
-      Finance.list_transactions(
-        socket.assigns.current_scope,
-        socket.assigns.ledger,
-        socket.assigns.filter_params,
-        new_page,
-        socket.assigns.page_size
-      )
+  defp handle_action(%{action: :saved, transaction: transaction}, socket) do
+    send_update(InfiniteScroll,
+      id: socket.assigns.scroll_id,
+      action: :insert_new_item,
+      item: transaction
+    )
 
     socket
-    |> assign(:current_page, page_data.page_number)
-    |> assign(:total_pages, page_data.total_pages)
-    |> assign(:num_transactions, page_data.total_entries)
-    |> stream(:transaction_collection, page_data.entries, reset: true)
+  end
+
+  defp handle_action(%{action: :deleted, transaction: transaction}, socket) do
+    send_update(InfiniteScroll,
+      id: socket.assigns.scroll_id,
+      action: :delete_item,
+      item: transaction
+    )
+
+    socket
+  end
+
+  defp handle_action(%{action: :update}, socket) do
+    send_update(InfiniteScroll, id: socket.assigns.scroll_id, action: :reset)
+    socket
+  end
+
+  defp handle_action(_, socket), do: socket
+
+  def fetch_transactions(scope, ledger, opts) do
+    filters = Map.get(opts, :filters, %{})
+    page = Map.get(opts, :page, 1)
+    per_page = Map.get(opts, :per_page, @default_page_size)
+
+    data = Finance.list_transactions(scope, ledger, filters || %{}, page, per_page)
+
+    %{
+      items: data.entries,
+      total_items: data.total_entries,
+      items_in_page: length(data.entries),
+      total_pages: data.total_pages
+    }
+  end
+
+  defp filter_config(assigns) do
+    [
+      %{
+        name: :profile_id,
+        type: "select",
+        label: "Perfil",
+        options: assigns.profiles,
+        prompt: "Selecione um perfil",
+        parser: &ParseUtils.parse_id/1,
+        to_form_value: &to_select_value/1,
+        match: fn transaction, value -> transaction.profile_id == value end
+      },
+      %{
+        name: :type,
+        type: "select",
+        label: "Tipo",
+        options: [{"Receita", :income}, {"Despesa", :expense}],
+        prompt: "Selecione um tipo",
+        parser: &parse_type/1,
+        to_form_value: &to_type_value/1,
+        match: fn transaction, value -> transaction.type == value end
+      },
+      %{
+        name: :category_id,
+        type: "select",
+        label: "Categoria",
+        options: assigns.categories,
+        prompt: "Selecione uma categoria",
+        parser: &ParseUtils.parse_id/1,
+        to_form_value: &to_select_value/1,
+        match: fn transaction, value -> transaction.category_id == value end
+      },
+      %{
+        name: :investment_type_id,
+        type: "select",
+        label: "Tipo de Investimento",
+        options: assigns.investment_types,
+        prompt: "Selecione um tipo de investimento",
+        parser: &ParseUtils.parse_id/1,
+        to_form_value: &to_select_value/1,
+        match: fn transaction, value -> transaction.investment_type_id == value end
+      },
+      %{
+        name: :start_date,
+        type: "date",
+        label: "Data Inicial",
+        parser: &parse_start_date/1,
+        to_form_value: &to_date_value/1,
+        match: fn transaction, value -> match_start_date(transaction.date, value) end
+      },
+      %{
+        name: :end_date,
+        type: "date",
+        label: "Data Final",
+        parser: &parse_end_date/1,
+        to_form_value: &to_date_value/1,
+        match: fn transaction, value -> match_end_date(transaction.date, value) end
+      }
+    ]
+  end
+
+  defp to_select_value(nil), do: nil
+  defp to_select_value(value) when is_binary(value), do: value
+  defp to_select_value(value), do: to_string(value)
+
+  defp parse_type(nil), do: nil
+  defp parse_type(""), do: nil
+  defp parse_type(value) when is_atom(value), do: value
+
+  defp parse_type(value) when is_binary(value) do
+    value
+    |> String.trim()
+    |> case do
+      "" -> nil
+      trimmed -> String.to_existing_atom(trimmed)
+    end
+  rescue
+    _ -> nil
+  end
+
+  defp parse_type(_), do: nil
+
+  defp to_type_value(nil), do: nil
+  defp to_type_value(value) when is_binary(value), do: value
+  defp to_type_value(value) when is_atom(value), do: Atom.to_string(value)
+  defp to_type_value(value), do: to_string(value)
+
+  defp parse_start_date(nil), do: nil
+  defp parse_start_date(""), do: nil
+  defp parse_start_date(%DateTime{} = datetime), do: datetime
+
+  defp parse_start_date(%Date{} = date) do
+    DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+  end
+
+  defp parse_start_date(value) when is_binary(value) do
+    case Date.from_iso8601(value) do
+      {:ok, date} -> DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+      _ -> nil
+    end
+  end
+
+  defp parse_start_date(_), do: nil
+
+  defp parse_end_date(nil), do: nil
+  defp parse_end_date(""), do: nil
+  defp parse_end_date(%DateTime{} = datetime), do: datetime
+
+  defp parse_end_date(%Date{} = date) do
+    DateTime.new!(date, ~T[23:59:59], "Etc/UTC")
+  end
+
+  defp parse_end_date(value) when is_binary(value) do
+    case Date.from_iso8601(value) do
+      {:ok, date} -> DateTime.new!(date, ~T[23:59:59], "Etc/UTC")
+      _ -> nil
+    end
+  end
+
+  defp parse_end_date(_), do: nil
+
+  defp to_date_value(nil), do: nil
+
+  defp to_date_value(%DateTime{} = datetime) do
+    datetime
+    |> DateTime.to_date()
+    |> Date.to_iso8601()
+  end
+
+  defp to_date_value(%Date{} = date), do: Date.to_iso8601(date)
+  defp to_date_value(value) when is_binary(value), do: value
+  defp to_date_value(_), do: nil
+
+  defp match_start_date(nil, _value), do: false
+
+  defp match_start_date(date, value) do
+    DateTime.compare(date, value) != :lt
+  end
+
+  defp match_end_date(nil, _value), do: false
+
+  defp match_end_date(date, value) do
+    DateTime.compare(date, value) != :gt
+  end
+
+  defp build_scroll_id(assigns, socket) do
+    base_id =
+      case {Map.get(assigns, :id), Map.get(socket.assigns, :id)} do
+        {id, _} when is_binary(id) and id != "" -> id
+        {_, id} when is_binary(id) and id != "" -> id
+        _ -> "transactions-list"
+      end
+
+    base_id
+    |> to_string()
+    |> Kernel.<>("-scroll")
   end
 end

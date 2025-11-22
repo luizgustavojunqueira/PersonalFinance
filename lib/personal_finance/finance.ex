@@ -217,13 +217,16 @@ defmodule PersonalFinance.Finance do
         do: from(t in query, where: t.type == ^type),
         else: query
 
+    start_date = normalize_start_date(filters[:start_date] || filters["start_date"])
+    end_date = normalize_end_date(filters[:end_date] || filters["end_date"])
+
     query =
-      if start_date = filters[:start_date] || filters["start_date"],
+      if start_date,
         do: from(t in query, where: t.date >= ^start_date),
         else: query
 
     query =
-      if end_date = filters[:end_date] || filters["end_date"],
+      if end_date,
         do: from(t in query, where: t.date <= ^end_date),
         else: query
 
@@ -249,9 +252,54 @@ defmodule PersonalFinance.Finance do
       page_number: page,
       page_size: page_size,
       total_entries: total_entries,
-      total_pages: total_pages
+      total_pages: total_pages,
+      items: transactions,
+      items_in_page: length(transactions),
+      total_items: total_entries
     }
   end
+
+  defp normalize_start_date(nil), do: nil
+  defp normalize_start_date(""), do: nil
+  defp normalize_start_date(%DateTime{} = datetime), do: datetime
+
+  defp normalize_start_date(%NaiveDateTime{} = naive_datetime) do
+    DateTime.from_naive!(naive_datetime, "Etc/UTC")
+  end
+
+  defp normalize_start_date(%Date{} = date) do
+    DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+  end
+
+  defp normalize_start_date(value) when is_binary(value) do
+    case Date.from_iso8601(value) do
+      {:ok, date} -> DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+      _ -> nil
+    end
+  end
+
+  defp normalize_start_date(_), do: nil
+
+  defp normalize_end_date(nil), do: nil
+  defp normalize_end_date(""), do: nil
+  defp normalize_end_date(%DateTime{} = datetime), do: datetime
+
+  defp normalize_end_date(%NaiveDateTime{} = naive_datetime) do
+    DateTime.from_naive!(naive_datetime, "Etc/UTC")
+  end
+
+  defp normalize_end_date(%Date{} = date) do
+    DateTime.new!(date, ~T[23:59:59], "Etc/UTC")
+  end
+
+  defp normalize_end_date(value) when is_binary(value) do
+    case Date.from_iso8601(value) do
+      {:ok, date} -> DateTime.new!(date, ~T[23:59:59], "Etc/UTC")
+      _ -> nil
+    end
+  end
+
+  defp normalize_end_date(_), do: nil
 
   @doc """
   Cria uma transação.
