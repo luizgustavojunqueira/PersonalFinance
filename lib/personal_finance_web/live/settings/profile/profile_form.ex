@@ -1,10 +1,14 @@
-defmodule PersonalFinanceWeb.ProfileLive.ProfileForm do
-  alias PersonalFinance.Finance.Profile
-  alias PersonalFinance.Finance
+defmodule PersonalFinanceWeb.SettingsLive.ProfileForm do
   use PersonalFinanceWeb, :live_component
+
+  alias Phoenix.LiveView.JS
+  alias PersonalFinance.Finance
+  alias PersonalFinance.Finance.Profile
 
   @impl true
   def update(assigns, socket) do
+    assigns = Map.put_new(assigns, :on_close, JS.push("close_modal"))
+
     ledger = assigns.ledger
     current_scope = assigns.current_scope
 
@@ -34,7 +38,7 @@ defmodule PersonalFinanceWeb.ProfileLive.ProfileForm do
       <.modal
         show={@show}
         id={@id}
-        on_close={JS.push("close_modal")}
+        on_close={@on_close}
         class="mt-2"
       >
         <:title>{if @action == :edit, do: "Editar Perfil", else: "Novo Perfil"}</:title>

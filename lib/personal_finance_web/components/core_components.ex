@@ -113,6 +113,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
   """
   attr :rest, :global, include: ~w(href navigate patch)
   attr :variant, :string, values: ~w(primary custom)
+  attr :size, :string, values: ~w(xs sm md lg)
   attr :class, :any, default: nil
 
   attr :disabled, :boolean,
@@ -123,12 +124,15 @@ defmodule PersonalFinanceWeb.CoreComponents do
 
   def button(%{rest: rest} = assigns) do
     variants = %{"primary" => "btn-primary", "custom" => "", nil => "btn-primary btn-soft"}
+    sizes = %{"xs" => "btn-xs", "sm" => "btn-sm", "md" => "btn-md", "lg" => "btn-lg"}
+
     internal_class = Map.fetch!(variants, assigns[:variant])
+    size_class = if assigns[:size], do: Map.fetch!(sizes, assigns[:size]), else: nil
 
     custom_class = assigns[:class]
 
     combined_class =
-      [internal_class, custom_class]
+      [internal_class, size_class, custom_class]
       |> Enum.reject(&is_nil/1)
       |> Enum.flat_map(fn c -> if is_list(c), do: c, else: String.split(c, " ") end)
       |> Enum.uniq()
@@ -705,7 +709,8 @@ defmodule PersonalFinanceWeb.CoreComponents do
   attr :rest, :global, include: ~w(id phx-hook phx-click phx-submit phx-change)
 
   slot :title
-  slot :inner_block, required: true
+  slot :content
+  slot :inner_block
   slot :actions
 
   def modal(assigns) do
@@ -742,7 +747,12 @@ defmodule PersonalFinanceWeb.CoreComponents do
             <.icon name="hero-x-mark" class="text-2xl" />
           </.button>
         </div>
-        {render_slot(@inner_block)}
+        <div :if={@content != []} class="mb-4 space-y-2">
+          {render_slot(@content)}
+        </div>
+        <div :if={@inner_block != []}>
+          {render_slot(@inner_block)}
+        </div>
         <div :if={@actions != []} class="flex justify-end gap-2 mt-4">
           {render_slot(@actions)}
         </div>
