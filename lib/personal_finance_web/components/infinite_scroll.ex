@@ -662,10 +662,10 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
       <%= if @total_items > 0 do %>
         <div class="flex justify-between items-center text-sm text-base-content/70 mb-2 px-1">
           <span>
-            Loaded {@current_items_count} of {@total_items}
+            Carregado {@current_items_count} de {@total_items}
           </span>
           <span>
-            Page {@page}/{@total_pages}
+            Página {@page}/{@total_pages}
           </span>
         </div>
       <% end %>

@@ -29,7 +29,9 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
       <div class="rounded-lg p-6 bg-base-100/50 w-full shadow-lg space-y-4">
         <div>
           <h2 class="text-2xl font-bold">Convidar</h2>
-          <p class="text-sm text-base-content/60">Escolha um usuário para colaborar neste orçamento.</p>
+          <p class="text-sm text-base-content/60">
+            Escolha um usuário para colaborar neste orçamento.
+          </p>
         </div>
 
         <.form
@@ -58,7 +60,9 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
         </.form>
 
         <%= if @available_users == [] do %>
-          <p class="text-xs text-base-content/60">Todos os usuários elegíveis já fazem parte deste orçamento.</p>
+          <p class="text-xs text-base-content/60">
+            Todos os usuários elegíveis já fazem parte deste orçamento.
+          </p>
         <% end %>
       </div>
 
@@ -124,7 +128,11 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
 
     case Finance.add_ledger_user(current_scope, ledger, user_id) do
       {:ok, user} ->
-        notify_parent(socket, {:put_flash, :info, "Colaborador #{user.email} adicionado com sucesso."})
+        notify_parent(
+          socket,
+          {:put_flash, :info, "Colaborador #{user.email} adicionado com sucesso."}
+        )
+
         {:noreply, refresh_data(socket)}
 
       {:error, %Ecto.Changeset{} = changeset} ->
