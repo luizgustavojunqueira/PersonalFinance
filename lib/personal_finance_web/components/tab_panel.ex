@@ -50,7 +50,8 @@ defmodule PersonalFinanceWeb.Components.TabPanel do
          |> assign(:tabs_loaded, tabs_loaded)}
     end
   end
-
+  
+  @impl true
   def render(assigns) do
     ~H"""
     <div id={@id} class={["flex flex-col", @wrapper_class]}>
@@ -129,7 +130,7 @@ defmodule PersonalFinanceWeb.Components.TabPanel do
           "Each tab entry must include :id (atom), :label, and :component keys"
   end
 
-  defp resolve_active_tab(assigns, socket, []), do: socket.assigns[:active_tab]
+  defp resolve_active_tab(_assigns, socket, []), do: socket.assigns[:active_tab]
 
   defp resolve_active_tab(assigns, socket, tabs) do
     candidates = [assigns[:active_tab], socket.assigns[:active_tab], assigns[:initial_tab]]

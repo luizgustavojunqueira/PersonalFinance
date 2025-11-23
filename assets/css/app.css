@@ -20,32 +20,32 @@ The heroicons installation itself is managed by your mix.exs */
     default: true;
     prefersdark: false;
     color-scheme: "light";
-    --color-base-100: oklch(98% 0.002 247.839);
-    --color-base-200: oklch(96% 0.003 264.542);
-    --color-base-300: oklch(92% 0.006 264.531);
-    --color-base-content: oklch(21% 0.034 264.665);
-    --color-primary: oklch(84% 0.238 128.85);
-    --color-primary-content: oklch(27% 0.072 132.109);
-    --color-secondary: oklch(75% 0.183 55.934);
-    --color-secondary-content: oklch(26% 0.079 36.259);
-    --color-accent: oklch(70% 0.165 254.624);
-    --color-accent-content: oklch(28% 0.091 267.935);
-    --color-neutral: oklch(13% 0.028 261.692);
-    --color-neutral-content: oklch(98% 0.002 247.839);
-    --color-info: oklch(54% 0.245 262.881);
-    --color-info-content: oklch(97% 0.014 254.604);
-    --color-success: oklch(64% 0.2 131.684);
-    --color-success-content: oklch(98% 0.031 120.757);
-    --color-warning: oklch(68% 0.162 75.834);
-    --color-warning-content: oklch(98% 0.026 102.212);
-    --color-error: oklch(59% 0.249 0.584);
-    --color-error-content: oklch(97% 0.014 343.198);
-    --radius-selector: 0rem;
+  --color-base-100: oklch(98% 0.001 106.423);
+  --color-base-200: oklch(97% 0.001 106.424);
+  --color-base-300: oklch(92% 0.003 48.717);
+  --color-base-content: oklch(21% 0.006 56.043);
+  --color-primary: oklch(69% 0.17 162.48);
+  --color-primary-content: oklch(97% 0.021 166.113);
+  --color-secondary: oklch(65% 0.241 354.308);
+  --color-secondary-content: oklch(97% 0.014 343.198);
+  --color-accent: oklch(58% 0.233 277.117);
+  --color-accent-content: oklch(96% 0.018 272.314);
+  --color-neutral: oklch(14% 0.004 49.25);
+  --color-neutral-content: oklch(98% 0.001 106.423);
+  --color-info: oklch(71% 0.143 215.221);
+  --color-info-content: oklch(98% 0.019 200.873);
+  --color-success: oklch(70% 0.14 182.503);
+  --color-success-content: oklch(98% 0.014 180.72);
+  --color-warning: oklch(70% 0.213 47.604);
+  --color-warning-content: oklch(98% 0.016 73.684);
+  --color-error: oklch(65% 0.241 354.308);
+  --color-error-content: oklch(97% 0.014 343.198);
+    --radius-selector: 0.25rem;
     --radius-field: 0.5rem;
     --radius-box: 1rem;
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
-    --border: 1px;
+    --size-selector: 0.28125rem;
+    --size-field: 0.28125rem;
+    --border: 1.5px;
     --depth: 1;
     --noise: 0;
 }
@@ -55,32 +55,32 @@ The heroicons installation itself is managed by your mix.exs */
     default: false;
     prefersdark: false;
     color-scheme: "dark";
-    --color-base-100: oklch(26% 0.051 172.552);
-    --color-base-200: oklch(37% 0.077 168.94);
-    --color-base-300: oklch(43% 0.095 166.913);
-    --color-base-content: oklch(95% 0.052 163.051);
-    --color-primary: oklch(87% 0.15 154.449);
-    --color-primary-content: oklch(26% 0.065 152.934);
-    --color-secondary: oklch(84% 0.143 164.978);
-    --color-secondary-content: oklch(26% 0.051 172.552);
-    --color-accent: oklch(82% 0.119 306.383);
-    --color-accent-content: oklch(29% 0.149 302.717);
-    --color-neutral: oklch(59% 0.145 163.225);
-    --color-neutral-content: oklch(97% 0.021 166.113);
-    --color-info: oklch(70% 0.165 254.624);
-    --color-info-content: oklch(28% 0.091 267.935);
-    --color-success: oklch(77% 0.152 181.912);
-    --color-success-content: oklch(27% 0.046 192.524);
-    --color-warning: oklch(85% 0.199 91.936);
-    --color-warning-content: oklch(28% 0.066 53.813);
-    --color-error: oklch(71% 0.194 13.428);
-    --color-error-content: oklch(27% 0.105 12.094);
-    --radius-selector: 0rem;
+  --color-base-100: oklch(14% 0 0);
+  --color-base-200: oklch(20% 0 0);
+  --color-base-300: oklch(26% 0 0);
+  --color-base-content: oklch(97% 0 0);
+  --color-primary: oklch(64% 0.222 41.116);
+  --color-primary-content: oklch(98% 0.016 73.684);
+  --color-secondary: oklch(55% 0.288 302.321);
+  --color-secondary-content: oklch(97% 0.014 308.299);
+  --color-accent: oklch(44% 0.017 285.786);
+  --color-accent-content: oklch(98% 0 0);
+  --color-neutral: oklch(37% 0 0);
+  --color-neutral-content: oklch(98% 0 0);
+  --color-info: oklch(78% 0.154 211.53);
+  --color-info-content: oklch(30% 0.056 229.695);
+  --color-success: oklch(76% 0.177 163.223);
+  --color-success-content: oklch(26% 0.051 172.552);
+  --color-warning: oklch(85% 0.199 91.936);
+  --color-warning-content: oklch(28% 0.066 53.813);
+  --color-error: oklch(70% 0.191 22.216);
+  --color-error-content: oklch(25% 0.092 26.042);
+    --radius-selector: 0.25rem;
     --radius-field: 0.5rem;
     --radius-box: 1rem;
-    --size-selector: 0.25rem;
-    --size-field: 0.25rem;
-    --border: 1px;
+    --size-selector: 0.28125rem;
+    --size-field: 0.28125rem;
+    --border: 1.5px;
     --depth: 1;
     --noise: 0;
 }
@@ -145,4 +145,140 @@ The heroicons installation itself is managed by your mix.exs */
 
 .animate-progress {
     animation: progress-bar-fill linear forwards;
+}
+
+.slider-shell {
+    position: relative;
+    width: 220px;
+}
+
+.category-slider {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 100%;
+    height: 16px;
+    border-radius: 999px;
+    background-image:
+        linear-gradient(to right, rgba(0, 0, 0, 0.18) 1px, transparent 1px),
+        linear-gradient(var(--slider-primary, #2563eb), var(--slider-primary, #2563eb)),
+        linear-gradient(var(--slider-track, #ffffff), var(--slider-track, #ffffff));
+    background-size:
+        10% 100%,
+        var(--slider-progress, 0%) 100%,
+        100% 100%;
+    background-repeat:
+        repeat-x,
+        no-repeat,
+        no-repeat;
+    box-shadow: inset 0 1px 4px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    transition: box-shadow 150ms ease;
+}
+
+.category-slider:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px color-mix(in oklab, var(--slider-primary, #2563eb) 40%, transparent);
+}
+
+.category-slider:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+}
+
+.category-slider::-webkit-slider-runnable-track {
+    height: 14px;
+    border-radius: 999px;
+    background: transparent;
+}
+
+.category-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--slider-primary, #2563eb);
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+    margin-top: -5px;
+}
+
+.category-slider::-moz-range-track {
+    height: 14px;
+    border-radius: 999px;
+    background: var(--slider-track, #ffffff);
+}
+
+.category-slider::-moz-range-progress {
+    height: 14px;
+    border-radius: 999px;
+    background: var(--slider-primary, #2563eb);
+}
+
+.category-slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    background: var(--slider-primary, #2563eb);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.category-slider::-ms-track {
+    height: 14px;
+    border-radius: 999px;
+    background: transparent;
+    border-color: transparent;
+    color: transparent;
+}
+
+.category-slider::-ms-fill-lower {
+    border-radius: 999px;
+    background: var(--slider-primary, #2563eb);
+}
+
+.category-slider::-ms-fill-upper {
+    border-radius: 999px;
+    background: var(--slider-track, #ffffff);
+}
+
+.category-slider::-ms-thumb {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 3px solid #ffffff;
+    background: var(--slider-primary, #2563eb);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+}
+
+.category-slider-tooltip {
+    position: absolute;
+    top: -42px;
+    left: 0;
+    transform: translateX(-50%);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+    background: #3f3f46;
+    color: #f8fafc;
+    font-size: 0.75rem;
+    font-weight: 600;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 120ms ease-in-out;
+    white-space: nowrap;
+}
+
+.category-slider-tooltip::after {
+    content: "";
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 6px 6px 0 6px;
+    border-style: solid;
+    border-color: #3f3f46 transparent transparent transparent;
+}
+
+.category-slider-tooltip.visible {
+    opacity: 1;
 }

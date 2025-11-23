@@ -382,7 +382,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
     ~H"""
     <header class={[
       @actions != [] && "gap-6",
-      "min-h-24 flex flex-col md:flex-row justify-between items-center m-2 mb-0",
+      "min-h-20 flex flex-col md:flex-row justify-between items-center m-2 mb-0",
       @class
     ]}>
       <div>
