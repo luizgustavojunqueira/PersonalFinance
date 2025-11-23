@@ -253,16 +253,14 @@ defmodule PersonalFinanceWeb.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <fieldset class="fieldset w-full">
-      <label>
-        <span :if={@label} class="fieldset-legend">
-          {@label}
-        </span>
+      <legend :if={@label} class="fieldset-legend">{@label}</legend>
+      <div class="flex flex-col gap-1">
         <select
           id={@id}
           name={@name}
           class={[
-            "select w-full focus:outline- :",
-            @errors != [] && "input-error"
+            "select select-bordered w-full",
+            @errors != [] && "select-error"
           ]}
           disabled={@disabled}
           multiple={@multiple}
@@ -271,8 +269,11 @@ defmodule PersonalFinanceWeb.CoreComponents do
           <option :if={@prompt} value="">{@prompt}</option>
           {Phoenix.HTML.Form.options_for_select(@options, @value)}
         </select>
-      </label>
-      <.error :for={msg <- @errors} class="label">{msg}</.error>
+        <span :if={@rest[:"data-hint"]} class="label-text-alt text-sm text-base-content/70">
+          {@rest[:"data-hint"]}
+        </span>
+      </div>
+      <.error :for={msg <- @errors} class="label text-error">{msg}</.error>
     </fieldset>
     """
   end
