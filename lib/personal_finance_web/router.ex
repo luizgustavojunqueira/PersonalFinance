@@ -76,6 +76,8 @@ defmodule PersonalFinanceWeb.Router do
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/", LedgersLive.Index, :index
       live "/ledgers", LedgersLive.Index, :index
+      live "/ledgers/new", LedgersLive.Index, :new
+      live "/ledgers/:id/edit", LedgersLive.Index, :edit
       live "/ledgers/:id/delete", LedgersLive.Index, :delete
       live "/ledgers/:id/home", HomeLive.Index, :index
       live "/ledgers/:id/home/new_user", HomeLive.Index, :new

@@ -61,7 +61,9 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-lg border border-base-200/50 backdrop-blur-sm flex-1">
           <div class="p-4 pb-2 border-b border-base-200/50">
             <div class="flex justify-between items-center">
-              <h3 class="text-lg font-bold text-gray-800 dark:text-white">Transações Recentes</h3>
+              <h3 class="text-md w-full font-bold text-gray-800 dark:text-white">
+                Transações Recentes
+              </h3>
               <.link
                 class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 flex items-center w-full justify-end hover:gap-2"
                 navigate={~p"/ledgers/#{@ledger.id}/transactions"}
@@ -185,14 +187,14 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                         :error -> "hero-x-circle"
                       end
                     }
-                    class={[
-                      "w-3 h-3",
+                    class={
+                      "w-3 h-3" <>
                       case message.type do
                         :info -> "text-blue-600 dark:text-blue-400"
                         :warning -> "text-yellow-600 dark:text-yellow-400"
                         :error -> "text-red-600 dark:text-red-400"
                       end
-                    ]}
+                    }
                   />
                 </div>
                 <span class="text-xs font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
