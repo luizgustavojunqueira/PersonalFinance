@@ -618,7 +618,7 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
             <.icon name="hero-funnel" />
             Filtros
           </summary>
-          <div class="collapse-content bg-base-200 rounded-b-lg">
+          <div class="collapse-content bg-base-100 rounded-b-lg">
             <.form
               for={@filter_form}
               phx-submit="apply_filters"
