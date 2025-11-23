@@ -14,7 +14,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
     ~H"""
     <div
       id={@id}
-      class="card bg-base-100 w-full shadow-lg hover:shadow-xl transition-all duration-200"
+      class="card bg-base-100 w-full shadow-lg hover:shadow-xl transition-all duration-300"
     >
       <div class="card-body p-4">
         <div class="relative flex items-start justify-between gap-4">
