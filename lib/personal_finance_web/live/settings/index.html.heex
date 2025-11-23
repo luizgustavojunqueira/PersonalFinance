@@ -8,17 +8,6 @@
     id="settings-tabs"
     tabs={[
       %{
-        id: :access,
-        label: "Acesso",
-        icon: "hero-user-group",
-        component: PersonalFinanceWeb.SettingsLive.AccessPanel,
-        assigns: %{
-          ledger: @ledger,
-          current_scope: @current_scope,
-          parent_pid: self()
-        }
-      },
-      %{
         id: :categories,
         label: "Categorias",
         icon: "hero-tag",
@@ -35,6 +24,17 @@
         icon: "hero-users",
         component: PersonalFinanceWeb.SettingsLive.ProfilesPanel,
         component_id: @profiles_panel_id,
+        assigns: %{
+          ledger: @ledger,
+          current_scope: @current_scope,
+          parent_pid: self()
+        }
+      },
+      %{
+        id: :access,
+        label: "Acesso",
+        icon: "hero-user-group",
+        component: PersonalFinanceWeb.SettingsLive.AccessPanel,
         assigns: %{
           ledger: @ledger,
           current_scope: @current_scope,
