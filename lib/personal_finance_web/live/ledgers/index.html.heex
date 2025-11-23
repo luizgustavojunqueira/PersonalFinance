@@ -2,16 +2,17 @@
   <.header>
     {@current_scope.user.name} - Ledgers
     <:actions>
-      <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_ledger}>
+      <.button variant="primary" patch={~p"/ledgers/new"}>
         <.icon name="hero-plus" /> Adicionar Ledger
       </.button>
     </:actions>
   </.header>
 
   <.live_component
+    :if={@open_modal in [:new_ledger, :edit_ledger]}
     module={PersonalFinanceWeb.LedgersLive.LedgerForm}
     id="ledger-form-modal"
-    show={@open_modal in [:new_ledger, :edit_ledger]}
+    show={true}
     action={if @open_modal == :new_ledger, do: :new, else: :edit}
     ledger={@ledger}
     current_scope={@current_scope}
@@ -19,8 +20,10 @@
   />
 
   <.modal
+    :if={@open_modal == :delete_ledger && @ledger}
     id="delete-ledger-modal"
-    show={@open_modal == :delete_ledger}
+    show={true}
+    on_close={JS.push("close_modal")}
   >
     <:title>
       Excluir Orçamento
