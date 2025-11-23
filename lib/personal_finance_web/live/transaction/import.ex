@@ -51,19 +51,26 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
               <label class="label">
                 <span class="label-text font-medium">Arquivo CSV</span>
               </label>
-              <div class="border-2 border-dashed border-base-300 rounded-lg p-8 text-center hover:border-primary transition-colors duration-300">
+              <label
+                for={@uploads.file.ref}
+                phx-drop-target={@uploads.file.ref}
+                class="border-2 border-dashed border-base-300 rounded-lg p-8 text-center hover:border-primary transition-colors duration-300 cursor-pointer flex flex-col items-center"
+              >
                 <.icon
                   name="hero-cloud-arrow-up"
-                  class="w-12 h-12 mx-auto mb-4 text-base-content/50"
+                  class="w-12 h-12 mb-4 text-base-content/50"
                 />
+                <p class="text-base font-medium text-base-content">
+                  Arraste e solte seu arquivo CSV
+                </p>
+                <p class="text-sm text-base-content/70 mt-1">
+                  ou clique para selecionar (máximo 5MB)
+                </p>
                 <.live_file_input
                   upload={@uploads.file}
-                  class="file-input file-input-bordered file-input-primary w-full"
+                  class="sr-only"
                 />
-                <p class="text-sm text-base-content/70 mt-2">
-                  Selecione um arquivo CSV (máximo 5MB)
-                </p>
-              </div>
+              </label>
 
               <%= for entry <- @uploads.file.entries do %>
                 <div class="mt-4">
