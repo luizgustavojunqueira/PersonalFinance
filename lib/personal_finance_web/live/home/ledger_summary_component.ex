@@ -63,7 +63,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             <div class="flex justify-between items-center">
               <h3 class="text-lg font-bold text-gray-800 dark:text-white">Transações Recentes</h3>
               <.link
-                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center w-full justify-end hover:gap-2 duration-200"
+                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 flex items-center w-full justify-end hover:gap-2"
                 navigate={~p"/ledgers/#{@ledger.id}/transactions"}
               >
                 Ver todas <.icon name="hero-arrow-right" class="w-3 h-3" />
@@ -74,18 +74,18 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="divide-y divide-base-200/30">
             <div
               :for={{id, transaction} <- @streams.recent_transactions}
-              class="flex items-center justify-between p-4 hover:bg-white/30 dark:hover:bg-black/20 transition-all duration-200 group cursor-pointer"
+              class="flex items-center justify-between p-4 hover:bg-white/30 dark:hover:bg-black/20 transition-all duration-300 group cursor-pointer"
               id={id}
             >
               <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
                   <.icon name="hero-banknotes" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
                 </div>
                 <div class="min-w-0 flex-1">
                   <.text_ellipsis
                     text={transaction.description}
                     max_width="max-w-[100px] sm:max-w-[200px] lg:max-w-[100px]"
-                    class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors"
+                    class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
                   />
                   <.text_ellipsis
                     text={transaction.profile.name}
@@ -125,7 +125,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                   type="select"
                   field={@form_chart[:chart_type]}
                   options={[{"Barras", :bars}, {"Pizza", :pie}]}
-                  class="bg-white/50 dark:bg-black/20 border-white/30 dark:border-white/10 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all"
+                  class="bg-white/50 dark:bg-black/20 border-white/30 dark:border-white/10 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all duration-300"
                 />
               </.form>
             </div>
@@ -167,7 +167,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             <div class="space-y-2">
               <div
                 :for={message <- @messages}
-                class="flex items-start gap-2 bg-white/40 dark:bg-black/20 rounded-xl p-3 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-200 border border-white/20 group"
+                class="flex items-start gap-2 bg-white/40 dark:bg-black/20 rounded-xl p-3 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-300 border border-white/20 group"
               >
                 <div class={[
                   "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
@@ -212,7 +212,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                 Renda Fixa
               </h3>
               <.link
-                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors flex items-center justify-end hover:gap-2 duration-200"
+                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 flex items-center justify-end hover:gap-2"
                 navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
               >
                 Ver todos <.icon name="hero-arrow-right" class="w-3 h-3" />

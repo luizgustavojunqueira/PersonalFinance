@@ -178,7 +178,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
               options={[{"Receita", :income}, {"Despesa", :expense}]}
             />
           </div>
-          <div class="flex flex-row gap-2 transition-all">
+          <div class="flex flex-row gap-2 transition-all duration-300">
             <.input
               field={@form[:category_id]}
               id="input-category"

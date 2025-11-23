@@ -51,7 +51,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
               <label class="label">
                 <span class="label-text font-medium">Arquivo CSV</span>
               </label>
-              <div class="border-2 border-dashed border-base-300 rounded-lg p-8 text-center hover:border-primary transition-colors">
+              <div class="border-2 border-dashed border-base-300 rounded-lg p-8 text-center hover:border-primary transition-colors duration-300">
                 <.icon
                   name="hero-cloud-arrow-up"
                   class="w-12 h-12 mx-auto mb-4 text-base-content/50"

@@ -533,13 +533,13 @@ defmodule PersonalFinanceWeb.CoreComponents do
     assigns = assign(assigns, col_widths: assigns[:col_widths] || [])
 
     ~H"""
-    <div class="relative w-full overflow-x-auto shadow-sm rounded-xl">
-      <table class="w-full p-2">
-        <thead class="bg-base-100">
+    <div class="relative w-full overflow-x-auto shadow-sm rounded-xl transition-colors duration-300">
+      <table class="w-full p-2 transition-colors duration-300">
+        <thead class="bg-base-100 transition-colors duration-300">
           <tr class="text-left">
             <th
               :for={{col, idx} <- Enum.with_index(@col)}
-              class="p-2"
+              class="p-2 transition-colors duration-300"
               style={
                 if Enum.at(@col_widths, idx), do: "width: #{Enum.at(@col_widths, idx)}", else: ""
               }
@@ -562,11 +562,11 @@ defmodule PersonalFinanceWeb.CoreComponents do
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
             phx-click={@row_click && @row_click.(row)}
-            class={"transition-colors border-b-1 last:border-none bg-base-300 #{if @row_click, do: "hover:bg-base-300/50 hover:cursor-pointer"}"}
+            class={"transition-colors duration-300 border-b-1 last:border-none bg-base-300 #{if @row_click, do: "hover:bg-base-300/50 hover:cursor-pointer"}"}
           >
             <td
               :for={{col, idx} <- Enum.with_index(@col)}
-              class="p-4 px-2"
+              class="p-4 px-2 transition-colors duration-300"
               style={
                 if Enum.at(@col_widths, idx), do: "width: #{Enum.at(@col_widths, idx)}", else: ""
               }
