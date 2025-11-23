@@ -1,0 +1,77 @@
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
+msgid ""
+msgstr ""
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n>1);\n"
+
+#: lib/personal_finance_web/components/layouts.ex:63
+#, elixir-autogen, elixir-format
+msgid "Attempting to reconnect"
+msgstr "Tentando reconectar"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:117
+#, elixir-autogen, elixir-format
+msgid "Create First Ledger"
+msgstr "Criar Primeiro Ledger"
+
+#: lib/personal_finance_web/components/layouts.ex:75
+#, elixir-autogen, elixir-format
+msgid "Hang in there while we get back on track"
+msgstr "Aguarde enquanto voltamos aos trilhos"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Hello, %{name}! 👋"
+msgstr "Olá, %{name}! 👋"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "Manage your ledgers and track your finances"
+msgstr "Gerencie seus ledgers e acompanhe suas finanças"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "My Ledgers"
+msgstr "Meus Ledgers"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:16
+#, elixir-autogen, elixir-format
+msgid "New Ledger"
+msgstr "Novo Ledger"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:110
+#, elixir-autogen, elixir-format
+msgid "No ledgers found"
+msgstr "Nenhum ledger encontrado"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:86
+#, elixir-autogen, elixir-format
+msgid "Shared Ledgers"
+msgstr "Ledgers Compartilhados"
+
+#: lib/personal_finance_web/components/layouts.ex:70
+#, elixir-autogen, elixir-format
+msgid "Something went wrong!"
+msgstr "Algo deu errado!"
+
+#: lib/personal_finance_web/live/ledgers/index.html.heex:113
+#, elixir-autogen, elixir-format
+msgid "Start by creating your first ledger to manage your finances"
+msgstr "Comece criando seu primeiro ledger para gerenciar suas finanças"
+
+#: lib/personal_finance_web/components/layouts.ex:58
+#, elixir-autogen, elixir-format
+msgid "We can't find the internet"
+msgstr "Não conseguimos encontrar a internet"
+
+#: lib/personal_finance_web/components/core_components.ex:81
+#, elixir-autogen, elixir-format
+msgid "close"
+msgstr "fechar"

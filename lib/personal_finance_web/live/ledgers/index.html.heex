@@ -4,16 +4,16 @@
       <div class="flex items-center justify-between">
         <div>
           <h1 class="text-2xl font-bold text-base-content mb-1">
-            Olá, {@current_scope.user.name}! 👋
+            <%= gettext("Hello, %{name}! 👋", name: @current_scope.user.name) %>
           </h1>
           <p class="text-base-content/70 text-sm">
-            Gerencie seus ledgers e acompanhe suas finanças
+            <%= gettext("Manage your ledgers and track your finances") %>
           </p>
         </div>
         <%= if @has_any_ledgers do %>
           <.button variant="primary" patch={~p"/ledgers/new"} class="gap-2">
             <.icon name="hero-plus" class="w-4 h-4" />
-            Novo Ledger
+            <%= gettext("New Ledger") %>
           </.button>
         <% end %>
       </div>
@@ -58,7 +58,7 @@
               <.icon name="hero-briefcase" class="w-6 h-6 text-primary" />
             </div>
             <h2 class="text-2xl font-semibold text-base-content">
-              Meus Ledgers
+              <%= gettext("My Ledgers") %>
             </h2>
           </div>
           <div id="my-ledgers" phx-update="stream" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -83,7 +83,7 @@
               <.icon name="hero-users" class="w-6 h-6 text-secondary" />
             </div>
             <h2 class="text-2xl font-semibold text-base-content">
-              Ledgers Compartilhados
+              <%= gettext("Shared Ledgers") %>
             </h2>
           </div>
           <div id="shared-ledgers" phx-update="stream" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -107,14 +107,14 @@
             <.icon name="hero-book-open" class="w-12 h-12 text-base-content/40" />
           </div>
           <h3 class="text-2xl font-semibold text-base-content mb-2">
-            Nenhum ledger encontrado
+            <%= gettext("No ledgers found") %>
           </h3>
           <p class="text-base-content/60 mb-6">
-            Comece criando seu primeiro ledger para gerenciar suas finanças
+            <%= gettext("Start by creating your first ledger to manage your finances") %>
           </p>
           <.button variant="primary" patch={~p"/ledgers/new"} class="btn-lg gap-2">
             <.icon name="hero-plus" class="w-5 h-5" />
-            Criar Primeiro Ledger
+            <%= gettext("Create First Ledger") %>
           </.button>
         </div>
       <% end %>

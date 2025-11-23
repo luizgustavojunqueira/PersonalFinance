@@ -46,9 +46,16 @@ const hooks = {
 const csrfToken = document
   .querySelector("meta[name='csrf-token']")
   .getAttribute("content");
+
+// Get locale from session storage or default to "en"
+const locale = sessionStorage.getItem("locale") || "en";
+
 const liveSocket = new LiveSocket("/live", Socket, {
   longPollFallbackMs: 2500,
-  params: { _csrf_token: csrfToken },
+  params: { 
+    _csrf_token: csrfToken,
+    locale: locale
+  },
   hooks: hooks,
 });
 
@@ -68,6 +75,17 @@ liveSocket.connect();
 // >> liveSocket.enableLatencySim(1000)  // enabled for duration of browser session
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket;
+
+
+window.addEventListener("phx:set-locale", (event) => {
+  const newLocale = event.detail.locale;
+  const currentLocale = sessionStorage.getItem("locale") || "en";
+  
+  if (newLocale !== currentLocale) {
+    sessionStorage.setItem("locale", newLocale);
+    window.location.reload();
+  }
+});
 
 // The lines below enable quality of life phoenix_live_reload
 // development features:
