@@ -1,3 +1,5 @@
+
+import * as echarts from "../../vendor/echarts.min.js";
 export const Chart = {
 
   mounted() {

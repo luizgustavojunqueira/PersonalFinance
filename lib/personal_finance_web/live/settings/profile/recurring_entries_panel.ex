@@ -186,7 +186,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
         <div class="flex items-center mt-2">
           <.button variant="primary" size="sm" phx-click="open_modal" phx-target={@myself}>
             <.icon name="hero-plus" class="w-4 h-4 mr-1" />
-            Nova recorrente
+            Nova transação recorrente
           </.button>
         </div>
 

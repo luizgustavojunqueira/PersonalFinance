@@ -22,7 +22,6 @@ import "phoenix_html";
 // Establish Phoenix Socket and LiveView configuration.
 import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
-import * as echarts from "../vendor/echarts.min.js";
 import topbar from "../vendor/topbar";
 import { Chart } from "./hooks/chart.js";
 import { FlashAutoClose } from "./hooks/flash.js";
@@ -31,6 +30,7 @@ import { Copy } from "./hooks/copy.js";
 import { ToggleSidebar } from "./hooks/toggle_sidebar.js";
 import { Modal } from "./hooks/modal.js";
 import { InfiniteScroll } from "./hooks/infinite_scroll.js";
+import { RangeField } from "./hooks/range_field.js";
 
 const hooks = {
   Chart,
@@ -40,6 +40,7 @@ const hooks = {
   ToggleSidebar,
   Modal,
   InfiniteScroll,
+  RangeField,
 }
 
 const csrfToken = document
