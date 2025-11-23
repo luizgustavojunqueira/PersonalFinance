@@ -39,6 +39,12 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
   end
 
   @impl true
+  def handle_event("change_locale", %{"locale" => locale}, socket) do
+    Gettext.put_locale(PersonalFinanceWeb.Gettext, locale)
+    {:noreply, socket}
+  end
+
+  @impl true
   def handle_event("delete", %{"id" => id}, socket) do
     current_scope = socket.assigns.current_scope
 

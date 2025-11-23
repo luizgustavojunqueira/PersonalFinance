@@ -104,6 +104,50 @@ defmodule PersonalFinanceWeb.Layouts do
     """
   end
 
+  @doc """
+  Provides locale/language selector.
+  """
+  def locale_selector(assigns) do
+    current_locale = Gettext.get_locale(PersonalFinanceWeb.Gettext)
+    current_flag = if current_locale == "pt_BR", do: "🇧🇷", else: "🇺🇸"
+    assigns = assign(assigns, :current_locale, current_locale)
+    assigns = assign(assigns, :current_flag, current_flag)
+
+    ~H"""
+    <div class="dropdown dropdown-end">
+      <label tabindex="0" class="btn btn-ghost btn-circle">
+        <span class="text-2xl"><%= @current_flag %></span>
+      </label>
+      <ul tabindex="0" class="dropdown-content menu w-44 rounded-box bg-base-100 shadow-xl border border-base-300 p-2 z-50 mt-2">
+        <li>
+          <a
+            href="#"
+            phx-click={JS.dispatch("phx:set-locale", detail: %{locale: "en"})}
+            class={"flex items-center gap-2 justify-between #{if @current_locale == "en", do: "active"}"}
+          >
+            <span>🇺🇸 English</span>
+            <%= if @current_locale == "en" do %>
+              <.icon name="hero-check" class="size-4" />
+            <% end %>
+          </a>
+        </li>
+        <li>
+          <a
+            href="#"
+            phx-click={JS.dispatch("phx:set-locale", detail: %{locale: "pt_BR"})}
+            class={"flex items-center gap-2 justify-between #{if @current_locale == "pt_BR", do: "active"}"}
+          >
+            <span>🇧🇷 Português</span>
+            <%= if @current_locale == "pt_BR" do %>
+              <.icon name="hero-check" class="size-4" />
+            <% end %>
+          </a>
+        </li>
+      </ul>
+    </div>
+    """
+  end
+
   def navigation_sidebar(assigns) do
     ~H"""
     <div
@@ -184,6 +228,7 @@ defmodule PersonalFinanceWeb.Layouts do
         </button>
       </div>
       <div class="navbar-end gap-4">
+        <Layouts.locale_selector />
         <Layouts.theme_toggle />
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">

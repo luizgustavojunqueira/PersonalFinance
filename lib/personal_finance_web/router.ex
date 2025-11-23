@@ -59,7 +59,10 @@ defmodule PersonalFinanceWeb.Router do
     ]
 
     live_session :require_admin,
-      on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
+      on_mount: [
+        {PersonalFinanceWeb.LocaleHook, :default},
+        {PersonalFinanceWeb.UserAuth, :require_authenticated}
+      ] do
       live "/users", AdminLive.Users, :index
       live "/users/new", AdminLive.Users, :new
       live "/users/:id/edit", AdminLive.Users, :edit
@@ -71,7 +74,10 @@ defmodule PersonalFinanceWeb.Router do
     pipe_through [:browser, :redirect_if_setup_required, :require_authenticated_user]
 
     live_session :require_authenticated_user,
-      on_mount: [{PersonalFinanceWeb.UserAuth, :require_authenticated}] do
+      on_mount: [
+        {PersonalFinanceWeb.LocaleHook, :default},
+        {PersonalFinanceWeb.UserAuth, :require_authenticated}
+      ] do
       live "/users/settings", UserLive.Settings, :edit
       live "/users/settings/confirm-email/:token", UserLive.Settings, :confirm_email
       live "/", LedgersLive.Index, :index
