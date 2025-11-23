@@ -1,52 +1,123 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={nil}>
-  <.header>
-    {@current_scope.user.name} - Ledgers
-    <:actions>
-      <.button variant="primary" patch={~p"/ledgers/new"}>
-        <.icon name="hero-plus" /> Adicionar Ledger
-      </.button>
-    </:actions>
-  </.header>
+  <div class="min-h-screen pb-12">
+    <div class="bg-gradient-to-br from-primary/10 via-secondary/5 to-accent/10 rounded-xl p-6 mb-6 shadow-sm">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-2xl font-bold text-base-content mb-1">
+            Olá, {@current_scope.user.name}! 👋
+          </h1>
+          <p class="text-base-content/70 text-sm">
+            Gerencie seus ledgers e acompanhe suas finanças
+          </p>
+        </div>
+        <%= if @has_any_ledgers do %>
+          <.button variant="primary" patch={~p"/ledgers/new"} class="gap-2">
+            <.icon name="hero-plus" class="w-4 h-4" />
+            Novo Ledger
+          </.button>
+        <% end %>
+      </div>
+    </div>
 
-  <.live_component
-    :if={@open_modal in [:new_ledger, :edit_ledger]}
-    module={PersonalFinanceWeb.LedgersLive.LedgerForm}
-    id="ledger-form-modal"
-    show={true}
-    action={if @open_modal == :new_ledger, do: :new, else: :edit}
-    ledger={@ledger}
-    current_scope={@current_scope}
-    parent_pid={self()}
-  />
-
-  <.modal
-    :if={@open_modal == :delete_ledger && @ledger}
-    id="delete-ledger-modal"
-    show={true}
-    on_close={JS.push("close_modal")}
-  >
-    <:title>
-      Excluir Orçamento
-    </:title>
-    Tem certeza de que deseja excluir o orçamento "{@ledger.name}"?
-    <:actions>
-      <.button variant="primary" phx-click="delete" phx-value-id={@ledger.id}>
-        Excluir
-      </.button>
-      <.button phx-click="close_modal">
-        Cancelar
-      </.button>
-    </:actions>
-  </.modal>
-
-  <div id="ledgers" phx-update="stream" class="flex flex-row flex-wrap p-2 gap-5">
     <.live_component
-      :for={{id, ledger} <- @streams.ledger_collection}
-      module={PersonalFinanceWeb.LedgersLive.LedgerCardItem}
-      id={id}
-      ledger={ledger}
+      :if={@open_modal in [:new_ledger, :edit_ledger]}
+      module={PersonalFinanceWeb.LedgersLive.LedgerForm}
+      id="ledger-form-modal"
+      show={true}
+      action={if @open_modal == :new_ledger, do: :new, else: :edit}
+      ledger={@ledger}
       current_scope={@current_scope}
       parent_pid={self()}
     />
+
+    <.modal
+      :if={@open_modal == :delete_ledger && @ledger}
+      id="delete-ledger-modal"
+      show={true}
+      on_close={JS.push("close_modal")}
+    >
+      <:title>
+        Excluir Ledger
+      </:title>
+      Tem certeza de que deseja excluir o ledger "{@ledger.name}"?
+      <:actions>
+        <.button variant="primary" phx-click="delete" phx-value-id={@ledger.id}>
+          Excluir
+        </.button>
+        <.button phx-click="close_modal">
+          Cancelar
+        </.button>
+      </:actions>
+    </.modal>
+
+    <div class="space-y-8">
+      <%= if @has_own_ledgers do %>
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="p-2 bg-primary/10 rounded-lg">
+              <.icon name="hero-briefcase" class="w-6 h-6 text-primary" />
+            </div>
+            <h2 class="text-2xl font-semibold text-base-content">
+              Meus Ledgers
+            </h2>
+          </div>
+          <div id="my-ledgers" phx-update="stream" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <.live_component
+              :for={{id, ledger} <- @streams.ledger_collection}
+              :if={ledger.owner.id == @current_scope.user.id}
+              module={PersonalFinanceWeb.LedgersLive.LedgerCardItem}
+              id={id}
+              ledger={ledger}
+              current_scope={@current_scope}
+              parent_pid={self()}
+              is_owner={true}
+            />
+          </div>
+        </div>
+      <% end %>
+
+      <%= if @has_shared_ledgers do %>
+        <div>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="p-2 bg-secondary/10 rounded-lg">
+              <.icon name="hero-users" class="w-6 h-6 text-secondary" />
+            </div>
+            <h2 class="text-2xl font-semibold text-base-content">
+              Ledgers Compartilhados
+            </h2>
+          </div>
+          <div id="shared-ledgers" phx-update="stream" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <.live_component
+              :for={{id, ledger} <- @streams.ledger_collection}
+              :if={ledger.owner.id != @current_scope.user.id}
+              module={PersonalFinanceWeb.LedgersLive.LedgerCardItem}
+              id={id}
+              ledger={ledger}
+              current_scope={@current_scope}
+              parent_pid={self()}
+              is_owner={false}
+            />
+          </div>
+        </div>
+      <% end %>
+
+      <%= if not @has_any_ledgers do %>
+        <div class="text-center py-20">
+          <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-base-200 mb-6">
+            <.icon name="hero-book-open" class="w-12 h-12 text-base-content/40" />
+          </div>
+          <h3 class="text-2xl font-semibold text-base-content mb-2">
+            Nenhum ledger encontrado
+          </h3>
+          <p class="text-base-content/60 mb-6">
+            Comece criando seu primeiro ledger para gerenciar suas finanças
+          </p>
+          <.button variant="primary" patch={~p"/ledgers/new"} class="btn-lg gap-2">
+            <.icon name="hero-plus" class="w-5 h-5" />
+            Criar Primeiro Ledger
+          </.button>
+        </div>
+      <% end %>
+    </div>
   </div>
 </Layouts.app>

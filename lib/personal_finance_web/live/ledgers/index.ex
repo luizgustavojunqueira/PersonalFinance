@@ -1,19 +1,25 @@
 defmodule PersonalFinanceWeb.LedgersLive.Index do
   alias PersonalFinance.Finance
   alias PersonalFinance.Finance.Ledger
+  alias PersonalFinance.Balance
   use PersonalFinanceWeb, :live_view
 
   @impl true
   def mount(_params, _session, socket) do
     current_scope = socket.assigns.current_scope
+    ledgers = Finance.list_ledgers(current_scope)
+    ledgers_with_stats = Enum.map(ledgers, &enrich_ledger_with_stats(&1, current_scope))
 
     socket =
       socket
-      |> stream(:ledger_collection, Finance.list_ledgers(current_scope))
+      |> stream(:ledger_collection, ledgers_with_stats)
       |> assign(
         page_title: "Ledgers",
         ledger: nil,
-        open_modal: nil
+        open_modal: nil,
+        has_own_ledgers: Enum.any?(ledgers, fn l -> l.owner.id == current_scope.user.id end),
+        has_shared_ledgers: Enum.any?(ledgers, fn l -> l.owner.id != current_scope.user.id end),
+        has_any_ledgers: not Enum.empty?(ledgers)
       )
 
     {:ok, socket}
@@ -38,11 +44,18 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
 
     with %Ledger{} = ledger <- Finance.get_ledger(current_scope, id),
          {:ok, _deleted} <- Finance.delete_ledger(current_scope, ledger) do
+      ledgers = Finance.list_ledgers(current_scope)
+
       {:noreply,
        socket
        |> assign(ledger: nil, open_modal: nil)
        |> put_flash(:info, "Ledger excluído com sucesso.")
        |> stream_delete(:ledger_collection, ledger)
+       |> assign(
+         has_own_ledgers: Enum.any?(ledgers, fn l -> l.owner.id == current_scope.user.id end),
+         has_shared_ledgers: Enum.any?(ledgers, fn l -> l.owner.id != current_scope.user.id end),
+         has_any_ledgers: not Enum.empty?(ledgers)
+       )
        |> push_patch(to: ~p"/ledgers")}
     else
       nil ->
@@ -63,11 +76,20 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
 
   @impl true
   def handle_info({:saved, ledger}, socket) do
+    current_scope = socket.assigns.current_scope
+    ledgers = Finance.list_ledgers(current_scope)
+
     {:noreply,
      socket
      |> put_flash(:info, "Ledger salvo com sucesso.")
-      |> stream_insert(:ledger_collection, ledger, at: 0, replace: true)
-      |> assign(open_modal: nil, ledger: nil)
+     |> stream_insert(:ledger_collection, ledger, at: 0, replace: true)
+     |> assign(
+       open_modal: nil,
+       ledger: nil,
+       has_own_ledgers: Enum.any?(ledgers, fn l -> l.owner.id == current_scope.user.id end),
+       has_shared_ledgers: Enum.any?(ledgers, fn l -> l.owner.id != current_scope.user.id end),
+       has_any_ledgers: not Enum.empty?(ledgers)
+     )
      |> push_patch(to: ~p"/ledgers")}
   end
 
@@ -102,4 +124,19 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
 
   defp page_title(:edit, ledger), do: "Editar Ledger - #{ledger.name}"
   defp page_title(:delete, ledger), do: "Excluir Ledger - #{ledger.name}"
+
+  defp enrich_ledger_with_stats(ledger, current_scope) do
+    balance = Balance.get_balance(current_scope, ledger.id, :all, nil)
+    month_balance = Balance.get_balance(current_scope, ledger.id, :monthly, nil)
+
+    transaction_count = Finance.count_transactions(current_scope, ledger.id)
+
+    Map.merge(ledger, %{
+      stats: %{
+        balance: balance.balance,
+        month_balance: month_balance.balance,
+        transaction_count: transaction_count
+      }
+    })
+  end
 end

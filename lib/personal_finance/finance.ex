@@ -278,6 +278,17 @@ defmodule PersonalFinance.Finance do
     end
   end
 
+  @doc """
+  Retorna o número total de transações de um ledger.
+  """
+  def count_transactions(%Scope{} = _scope, ledger_id) do
+    from(t in Transaction,
+      where: t.ledger_id == ^ledger_id,
+      select: count(t.id)
+    )
+    |> Repo.one()
+  end
+
   defp normalize_start_date(_), do: nil
 
   defp normalize_end_date(nil), do: nil
