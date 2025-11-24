@@ -14,119 +14,131 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
     ~H"""
     <div
       id={@id}
-      class="card bg-base-100 w-full shadow-lg hover:shadow-xl transition-all duration-300"
+      class="rounded-2xl border border-base-300 bg-base-100/90 p-5 shadow-sm transition hover:shadow-md hover:border-primary/40"
     >
-      <div class="card-body p-4">
-        <div class="relative flex items-start justify-between gap-4">
-          <div>
-            <h3 class="card-title text-lg font-semibold">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-primary/70">
+              {@fixed_income.institution}
+            </p>
+            <h3 class="text-xl font-semibold text-base-content">
               {@fixed_income.name}
-              <%= if not @fixed_income.is_active do %>
-                - <%= gettext("Inactive") %>
-              <% end %>
             </h3>
-            <p class="text-sm text-gray-500">{@fixed_income.institution}</p>
           </div>
-          <div class="flex items-center gap-2">
-            <div
-              class="rounded-lg text-white text-center w-fit px-2 py-1"
-              style={"background-color: #{@fixed_income.profile && @fixed_income.profile.color}99;"}
+
+          <div class="flex flex-wrap items-center gap-2">
+            <span
+              class={"px-3 py-1 rounded-full text-xs font-semibold #{if @fixed_income.is_active, do: "bg-success/10 text-success", else: "bg-error/10 text-error"}"}
             >
-              <.text_ellipsis
-                class="text-xs"
-                text={@fixed_income.profile && @fixed_income.profile.name}
-                max_width="max-w-[10rem]"
-              />
-            </div>
+              <%= if @fixed_income.is_active, do: gettext("Active"), else: gettext("Inactive") %>
+            </span>
+            <%= if profile = @fixed_income.profile do %>
+              <span
+                class="inline-flex items-center gap-2 rounded-full border border-base-300 px-3 py-1 text-xs"
+              >
+                <span class="h-2.5 w-2.5 rounded-full" style={"background-color: #{profile.color};"}></span>
+                <.text_ellipsis text={profile.name} max_width="max-w-[8rem]" />
+              </span>
+            <% end %>
           </div>
         </div>
 
-        <div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
-          <div>
-            <span class="text-gray-600/70 font-medium"><%= gettext("Type") %></span>
-            <div class="font-medium">
+        <div class="grid grid-cols-2 gap-3 text-sm">
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Type")}</p>
+            <div class="font-semibold text-base-content">
               <% type = @fixed_income.type |> Atom.to_string() |> String.upcase() %>
               <% base = @fixed_income.remuneration_basis |> Atom.to_string() |> String.upcase() %>
               {type} {if base != "", do: "(" <> base <> ")", else: ""}
             </div>
           </div>
-
-          <div>
-            <span class="text-gray-600/70 font-medium"><%= gettext("Remuneration") %></span>
-            <div class="font-medium">
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Remuneration")}</p>
+            <div class="font-semibold text-base-content">
               {CurrencyUtils.format_rate(@fixed_income.remuneration_rate)}
             </div>
           </div>
-
-          <div>
-            <span class="text-gray-600/70 font-medium"><%= gettext("Yield") %></span>
-            <div class="font-medium">
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Yield")}</p>
+            <div class="font-semibold text-base-content">
               {format_frequency(@fixed_income.yield_frequency)}
             </div>
           </div>
-
-          <div>
-            <span class="text-gray-600/70 font-medium"><%= gettext("Start") %></span>
-            <div class="font-medium">{DateUtils.format_date(@fixed_income.start_date)}</div>
-          </div>
-
-          <div class="col-span-2 mt-2">
-            <div class="grid grid-cols-2 gap-x-4 gap-y-1">
-              <div>
-                <span class="text-gray-600/70 font-medium"><%= gettext("Initial investment") %></span>
-                <div class="font-medium text-sm">
-                  {CurrencyUtils.format_money(@fixed_income.initial_investment)}
-                </div>
-              </div>
-
-              <div>
-                <span class="text-gray-600/70 font-medium"><%= gettext("Current balance") %></span>
-                <div class="font-semibold text-sm">
-                  {CurrencyUtils.format_money(@fixed_income.current_balance)}
-                </div>
-              </div>
-            </div>
-
-            <div class="mt-2 text-xs text-gray-600">
-              <% total_yield = @fixed_income.total_yield || Decimal.new("0.00") %>
-              <% total_tax_deducted = @fixed_income.total_tax_deducted || Decimal.new("0.00") %>
-              <% net_yield = Decimal.sub(total_yield, total_tax_deducted) %>
-
-              <div>
-                <%= gettext("Gross yield") %>:
-                <span class={"font-medium #{if total_yield >= 0, do: "text-green-600", else: "text-red-600"} "}>
-                  {CurrencyUtils.format_money(Decimal.to_float(total_yield))}
-                </span>
-              </div>
-              <div>
-                <%= gettext("Tax deducted") %>:
-                <span class="font-medium text-red-600">
-                  {CurrencyUtils.format_money(Decimal.to_float(total_tax_deducted))}
-                </span>
-              </div>
-              <div>
-                <%= gettext("Net yield") %>:
-                <span class={"font-medium #{if net_yield >= 0, do: "text-green-600", else: "text-red-600"} "}>
-                  {CurrencyUtils.format_money(Decimal.to_float(net_yield))}
-                </span>
-              </div>
-              <%= if total_yield == 0 and total_tax_deducted == 0 do %>
-                <div class="text-gray-400"><%= gettext("No apparent yield yet") %></div>
-              <% end %>
+          <div class="space-y-1">
+            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Start")}</p>
+            <div class="font-semibold text-base-content">
+              {DateUtils.format_date(@fixed_income.start_date)}
             </div>
           </div>
         </div>
 
-        <div class="mt-4 flex justify-end gap-2">
+        <div class="rounded-xl bg-base-200/70 p-4 text-sm">
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Initial investment")}</p>
+              <p class="font-semibold">
+                {CurrencyUtils.format_money(@fixed_income.initial_investment)}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Current balance")}</p>
+              <p class="font-semibold">
+                {CurrencyUtils.format_money(@fixed_income.current_balance)}
+              </p>
+            </div>
+          </div>
+
+          <% total_yield = @fixed_income.total_yield || Decimal.new("0.00") %>
+          <% total_tax_deducted = @fixed_income.total_tax_deducted || Decimal.new("0.00") %>
+          <% net_yield = Decimal.sub(total_yield, total_tax_deducted) %>
+
+          <div class="mt-4 grid gap-2 text-xs sm:grid-cols-3">
+            <div>
+              <p class="text-base-content/50">{gettext("Gross yield")}</p>
+              <p class={[
+                "font-semibold",
+                total_yield >= 0 && "text-success",
+                total_yield < 0 && "text-error"
+              ]}>
+                {CurrencyUtils.format_money(Decimal.to_float(total_yield))}
+              </p>
+            </div>
+            <div>
+              <p class="text-base-content/50">{gettext("Tax deducted")}</p>
+              <p class="font-semibold text-error">
+                {CurrencyUtils.format_money(Decimal.to_float(total_tax_deducted))}
+              </p>
+            </div>
+            <div>
+              <p class="text-base-content/50">{gettext("Net yield")}</p>
+              <p class={[
+                "font-semibold",
+                net_yield >= 0 && "text-success",
+                net_yield < 0 && "text-error"
+              ]}>
+                {CurrencyUtils.format_money(Decimal.to_float(net_yield))}
+              </p>
+            </div>
+          </div>
+          <%= if total_yield == 0 and total_tax_deducted == 0 do %>
+            <p class="mt-2 text-xs text-base-content/50">
+              {gettext("No apparent yield yet")}
+            </p>
+          <% end %>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 pt-2">
           <.link
-            class="btn btn-secondary text-sm px-4 py-2"
+            class="text-sm font-medium text-primary hover:underline"
             navigate={~p"/ledgers/#{@ledger.id}/fixed_income/#{@fixed_income.id}"}
           >
-            <%= gettext("View") %>
+            <%= gettext("View details") %>
           </.link>
           <.button
             variant="primary"
-            class="text-sm px-4 py-2"
+            size="sm"
+            class="px-4"
             phx-click="open_edit_modal"
             phx-value-id={@fixed_income.id}
             disabled={@fixed_income.is_active == false}

@@ -183,11 +183,13 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
         </:actions>
       </.modal>
 
-      <section class="bg-base-100/80 border border-base-300 rounded-2xl shadow-sm">
+
         <%= if Enum.empty?(@categories) do %>
+        <section class="bg-base-100/80 border border-base-300 rounded-2xl shadow-sm">
           <div class="p-8 text-center text-sm text-base-content/70">
             {gettext("You have not created any categories yet. Start by adding one above.")}
           </div>
+          </section>
         <% else %>
           <div class="overflow-x-auto p-2">
             <.table
@@ -280,7 +282,6 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
             </.table>
           </div>
         <% end %>
-      </section>
     </div>
     """
   end

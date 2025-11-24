@@ -1,3 +1,34 @@
+#: lib/personal_finance_web/live/fixed_income/index.html.heex:5
+#, elixir-autogen, elixir-format
+msgid "Fixed income"
+msgstr "Renda fixa"
+
+#: lib/personal_finance_web/live/fixed_income/index.html.heex:10
+#, elixir-autogen, elixir-format
+msgid "Curate and monitor your private fixed income positions in one place."
+msgstr "Centralize e acompanhe seus ativos de renda fixa privados em um só lugar."
+
+#: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Fixed income details"
+msgstr "Detalhes da renda fixa"
+
+#: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:36
+#, elixir-autogen, elixir-format
+msgid "Investment summary"
+msgstr "Resumo do investimento"
+
+#: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:66
+#, elixir-autogen, elixir-format
+msgid "Gross: %{gross} · Tax: %{tax}"
+msgstr "Bruto: %{gross} · Imposto: %{tax}"
+
+#: lib/personal_finance_web/live/fixed_income/details/fixed_income_transactions.ex:108
+#, elixir-autogen, elixir-format
+msgid "%{count} movement"
+msgid_plural "%{count} movements"
+msgstr[0] "%{count} movimentação"
+msgstr[1] "%{count} movimentações"
 ## "msgid"s in this file come from POT (.pot) files.
 ###
 ### Do not add, change, or remove "msgid"s manually here as
@@ -1550,7 +1581,7 @@ msgstr "IR"
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:76
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Initial investment"
-msgstr "O valor inicial é obrigatório."
+msgstr "Valor inicial"
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:75
 #, elixir-autogen, elixir-format, fuzzy
@@ -1663,7 +1694,7 @@ msgstr "Controle de acesso"
 #: lib/personal_finance_web/live/category/categories_panel.ex:136
 #, elixir-autogen, elixir-format
 msgid "Budgets and labels"
-msgstr "Orçamentos e categorias"
+msgstr "Orçamentos e rótulos"
 
 #: lib/personal_finance_web/live/settings/index.ex:125
 #, elixir-autogen, elixir-format

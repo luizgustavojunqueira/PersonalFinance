@@ -1,64 +1,148 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
-  <.header>
-    <%=
-      gettext(
-        "%{ledger} - Fixed Income (%{investment})",
-        ledger: @ledger.name,
-        investment: @fixed_income.name
-      )
-    %>
-    <:actions>
-      <.button
-        variant="primary"
-        phx-click="open_modal"
-        phx-value-modal={:new_fixed_income_transaction}
-      >
-        <.icon name="hero-plus" /> <%= gettext("Add transaction") %>
-      </.button>
-    </:actions>
-  </.header>
+  <div class="min-h-screen pb-12 space-y-6">
+    <section class="bg-base-100/80 border border-base-300 rounded-2xl p-6 shadow-sm mt-4">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div class="space-y-3">
+          <p class="text-sm font-semibold uppercase tracking-wide text-primary/70">
+            {gettext("Fixed income details")}
+          </p>
+          <div>
+            <h1 class="text-3xl font-bold text-base-content">
+              {@fixed_income.name}
+            </h1>
+            <p class="text-sm text-base-content/70">
+              {@fixed_income.institution}
+            </p>
+          </div>
+        </div>
 
-  <.live_component
-    module={PersonalFinanceWeb.FixedIncomeLive.Details.Form}
-    id="fixed-income-transaction-form-modal"
-    show={@open_modal in [:new_fixed_income_transaction]}
-    ledger={@ledger}
-    fixed_income={@fixed_income}
-  />
+        <div class="flex flex-wrap gap-2 w-full lg:w-auto">
+          <.button
+            variant="primary"
+            class="flex-1 lg:flex-none"
+            phx-click="open_modal"
+            phx-value-modal={:new_fixed_income_transaction}
+          >
+            <.icon name="hero-plus" /> {gettext("Add transaction")}
+          </.button>
+        </div>
+      </div>
+    </section>
 
-  <div class="bg-base-100 rounded-lg shadow-lg p-4 mb-6">
-    <h2 class="text-lg font-semibold text-base-content mb-4">Resumo do Investimento</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="p-3 bg-base-200 rounded-lg">
-        <p class="text-sm font-medium text-base-content">Total Investido</p>
-        <p class="text-xl font-bold text-base-content">
-          {CurrencyUtils.format_money(@total_invested)}
+    <.live_component
+      module={PersonalFinanceWeb.FixedIncomeLive.Details.Form}
+      id="fixed-income-transaction-form-modal"
+      show={@open_modal in [:new_fixed_income_transaction]}
+      ledger={@ledger}
+      fixed_income={@fixed_income}
+    />
+
+    <section class="bg-base-100/80 border border-base-300 rounded-2xl p-6 shadow-sm space-y-6">
+      <div class="space-y-2">
+        <% frequency_label =
+          case @fixed_income.yield_frequency do
+            :daily -> gettext("Daily")
+            :weekly -> gettext("Weekly")
+            :monthly -> gettext("Monthly")
+            :quarterly -> gettext("Quarterly")
+            :semi_annual -> gettext("Semiannual")
+            :annual -> gettext("Annual")
+            :at_maturity -> gettext("At maturity")
+            _ -> gettext("N/A")
+          end %>
+        <p class="text-sm font-semibold uppercase tracking-wide text-primary/70">
+          {gettext("Investment summary")}
         </p>
-      </div>
+        <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4 text-sm">
+          <div>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Type")}</p>
+            <p class="font-semibold text-base-content">
+              <% type = @fixed_income.type |> Atom.to_string() |> String.upcase() %>
+              <% base = @fixed_income.remuneration_basis |> Atom.to_string() |> String.upcase() %>
+              {type} {if base != "", do: "(" <> base <> ")", else: ""}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Yield frequency")}
+            </p>
+            <p class="font-semibold text-base-content">{frequency_label}</p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Start date")}
+            </p>
+            <p class="font-semibold text-base-content">
+              {PersonalFinance.Utils.DateUtils.format_date(@fixed_income.start_date)}
+            </p>
+          </div>
+          <div>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Maturity date")}
+            </p>
+            <p class="font-semibold text-base-content">
+              <%= if @fixed_income.end_date do %>
+                {PersonalFinance.Utils.DateUtils.format_date(@fixed_income.end_date)}
+              <% else %>
+                {gettext("N/A")}
+              <% end %>
+            </p>
+          </div>
+        </div>
 
-      <div class="p-3 bg-base-200 rounded-lg">
-        <p class="text-sm font-medium text-base-content">Total Rendido</p>
-        <p class="text-xl font-bold text-success">{CurrencyUtils.format_money(@total_yield)}</p>
+        <div class="grid gap-4 md:grid-cols-3">
+          <div class="rounded-2xl border border-base-200 p-4">
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Initial investment")}
+            </p>
+            <p class="text-2xl font-semibold text-base-content">
+              {PersonalFinance.Utils.CurrencyUtils.format_money(@fixed_income.initial_investment)}
+            </p>
+          </div>
+          <div class="rounded-2xl border border-base-200 p-4">
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Current balance")}
+            </p>
+            <p class="text-2xl font-semibold text-base-content">
+              {PersonalFinance.Utils.CurrencyUtils.format_money(@fixed_income.current_balance)}
+            </p>
+          </div>
+          <% total_yield = @fixed_income.total_yield || Decimal.new("0.00") %>
+          <% total_tax_deducted = @fixed_income.total_tax_deducted || Decimal.new("0.00") %>
+          <% net_yield = Decimal.sub(total_yield, total_tax_deducted) %>
+          <div class="rounded-2xl border border-base-200 p-4">
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Net yield")}
+            </p>
+            <p class={[
+              "text-2xl font-semibold",
+              net_yield >= 0 && "text-success",
+              net_yield < 0 && "text-error"
+            ]}>
+              {PersonalFinance.Utils.CurrencyUtils.format_money(Decimal.to_float(net_yield))}
+            </p>
+            <p class="mt-1 text-xs text-base-content/60">
+              {gettext("Gross: %{gross} · Tax: %{tax}",
+                gross:
+                  PersonalFinance.Utils.CurrencyUtils.format_money(Decimal.to_float(total_yield)),
+                tax:
+                  PersonalFinance.Utils.CurrencyUtils.format_money(
+                    Decimal.to_float(total_tax_deducted)
+                  )
+              )}
+            </p>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="p-3 bg-base-200 rounded-lg">
-        <p class="text-sm font-medium text-base-content">Total de Impostos</p>
-        <p class="text-xl font-bold text-error">{CurrencyUtils.format_money(@total_tax)}</p>
-      </div>
-
-      <div class="p-3 bg-base-200 rounded-lg">
-        <p class="text-sm font-medium text-base-content">Valor Atual Líquido</p>
-        <p class="text-xl font-bold text-base-content">
-          {CurrencyUtils.format_money(@total_value)}
-        </p>
-      </div>
-    </div>
+    <section class="space-y-4">
+      <.live_component
+        module={PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions}
+        id="fixed-income-transactions"
+        ledger={@ledger}
+        fixed_income={@fixed_income}
+      />
+    </section>
   </div>
-
-  <.live_component
-    module={PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions}
-    id="fixed-income-transactions"
-    ledger={@ledger}
-    fixed_income={@fixed_income}
-  />
 </Layouts.app>
