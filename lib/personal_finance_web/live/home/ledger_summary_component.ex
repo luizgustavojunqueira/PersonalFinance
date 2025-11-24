@@ -9,174 +9,232 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   @impl true
   def render(assigns) do
     ~H"""
-    <div class="flex flex-col xl:grid xl:grid-cols-4 gap-6 px-4">
-      <div class="w-full xl:col-span-1 flex flex-col gap-6">
-        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-4 shadow-lg border border-base-200/50 backdrop-blur-sm">
-          <div class="space-y-4">
-            <div class="relative">
-              <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl blur opacity-30">
-              </div>
-              <div class="relative bg-white/50 dark:bg-black/20 rounded-xl p-2 border border-white/20">
-                <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{gettext("Current Balance")}</h3>
-                <span class="text-xl font-black bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                  {@balance.balance |> CurrencyUtils.format_money()}
-                </span>
-              </div>
-            </div>
+    <div class="space-y-6">
+      <section class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div class="rounded-2xl border border-base-200 bg-base-100/80 p-5 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+            {gettext("Current Balance")}
+          </p>
+          <p class="text-3xl font-semibold text-base-content mt-2">
+            {CurrencyUtils.format_money(@balance.balance)}
+          </p>
+          <p class="text-xs text-base-content/60 mt-1">{@ledger.name}</p>
+        </div>
 
+        <div class="rounded-2xl border border-base-200 bg-base-100/80 p-5 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-success">
+            {gettext("Incomes")}
+          </p>
+          <p class="text-2xl font-semibold text-base-content mt-2">
+            + {CurrencyUtils.format_money(@month_balance.total_incomes_all_categories)}
+          </p>
+          <p class="text-xs text-base-content/60 mt-1">{gettext("Current month")}</p>
+        </div>
+
+        <div class="rounded-2xl border border-base-200 bg-base-100/80 p-5 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-error">
+            {gettext("Expenses")}
+          </p>
+          <p class="text-2xl font-semibold text-base-content mt-2">
+            - {CurrencyUtils.format_money(@month_balance.total_expenses)}
+          </p>
+          <p class="text-xs text-base-content/60 mt-1">{gettext("Current month")}</p>
+        </div>
+
+        <div class="rounded-2xl border border-base-200 bg-base-100/80 p-5 shadow-sm">
+          <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+            {gettext("Monthly Balance")}
+          </p>
+          <p class={[
+            "text-2xl font-semibold mt-2",
+            if(@month_balance.balance < 0, do: "text-error", else: "text-success")
+          ]}>
+            {CurrencyUtils.format_money(@month_balance.balance)}
+          </p>
+          <p class="text-xs text-base-content/60 mt-1">{gettext("Total")}</p>
+        </div>
+      </section>
+
+      <section class="grid gap-6 lg:grid-cols-3">
+        <div class="lg:col-span-2 rounded-2xl border border-base-200 bg-base-100/80 shadow-sm">
+          <div class="flex flex-col gap-3 border-b border-base-200/70 p-5 md:flex-row md:items-center md:justify-between">
             <div>
-              <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">{gettext("Monthly Balance")}</h3>
-              <div class="space-y-2">
-                <div class="flex justify-between items-center py-2 px-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <span class="text-xs font-medium text-green-700 dark:text-green-300">{gettext("Incomes")}</span>
-                  <span class="text-sm font-bold text-green-600 dark:text-green-400">
-                    + {@month_balance.total_incomes_all_categories |> CurrencyUtils.format_money()}
-                  </span>
-                </div>
-                <div class="flex justify-between items-center py-2 px-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                  <span class="text-xs font-medium text-red-700 dark:text-red-300">{gettext("Expenses")}</span>
-                  <span class="text-sm font-bold text-red-600 dark:text-red-400">
-                    - {@month_balance.total_expenses |> CurrencyUtils.format_money()}
-                  </span>
-                </div>
-                <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
-                  <div class="flex justify-between items-center">
-                    <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{gettext("Total")}</span>
-                    <span class={[
-                      "text-lg font-black",
-                      if(@month_balance.balance < 0,
-                        do: "text-red-600 dark:text-red-400",
-                        else: "text-green-600 dark:text-green-400"
-                      )
-                    ]}>
-                      {@month_balance.balance |> CurrencyUtils.format_money()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-lg border border-base-200/50 backdrop-blur-sm flex-1">
-          <div class="p-4 pb-2 border-b border-base-200/50">
-            <div class="flex justify-between items-center">
-              <h3 class="text-md w-full font-bold text-gray-800 dark:text-white">
-                {gettext("Recent Transactions")}
-              </h3>
-              <.link
-                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 flex items-center w-full justify-end hover:gap-2"
-                navigate={~p"/ledgers/#{@ledger.id}/transactions"}
-              >
-                {gettext("See all")} <.icon name="hero-arrow-right" class="w-3 h-3" />
-              </.link>
-            </div>
-          </div>
-
-          <div class="divide-y divide-base-200/30">
-            <div
-              :for={{id, transaction} <- @streams.recent_transactions}
-              class="flex items-center justify-between p-4 hover:bg-white/30 dark:hover:bg-black/20 transition-all duration-300 group cursor-pointer"
-              id={id}
-            >
-              <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center group-hover:from-blue-500/30 group-hover:to-purple-500/30 transition-all duration-300">
-                  <.icon name="hero-banknotes" class="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                </div>
-                <div class="min-w-0 flex-1">
-                  <.text_ellipsis
-                    text={transaction.description}
-                    max_width="max-w-[100px] sm:max-w-[200px] lg:max-w-[100px]"
-                    class="text-sm font-semibold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300"
-                  />
-                  <.text_ellipsis
-                    text={transaction.profile.name}
-                    max_width="max-w-[100px] sm:max-w-[200px] lg:max-w-[100px]"
-                    class="text-xs text-gray-500 dark:text-gray-400"
-                  />
-                </div>
-              </div>
-              <div class="text-right">
-                <div class={"text-sm font-bold text-gray-900 dark:text-white #{if transaction.type == :expense, do: "text-red-600 dark:text-red-400", else: "text-green-600 dark:text-green-400"}"}>
-                  {CurrencyUtils.format_money(transaction.total_value)}
-                </div>
-                <div class="text-xs text-gray-500 dark:text-gray-400">
-                  {DateUtils.format_date(transaction.date)}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="w-full xl:col-span-2 flex flex-col gap-6">
-        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-xl border border-base-200/50 backdrop-blur-sm flex-1 max-h-fit">
-          <div class="p-4 pb-2 border-b border-base-200/30">
-            <div class="flex justify-between items-center">
-              <h3 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
+              <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
                 {gettext("Monthly Analysis")}
-              </h3>
-              <.form
-                id="chart_select_form"
-                for={@form_chart}
-                phx-change="select_chart_type"
-                phx-target={@myself}
-                class="relative"
-              >
-                <.input
-                  type="select"
-                  field={@form_chart[:chart_type]}
-                  options={[{gettext("Bars"), :bars}, {gettext("Pie"), :pie}]}
-                  class="bg-white/50 dark:bg-black/20 border-white/30 dark:border-white/10 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all duration-300"
-                />
-              </.form>
+              </p>
+              <p class="text-sm text-base-content/70">
+                {gettext("See how categories perform this month.")}
+              </p>
             </div>
+            <.form
+              id="chart_select_form"
+              for={@form_chart}
+              phx-change="select_chart_type"
+              phx-target={@myself}
+              class="w-full md:w-48"
+            >
+              <.input
+                type="select"
+                field={@form_chart[:chart_type]}
+                options={[{gettext("Bars"), :bars}, {gettext("Pie"), :pie}]}
+              />
+            </.form>
           </div>
-
-          <div class="p-4">
-            <div class="relative bg-white/30 dark:bg-black/10 rounded-2xl p-4 min-h-[300px] backdrop-blur-sm border border-white/20">
+          <div class="p-5">
+            <div class="rounded-2xl bg-base-200/60 p-4 min-h-[320px]">
               <%= if @chart_type == :pie do %>
                 <div id="pie" phx-hook="Chart" class="h-full">
-                  <div id="pie-chart" class="w-full h-[300px]" phx-update="ignore" />
+                  <div id="pie-chart" class="w-full h-[320px]" phx-update="ignore" />
                   <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
                 </div>
               <% else %>
-                <%= if @chart_type == :bars do %>
-                  <div id="bar" phx-hook="Chart" class="h-full">
-                    <div
-                      id="bar-chart"
-                      class="w-full h-[300px]"
-                      phx-update="ignore"
-                      style="overflow: visible;"
-                    />
-                    <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
-                  </div>
-                <% end %>
+                <div id="bar" phx-hook="Chart" class="h-full">
+                  <div id="bar-chart" class="w-full h-[320px]" phx-update="ignore" />
+                  <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
+                </div>
               <% end %>
             </div>
           </div>
         </div>
 
-        <%= if !Enum.empty?(@messages) do %>
-          <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl p-4 shadow-lg border border-base-200/50 backdrop-blur-sm">
-            <div class="flex items-center gap-2 mb-2">
-              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
-                <.icon name="hero-bell" class="w-4 h-4 text-amber-600 dark:text-amber-400" />
+        <div class="rounded-2xl border border-base-200 bg-base-100/80 shadow-sm flex flex-col">
+          <div class="flex items-center justify-between border-b border-base-200/70 p-5">
+            <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+              {gettext("Recent Transactions")}
+            </p>
+            <.link
+              class="text-xs font-medium text-primary hover:underline"
+              navigate={~p"/ledgers/#{@ledger.id}/transactions"}
+            >
+              {gettext("See all")}
+            </.link>
+          </div>
+
+          <div class="p-5 space-y-3 flex-1">
+            <%= if Enum.empty?(@recent_transactions) do %>
+              <div class="rounded-xl border border-dashed border-base-300 p-6 text-center text-sm text-base-content/60">
+                {gettext("No recent transactions yet.")}
               </div>
-              <h3 class="text-sm font-bold text-gray-800 dark:text-white">{gettext("Warnings")}</h3>
+            <% else %>
+              <div class="space-y-3">
+                <div
+                  :for={transaction <- @recent_transactions}
+                  id={"recent-#{transaction.id}"}
+                  class="flex items-center justify-between rounded-xl border border-base-200 bg-base-200/80 p-3"
+                >
+                  <div class="flex items-center gap-3 min-w-0">
+                    <div class={[
+                      "w-10 h-10 rounded-full flex items-center justify-center",
+                      if(transaction.type == :expense,
+                        do: "bg-error/10 text-error",
+                        else: "bg-success/10 text-success"
+                      )
+                    ]}>
+                      <.icon name="hero-banknotes" class="w-5 h-5" />
+                    </div>
+                    <div class="min-w-0">
+                      <p class="text-sm font-medium text-base-content">
+                        <.text_ellipsis text={transaction.description} max_width="max-w-[10rem]" />
+                      </p>
+                      <p class="text-xs text-base-content/60">
+                        {DateUtils.format_date(transaction.date)} • {transaction.profile.name}
+                      </p>
+                    </div>
+                  </div>
+                  <p class={[
+                    "text-sm font-semibold",
+                    if(transaction.type == :expense, do: "text-error", else: "text-success")
+                  ]}>
+                    {CurrencyUtils.format_money(transaction.total_value)}
+                  </p>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid gap-6 lg:grid-cols-3">
+        <div class="rounded-2xl border border-base-200 bg-base-100/80 shadow-sm p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                {gettext("Fixed Income")}
+              </p>
+              <p class="text-sm text-base-content/70">
+                {gettext("Track private investments at a glance.")}
+              </p>
+            </div>
+            <.link
+              class="text-xs font-medium text-primary hover:underline"
+              navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
+            >
+              {gettext("See all")}
+            </.link>
+          </div>
+
+          <div class="grid gap-3 sm:grid-cols-2">
+            <div class="rounded-xl border border-base-200 p-3">
+              <p class="text-xs text-base-content/60">{gettext("Total Invested")}</p>
+              <p class="text-lg font-semibold text-base-content mt-1">
+                {CurrencyUtils.format_money(@total_invested)}
+              </p>
+            </div>
+            <div class="rounded-xl border border-base-200 p-3">
+              <p class="text-xs text-base-content/60">{gettext("Current Value")}</p>
+              <p class="text-lg font-semibold text-success mt-1">
+                {CurrencyUtils.format_money(@current_value)}
+              </p>
+            </div>
+          </div>
+
+          <div class="grid gap-3 mt-4 sm:grid-cols-2">
+            <div class="rounded-xl border border-base-200 p-3">
+              <h4 class="text-xs font-semibold uppercase tracking-wide text-base-content/60 mb-2">
+                {gettext("Fixed Income Composition")}
+              </h4>
+              <div id="fixed-income-composition-chart" class="w-full h-[120px]" phx-update="ignore" />
+              <div id="fixed-income-composition-data" hidden>
+                {Jason.encode!(%{"mock" => "data"})}
+              </div>
+            </div>
+            <div class="rounded-xl border border-base-200 p-3">
+              <h4 class="text-xs font-semibold uppercase tracking-wide text-base-content/60 mb-2">
+                {gettext("Equity")}
+              </h4>
+              <div id="patrimony-chart" class="w-full h-[120px]" phx-update="ignore" />
+              <div id="patrimony-data" hidden>{Jason.encode!(%{"mock" => "data"})}</div>
+            </div>
+          </div>
+        </div>
+
+        <%= if !Enum.empty?(@messages) do %>
+          <div class="lg:col-span-2 rounded-2xl border border-base-200 bg-base-100/80 shadow-sm p-5">
+            <div class="flex items-center gap-2 mb-4">
+              <div class="w-8 h-8 rounded-full bg-amber-100 text-amber-900 dark:bg-amber-900/30 dark:text-amber-100 flex items-center justify-center">
+                <.icon name="hero-bell" class="w-4 h-4" />
+              </div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                  {gettext("Warnings")}
+                </p>
+                <p class="text-sm text-base-content/70">
+                  {gettext("Keep an eye on budgets getting close to the limit.")}
+                </p>
+              </div>
             </div>
 
-            <div class="space-y-2">
+            <div class="space-y-3">
               <div
                 :for={message <- @messages}
-                class="flex items-start gap-2 bg-white/40 dark:bg-black/20 rounded-xl p-3 hover:bg-white/60 dark:hover:bg-black/30 transition-all duration-300 border border-white/20 group"
+                class="flex items-start gap-3 rounded-xl border border-base-200 p-3"
               >
                 <div class={[
-                  "w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0",
+                  "w-8 h-8 rounded-full flex items-center justify-center",
                   case message.type do
-                    :info -> "bg-blue-500/20 group-hover:bg-blue-500/30"
-                    :warning -> "bg-yellow-500/20 group-hover:bg-yellow-500/30"
-                    :error -> "bg-red-500/20 group-hover:bg-red-500/30"
+                    :info -> "bg-blue-100 text-blue-900 dark:bg-blue-900/30 dark:text-blue-100"
+                    :warning -> "bg-yellow-100 text-yellow-900 dark:bg-yellow-900/30 dark:text-yellow-100"
+                    :error -> "bg-red-100 text-red-900 dark:bg-red-900/30 dark:text-red-100"
                   end
                 ]}>
                   <.icon
@@ -187,80 +245,15 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                         :error -> "hero-x-circle"
                       end
                     }
-                    class={
-                      "w-3 h-3" <>
-                      case message.type do
-                        :info -> "text-blue-600 dark:text-blue-400"
-                        :warning -> "text-yellow-600 dark:text-yellow-400"
-                        :error -> "text-red-600 dark:text-red-400"
-                      end
-                    }
+                    class="w-4 h-4"
                   />
                 </div>
-                <span class="text-xs font-medium text-gray-700 dark:text-gray-300 leading-relaxed">
-                  {message.text}
-                </span>
+                <p class="text-sm text-base-content/80 leading-relaxed">{message.text}</p>
               </div>
             </div>
           </div>
         <% end %>
-      </div>
-
-      <div class="w-full xl:col-span-1 flex flex-col gap-6">
-        <div class="bg-gradient-to-br from-base-300 to-base-200 rounded-2xl shadow-lg border border-base-200/50 backdrop-blur-sm flex-1 max-h-fit">
-          <div class="p-4 pb-2 border-b border-base-200/50">
-            <div class="flex justify-between items-center">
-              <h3 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                {gettext("Fixed Income")}
-              </h3>
-              <.link
-                class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 flex items-center justify-end hover:gap-2"
-                navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
-              >
-                {gettext("See all")} <.icon name="hero-arrow-right" class="w-3 h-3" />
-              </.link>
-            </div>
-          </div>
-
-          <div class="p-4 space-y-4">
-            <div class="space-y-2">
-              <div class="flex justify-between items-center">
-                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
-                  {gettext("Total Invested")}
-                </span>
-                <span class="text-sm font-bold text-gray-900 dark:text-white">
-                  {CurrencyUtils.format_money(@total_invested)}
-                </span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
-                  {gettext("Current Value")}
-                </span>
-                <span class="text-sm font-bold text-green-600 dark:text-green-400">
-                  {CurrencyUtils.format_money(@current_value)}
-                </span>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <div class="relative bg-white/30 dark:bg-black/10 rounded-xl p-2 min-h-[150px] backdrop-blur-sm border border-white/20">
-                <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                  {gettext("Fixed Income Composition")}
-                </h4>
-                <div id="fixed-income-composition-chart" class="w-full h-[120px]" phx-update="ignore" />
-                <div id="fixed-income-composition-data" hidden>
-                  {Jason.encode!(%{"mock" => "data"})}
-                </div>
-              </div>
-              <div class="relative bg-white/30 dark:bg-black/10 rounded-xl p-2 min-h-[150px] backdrop-blur-sm border border-white/20">
-                <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{gettext("Equity")}</h4>
-                <div id="patrimony-chart" class="w-full h-[120px]" phx-update="ignore" />
-                <div id="patrimony-data" hidden>{Jason.encode!(%{"mock" => "data"})}</div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      </section>
     </div>
     """
   end
@@ -273,21 +266,23 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
      socket
      |> assign(
        chart_type: chart_type,
-       form_chart: to_form(%{"chart_type" => chart_type})
-     )
-     |> stream(:recent_transactions, [])}
+       form_chart: to_form(%{"chart_type" => chart_type}),
+       recent_transactions: []
+     )}
   end
 
   @impl true
   def update(assigns, socket) do
+    recent_transactions = assigns.transactions |> Enum.take(5)
+
     {:ok,
      socket
      |> assign(assigns)
+     |> assign(:recent_transactions, recent_transactions)
      |> assign_balance()
      |> assign_investment_data()
      |> assign_chart_data()
-     |> assign_messages()
-     |> stream(:recent_transactions, assigns.transactions |> Enum.take(5))}
+     |> assign_messages()}
   end
 
   @impl true
@@ -304,8 +299,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
          |> format_categories(transactions, monthly_income)
          |> get_chart_data(String.to_existing_atom(chart_type)),
        form_chart: to_form(%{"chart_type" => chart_type})
-     )
-     |> stream(:recent_transactions, socket.assigns.transactions |> Enum.take(5))}
+      )}
   end
 
   defp assign_balance(socket) do
