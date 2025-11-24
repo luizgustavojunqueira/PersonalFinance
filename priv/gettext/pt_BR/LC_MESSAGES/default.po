@@ -1127,6 +1127,21 @@ msgstr "Avisos"
 msgid "Keep an eye on budgets getting close to the limit."
 msgstr "Fique de olho nos orçamentos que estão perto do limite."
 
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:525
+#, elixir-autogen, elixir-format
+msgid "Remaining"
+msgstr "Restante"
+
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:526
+#, elixir-autogen, elixir-format
+msgid "Spent"
+msgstr "Gasto"
+
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:527
+#, elixir-autogen, elixir-format
+msgid "Goal"
+msgstr "Meta"
+
 #: lib/personal_finance_web/live/fixed_income/details/form.ex:59
 #, elixir-autogen, elixir-format
 msgid "Withdraw"
