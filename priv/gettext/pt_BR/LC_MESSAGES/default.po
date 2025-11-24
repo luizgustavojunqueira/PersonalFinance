@@ -3,6 +3,16 @@
 msgid "Fixed income"
 msgstr "Renda fixa"
 
+#: lib/personal_finance_web/live/home/index.html.heex:7
+#, elixir-autogen, elixir-format
+msgid "Home overview"
+msgstr "Visão geral"
+
+#: lib/personal_finance_web/live/home/index.html.heex:12
+#, elixir-autogen, elixir-format
+msgid "Monitor your budgets and balances in one place."
+msgstr "Monitore seus orçamentos e saldos em um só lugar."
+
 #: lib/personal_finance_web/live/fixed_income/index.html.heex:10
 #, elixir-autogen, elixir-format
 msgid "Curate and monitor your private fixed income positions in one place."
@@ -856,6 +866,11 @@ msgstr "Falha ao excluir perfil."
 msgid "Fixed Income"
 msgstr "Renda Fixa"
 
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:217
+#, elixir-autogen, elixir-format
+msgid "Track private investments at a glance."
+msgstr "Acompanhe seus investimentos privados em um relance."
+
 #: lib/personal_finance_web/live/home/ledger_summary_component.ex:248
 #, elixir-autogen, elixir-format
 msgid "Fixed Income Composition"
@@ -899,6 +914,11 @@ msgstr "Inativo"
 msgid "Incomes"
 msgstr "Receitas"
 
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:37
+#, elixir-autogen, elixir-format
+msgid "Current month"
+msgstr "Mês atual"
+
 #: lib/personal_finance_web/live/settings/access_panel.ex:39
 #, elixir-autogen, elixir-format
 msgid "Invite"
@@ -926,6 +946,11 @@ msgstr "Mensal"
 #, elixir-autogen, elixir-format
 msgid "Monthly Analysis"
 msgstr "Análise mensal"
+
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:119
+#, elixir-autogen, elixir-format
+msgid "See how categories perform this month."
+msgstr "Veja como as categorias se comportam neste mês."
 
 #: lib/personal_finance_web/live/home/ledger_summary_component.ex:28
 #, elixir-autogen, elixir-format
@@ -1011,6 +1036,11 @@ msgstr "Perfil salvo com sucesso."
 msgid "Recent Transactions"
 msgstr "Transações recentes"
 
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:82
+#, elixir-autogen, elixir-format
+msgid "No recent transactions yet."
+msgstr "Ainda não há transações recentes."
+
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:95
 #, elixir-autogen, elixir-format
 msgid "Recurring transaction status successfully updated."
@@ -1091,6 +1121,11 @@ msgstr "Valor (R$)"
 #, elixir-autogen, elixir-format
 msgid "Warnings"
 msgstr "Avisos"
+
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:169
+#, elixir-autogen, elixir-format
+msgid "Keep an eye on budgets getting close to the limit."
+msgstr "Fique de olho nos orçamentos que estão perto do limite."
 
 #: lib/personal_finance_web/live/fixed_income/details/form.ex:59
 #, elixir-autogen, elixir-format
