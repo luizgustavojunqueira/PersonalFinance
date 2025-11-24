@@ -8,9 +8,9 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
   def mount(params, _session, socket) do
     current_scope = socket.assigns.current_scope
     ledger = Finance.get_ledger(current_scope, params["id"])
-    fixed_income = Investment.get_fixed_income(params["fixed_income_id"], ledger.id)
+    fixed_income = Investment.get_fixed_income(params["fixed_income_id"], ledger && ledger.id)
 
-     if ledger == nil or fixed_income == nil do
+    if ledger == nil or fixed_income == nil do
       {:ok,
        socket
        |> put_flash(:error, gettext("Ledger or fixed income not found."))
