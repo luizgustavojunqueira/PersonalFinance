@@ -128,15 +128,22 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
   def render(assigns) do
     ~H"""
     <div id={@id} class="space-y-6">
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-semibold">{gettext("Categories")}</h2>
+      <div class="rounded-xl border border-base-300 bg-base-100/70 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+            {gettext("Categories")}
+          </p>
+          <h2 class="text-xl font-semibold text-base-content">{gettext("Budgets and labels")}</h2>
+        </div>
         <.button
           variant="primary"
+          size="sm"
+          class="w-full md:w-auto"
           phx-target={@myself}
           phx-click="open_modal"
           phx-value-modal={:new_category}
         >
-          <.icon name="hero-plus" /> {gettext("Add Category")}
+          <.icon name="hero-plus" class="w-4 h-4" /> {gettext("Add Category")}
         </.button>
       </div>
 
@@ -176,92 +183,104 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
         </:actions>
       </.modal>
 
-      <.table
-        id={"#{@id}-table"}
-        rows={@streams.category_collection}
-        col_widths={["20%", "25%", "10%", "10%"]}
-        row_item={
-          fn
-            {_, struct} -> struct
-            struct -> struct
-          end
-        }
-      >
-        <:col :let={category} label={gettext("Name")}>
-          <.text_ellipsis text={category.name} max_width="max-w-[15rem]" />
-        </:col>
-        <:col :let={category} label={gettext("Description")}>
-          <.text_ellipsis text={category.description} max_width="max-w-[20rem]" />
-        </:col>
-        <:col :let={category} label={gettext("Color")}>
-          <span
-            class="inline-block w-7 h-4 rounded-xl border-2 border-black dark:border-white"
-            style={"background-color: #{category.color};"}
-          >
-          </span>
-        </:col>
-        <:col :let={category} label={gettext("Percentage (100% max.)")}>
-          <%= if slider_disabled?(category) do %>
-            <div class="flex items-center gap-4 text-sm">
-              <span class="font-semibold tabular-nums w-16 text-right">
-                {format_percentage(category.percentage)}
-              </span>
-              <span class="text-xs uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
-                {gettext("Locked")}
-              </span>
-            </div>
-          <% else %>
-            <form
-              phx-submit="update_percentage"
-              phx-target={@myself}
-              class="flex items-center gap-4"
+      <section class="bg-base-100/80 border border-base-300 rounded-2xl shadow-sm">
+        <%= if Enum.empty?(@categories) do %>
+          <div class="p-8 text-center text-sm text-base-content/70">
+            {gettext("You have not created any categories yet. Start by adding one above.")}
+          </div>
+        <% else %>
+          <div class="overflow-x-auto p-2">
+            <.table
+              id={"#{@id}-table"}
+              rows={@streams.category_collection}
+              col_widths={["20%", "25%", "10%", "10%"]}
+              row_item={
+                fn
+                  {_, struct} -> struct
+                  struct -> struct
+                end
+              }
             >
-              <input type="hidden" name="category_id" value={category.id} />
-              <span class="text-sm font-semibold tabular-nums w-16 text-right">
-                {format_percentage(category.percentage)}
-              </span>
-              <div class="slider-shell relative">
-                <input
-                  type="range"
-                  id={"category-slider-#{category.id}"}
-                  name="percentage"
-                  class="category-slider"
-                  min="0"
-                  max="100"
-                  step="0.5"
-                  value={category.percentage}
-                  phx-hook="RangeField"
-                  data-max-available={percentage_slider_max(@categories, category)}
-                  aria-label={gettext("Category percentage %{name}", name: category.name)}
-                  style={slider_style(@categories, category)}
-                />
-              </div>
-            </form>
-          <% end %>
-        </:col>
-        <:action :let={category}>
-          <%= if !category.is_default do %>
-            <.link
-              phx-target={@myself}
-              phx-click="open_edit_category"
-              phx-value-category_id={category.id}
-            >
-              <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
-            </.link>
-          <% end %>
-        </:action>
-        <:action :let={category}>
-          <%= if !category.is_fixed do %>
-            <.link
-              phx-target={@myself}
-              phx-click="open_delete_modal"
-              phx-value-category_id={category.id}
-            >
-              <.icon name="hero-trash" class="text-red-600 hover:text-red-800" />
-            </.link>
-          <% end %>
-        </:action>
-      </.table>
+              <:col :let={category} label={gettext("Name")}>
+                <.text_ellipsis text={category.name} max_width="max-w-[15rem]" />
+              </:col>
+              <:col :let={category} label={gettext("Description")}>
+                <.text_ellipsis text={category.description} max_width="max-w-[20rem]" />
+              </:col>
+              <:col :let={category} label={gettext("Color")}>
+                <span
+                  class="inline-block w-7 h-4 rounded-xl border-2 border-black dark:border-white"
+                  style={"background-color: #{category.color};"}
+                >
+                </span>
+              </:col>
+              <:col :let={category} label={gettext("Percentage (100% max.)")}>
+                <%= if slider_disabled?(category) do %>
+                  <div class="flex items-center gap-4 text-sm">
+                    <span class="font-semibold tabular-nums w-16 text-right">
+                      {format_percentage(category.percentage)}
+                    </span>
+                    <span class="text-xs uppercase tracking-wide text-base-content/50">
+                      {gettext("Locked")}
+                    </span>
+                  </div>
+                <% else %>
+                  <form
+                    phx-submit="update_percentage"
+                    phx-target={@myself}
+                    class="flex items-center gap-4"
+                  >
+                    <input type="hidden" name="category_id" value={category.id} />
+                    <span class="text-sm font-semibold tabular-nums w-16 text-right">
+                      {format_percentage(category.percentage)}
+                    </span>
+                    <div class="slider-shell relative">
+                      <input
+                        type="range"
+                        id={"category-slider-#{category.id}"}
+                        name="percentage"
+                        class="category-slider"
+                        min="0"
+                        max="100"
+                        step="0.5"
+                        value={category.percentage}
+                        phx-hook="RangeField"
+                        data-max-available={percentage_slider_max(@categories, category)}
+                        aria-label={gettext("Category percentage %{name}", name: category.name)}
+                        style={slider_style(@categories, category)}
+                      />
+                    </div>
+                  </form>
+                <% end %>
+              </:col>
+              <:action :let={category}>
+                <%= if !category.is_default do %>
+                  <.link
+                    phx-target={@myself}
+                    phx-click="open_edit_category"
+                    phx-value-category_id={category.id}
+                    class="btn btn-ghost btn-xs"
+                  >
+                    <.icon name="hero-pencil" class="text-primary" />
+                  </.link>
+                <% end %>
+              </:action>
+              <:action :let={category}>
+                <%= if !category.is_fixed do %>
+                  <.link
+                    phx-target={@myself}
+                    phx-click="open_delete_modal"
+                    phx-value-category_id={category.id}
+                    class="btn btn-ghost btn-xs"
+                  >
+                    <.icon name="hero-trash" class="text-error" />
+                  </.link>
+                <% end %>
+              </:action>
+            </.table>
+          </div>
+        <% end %>
+      </section>
     </div>
     """
   end

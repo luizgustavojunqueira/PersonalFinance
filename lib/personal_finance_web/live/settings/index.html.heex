@@ -1,46 +1,27 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
-  <.header>
-    {@ledger.name} - {gettext("Settings")}
-  </.header>
+  <div class="min-h-screen pb-12 space-y-6">
+    <% tab_meta = Map.get(@tab_metadata, @active_settings_tab, %{}) %>
+    <section class="bg-base-100/80 border border-base-300 rounded-2xl p-6 shadow-sm mt-4">
+      <div class="space-y-3">
+        <p class="text-sm font-semibold uppercase tracking-wide text-primary/70">
+          {tab_meta[:tagline] || gettext("Settings")}
+        </p>
+        <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+          <h1 class="text-3xl font-bold text-base-content">{@ledger.name}</h1>
+          <span class="text-sm text-base-content/70">{tab_meta[:label] || gettext("Settings")}</span>
+        </div>
+        <%= if tab_meta[:description] do %>
+          <p class="text-sm text-base-content/70">{tab_meta[:description]}</p>
+        <% end %>
+      </div>
+    </section>
 
-  <.live_component
-    module={PersonalFinanceWeb.Components.TabPanel}
-    id="settings-tabs"
-    tabs={[
-      %{
-        id: :categories,
-        label: gettext("Categories"),
-        icon: "hero-tag",
-        component: PersonalFinanceWeb.CategoryLive.CategoriesPanel,
-        component_id: @categories_panel_id,
-        assigns: %{
-          ledger: @ledger,
-          current_scope: @current_scope
-        }
-      },
-      %{
-        id: :profiles,
-        label: gettext("Profiles"),
-        icon: "hero-users",
-        component: PersonalFinanceWeb.SettingsLive.ProfilesPanel,
-        component_id: @profiles_panel_id,
-        assigns: %{
-          ledger: @ledger,
-          current_scope: @current_scope,
-          parent_pid: self()
-        }
-      },
-      %{
-        id: :access,
-        label: gettext("Access"),
-        icon: "hero-user-group",
-        component: PersonalFinanceWeb.SettingsLive.AccessPanel,
-        assigns: %{
-          ledger: @ledger,
-          current_scope: @current_scope,
-          parent_pid: self()
-        }
-      }
-    ]}
-  />
+    <.live_component
+      module={PersonalFinanceWeb.Components.TabPanel}
+      id="settings-tabs"
+      tabs={@settings_tabs}
+      active_tab={@active_settings_tab}
+      notify_parent={@tab_panel_parent}
+    />
+  </div>
 </Layouts.app>
