@@ -5,6 +5,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
   alias PersonalFinance.Finance.Category
   alias PersonalFinance.Finance.Profile
   alias PersonalFinanceWeb.CategoryLive.CategoriesPanel
+  alias PersonalFinanceWeb.SettingsLive.AccessPanel
   alias PersonalFinanceWeb.SettingsLive.ProfilesPanel
 
   @categories_panel_id "settings-categories"
@@ -31,11 +32,18 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
         Finance.subscribe_finance(:category, ledger.id)
         Finance.subscribe_finance(:profile, ledger.id)
 
+        tabs = build_settings_tabs(ledger, current_scope, self())
+        default_tab = tabs |> List.first() |> Map.get(:id)
+
         socket =
           socket
           |> assign(page_title: gettext("Settings"), ledger: ledger)
           |> assign(:categories_panel_id, @categories_panel_id)
           |> assign(:profiles_panel_id, @profiles_panel_id)
+          |> assign(:settings_tabs, tabs)
+          |> assign(:tab_metadata, tab_metadata(tabs))
+          |> assign(:active_settings_tab, default_tab)
+          |> assign(:tab_panel_parent, self())
 
         {:ok, socket}
       end
@@ -95,5 +103,64 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
   @impl true
   def handle_info({:put_flash, type, message}, socket) when type in [:info, :error] do
     {:noreply, put_flash(socket, type, message)}
+  end
+
+  def handle_info({:tab_panel_changed, "settings-tabs", tab_id}, socket) do
+    {:noreply, assign(socket, :active_settings_tab, tab_id)}
+  end
+
+  defp build_settings_tabs(ledger, current_scope, parent_pid) do
+    [
+      %{
+        id: :categories,
+        label: gettext("Categories"),
+        icon: "hero-tag",
+        component: CategoriesPanel,
+        component_id: @categories_panel_id,
+        assigns: %{
+          ledger: ledger,
+          current_scope: current_scope
+        },
+        hero_tagline: gettext("Categories"),
+        hero_description: gettext("Classify your expenses and control allocation caps.")
+      },
+      %{
+        id: :profiles,
+        label: gettext("Profiles"),
+        icon: "hero-users",
+        component: ProfilesPanel,
+        component_id: @profiles_panel_id,
+        assigns: %{
+          ledger: ledger,
+          current_scope: current_scope,
+          parent_pid: parent_pid
+        },
+        hero_tagline: gettext("Profiles & recurrences"),
+        hero_description: gettext("Organize recurring entries with color-coded personas.")
+      },
+      %{
+        id: :access,
+        label: gettext("Access"),
+        icon: "hero-user-group",
+        component: AccessPanel,
+        assigns: %{
+          ledger: ledger,
+          current_scope: current_scope,
+          parent_pid: parent_pid
+        },
+        hero_tagline: gettext("Access control"),
+        hero_description: gettext("Invite collaborators and manage permissions in real time.")
+      }
+    ]
+  end
+
+  defp tab_metadata(tabs) do
+    Enum.reduce(tabs, %{}, fn tab, acc ->
+      Map.put(acc, tab.id, %{
+        label: tab.label,
+        tagline: Map.get(tab, :hero_tagline, tab.label),
+        description: Map.get(tab, :hero_description)
+      })
+    end)
   end
 end

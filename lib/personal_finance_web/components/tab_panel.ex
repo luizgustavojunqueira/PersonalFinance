@@ -18,17 +18,26 @@ defmodule PersonalFinanceWeb.Components.TabPanel do
       |> Map.put_new(:tabs_class, nil)
       |> Map.put_new(:panes_class, nil)
       |> Map.put_new(:preload_tabs, [])
+      |> Map.put_new(:notify_parent, nil)
+
+    component_id = assigns[:id] || socket.assigns[:tab_panel_component_id]
+    previous_active = socket.assigns[:active_tab]
 
     prepared_tabs = Enum.map(tabs, &prepare_tab/1)
     active_tab = resolve_active_tab(assigns, socket, prepared_tabs)
     tabs_loaded = update_tabs_loaded(assigns, socket, active_tab, prepared_tabs)
 
-    {:ok,
-     socket
-     |> assign(assigns)
-     |> assign(:tabs, prepared_tabs)
-     |> assign(:active_tab, active_tab)
-     |> assign(:tabs_loaded, tabs_loaded)}
+    socket =
+      socket
+      |> assign(assigns)
+      |> assign(:tab_panel_component_id, component_id)
+      |> assign(:tabs, prepared_tabs)
+      |> assign(:active_tab, active_tab)
+      |> assign(:tabs_loaded, tabs_loaded)
+
+    maybe_notify_parent(assigns[:notify_parent], component_id, previous_active, active_tab)
+
+    {:ok, socket}
   end
 
   def update(_assigns, _socket) do
@@ -43,14 +52,19 @@ defmodule PersonalFinanceWeb.Components.TabPanel do
 
       tab ->
         tabs_loaded = MapSet.put(socket.assigns.tabs_loaded, tab.id)
+        previous_active = socket.assigns.active_tab
 
-        {:noreply,
-         socket
-         |> assign(:active_tab, tab.id)
-         |> assign(:tabs_loaded, tabs_loaded)}
+        socket =
+          socket
+          |> assign(:active_tab, tab.id)
+          |> assign(:tabs_loaded, tabs_loaded)
+
+        maybe_notify_parent(socket.assigns.notify_parent, socket.assigns.tab_panel_component_id, previous_active, tab.id)
+
+        {:noreply, socket}
     end
   end
-  
+
   @impl true
   def render(assigns) do
     ~H"""
@@ -194,4 +208,13 @@ defmodule PersonalFinanceWeb.Components.TabPanel do
   defp tab_dom_id(base, tab_id), do: "#{base}-tab-#{tab_id}"
 
   defp tab_component_dom_id(base, tab_id), do: "#{base}-component-#{tab_id}"
+
+  defp maybe_notify_parent(nil, _component_id, _old_active, _new_active), do: :ok
+
+  defp maybe_notify_parent(_parent, _component_id, active, active), do: :ok
+
+  defp maybe_notify_parent(parent, component_id, _old_active, new_active) when is_pid(parent) do
+    send(parent, {:tab_panel_changed, component_id, new_active})
+    :ok
+  end
 end

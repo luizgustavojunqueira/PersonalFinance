@@ -145,105 +145,116 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
   def render(assigns) do
     ~H"""
     <div class="space-y-6">
-      <div class="space-y-4">
-        <div class="flex items-center justify-between">
-          <div>
-            <p class="text-2xl font-semibold text-base-content">{gettext("Manage profiles and recurrences")}</p>
-          </div>
-          <.button
-            variant="primary"
-            size="sm"
-            class="gap-1"
-            phx-click="open_new_profile"
-            phx-target={@myself}
-          >
-            <.icon name="hero-plus" class="w-4 h-4 mr-1" /> {gettext("New profile")}
-          </.button>
+      <div class="rounded-xl border border-base-300 bg-base-100/70 p-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+            {gettext("Profiles")}
+          </p>
+          <h2 class="text-xl font-semibold text-base-content">{gettext("Manage profiles and recurrences")}</h2>
         </div>
+        <.button
+          variant="primary"
+          size="sm"
+          class="w-full md:w-auto gap-2"
+          phx-click="open_new_profile"
+          phx-target={@myself}
+        >
+          <.icon name="hero-plus" class="w-4 h-4" /> {gettext("New profile")}
+        </.button>
+      </div>
 
-        <div class="space-y-2">
-          <%= if @profiles_empty? do %>
-            <div class="rounded-xl border border-dashed border-base-300 bg-base-100/80 p-6 text-sm text-base-content/70">
-              {gettext("No profiles registered yet.")}
-            </div>
-          <% end %>
+      <section class="space-y-3">
+        <%= if @profiles_empty? do %>
+          <div class="rounded-2xl border border-dashed border-base-300 bg-base-100/70 p-6 text-sm text-base-content/70">
+            {gettext("No profiles registered yet.")}
+          </div>
+        <% end %>
 
-          <%= for profile <- @profiles do %>
-            <div class="rounded-xl border border-base-300 bg-base-100/70 shadow-sm">
-              <div class="flex items-center justify-between gap-4 p-4">
-                <button
+        <%= for profile <- @profiles do %>
+          <div class="rounded-2xl border border-base-300 bg-base-100/80 shadow-sm">
+            <div class="flex flex-col gap-4 p-4 md:flex-row md:items-center md:justify-between">
+              <button
+                type="button"
+                class="flex flex-1 flex-col text-left"
+                phx-click="toggle_profile"
+                phx-value-profile_id={profile.id}
+                phx-target={@myself}
+              >
+                <div class="flex flex-col gap-1">
+                  <p class="text-base font-semibold text-base-content">{profile.name}</p>
+                  <p class="text-sm text-base-content/70">
+                    {profile.description || gettext("No description")}
+                  </p>
+                </div>
+              </button>
+
+              <div class="flex items-center justify-between gap-4 md:justify-end">
+                <span
+                  class="inline-flex h-8 w-8 items-center justify-center rounded-full border border-base-300"
+                  style={"background-color: #{profile.color};"}
+                  aria-hidden="true"
+                />
+                <.button
                   type="button"
-                  class="flex flex-1 items-center justify-between text-left"
+                  variant="custom"
+                  size="sm"
+                  class="btn-circle btn-ghost"
                   phx-click="toggle_profile"
                   phx-value-profile_id={profile.id}
                   phx-target={@myself}
+                  aria-label={gettext("Expand profile")}
                 >
-                  <div class="flex items-center gap-4">
-                    <div class="space-y-1">
-                      <p class="text-base font-semibold text-base-content">{profile.name}</p>
-                      <p class="text-sm text-base-content/70">
-                        {profile.description || gettext("No description")}
-                      </p>
-                    </div>
-                  </div>
                   <.icon
                     name="hero-chevron-down"
-                    class={"size-5 transition-transform duration-200 #{if profile_expanded?(@expanded_profiles, profile.id), do: "rotate-180", else: ""}"}
+                    class={"transition-transform duration-200 #{if profile_expanded?(@expanded_profiles, profile.id), do: "rotate-180", else: ""}"}
                   />
-                </button>
-
-                <div class="flex items-center gap-2">
-                  <span
-                    class="inline-block h-4 w-7 rounded-xl border border-base-content"
-                    style={"background-color: #{profile.color};"}
-                  />
+                </.button>
+                <.button
+                  type="button"
+                  variant="custom"
+                  size="sm"
+                  class="btn-circle btn-ghost"
+                  phx-click="open_edit_profile"
+                  phx-value-profile_id={profile.id}
+                  phx-target={@myself}
+                  title={gettext("Edit profile")}
+                >
+                  <.icon name="hero-pencil" class="text-primary" />
+                </.button>
+                <%= unless profile.is_default do %>
                   <.button
                     type="button"
                     variant="custom"
                     size="sm"
                     class="btn-circle btn-ghost"
-                    phx-click="open_edit_profile"
+                    phx-click="open_delete_modal"
                     phx-value-profile_id={profile.id}
                     phx-target={@myself}
-                    title={gettext("Edit profile")}
+                    title={gettext("Delete profile")}
                   >
-                    <.icon name="hero-pencil" class="text-primary" />
+                    <.icon name="hero-trash" class="text-error" />
                   </.button>
-                  <%= unless profile.is_default do %>
-                    <.button
-                      type="button"
-                      variant="custom"
-                      size="sm"
-                      class="btn-circle btn-ghost"
-                      phx-click="open_delete_modal"
-                      phx-value-profile_id={profile.id}
-                      phx-target={@myself}
-                      title={gettext("Delete profile")}
-                    >
-                      <.icon name="hero-trash" class="text-error" />
-                    </.button>
-                  <% end %>
+                <% end %>
+              </div>
+            </div>
+
+            <%= if profile_expanded?(@expanded_profiles, profile.id) do %>
+              <div class="border-t border-base-300 bg-base-100">
+                <div class="px-4 pb-4 pt-3">
+                  <.live_component
+                    module={RecurringEntriesPanel}
+                    id={"recurring-panel-#{profile.id}"}
+                    ledger={@ledger}
+                    profile={profile}
+                    current_scope={@current_scope}
+                    parent_pid={@parent_pid}
+                  />
                 </div>
               </div>
-
-              <%= if profile_expanded?(@expanded_profiles, profile.id) do %>
-                <div class="border-t border-base-300">
-                  <div class="px-4 pb-4">
-                    <.live_component
-                      module={RecurringEntriesPanel}
-                      id={"recurring-panel-#{profile.id}"}
-                      ledger={@ledger}
-                      profile={profile}
-                      current_scope={@current_scope}
-                      parent_pid={@parent_pid}
-                    />
-                  </div>
-                </div>
-              <% end %>
-            </div>
-          <% end %>
-        </div>
-      </div>
+            <% end %>
+          </div>
+        <% end %>
+      </section>
 
       <.live_component
         module={ProfileForm}
