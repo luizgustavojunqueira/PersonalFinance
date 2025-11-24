@@ -522,6 +522,10 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   end
 
   defp get_chart_data(categories_data, :bars) do
+    remaining_label = gettext("Remaining")
+    spent_label = gettext("Spent")
+    goal_label = gettext("Goal")
+
     truncated_names = Enum.map(categories_data, &truncate_text(&1.name, 20))
 
     remaining_values =
@@ -545,22 +549,22 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         axisPointer: %{
           type: "shadow"
         },
-        backgroundColor: "rgba(255, 255, 255, 0.95)",
-        borderColor: "#ccc",
+        backgroundColor: nil,
+        borderColor: nil,
         borderWidth: 1,
         textStyle: %{
-          color: "#333",
+          color: nil,
           fontSize: 13
         },
         formatter:
-          "{b0}<br/><span style='color:#9E9E9E'>●</span> Meta: R${c2}<br/><span style='color:#FF9800'>●</span> Gasto: R${c1}<br/><span style='color:#4CAF50'>●</span> Restante: R${c0}"
+          "{b0}<br/><span style='color:#9E9E9E'>●</span> #{goal_label}: R${c2}<br/><span style='color:#FF9800'>●</span> #{spent_label}: R${c1}<br/><span style='color:#4CAF50'>●</span> #{remaining_label}: R${c0}"
       },
       legend: %{
         top: 10,
         left: "center",
-        data: ["Restante", "Gasto", "Meta"],
+        data: [remaining_label, spent_label, goal_label],
         textStyle: %{
-          color: "#333",
+          color: nil,
           fontSize: 14,
           fontWeight: "500"
         },
@@ -630,7 +634,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       ],
       series: [
         %{
-          name: "Restante",
+          name: remaining_label,
+          meta_key: "remaining",
           type: "bar",
           stack: "total_sum",
           barWidth: "50%",
@@ -657,7 +662,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           data: remaining_values
         },
         %{
-          name: "Gasto",
+          name: spent_label,
+          meta_key: "spent",
           type: "bar",
           stack: "total_sum",
           itemStyle: %{
@@ -683,7 +689,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           data: total_values
         },
         %{
-          name: "Meta",
+          name: goal_label,
+          meta_key: "goal",
           type: "bar",
           barWidth: "35%",
           itemStyle: %{
