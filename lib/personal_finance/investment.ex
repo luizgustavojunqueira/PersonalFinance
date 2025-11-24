@@ -342,13 +342,19 @@ defmodule PersonalFinance.Investment do
           :withdraw -> "Retirada de #{get_fixed_income_name(fi_transaction.fixed_income_id)}"
         end
 
+      IO.inspect(description, label: "General Transaction Description")
+
       general_type =
         case fi_transaction.type do
           :deposit -> :expense
           :withdraw -> :income
         end
 
+      IO.inspect(general_type, label: "General Transaction Type")
+
       investment_category = Finance.get_investment_category(%Scope{}, ledger.id)
+
+      IO.inspect(investment_category, label: "Investment Category")
 
       attrs = %{
         "description" => description,
@@ -359,8 +365,16 @@ defmodule PersonalFinance.Investment do
         "category_id" => investment_category.id,
         "date" => fi_transaction.date,
         "ledger_id" => ledger.id,
-        "profile_id" => fi_transaction.profile_id
+        "profile_id" => fi_transaction.profile_id,
+        "time_input" =>
+          fi_transaction.date
+          |> DateUtils.to_local_time_with_date(),
+        "date_input" =>
+          fi_transaction.date
+          |> DateTime.to_date()
       }
+
+      IO.inspect(attrs)
 
       Finance.create_transaction(%Scope{}, attrs, ledger)
       |> case do
@@ -373,6 +387,7 @@ defmodule PersonalFinance.Investment do
           {:ok, transaction}
 
         error ->
+          IO.inspect(error, label: "Error creating general transaction")
           error
       end
     end
