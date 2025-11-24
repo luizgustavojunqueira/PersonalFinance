@@ -534,23 +534,20 @@ defmodule PersonalFinanceWeb.CoreComponents do
     assigns = assign(assigns, col_widths: assigns[:col_widths] || [])
 
     ~H"""
-    <div class="relative w-full overflow-x-auto shadow-sm rounded-xl transition-colors duration-300">
-      <table class="w-full p-2 transition-colors duration-300">
-        <thead class="bg-base-100 transition-colors duration-300">
+    <div class="relative w-full overflow-x-auto bg-base-100/80 border border-base-300 rounded-2xl shadow-sm transition-colors duration-300">
+      <table class="w-full text-sm transition-colors duration-300">
+        <thead class="bg-base-200/70 text-base-content/70">
           <tr class="text-left">
             <th
               :for={{col, idx} <- Enum.with_index(@col)}
-              class="p-2 transition-colors duration-300"
+              class="p-3 font-semibold transition-colors duration-300"
               style={
                 if Enum.at(@col_widths, idx), do: "width: #{Enum.at(@col_widths, idx)}", else: ""
               }
             >
               <div class="truncate" title={col[:label]}>{col[:label]}</div>
             </th>
-            <th
-              :if={@action != []}
-              class="p-2 w-px"
-            >
+            <th :if={@action != []} class="p-3 w-px">
               <div class="text-right whitespace-nowrap">{gettext("Actions")}</div>
             </th>
           </tr>
@@ -563,22 +560,22 @@ defmodule PersonalFinanceWeb.CoreComponents do
             :for={row <- @rows}
             id={@row_id && @row_id.(row)}
             phx-click={@row_click && @row_click.(row)}
-            class={"transition-colors duration-300 border-b-1 last:border-none bg-base-300 #{if @row_click, do: "hover:bg-base-300/50 hover:cursor-pointer"}"}
+            class={
+              "transition-colors duration-300 border-b border-base-300/60 last:border-none bg-base-100 even:bg-base-200/40 " <>
+                if(@row_click, do: "hover:bg-base-200/80 hover:cursor-pointer", else: "")
+            }
           >
             <td
               :for={{col, idx} <- Enum.with_index(@col)}
-              class="p-4 px-2 transition-colors duration-300"
+              class="p-4 transition-colors duration-300 align-middle"
               style={
                 if Enum.at(@col_widths, idx), do: "width: #{Enum.at(@col_widths, idx)}", else: ""
               }
             >
               {render_slot(col, @row_item.(row))}
             </td>
-            <td
-              :if={@action != []}
-              class="p-2 w-px"
-            >
-              <div class="flex justify-end gap-4 whitespace-nowrap">
+            <td :if={@action != []} class="p-4 w-px align-middle">
+              <div class="flex justify-end gap-3 whitespace-nowrap text-base-content/80">
                 <%= for action <- @action do %>
                   {render_slot(action, @row_item.(row))}
                 <% end %>

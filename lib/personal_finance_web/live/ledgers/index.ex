@@ -85,6 +85,8 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
     current_scope = socket.assigns.current_scope
     ledgers = Finance.list_ledgers(current_scope)
 
+    ledger = enrich_ledger_with_stats(ledger, current_scope)
+
     {:noreply,
      socket
      |> put_flash(:info, gettext("Ledger saved successfully."))

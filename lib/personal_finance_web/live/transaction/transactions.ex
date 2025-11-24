@@ -47,28 +47,32 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
         stream_name="transaction_collection"
         loader_mfa={{__MODULE__, :fetch_transactions, [@current_scope, @ledger]}}
         per_page={@page_size}
-        wrapper_class="flex flex-col gap-4"
+        wrapper_class="space-y-6 bg-base-100/80 border border-base-300 rounded-2xl p-5 shadow-sm"
         filter_config={filter_config(assigns)}
         initial_filters={@filter}
         filter_change_target={@parent_pid || self()}
         filter_change_message={:transactions_filter_changed}
       >
         <:content :let={transactions_stream}>
-          <.table
-            id="transactions_table"
-            rows={transactions_stream}
-            col_widths={["7%", "7%", "10%", "12%", "12%", "15%", "10%", "10%", "10%"]}
-            row_item={
-              fn
-                {_, struct} -> struct
-                struct -> struct
-              end
-            }
-          >
+          <div class="space-y-4">
+            <.table
+              id="transactions_table"
+              rows={transactions_stream}
+              col_widths={["7%", "7%", "10%", "12%", "12%", "15%", "10%", "10%", "10%"]}
+              row_item={
+                fn
+                  {_, struct} -> struct
+                  struct -> struct
+                end
+              }
+            >
             <:col :let={transaction} label={gettext("Type")}>
               <span class={[
-                "p-1 px-2 rounded-lg text-black",
-                if(transaction.type == :income, do: "bg-green-300", else: "bg-red-300")
+                "inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold",
+                if(transaction.type == :income,
+                  do: "bg-green-100 text-green-800",
+                  else: "bg-red-100 text-red-700"
+                )
               ]}>
                 {if transaction.type == :income, do: gettext("Income"), else: gettext("Expense")}
               </span>
@@ -85,11 +89,11 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
             </:col>
             <:col :let={transaction} label={gettext("Profile")}>
               <div
-                class="rounded-lg text-white text-center w-fit"
+                class="inline-flex items-center rounded-lg text-white text-center w-fit text-xs font-medium"
                 style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
               >
                 <.text_ellipsis
-                  class="p-1 px-2"
+                  class="px-3 py-1"
                   text={transaction.profile && transaction.profile.name}
                   max_width="max-w-[10rem]"
                 />
@@ -97,11 +101,11 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
             </:col>
             <:col :let={transaction} label={gettext("Category")}>
               <div
-                class="rounded-lg text-white text-center w-fit"
+                class="inline-flex items-center rounded-lg text-white text-center w-fit text-xs font-medium"
                 style={"background-color: #{transaction.category && transaction.category.color}99;"}
               >
                 <.text_ellipsis
-                  class="p-1 px-2"
+                  class="px-3 py-1"
                   text={transaction.category && transaction.category.name}
                   max_width="max-w-[10rem]"
                 />
@@ -125,20 +129,29 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
               {CurrencyUtils.format_money(transaction.total_value)}
             </:col>
             <:action :let={transaction}>
-              <.link phx-click="open_edit_transaction" phx-value-transaction_id={transaction.id}>
-                <.icon name="hero-pencil" class="text-blue-500 hover:text-blue-800" />
+              <.link
+                class="btn btn-sm btn-ghost rounded-full"
+                phx-click="open_edit_transaction"
+                phx-value-transaction_id={transaction.id}
+                aria-label={gettext("Edit Transaction")}
+              >
+                <.icon name="hero-pencil" class="w-4 h-4" />
               </.link>
             </:action>
             <:action :let={transaction}>
-              <.link phx-click="delete" phx-target={@myself} phx-value-id={transaction.id}>
-                <.icon name="hero-trash" class="text-red-500 hover:text-red-800" />
+              <.link
+                class="btn btn-sm btn-ghost rounded-full text-red-500"
+                phx-click="delete"
+                phx-target={@myself}
+                phx-value-id={transaction.id}
+                aria-label={gettext("Delete")}
+              >
+                <.icon name="hero-trash" class="w-4 h-4" />
               </.link>
             </:action>
-          </.table>
+            </.table>
+          </div>
         </:content>
-        <:empty_slot>
-          <div class="text-center py-4 text-gray-500">{gettext("No transactions found.")}</div>
-        </:empty_slot>
       </.live_component>
     </div>
     """

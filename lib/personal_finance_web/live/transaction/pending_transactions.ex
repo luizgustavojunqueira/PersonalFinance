@@ -71,58 +71,68 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
         show={@show}
         on_close={JS.push("close_modal")}
       >
-        <:title>{gettext("Upcoming Recurring Transactions")}</:title>
+        <:title>
+          <div class="space-y-1">
+            <p class="text-base-content font-semibold">{gettext("Pending Transactions")}</p>
+            <p class="text-sm text-base-content/70">{gettext("Upcoming Recurring Transactions")}</p>
+          </div>
+        </:title>
 
-        <div class="mb-4">
-          <.form for={@form} class="mt-1" phx-change="update_months" phx-target={@myself}>
-            <.input
-              field={@form[:months]}
-              type="select"
-              id="months"
-              name="months"
-              options={1..12}
-              value={@form[:months].value || 1}
-              class="w-full"
-              label={gettext("Months to display")}
-            />
-          </.form>
-        </div>
+        <div class="space-y-4">
+          <div class="rounded-2xl border border-base-300 bg-base-100/80 p-4">
+            <.form for={@form} class="mt-1" phx-change="update_months" phx-target={@myself}>
+              <.input
+                field={@form[:months]}
+                type="select"
+                id="months"
+                name="months"
+                options={1..12}
+                value={@form[:months].value || 1}
+                class="w-full"
+                label={gettext("Months to display")}
+              />
+            </.form>
+          </div>
 
-        <div class="flex-grow overflow-y-auto">
-          <%= if @pending_recurrent_transactions == [] do %>
-            <p class="text-gray-500">{gettext("No pending transactions.")}</p>
-          <% else %>
-            <.table
-              id="pending_transactions_table"
-              rows={@pending_recurrent_transactions}
-            >
-              <:col :let={transaction} label={gettext("Description")}>
-                {transaction.description}
-              </:col>
-              <:col :let={transaction} label={gettext("Profile")}>
-                {transaction.profile.name}
-              </:col>
-              <:col :let={transaction} label={gettext("Type")}>
-                {if transaction.type == :expense, do: gettext("Expense"), else: gettext("Income")}
-              </:col>
-              <:col :let={transaction} label={gettext("Value")}>
-                {CurrencyUtils.format_money(transaction.value)}
-              </:col>
-              <:col :let={transaction} label={gettext("Expected Date")}>
-                {DateUtils.format_date(transaction.date_expected)}
-              </:col>
-              <:action :let={transaction}>
-                <.link
-                  class="text-blue-600 hover:text-blue-800"
-                  phx-click="confirm_transaction"
-                  phx-value-id={transaction.recurring_entry.id}
-                  phx-target={@myself}
-                >
-                  <.icon name="hero-check" class="inline-block mr-1" />
-                </.link>
-              </:action>
-            </.table>
-          <% end %>
+          <div class="flex-grow overflow-y-auto rounded-2xl border border-base-300 bg-base-100/80 p-4">
+            <%= if @pending_recurrent_transactions == [] do %>
+              <div class="text-center text-base-content/60">
+                <.icon name="hero-check-circle" class="w-8 h-8 mx-auto text-success" />
+                <p class="mt-2 font-medium">{gettext("No pending transactions.")}</p>
+              </div>
+            <% else %>
+              <.table
+                id="pending_transactions_table"
+                rows={@pending_recurrent_transactions}
+              >
+                <:col :let={transaction} label={gettext("Description")}>
+                  {transaction.description}
+                </:col>
+                <:col :let={transaction} label={gettext("Profile")}>
+                  {transaction.profile.name}
+                </:col>
+                <:col :let={transaction} label={gettext("Type")}>
+                  {if transaction.type == :expense, do: gettext("Expense"), else: gettext("Income")}
+                </:col>
+                <:col :let={transaction} label={gettext("Value")}>
+                  {CurrencyUtils.format_money(transaction.value)}
+                </:col>
+                <:col :let={transaction} label={gettext("Expected Date")}>
+                  {DateUtils.format_date(transaction.date_expected)}
+                </:col>
+                <:action :let={transaction}>
+                  <.link
+                    class="btn btn-sm btn-success btn-circle text-white"
+                    phx-click="confirm_transaction"
+                    phx-value-id={transaction.recurring_entry.id}
+                    phx-target={@myself}
+                  >
+                    <.icon name="hero-check" class="w-4 h-4" />
+                  </.link>
+                </:action>
+              </.table>
+            <% end %>
+          </div>
         </div>
       </.side_modal>
     </div>

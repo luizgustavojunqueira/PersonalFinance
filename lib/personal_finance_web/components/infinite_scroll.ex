@@ -611,14 +611,20 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
     <div class={@wrapper_class || ""}>
       <%= if @filter_config != [] do %>
         <details
-          class="collapse bg-base-300 rounded-lg mb-4 shadow-sm"
+          class="group rounded-2xl border border-base-300 bg-base-100/80 mb-4 shadow-sm"
           open={if filters_active?(@filter_form_data), do: true, else: nil}
         >
-          <summary class="collapse-title font-semibold flex items-center gap-2">
-            <.icon name="hero-funnel" />
-            <%= gettext("Filters") %>
+          <summary class="flex items-center justify-between gap-4 px-5 py-4 cursor-pointer select-none font-semibold">
+            <span class="flex items-center gap-2">
+              <.icon name="hero-funnel" />
+              <%= gettext("Filters") %>
+            </span>
+            <.icon
+              name="hero-chevron-down"
+              class="w-4 h-4 transition-transform duration-200 group-open:rotate-180"
+            />
           </summary>
-          <div class="collapse-content bg-base-100 rounded-b-lg">
+          <div class="border-t border-base-300/60 bg-base-100 px-5 py-5 rounded-b-2xl">
             <.form
               for={@filter_form}
               phx-submit="apply_filters"
@@ -660,7 +666,7 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
       <% end %>
 
       <%= if @total_items > 0 do %>
-        <div class="flex justify-between items-center text-sm text-base-content/70 mb-2 px-1">
+        <div class="flex flex-wrap justify-between items-center text-sm text-base-content/70 mb-2 px-4 py-2 rounded-xl bg-base-200/60">
           <span>
             <%=
               gettext(
@@ -697,7 +703,7 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
         <%= if assigns[:empty_slot] && @empty_slot != [] do %>
           {render_slot(@empty_slot)}
         <% else %>
-          <div class="text-center py-4 text-base-content/60 text-sm">
+          <div class="text-center py-6 text-base-content/60 text-sm">
             <%= if @current_items_count == 0 do %>
               <%= gettext("No items found") %>
             <% else %>
