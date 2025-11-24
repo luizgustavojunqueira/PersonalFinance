@@ -155,107 +155,122 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
           phx-change="validate"
           phx-target={@myself}
         >
-          <.input
-            field={@form[:description]}
-            id="input-description"
-            type="text"
-            label={gettext("Description")}
-            placeholder={gettext("E.g.: Monster")}
-          />
-          <div class="flex flex-row gap-2">
-            <.input
-              field={@form[:profile_id]}
-              id="input-profile"
-              type="select"
-              options={@profiles}
-              label={gettext("Profile")}
-            />
-            <.input
-              field={@form[:type]}
-              id="input-type"
-              type="select"
-              label={gettext("Type")}
-              options={[{gettext("Income"), :income}, {gettext("Expense"), :expense}]}
-            />
-          </div>
-          <div class="flex flex-row gap-2 transition-all duration-300">
-            <.input
-              field={@form[:category_id]}
-              id="input-category"
-              type="select"
-              options={@categories}
-              label={gettext("Category")}
-            />
-            <%= if @selected_category_id && to_string(@selected_category_id) == to_string(@investment_category_id) do %>
-              <div
-                class="w-full"
-                phx-mounted={
-                  JS.transition(
-                    {"transition-all transform ease-in", "opacity-0 max-w-0",
-                     "opacity-100 max-w-full"},
-                    time: 200
-                  )
-                }
-                phx-remove={
-                  JS.hide(
-                    transition:
-                      {"transition-all transform ease-in duration-200", "opacity-100 max-w-full",
-                       "opacity-0 max-w-0"}
-                  )
-                }
-              >
+          <div class="space-y-6">
+            <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-4">
+              <.input
+                field={@form[:description]}
+                id="input-description"
+                type="text"
+                label={gettext("Description")}
+                placeholder={gettext("E.g.: Monster")}
+              />
+
+              <div class="grid gap-4 sm:grid-cols-2">
                 <.input
-                  field={@form[:investment_type_id]}
-                  id="input-investment-type"
+                  field={@form[:profile_id]}
+                  id="input-profile"
                   type="select"
-                  options={@investment_types}
-                  label={gettext("Investment Type")}
+                  options={@profiles}
+                  label={gettext("Profile")}
+                />
+                <.input
+                  field={@form[:type]}
+                  id="input-type"
+                  type="select"
+                  label={gettext("Type")}
+                  options={[{gettext("Income"), :income}, {gettext("Expense"), :expense}]}
                 />
               </div>
-            <% end %>
-          </div>
-          <div class="flex flex-row gap-2">
-            <.input
-              field={@form[:amount]}
-              id="input-amount"
-              type="number"
-              step="0.00000001"
-              label={gettext("Amount")}
-              placeholder={gettext("E.g.: 1")}
-            />
-            <.input
-              field={@form[:value]}
-              id="input-value"
-              type="number"
-              step="0.01"
-              label={gettext("Value")}
-              placeholder={gettext("E.g.: 10.00")}
-            />
-          </div>
-          <div class="flex flex-row gap-2">
-            <.input
-              field={@form[:date_input]}
-              id="input-date"
-              type="date"
-              label={gettext("Date")}
-              placeholder={gettext("E.g.: 2023-10-01")}
-            />
-            <.input
-              field={@form[:time_input]}
-              id="input-time"
-              type="time"
-              label={gettext("Time")}
-              placeholder={gettext("E.g.: 14:30")}
-            />
-          </div>
-          <div class="flex justify-center gap-2 mt-4">
-            <.button
-              variant="custom"
-              class="btn btn-primary w-full"
-              phx-disable-with={gettext("Saving...")}
-            >
-              {gettext("Save")}
-            </.button>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <.input
+                  field={@form[:category_id]}
+                  id="input-category"
+                  type="select"
+                  options={@categories}
+                  label={gettext("Category")}
+                />
+
+                <%= if @selected_category_id && to_string(@selected_category_id) == to_string(@investment_category_id) do %>
+                  <div
+                    class="w-full"
+                    phx-mounted={
+                      JS.transition(
+                        {"transition-all transform ease-in", "opacity-0 max-w-0",
+                         "opacity-100 max-w-full"},
+                        time: 200
+                      )
+                    }
+                    phx-remove={
+                      JS.hide(
+                        transition:
+                          {"transition-all transform ease-in duration-200",
+                           "opacity-100 max-w-full",
+                           "opacity-0 max-w-0"}
+                      )
+                    }
+                  >
+                    <.input
+                      field={@form[:investment_type_id]}
+                      id="input-investment-type"
+                      type="select"
+                      options={@investment_types}
+                      label={gettext("Investment Type")}
+                    />
+                  </div>
+                <% else %>
+                  <div class="w-full hidden sm:block"></div>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="grid gap-4 md:grid-cols-2">
+              <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-4">
+                <.input
+                  field={@form[:amount]}
+                  id="input-amount"
+                  type="number"
+                  step="0.00000001"
+                  label={gettext("Amount")}
+                  placeholder={gettext("E.g.: 1")}
+                />
+                <.input
+                  field={@form[:value]}
+                  id="input-value"
+                  type="number"
+                  step="0.01"
+                  label={gettext("Value")}
+                  placeholder={gettext("E.g.: 10.00")}
+                />
+              </div>
+
+              <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-4">
+                <.input
+                  field={@form[:date_input]}
+                  id="input-date"
+                  type="date"
+                  label={gettext("Date")}
+                  placeholder={gettext("E.g.: 2023-10-01")}
+                />
+                <.input
+                  field={@form[:time_input]}
+                  id="input-time"
+                  type="time"
+                  label={gettext("Time")}
+                  placeholder={gettext("E.g.: 14:30")}
+                />
+              </div>
+            </div>
+
+            <div class="flex justify-end gap-2">
+              <.button
+                variant="primary"
+                class="w-full sm:w-auto"
+                phx-disable-with={gettext("Saving...")}
+              >
+                {gettext("Save")}
+              </.button>
+            </div>
           </div>
         </.form>
       </.modal>

@@ -38,91 +38,87 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
             <.icon name="hero-document-arrow-up" class="w-6 h-6" /> {gettext("Import Transactions")}
           </span>
         </:title>
-        <div class="p-6">
-          <.form
-            for={@import_form}
-            id="import-form"
-            phx-submit="import_transactions"
-            phx-change="validate_import"
-            phx-target={@myself}
-            class="space-y-4"
-          >
-            <div class="form-control">
-              <label class="label">
-                <span class="label-text font-medium">{gettext("CSV File")}</span>
-              </label>
-              <label
-                for={@uploads.file.ref}
-                phx-drop-target={@uploads.file.ref}
-                class="border-2 border-dashed border-base-300 rounded-lg p-8 text-center hover:border-primary transition-colors duration-300 cursor-pointer flex flex-col items-center"
-              >
-                <.icon
-                  name="hero-cloud-arrow-up"
-                  class="w-12 h-12 mb-4 text-base-content/50"
-                />
-                <p class="text-base font-medium text-base-content">
-                  {gettext("Drag and drop your CSV file")}
-                </p>
-                <p class="text-sm text-base-content/70 mt-1">
-                  {gettext("or click to select (maximum 5MB)")}
-                </p>
-                <.live_file_input
-                  upload={@uploads.file}
-                  class="sr-only"
-                />
-              </label>
+        <div class="p-6 space-y-6">
+          <div class="rounded-2xl border border-base-300 bg-base-100/80 p-6">
+            <.form
+              for={@import_form}
+              id="import-form"
+              phx-submit="import_transactions"
+              phx-change="validate_import"
+              phx-target={@myself}
+              class="space-y-6"
+            >
+              <div class="space-y-3">
+                <span class="text-sm font-semibold text-base-content/70">{gettext("CSV File")}</span>
+                <label
+                  for={@uploads.file.ref}
+                  phx-drop-target={@uploads.file.ref}
+                  class="border-2 border-dashed border-base-300 rounded-2xl p-8 text-center hover:border-primary transition-colors duration-300 cursor-pointer flex flex-col items-center gap-2 bg-base-200/30"
+                >
+                  <.icon name="hero-cloud-arrow-up" class="w-12 h-12 text-base-content/50" />
+                  <p class="text-base font-medium text-base-content">
+                    {gettext("Drag and drop your CSV file")}
+                  </p>
+                  <p class="text-sm text-base-content/70">
+                    {gettext("or click to select (maximum 5MB)")}
+                  </p>
+                  <.live_file_input upload={@uploads.file} class="sr-only" />
+                </label>
 
-              <%= for entry <- @uploads.file.entries do %>
-                <div class="mt-4">
-                  <div class="flex justify-between text-sm mb-1">
-                    <span>{entry.client_name}</span>
-                    <span>{entry.progress}%</span>
+                <%= for entry <- @uploads.file.entries do %>
+                  <div class="rounded-xl border border-base-300/70 bg-base-100 p-3">
+                    <div class="flex justify-between text-sm mb-1">
+                      <span>{entry.client_name}</span>
+                      <span>{entry.progress}%</span>
+                    </div>
+                    <progress class="progress progress-primary" value={entry.progress} max="100">
+                    </progress>
                   </div>
-                  <progress class="progress progress-primary" value={entry.progress} max="100">
-                  </progress>
-                </div>
-              <% end %>
-
-              <%= for err <- upload_errors(@uploads.file) do %>
-                <div class="alert alert-error mt-2">
-                  <.icon name="hero-exclamation-triangle" class="w-4 h-4" />
-                  <span>
-                    <%= case err do %>
-                      <% :too_large -> %>
-                        {gettext("File too large (maximum 5MB)")}
-                      <% :not_accepted -> %>
-                        {gettext("File type not accepted (CSV only)")}
-                      <% :too_many_files -> %>
-                        {gettext("Only one file at a time")}
-                      <% _ -> %>
-                        {gettext("Upload error")}
-                    <% end %>
-                  </span>
-                </div>
-              <% end %>
-            </div>
-
-            <div classs="flex flex-row gap-2 mt-4 w-full">
-              <.button
-                type="submit"
-                disabled={@uploads.file.entries == [] or @importing}
-                variant="custom"
-                class="btn btn-primary w-full"
-              >
-                <%= if @importing do %>
-                  <span class="loading loading-spinner loading-sm"></span> {gettext("Importing...")}
-                <% else %>
-                  <.icon name="hero-document-arrow-up" class="w-4 h-4" /> {gettext("Import")}
                 <% end %>
-              </.button>
-            </div>
-          </.form>
+
+                <%= for err <- upload_errors(@uploads.file) do %>
+                  <div class="alert alert-error">
+                    <.icon name="hero-exclamation-triangle" class="w-4 h-4" />
+                    <span>
+                      <%= case err do %>
+                        <% :too_large -> %>
+                          {gettext("File too large (maximum 5MB)")}
+                        <% :not_accepted -> %>
+                          {gettext("File type not accepted (CSV only)")}
+                        <% :too_many_files -> %>
+                          {gettext("Only one file at a time")}
+                        <% _ -> %>
+                          {gettext("Upload error")}
+                      <% end %>
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+
+              <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div class="flex-1 text-sm text-base-content/70">
+                  {gettext("Import Transactions")}
+                </div>
+                <.button
+                  type="submit"
+                  disabled={@uploads.file.entries == [] or @importing}
+                  variant="primary"
+                  class="w-full sm:w-auto"
+                >
+                  <%= if @importing do %>
+                    <span class="loading loading-spinner loading-sm"></span> {gettext("Importing...")}
+                  <% else %>
+                    <.icon name="hero-document-arrow-up" class="w-4 h-4" /> {gettext("Import")}
+                  <% end %>
+                </.button>
+              </div>
+            </.form>
+          </div>
 
           <%= if @imported_count > 0 do %>
-            <div class="divider">{gettext("Imported Transactions")}</div>
-            <div class="bg-success/10 border border-success/20 rounded-lg p-4 mb-4">
-              <div class="flex items-center gap-2 mb-2">
-                <.icon name="hero-check-circle" class="w-5 h-5 text-success" />
+            <div class="rounded-2xl border border-success/30 bg-success/10 p-4">
+              <div class="flex items-center gap-3">
+                <.icon name="hero-check-circle" class="w-6 h-6 text-success" />
                 <span class="font-medium text-success">
                   {Gettext.ngettext(PersonalFinanceWeb.Gettext, "%{count} transaction successfully imported!", "%{count} transactions successfully imported!", @imported_count, count: @imported_count)}
                 </span>

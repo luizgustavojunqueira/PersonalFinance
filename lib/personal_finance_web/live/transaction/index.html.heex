@@ -1,25 +1,43 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
-  <.header>
-    {@ledger.name} - {gettext("Transactions")}
-    <:actions>
-      <div class="flex flex-col md:flex-row  gap-2">
-        <.button phx-click="export_transactions" >
-          {gettext("Export")}
-        </.button>
-        <.button phx-click="open_modal" phx-value-modal={:import_transactions}>
-          {gettext("Import")}
-        </.button>
-        <.button phx-click="open_modal" phx-value-modal={:pending_transactions}>
-          <.icon name="hero-clock" /> {gettext("Pending Transactions")}
-        </.button>
-        <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_transaction}>
-          <.icon name="hero-plus" /> {gettext("Add Transaction")}
-        </.button>
-      </div>
-    </:actions>
-  </.header>
+  <div class="min-h-screen pb-12 space-y-6">
+    <section class="bg-base-100/80 border border-base-300 rounded-2xl p-6 shadow-sm mt-4">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div class="space-y-2">
+          <p class="text-sm font-semibold uppercase tracking-wide text-primary/70">
+            {gettext("Transactions")}
+          </p>
+          <h1 class="text-3xl font-bold text-base-content">{@ledger.name}</h1>
+        </div>
 
-  <div class="flex flex-col">
+        <div class="flex flex-wrap gap-2 w-full lg:w-auto">
+          <.button variant="custom" class="flex-1 lg:flex-none btn-outline" phx-click="export_transactions">
+            <.icon name="hero-arrow-down-tray" class="w-4 h-4" />
+            {gettext("Export")}
+          </.button>
+          <.button
+            variant="custom"
+            class="flex-1 lg:flex-none btn-outline"
+            phx-click="open_modal"
+            phx-value-modal={:import_transactions}
+          >
+            <.icon name="hero-arrow-up-tray" class="w-4 h-4" /> {gettext("Import")}
+          </.button>
+          <.button
+            class="flex-1 lg:flex-none btn-ghost"
+            variant="custom"
+            phx-click="open_modal"
+            phx-value-modal={:pending_transactions}
+          >
+            <.icon name="hero-clock" /> {gettext("Pending Transactions")}
+          </.button>
+          <.button variant="primary" class="flex-1 lg:flex-none" phx-click="open_modal" phx-value-modal={:new_transaction}>
+            <.icon name="hero-plus" /> {gettext("Add Transaction")}
+          </.button>
+        </div>
+      </div>
+    </section>
+
+    <div class="space-y-6">
     <.live_component
       module={PersonalFinanceWeb.TransactionLive.TransactionForm}
       id="transaction-form-modal"
@@ -61,5 +79,6 @@
       categories={@categories}
       investment_types={@investment_types}
     />
+    </div>
   </div>
 </Layouts.app>
