@@ -37,15 +37,15 @@
       on_close={JS.push("close_modal")}
     >
       <:title>
-        Excluir Ledger
+        <%= gettext("Delete Ledger") %>
       </:title>
-      Tem certeza de que deseja excluir o ledger "{@ledger.name}"?
+      <%= gettext("Are you sure you want to delete the ledger \"%{name}\"?", name: @ledger.name) %>
       <:actions>
         <.button variant="primary" phx-click="delete" phx-value-id={@ledger.id}>
-          Excluir
+          <%= gettext("Delete") %>
         </.button>
         <.button phx-click="close_modal">
-          Cancelar
+          <%= gettext("Cancel") %>
         </.button>
       </:actions>
     </.modal>

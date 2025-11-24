@@ -28,9 +28,9 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
     <div class="grid gap-6 grid-cols-1 lg:grid-cols-[minmax(0,40%)_minmax(0,60%)]">
       <div class="rounded-lg p-6 bg-base-100/50 w-full shadow-lg space-y-4">
         <div>
-          <h2 class="text-2xl font-bold">Convidar</h2>
+          <h2 class="text-2xl font-bold">{gettext("Invite")}</h2>
           <p class="text-sm text-base-content/60">
-            Escolha um usuário para colaborar neste orçamento.
+            {gettext("Choose a user to collaborate on this ledger.")}
           </p>
         </div>
 
@@ -45,23 +45,23 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
           <.input
             field={@invite_form[:user_id]}
             type="select"
-            label="Usuário"
+            label={gettext("User")}
             options={@available_users}
-            prompt="Selecione um usuário"
+            prompt={gettext("Select a user")}
           />
 
           <.button
             variant="primary"
-            phx-disable-with="Adicionando..."
+            phx-disable-with={gettext("Adding...")}
             disabled={@selected_user_id in [nil, ""]}
           >
-            <.icon name="hero-user-plus" class="w-4 h-4" /> Adicionar colaborador
+            <.icon name="hero-user-plus" class="w-4 h-4" /> {gettext("Add collaborator")}
           </.button>
         </.form>
 
         <%= if @available_users == [] do %>
           <p class="text-xs text-base-content/60">
-            Todos os usuários elegíveis já fazem parte deste orçamento.
+            {gettext("All eligible users are already part of this ledger.")}
           </p>
         <% end %>
       </div>
@@ -69,32 +69,32 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
       <div class="rounded-lg p-6 w-full shadow-lg bg-base-100/50">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h2 class="text-2xl font-bold">Colaboradores</h2>
-            <p class="text-sm text-base-content/60">Gerencie quem possui acesso a este orçamento.</p>
+            <h2 class="text-2xl font-bold">{gettext("Collaborators")}</h2>
+            <p class="text-sm text-base-content/60">{gettext("Manage who has access to this ledger.")}</p>
           </div>
-          <span class="text-sm text-base-content/60">{length(@ledger_users)} no total</span>
+          <span class="text-sm text-base-content/60">{Gettext.ngettext(PersonalFinanceWeb.Gettext, "%{count} in total", "%{count} in total", length(@ledger_users), count: length(@ledger_users))}</span>
         </div>
 
         <%= if @ledger_users == [] do %>
-          <p class="text-base-content/70">Nenhum colaborador adicionado.</p>
+          <p class="text-base-content/70">{gettext("No collaborators added.")}</p>
         <% else %>
           <.table
             id={"#{@id}-ledger-users"}
             rows={@ledger_users}
             col_widths={["35%", "25%", "10%"]}
           >
-            <:col :let={user} label="Colaborador">
+            <:col :let={user} label={gettext("Collaborator")}>
               <div class="flex flex-col">
                 <span class="font-semibold">{user.name}</span>
                 <span class="text-sm text-base-content/60">{user.email}</span>
               </div>
             </:col>
-            <:col :let={user} label="Tipo">
+            <:col :let={user} label={gettext("Type")}>
               <span class="uppercase text-xs tracking-wide text-base-content/70">
                 <%= if @ledger.owner_id == user.id do %>
-                  Dono
+                  {gettext("Owner")}
                 <% else %>
-                  Colaborador
+                  {gettext("Collaborator")}
                 <% end %>
               </span>
             </:col>
@@ -130,7 +130,7 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
       {:ok, user} ->
         notify_parent(
           socket,
-          {:put_flash, :info, "Colaborador #{user.email} adicionado com sucesso."}
+          {:put_flash, :info, "#{gettext("Collaborator")} #{user.email} #{gettext("successfully added.")}"}
         )
 
         {:noreply, refresh_data(socket)}
@@ -150,7 +150,7 @@ defmodule PersonalFinanceWeb.SettingsLive.AccessPanel do
 
     case Finance.remove_ledger_user(current_scope, ledger, user_id) do
       {:ok, _} ->
-        notify_parent(socket, {:put_flash, :info, "Colaborador removido com sucesso."})
+        notify_parent(socket, {:put_flash, :info, gettext("Collaborator successfully removed.")})
         {:noreply, refresh_data(socket)}
 
       {:error, reason} ->

@@ -41,7 +41,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfileForm do
         on_close={@on_close}
         class="mt-2"
       >
-        <:title>{if @action == :edit, do: "Editar Perfil", else: "Novo Perfil"}</:title>
+        <:title>{if @action == :edit, do: gettext("Edit Profile"), else: gettext("New Profile")}</:title>
         <.form
           for={@form}
           id="profile-form"
@@ -49,16 +49,16 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfileForm do
           phx-change="validate"
           phx-target={@myself}
         >
-          <.input field={@form[:name]} type="text" label="Nome" />
-          <.input field={@form[:description]} type="text" label="Descrição" />
-          <.input field={@form[:color]} type="color" label="Cor" />
+          <.input field={@form[:name]} type="text" label={gettext("Name")} />
+          <.input field={@form[:description]} type="text" label={gettext("Description")} />
+          <.input field={@form[:color]} type="color" label={gettext("Color")} />
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"
               class="btn btn-primary w-full"
-              phx-disable-with="Salvando..."
+              phx-disable-with={gettext("Saving...")}
             >
-              Salvar
+              {gettext("Save")}
             </.button>
           </div>
         </.form>

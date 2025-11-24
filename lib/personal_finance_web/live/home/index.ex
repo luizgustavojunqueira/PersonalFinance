@@ -10,7 +10,7 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
     if ledger == nil do
       {:ok,
        socket
-       |> put_flash(:error, "Orçamento não encontrado.")
+       |> put_flash(:error, gettext("Ledger not found."))
        |> push_navigate(to: ~p"/ledgers")}
     else
       Finance.subscribe_finance(:transaction, ledger.id)
@@ -27,7 +27,7 @@ defmodule PersonalFinanceWeb.HomeLive.Index do
         |> assign(
           current_user: current_scope.user,
           ledger: ledger,
-          page_title: "Home #{ledger.name}",
+          page_title: "#{gettext("Home")} #{ledger.name}",
           show_welcome_message: true,
           transactions: transactions,
           categories: categories,

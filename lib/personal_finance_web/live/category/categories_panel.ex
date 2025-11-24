@@ -21,7 +21,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
      socket
      |> assign(:open_modal, nil)
      |> assign(:category, nil)
-      |> reload_categories()}
+     |> reload_categories()}
   end
 
   def update(%{action: :deleted, category: _category}, socket) do
@@ -32,7 +32,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
     {:ok,
      socket
      |> assign(assigns)
-      |> maybe_initialize_categories()}
+     |> maybe_initialize_categories()}
   end
 
   @impl true
@@ -43,7 +43,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
     if category do
       {:noreply, assign(socket, open_modal: :edit_category, category: category)}
     else
-      {:noreply, put_flash(socket, :error, "Categoria não encontrada.")}
+      {:noreply, put_flash(socket, :error, gettext("Category not found."))}
     end
   end
 
@@ -60,7 +60,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
          |> reload_categories()}
 
       {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Falha ao remover categoria.")}
+        {:noreply, put_flash(socket, :error, gettext("Failed to delete category."))}
     end
   end
 
@@ -79,11 +79,15 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
     if category do
       {:noreply, assign(socket, open_modal: :delete_category, category: category)}
     else
-      {:noreply, put_flash(socket, :error, "Categoria não encontrada.")}
+      {:noreply, put_flash(socket, :error, gettext("Category not found."))}
     end
   end
 
-  def handle_event("update_percentage", %{"category_id" => category_id, "percentage" => value}, socket) do
+  def handle_event(
+        "update_percentage",
+        %{"category_id" => category_id, "percentage" => value},
+        socket
+      ) do
     with {:ok, category} <- fetch_category(socket, category_id, socket.assigns.ledger),
          false <- slider_disabled?(category),
          {:ok, parsed_value} <- parse_percentage(value),
@@ -99,16 +103,16 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
         {:noreply, socket}
 
       {:error, :invalid_value} ->
-          {:noreply,
-           socket
-           |> put_flash(:error, "Valor inválido para porcentagem.")
-           |> reload_categories()}
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Invalid value for percentage."))
+         |> reload_categories()}
 
       {:error, :not_found} ->
-          {:noreply,
-           socket
-           |> put_flash(:error, "Categoria não encontrada.")
-           |> reload_categories()}
+        {:noreply,
+         socket
+         |> put_flash(:error, gettext("Category not found."))
+         |> reload_categories()}
 
       {:error, %Ecto.Changeset{} = changeset} ->
         message = percentage_error_message(changeset)
@@ -125,14 +129,14 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
     ~H"""
     <div id={@id} class="space-y-6">
       <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-semibold">Categorias</h2>
+        <h2 class="text-2xl font-semibold">{gettext("Categories")}</h2>
         <.button
           variant="primary"
           phx-target={@myself}
           phx-click="open_modal"
           phx-value-modal={:new_category}
         >
-          <.icon name="hero-plus" /> Adicionar Categoria
+          <.icon name="hero-plus" /> {gettext("Add Category")}
         </.button>
       </div>
 
@@ -153,8 +157,10 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
         on_close={JS.push("close_modal", target: @myself)}
         class="mt-2"
       >
-        <:title>Excluir Categoria</:title>
-        Tem certeza de que deseja excluir a categoria "{@category && @category.name}"?
+        <:title>{gettext("Delete Category")}</:title>
+        {gettext("Are you sure you want to delete the category \"%{name}\"?",
+          name: @category && @category.name
+        )}
         <:actions>
           <.button
             variant="primary"
@@ -162,10 +168,10 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
             phx-click="delete"
             phx-value-id={@category && @category.id}
           >
-            Excluir
+            {gettext("Delete")}
           </.button>
           <.button phx-target={@myself} phx-click="close_modal">
-            Cancelar
+            {gettext("Cancel")}
           </.button>
         </:actions>
       </.modal>
@@ -181,27 +187,27 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
           end
         }
       >
-        <:col :let={category} label="Nome">
+        <:col :let={category} label={gettext("Name")}>
           <.text_ellipsis text={category.name} max_width="max-w-[15rem]" />
         </:col>
-        <:col :let={category} label="Descrição">
+        <:col :let={category} label={gettext("Description")}>
           <.text_ellipsis text={category.description} max_width="max-w-[20rem]" />
         </:col>
-        <:col :let={category} label="Cor">
+        <:col :let={category} label={gettext("Color")}>
           <span
             class="inline-block w-7 h-4 rounded-xl border-2 border-black dark:border-white"
             style={"background-color: #{category.color};"}
           >
           </span>
         </:col>
-        <:col :let={category} label="Porcentagem (100% máx.)">
+        <:col :let={category} label={gettext("Percentage (100% max.)")}>
           <%= if slider_disabled?(category) do %>
             <div class="flex items-center gap-4 text-sm">
               <span class="font-semibold tabular-nums w-16 text-right">
                 {format_percentage(category.percentage)}
               </span>
               <span class="text-xs uppercase tracking-wide text-zinc-400 dark:text-zinc-500">
-                Bloqueado
+                {gettext("Locked")}
               </span>
             </div>
           <% else %>
@@ -226,7 +232,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
                   value={category.percentage}
                   phx-hook="RangeField"
                   data-max-available={percentage_slider_max(@categories, category)}
-                  aria-label={"Porcentagem da categoria #{category.name}"}
+                  aria-label={gettext("Category percentage %{name}", name: category.name)}
                   style={slider_style(@categories, category)}
                 />
               </div>
@@ -297,13 +303,13 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
   defp parse_percentage(value) when is_float(value), do: {:ok, Float.round(value, 2)}
 
   defp parse_percentage(value) when is_integer(value) do
-    {:ok, value * 1.0 |> Float.round(2)}
+    {:ok, (value * 1.0) |> Float.round(2)}
   end
 
   defp percentage_error_message(%Ecto.Changeset{} = changeset) do
     case Keyword.get(changeset.errors, :percentage) do
       {message, _opts} -> message
-      _ -> "Não foi possível atualizar a porcentagem."
+      _ -> gettext("Unable to update the percentage.")
     end
   end
 

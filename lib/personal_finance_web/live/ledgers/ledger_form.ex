@@ -88,7 +88,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerForm do
         id="new-ledger-form"
         on_close={JS.push("close_modal")}
       >
-        <:title>{if @action == :edit, do: "Editar Ledger", else: "Novo Ledger"}</:title>
+        <:title>{if @action == :edit, do: gettext("Edit Ledger"), else: gettext("New Ledger")}</:title>
         <.form
           for={@form}
           id="ledger-form"
@@ -96,16 +96,16 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerForm do
           phx-change="validate"
           phx-target={@myself}
         >
-          <.input field={@form[:name]} type="text" label="Nome" />
-          <.input field={@form[:description]} type="text" label="Descrição" />
+          <.input field={@form[:name]} type="text" label={gettext("Name")} />
+          <.input field={@form[:description]} type="text" label={gettext("Description")} />
 
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"
               class="btn btn-primary w-full"
-              phx-disable-with="Salvando..."
+              phx-disable-with={gettext("Saving...")}
             >
-              Salvar
+              <%= gettext("Save") %>
             </.button>
           </div>
         </.form>

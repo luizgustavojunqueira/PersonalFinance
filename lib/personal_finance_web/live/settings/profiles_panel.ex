@@ -79,7 +79,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
        |> assign(:active_profile, profile)}
     else
       :error ->
-        send_flash(socket, :error, "Perfil não encontrado.")
+        send_flash(socket, :error, gettext("Profile not found."))
         {:noreply, socket}
     end
   end
@@ -98,7 +98,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
       {:noreply, assign(socket, :delete_profile, profile)}
     else
       :error ->
-        send_flash(socket, :error, "Perfil não encontrado.")
+        send_flash(socket, :error, gettext("Profile not found."))
         {:noreply, socket}
     end
   end
@@ -112,7 +112,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
   def handle_event("delete_profile", %{"id" => profile_id}, socket) do
     with {:ok, profile} <- fetch_profile(socket, profile_id),
          {:ok, _profile} <- Finance.delete_profile(socket.assigns.current_scope, profile) do
-      send_flash(socket, :info, "Perfil removido com sucesso.")
+      send_flash(socket, :info, gettext("Profile successfully deleted."))
 
       {:noreply,
        socket
@@ -120,11 +120,11 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
        |> reload_profiles()}
     else
       {:error, _changeset} ->
-        send_flash(socket, :error, "Falha ao remover o perfil.")
+        send_flash(socket, :error, gettext("Failed to delete profile."))
         {:noreply, socket}
 
       :error ->
-        send_flash(socket, :error, "Perfil não encontrado.")
+        send_flash(socket, :error, gettext("Profile not found."))
         {:noreply, socket}
     end
   end
@@ -148,7 +148,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
       <div class="space-y-4">
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-2xl font-semibold text-base-content">Gerencie perfis e recorrências</p>
+            <p class="text-2xl font-semibold text-base-content">{gettext("Manage profiles and recurrences")}</p>
           </div>
           <.button
             variant="primary"
@@ -157,14 +157,14 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
             phx-click="open_new_profile"
             phx-target={@myself}
           >
-            <.icon name="hero-plus" class="w-4 h-4 mr-1" /> Novo perfil
+            <.icon name="hero-plus" class="w-4 h-4 mr-1" /> {gettext("New profile")}
           </.button>
         </div>
 
         <div class="space-y-2">
           <%= if @profiles_empty? do %>
             <div class="rounded-xl border border-dashed border-base-300 bg-base-100/80 p-6 text-sm text-base-content/70">
-              Nenhum perfil cadastrado ainda.
+              {gettext("No profiles registered yet.")}
             </div>
           <% end %>
 
@@ -182,7 +182,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
                     <div class="space-y-1">
                       <p class="text-base font-semibold text-base-content">{profile.name}</p>
                       <p class="text-sm text-base-content/70">
-                        {profile.description || "Sem descrição"}
+                        {profile.description || gettext("No description")}
                       </p>
                     </div>
                   </div>
@@ -205,7 +205,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
                     phx-click="open_edit_profile"
                     phx-value-profile_id={profile.id}
                     phx-target={@myself}
-                    title="Editar perfil"
+                    title={gettext("Edit profile")}
                   >
                     <.icon name="hero-pencil" class="text-primary" />
                   </.button>
@@ -218,7 +218,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
                       phx-click="open_delete_modal"
                       phx-value-profile_id={profile.id}
                       phx-target={@myself}
-                      title="Excluir perfil"
+                      title={gettext("Delete profile")}
                     >
                       <.icon name="hero-trash" class="text-error" />
                     </.button>
@@ -261,13 +261,13 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
         show={not is_nil(@delete_profile)}
         on_close={JS.push("close_delete_modal", target: @myself)}
       >
-        <:title>Excluir perfil</:title>
+        <:title>{gettext("Delete profile")}</:title>
         <:content>
           <p class="text-base">
-            Tem certeza de que deseja excluir o perfil "{@delete_profile && @delete_profile.name}"?
+            {gettext("Are you sure you want to delete the profile \"%{name}\"?", name: @delete_profile && @delete_profile.name)}
           </p>
           <p class="mt-2 text-sm text-base-content/70">
-            Todas as transações recorrentes associadas a este perfil serão removidas permanentemente.
+            {gettext("All recurring transactions associated with this profile will be permanently deleted.")}
           </p>
         </:content>
         <:actions>
@@ -277,7 +277,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
             phx-value-id={@delete_profile && @delete_profile.id}
             phx-target={@myself}
           >
-            Excluir
+            {gettext("Delete")}
           </.button>
           <.button
             variant="custom"
@@ -286,7 +286,7 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
             phx-click="close_delete_modal"
             phx-target={@myself}
           >
-            Cancelar
+            {gettext("Cancel")}
           </.button>
         </:actions>
       </.modal>

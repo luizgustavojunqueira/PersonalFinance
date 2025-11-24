@@ -9,8 +9,8 @@ defmodule PersonalFinanceWeb.UserLive.Settings do
     ~H"""
     <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={nil}>
       <.header class="text-center">
-        Account Settings
-        <:subtitle>Manage your account settings</:subtitle>
+        <%= gettext("Account Settings") %>
+        <:subtitle><%= gettext("Manage your account settings") %></:subtitle>
       </.header>
 
       <.form
@@ -32,18 +32,18 @@ defmodule PersonalFinanceWeb.UserLive.Settings do
         <.input
           field={@password_form[:password]}
           type="password"
-          label="New password"
+          label={gettext("New password")}
           autocomplete="new-password"
           required
         />
         <.input
           field={@password_form[:password_confirmation]}
           type="password"
-          label="Confirm new password"
+          label={gettext("Confirm new password")}
           autocomplete="new-password"
         />
-        <.button variant="primary" phx-disable-with="Saving...">
-          Save Password
+        <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+          <%= gettext("Save Password") %>
         </.button>
       </.form>
     </Layouts.app>

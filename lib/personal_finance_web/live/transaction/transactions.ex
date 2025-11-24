@@ -65,25 +65,25 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
               end
             }
           >
-            <:col :let={transaction} label="Tipo">
+            <:col :let={transaction} label={gettext("Type")}>
               <span class={[
                 "p-1 px-2 rounded-lg text-black",
                 if(transaction.type == :income, do: "bg-green-300", else: "bg-red-300")
               ]}>
-                {if transaction.type == :income, do: "Receita", else: "Despesa"}
+                {if transaction.type == :income, do: gettext("Income"), else: gettext("Expense")}
               </span>
             </:col>
-            <:col :let={transaction} label="Data">
+            <:col :let={transaction} label={gettext("Date")}>
               <%= if transaction.date do %>
                 {DateUtils.to_local_time_with_date(transaction.date) |> DateUtils.format_date()}
               <% else %>
-                Data não disponível
+                {gettext("Date not available")}
               <% end %>
             </:col>
-            <:col :let={transaction} label="Descrição">
+            <:col :let={transaction} label={gettext("Description")}>
               <.text_ellipsis text={transaction.description} max_width="max-w-[10rem]" />
             </:col>
-            <:col :let={transaction} label="Perfil">
+            <:col :let={transaction} label={gettext("Profile")}>
               <div
                 class="rounded-lg text-white text-center w-fit"
                 style={"background-color: #{transaction.profile && transaction.profile.color}99;"}
@@ -95,7 +95,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
                 />
               </div>
             </:col>
-            <:col :let={transaction} label="Categoria">
+            <:col :let={transaction} label={gettext("Category")}>
               <div
                 class="rounded-lg text-white text-center w-fit"
                 style={"background-color: #{transaction.category && transaction.category.color}99;"}
@@ -107,21 +107,21 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
                 />
               </div>
             </:col>
-            <:col :let={transaction} label="Tipo de Investimento">
+            <:col :let={transaction} label={gettext("Investment Type")}>
               <.text_ellipsis
                 text={if transaction.investment_type, do: transaction.investment_type.name, else: "-"}
                 max_width="max-w-[10rem]"
               />
             </:col>
-            <:col :let={transaction} label="Quantidade">
+            <:col :let={transaction} label={gettext("Amount")}>
               {if transaction.investment_type && transaction.investment_type.name == "Cripto",
                 do: CurrencyUtils.format_amount(transaction.amount, true),
                 else: CurrencyUtils.format_amount(transaction.amount, false)}
             </:col>
-            <:col :let={transaction} label="Valor Unitário">
+            <:col :let={transaction} label={gettext("Unit Value")}>
               {CurrencyUtils.format_money(transaction.value)}
             </:col>
-            <:col :let={transaction} label="Valor Total">
+            <:col :let={transaction} label={gettext("Total Value")}>
               {CurrencyUtils.format_money(transaction.total_value)}
             </:col>
             <:action :let={transaction}>
@@ -137,7 +137,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
           </.table>
         </:content>
         <:empty_slot>
-          <div class="text-center py-4 text-gray-500">Nenhuma transação encontrada.</div>
+          <div class="text-center py-4 text-gray-500">{gettext("No transactions found.")}</div>
         </:empty_slot>
       </.live_component>
     </div>
@@ -156,7 +156,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
         {:noreply, socket}
 
       {:error, _changeset} ->
-        {:noreply, put_flash(socket, :error, "Falha ao remover transação.")}
+        {:noreply, put_flash(socket, :error, gettext("Failed to delete transaction."))}
     end
   end
 
@@ -207,9 +207,9 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       %{
         name: :profile_id,
         type: "select",
-        label: "Perfil",
+        label: gettext("Profile"),
         options: assigns.profiles,
-        prompt: "Selecione um perfil",
+        prompt: gettext("Select a profile"),
         parser: &ParseUtils.parse_id/1,
         to_form_value: &to_select_value/1,
         match: fn transaction, value -> transaction.profile_id == value end
@@ -217,9 +217,9 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       %{
         name: :type,
         type: "select",
-        label: "Tipo",
-        options: [{"Receita", :income}, {"Despesa", :expense}],
-        prompt: "Selecione um tipo",
+        label: gettext("Type"),
+        options: [{gettext("Income"), :income}, {gettext("Expense"), :expense}],
+        prompt: gettext("Select a type"),
         parser: &parse_type/1,
         to_form_value: &to_type_value/1,
         match: fn transaction, value -> transaction.type == value end
@@ -227,9 +227,9 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       %{
         name: :category_id,
         type: "select",
-        label: "Categoria",
+        label: gettext("Category"),
         options: assigns.categories,
-        prompt: "Selecione uma categoria",
+        prompt: gettext("Select a category"),
         parser: &ParseUtils.parse_id/1,
         to_form_value: &to_select_value/1,
         match: fn transaction, value -> transaction.category_id == value end
@@ -237,9 +237,9 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       %{
         name: :investment_type_id,
         type: "select",
-        label: "Tipo de Investimento",
+        label: gettext("Investment Type"),
         options: assigns.investment_types,
-        prompt: "Selecione um tipo de investimento",
+        prompt: gettext("Select an investment type"),
         parser: &ParseUtils.parse_id/1,
         to_form_value: &to_select_value/1,
         match: fn transaction, value -> transaction.investment_type_id == value end
@@ -247,7 +247,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       %{
         name: :start_date,
         type: "date",
-        label: "Data Inicial",
+        label: gettext("Start Date"),
         parser: &parse_start_date/1,
         to_form_value: &to_date_value/1,
         match: fn transaction, value -> match_start_date(transaction.date, value) end
@@ -255,7 +255,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
       %{
         name: :end_date,
         type: "date",
-        label: "Data Final",
+        label: gettext("Data Final"),
         parser: &parse_end_date/1,
         to_form_value: &to_date_value/1,
         match: fn transaction, value -> match_end_date(transaction.date, value) end

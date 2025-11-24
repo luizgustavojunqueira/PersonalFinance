@@ -1,14 +1,14 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <.header>
-    {@ledger.name} - Home
+    {@ledger.name} - {gettext("Home")}
     <:actions>
       <div class="w-48 max-w-xs">
         <.form id="profile_select_form" for={@form} phx-change="select_profile">
           <.input
             type="select"
             field={@form[:profile_id]}
-            label="Perfil"
-            options={[{"Total", ""} | @profiles]}
+            label={gettext("Profile")}
+            options={[{gettext("Total"), ""} | @profiles]}
           />
         </.form>
       </div>

@@ -1,15 +1,15 @@
-## This file is a PO Template file.
-##
-## "msgid"s here are often extracted from source code.
-## Add new messages manually only if they're dynamic
-## messages that can't be statically extracted.
-##
-## Run "mix gettext.extract" to bring this file up to
-## date. Leave "msgstr"s empty as changing them here has no
-## effect: edit them in PO (.po) files instead.
-#
+## "msgid"s in this file come from POT (.pot) files.
+###
+### Do not add, change, or remove "msgid"s manually here as
+### they're tied to the ones in the corresponding POT file
+### (with the same domain).
+###
+### Use "mix gettext.extract --merge" or "mix gettext.merge"
+### to merge POT files into PO files.
 msgid ""
 msgstr ""
+"Language: en\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: lib/personal_finance_web/components/layouts.ex:63
 #, elixir-autogen, elixir-format
@@ -239,7 +239,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/ledgers/index.ex:17
 #: lib/personal_finance_web/live/ledgers/index.ex:103
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Ledgers"
 msgstr ""
 
@@ -274,7 +274,7 @@ msgid "New password"
 msgstr ""
 
 #: lib/personal_finance_web/live/ledgers/ledger_card_item.ex:155
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Open Ledger"
 msgstr ""
 
@@ -361,7 +361,7 @@ msgid "You need to reauthenticate to perform sensitive actions on your account."
 msgstr ""
 
 #: lib/personal_finance_web/live/transaction/index.html.heex:16
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Add Transaction"
 msgstr ""
 
@@ -528,7 +528,7 @@ msgid "Months to display"
 msgstr ""
 
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:150
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "New Transaction"
 msgstr ""
 
@@ -605,12 +605,12 @@ msgid "Time"
 msgstr ""
 
 #: lib/personal_finance_web/live/transaction/transactions.ex:124
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Total Value"
 msgstr ""
 
 #: lib/personal_finance_web/live/transaction/index.ex:67
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Transaction not found."
 msgstr ""
 
@@ -702,7 +702,7 @@ msgid "All recurring transactions associated with this profile will be permanent
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/profiles_panel.ex:267
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to delete the profile \"%{name}\"?"
 msgstr ""
 
@@ -762,7 +762,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/settings/profiles_panel.ex:221
 #: lib/personal_finance_web/live/settings/profiles_panel.ex:264
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Delete profile"
 msgstr ""
 
@@ -812,12 +812,12 @@ msgid "Error updating recurring transaction status."
 msgstr ""
 
 #: lib/personal_finance_web/live/home/ledger_summary_component.ex:37
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Expenses"
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/profiles_panel.ex:123
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Failed to delete profile."
 msgstr ""
 
@@ -866,7 +866,7 @@ msgid "Inactive"
 msgstr ""
 
 #: lib/personal_finance_web/live/home/ledger_summary_component.ex:31
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Incomes"
 msgstr ""
 
@@ -904,17 +904,17 @@ msgid "Monthly Balance"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income_transactions.ex:92
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Net Value"
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/profile/profile_form.ex:44
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "New Profile"
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/profiles_panel.ex:160
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "New profile"
 msgstr ""
 
@@ -930,7 +930,7 @@ msgid "No collaborators added."
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/profiles_panel.ex:185
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "No description"
 msgstr ""
 
@@ -945,7 +945,7 @@ msgid "No recurring transactions registered for this profile."
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/index.ex:28
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Page not found."
 msgstr ""
 
@@ -1009,7 +1009,7 @@ msgid "See all"
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/access_panel.ex:50
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Select a user"
 msgstr ""
 
@@ -1021,12 +1021,12 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:69
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:209
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Start"
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:301
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Start date"
 msgstr ""
 
@@ -1037,7 +1037,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/home/index.html.heex:11
 #: lib/personal_finance_web/live/home/ledger_summary_component.ex:44
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Total"
 msgstr ""
 
@@ -1053,7 +1053,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/form.ex:65
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:113
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Value (R$)"
 msgstr ""
 
@@ -1081,22 +1081,22 @@ msgstr ""
 #: lib/personal_finance_web/live/category/categories_panel.ex:46
 #: lib/personal_finance_web/live/category/categories_panel.ex:82
 #: lib/personal_finance_web/live/category/categories_panel.ex:114
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Category not found."
 msgstr ""
 
 #: lib/personal_finance_web/live/category/category_form.ex:41
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Edit Category"
 msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:63
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Failed to delete category."
 msgstr ""
 
 #: lib/personal_finance_web/live/category/category_form.ex:41
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "New Category"
 msgstr ""
 
@@ -1136,7 +1136,7 @@ msgid "Actions"
 msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:139
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Add Category"
 msgstr ""
 
@@ -1163,13 +1163,13 @@ msgid "Apply filters"
 msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:161
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to delete the category \"%{name}\"?"
 msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:132
 #: lib/personal_finance_web/live/settings/index.html.heex:12
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Categories"
 msgstr ""
 
@@ -1195,7 +1195,7 @@ msgid "Date is required."
 msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:160
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Delete Category"
 msgstr ""
 
@@ -1203,12 +1203,12 @@ msgstr ""
 #: lib/personal_finance/finance/profile.ex:21
 #: lib/personal_finance/finance/recurring_entry.ex:63
 #: lib/personal_finance/finance/transaction.ex:46
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Description is required."
 msgstr ""
 
 #: lib/personal_finance/finance/recurring_entry.ex:64
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Description is too long."
 msgstr ""
 
@@ -1247,7 +1247,7 @@ msgid "Fixed category names cannot be changed."
 msgstr ""
 
 #: lib/personal_finance/finance/recurring_entry.ex:49
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Frequency is required."
 msgstr ""
 
@@ -1308,7 +1308,7 @@ msgid "Invalid yield frequency."
 msgstr ""
 
 #: lib/personal_finance/investment/fixed_income.ex:90
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Investment type is required."
 msgstr ""
 
@@ -1343,7 +1343,7 @@ msgid "Name must be between 1 and 100 characters."
 msgstr ""
 
 #: lib/personal_finance_web/components/infinite_scroll.ex:702
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "No items found"
 msgstr ""
 
@@ -1353,12 +1353,12 @@ msgid "Page %{page}/%{total}"
 msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:203
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Percentage (100% max.)"
 msgstr ""
 
 #: lib/personal_finance/finance/category.ex:34
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Percentage is required."
 msgstr ""
 
@@ -1378,7 +1378,7 @@ msgid "Profile is required."
 msgstr ""
 
 #: lib/personal_finance_web/live/settings/index.html.heex:23
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Profiles"
 msgstr ""
 
@@ -1398,12 +1398,12 @@ msgid "Remuneration rate must be greater than zero."
 msgstr ""
 
 #: lib/personal_finance/finance/transaction.ex:57
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Select a category."
 msgstr ""
 
 #: lib/personal_finance/finance/transaction.ex:58
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Select a profile."
 msgstr ""
 
@@ -1411,7 +1411,7 @@ msgstr ""
 #: lib/personal_finance/finance/recurring_entry.ex:48
 #: lib/personal_finance/investment/fixed_income.ex:95
 #: lib/personal_finance/investment/fixed_income.ex:96
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Start date is required."
 msgstr ""
 
@@ -1489,12 +1489,12 @@ msgid "%{ledger} - Fixed Income (%{investment})"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/index.html.heex:6
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Add Fixed Income"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:16
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Add transaction"
 msgstr ""
 
@@ -1515,7 +1515,7 @@ msgid "Create transaction"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:83
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Current balance"
 msgstr ""
 
@@ -1526,12 +1526,12 @@ msgid "Daily"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:49
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Edit Fixed Income"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.ex:28
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Fixed Income - %{name}"
 msgstr ""
 
@@ -1546,12 +1546,12 @@ msgid "IR"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:76
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Initial investment"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:75
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Institution"
 msgstr ""
 
@@ -1561,7 +1561,7 @@ msgid "Ledger or fixed income not found."
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:160
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Maturity date"
 msgstr ""
 
@@ -1592,7 +1592,7 @@ msgid "No apparent yield yet"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income_transactions.ex:116
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Page %{current} of %{total}"
 msgstr ""
 
@@ -1613,12 +1613,12 @@ msgid "Remuneration"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:103
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Remuneration basis"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:123
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Remuneration rate (%)"
 msgstr ""
 
@@ -1649,6 +1649,6 @@ msgid "Yield"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:143
-#, elixir-autogen, elixir-format
+#, elixir-autogen, elixir-format, fuzzy
 msgid "Yield frequency"
 msgstr ""

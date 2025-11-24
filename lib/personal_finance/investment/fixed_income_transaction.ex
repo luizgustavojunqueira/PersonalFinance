@@ -1,6 +1,7 @@
 defmodule PersonalFinance.Investment.FixedIncomeTransaction do
   use Ecto.Schema
   import Ecto.Changeset
+  use Gettext, backend: PersonalFinanceWeb.Gettext
 
   schema "fixed_income_transactions" do
     field :type, Ecto.Enum, values: [:deposit, :withdraw, :yield, :tax, :fee]
@@ -37,16 +38,16 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
     |> put_change(:is_automatic, false)
     |> validate_required(
       [:type, :value, :date, :fixed_income_id, :profile_id],
-      message: "Este campo é obrigatório"
+      message: gettext("This field is required.")
     )
     |> validate_inclusion(:type, [:deposit, :withdraw, :yield, :tax, :fee],
-      message: "Tipo de transação inválido"
+      message: gettext("Invalid transaction type.")
     )
-    |> validate_number(:value, greater_than: 0, message: "O valor deve ser maior que zero")
+    |> validate_number(:value, greater_than: 0, message: gettext("Value must be greater than zero."))
     |> validate_max_withdraw()
     |> validate_length(:description,
       max: 255,
-      message: "A descrição deve ter no máximo 255 caracteres"
+      message: gettext("Description must be at most 255 characters.")
     )
   end
 
@@ -67,7 +68,7 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
     ])
     |> validate_required(
       [:type, :value, :date, :fixed_income_id, :profile_id, :ledger_id],
-      message: "Este campo é obrigatório"
+      message: gettext("This field is required.")
     )
     |> validate_max_withdraw()
     |> put_change(:is_automatic, true)
@@ -86,7 +87,7 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
             PersonalFinance.Investment.get_fixed_income(fixed_income_id, ledger_id).current_balance
 
           if Decimal.cmp(value, Decimal.from_float(current_balance)) == :gt do
-            [value: "O valor do resgate não pode ser maior que o saldo atual"]
+            [value: gettext("Withdrawal amount cannot exceed current balance.")]
           else
             []
           end

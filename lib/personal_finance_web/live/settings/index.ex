@@ -19,13 +19,13 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
     if ledger == nil do
       {:ok,
        socket
-       |> put_flash(:error, "Orçamento não encontrado.")
+       |> put_flash(:error, gettext("Ledger not found."))
        |> push_navigate(to: ~p"/ledgers")}
     else
       if ledger.owner_id != current_scope.user.id do
         {:ok,
          socket
-         |> put_flash(:error, "Página não encontrada.")
+         |> put_flash(:error, gettext("Page not found."))
          |> push_navigate(to: ~p"/ledgers")}
       else
         Finance.subscribe_finance(:category, ledger.id)
@@ -33,7 +33,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
 
         socket =
           socket
-          |> assign(page_title: "Configurações", ledger: ledger)
+          |> assign(page_title: gettext("Settings"), ledger: ledger)
           |> assign(:categories_panel_id, @categories_panel_id)
           |> assign(:profiles_panel_id, @profiles_panel_id)
 
@@ -50,7 +50,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
       category: category
     )
 
-    {:noreply, put_flash(socket, :info, "Categoria salva com sucesso.")}
+    {:noreply, put_flash(socket, :info, gettext("Category successfully saved."))}
   end
 
   @impl true
@@ -61,7 +61,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
       category: category
     )
 
-    {:noreply, put_flash(socket, :info, "Categoria removida com sucesso.")}
+    {:noreply, put_flash(socket, :info, gettext("Category successfully deleted."))}
   end
 
   @impl true
@@ -75,7 +75,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
       parent_pid: self()
     )
 
-    {:noreply, put_flash(socket, :info, "Perfil salvo com sucesso.")}
+    {:noreply, put_flash(socket, :info, gettext("Profile successfully saved."))}
   end
 
   @impl true
@@ -89,7 +89,7 @@ defmodule PersonalFinanceWeb.SettingsLive.Index do
       parent_pid: self()
     )
 
-    {:noreply, put_flash(socket, :info, "Perfil removido com sucesso.")}
+    {:noreply, put_flash(socket, :info, gettext("Profile successfully deleted."))}
   end
 
   @impl true

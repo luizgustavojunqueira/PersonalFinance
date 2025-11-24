@@ -551,7 +551,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
               :if={@action != []}
               class="p-2 w-px"
             >
-              <div class="text-right whitespace-nowrap">Ações</div>
+              <div class="text-right whitespace-nowrap">{gettext("Actions")}</div>
             </th>
           </tr>
         </thead>

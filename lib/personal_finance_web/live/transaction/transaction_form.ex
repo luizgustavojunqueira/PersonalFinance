@@ -147,7 +147,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
         on_close={JS.push("close_modal")}
         class="mt-2"
       >
-        <:title>{if @action == :edit, do: "Editar Transação", else: "Nova Transação"}</:title>
+        <:title>{if @action == :edit, do: gettext("Edit Transaction"), else: gettext("New Transaction")}</:title>
         <.form
           for={@form}
           id="transaction-form"
@@ -159,8 +159,8 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
             field={@form[:description]}
             id="input-description"
             type="text"
-            label="Descrição"
-            placeholder="Ex: Monster"
+            label={gettext("Description")}
+            placeholder={gettext("E.g.: Monster")}
           />
           <div class="flex flex-row gap-2">
             <.input
@@ -168,14 +168,14 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
               id="input-profile"
               type="select"
               options={@profiles}
-              label="Perfil"
+              label={gettext("Profile")}
             />
             <.input
               field={@form[:type]}
               id="input-type"
               type="select"
-              label="Tipo"
-              options={[{"Receita", :income}, {"Despesa", :expense}]}
+              label={gettext("Type")}
+              options={[{gettext("Income"), :income}, {gettext("Expense"), :expense}]}
             />
           </div>
           <div class="flex flex-row gap-2 transition-all duration-300">
@@ -184,7 +184,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
               id="input-category"
               type="select"
               options={@categories}
-              label="Categoria"
+              label={gettext("Category")}
             />
             <%= if @selected_category_id && to_string(@selected_category_id) == to_string(@investment_category_id) do %>
               <div
@@ -209,7 +209,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
                   id="input-investment-type"
                   type="select"
                   options={@investment_types}
-                  label="Tipo de Investimento"
+                  label={gettext("Investment Type")}
                 />
               </div>
             <% end %>
@@ -220,16 +220,16 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
               id="input-amount"
               type="number"
               step="0.00000001"
-              label="Quantidade"
-              placeholder="Ex: 1"
+              label={gettext("Amount")}
+              placeholder={gettext("E.g.: 1")}
             />
             <.input
               field={@form[:value]}
               id="input-value"
               type="number"
               step="0.01"
-              label="Valor"
-              placeholder="Ex: 10.00"
+              label={gettext("Value")}
+              placeholder={gettext("E.g.: 10.00")}
             />
           </div>
           <div class="flex flex-row gap-2">
@@ -237,24 +237,24 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
               field={@form[:date_input]}
               id="input-date"
               type="date"
-              label="Data"
-              placeholder="Ex: 2023-10-01"
+              label={gettext("Date")}
+              placeholder={gettext("E.g.: 2023-10-01")}
             />
             <.input
               field={@form[:time_input]}
               id="input-time"
               type="time"
-              label="Horário"
-              placeholder="Ex: 14:30"
+              label={gettext("Time")}
+              placeholder={gettext("E.g.: 14:30")}
             />
           </div>
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"
               class="btn btn-primary w-full"
-              phx-disable-with="Salvando..."
+              phx-disable-with={gettext("Saving...")}
             >
-              Salvar
+              {gettext("Save")}
             </.button>
           </div>
         </.form>

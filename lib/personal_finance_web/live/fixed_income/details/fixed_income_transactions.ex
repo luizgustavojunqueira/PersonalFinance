@@ -55,7 +55,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
     ~H"""
     <div id={@id}>
       <%= if @num_transactions == 0 do %>
-        <p class="text-center text-gray-500">Nenhuma transação encontrada.</p>
+        <p class="text-center text-gray-500"><%= gettext("No transactions found.") %></p>
       <% else %>
         <.table
           id="fixed_income_transactions_table"
@@ -68,19 +68,19 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
             end
           }
         >
-          <:col :let={transaction} label="Data">
+          <:col :let={transaction} label={gettext("Date")}>
             {DateUtils.format_date(transaction.date, :with_time)}
           </:col>
-          <:col :let={transaction} label="Descrição">
+          <:col :let={transaction} label={gettext("Description")}>
             <.text_ellipsis text={transaction.description} max_width="max-w-[15rem]" />
           </:col>
-          <:col :let={transaction} label="Valor Bruto">
+          <:col :let={transaction} label={gettext("Gross Value")}>
             <span class={"font-bold #{if transaction.type in [:deposit, :yield] do "text-green-700 dark:text-green-300" else "text-red-600 dark:text-red-300" end}"}>
               {CurrencyUtils.format_money(Decimal.to_float(transaction.value))}
             </span>
           </:col>
 
-          <:col :let={transaction} label="IR">
+          <:col :let={transaction} label={gettext("IR")}>
             <span class={"font-bold #{if transaction.type == :yield do "text-red-600 dark:text-red-300" else "" end}"}>
               <%= if transaction.tax == nil or Decimal.equal?(transaction.tax, 0) do %>
                 -
@@ -89,7 +89,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
               <% end %>
             </span>
           </:col>
-          <:col :let={transaction} label="Valor Líquido">
+          <:col :let={transaction} label={gettext("Net Value")}>
             <span class={"font-bold #{if transaction.type in [:deposit, :yield] do "text-green-700 dark:text-green-300" else "text-red-600 dark:text-red-300" end}"}>
               <%= if transaction.tax == nil or Decimal.equal?(transaction.tax, 0) do %>
                 {CurrencyUtils.format_money(Decimal.to_float(transaction.value))}
@@ -110,10 +110,10 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
             variant="custom"
             class={"btn-primary btn-outline #{if @current_page <= 1, do: "btn-disabled", else: ""}"}
           >
-            Anterior
+            <%= gettext("Previous") %>
           </.button>
           <span>
-            Página {@current_page} de {@total_pages}
+            <%= gettext("Page %{current} of %{total}", current: @current_page, total: @total_pages) %>
           </span>
           <.button
             phx-click="next_page"
@@ -121,7 +121,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
             variant="custom"
             class={"btn-primary btn-outline #{if @current_page >= @total_pages, do: "btn-disabled", else: ""}"}
           >
-            Próximo
+            <%= gettext("Next") %>
           </.button>
         </div>
       <% end %>
@@ -161,6 +161,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncomeTransactions do
      socket
      |> assign(open_modal: nil)
      |> stream_insert(:transaction_collection, fi_transaction)
-     |> put_flash(:info, "Transação salva com sucesso.")}
+     |> put_flash(:info, gettext("Transaction successfully saved."))}
   end
 end

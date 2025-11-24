@@ -1,6 +1,7 @@
 defmodule PersonalFinance.Finance.Transaction do
   use Ecto.Schema
   import Ecto.Changeset
+  use Gettext, backend: PersonalFinanceWeb.Gettext
   alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Finance.{Category, InvestmentType, Profile, RecurringEntry}
 
@@ -39,22 +40,22 @@ defmodule PersonalFinance.Finance.Transaction do
       :recurring_entry_id,
       :type
     ])
-    |> validate_inclusion(:type, [:income, :expense], message: "Tipo de transação inválido")
-    |> validate_required([:value], message: "O valor da transação é obrigatório")
-    |> validate_required([:amount], message: "A quantidade é obrigatória")
-    |> validate_required([:description], message: "A descrição é obrigatória")
+    |> validate_inclusion(:type, [:income, :expense], message: gettext("Invalid transaction type."))
+    |> validate_required([:value], message: gettext("Transaction value is required."))
+    |> validate_required([:amount], message: gettext("Amount is required."))
+    |> validate_required([:description], message: gettext("Description is required."))
     |> validate_length(:description,
       max: 255,
-      message: "A descrição deve ter no máximo 255 caracteres"
+      message: gettext("Description must be at most 255 characters.")
     )
     |> convert_date_to_datetime(:date_input, :date)
-    |> validate_required([:date_input], message: "A data é obrigatória")
-    |> validate_required([:date], message: "A data é obrigatória")
-    |> validate_required(:time_input, message: "A hora é obrigatória")
-    |> validate_number(:value, greater_than: 0, message: "O valor deve ser maior que zero")
-    |> validate_number(:amount, greater_than: 0, message: "A quantidade deve ser maior que zero")
-    |> validate_required([:category_id], message: "Selecione uma categoria")
-    |> validate_required([:profile_id], message: "Selecione um perfil")
+    |> validate_required([:date_input], message: gettext("Date is required."))
+    |> validate_required([:date], message: gettext("Date is required."))
+    |> validate_required(:time_input, message: gettext("Time is required."))
+    |> validate_number(:value, greater_than: 0, message: gettext("Value must be greater than zero."))
+    |> validate_number(:amount, greater_than: 0, message: gettext("Amount must be greater than zero."))
+    |> validate_required([:category_id], message: gettext("Select a category."))
+    |> validate_required([:profile_id], message: gettext("Select a profile."))
     |> put_change(:ledger_id, ledger_id)
   end
 

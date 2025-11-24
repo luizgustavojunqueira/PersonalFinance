@@ -17,7 +17,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
               <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-xl blur opacity-30">
               </div>
               <div class="relative bg-white/50 dark:bg-black/20 rounded-xl p-2 border border-white/20">
-                <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Saldo Atual</h3>
+                <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{gettext("Current Balance")}</h3>
                 <span class="text-xl font-black bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
                   {@balance.balance |> CurrencyUtils.format_money()}
                 </span>
@@ -25,23 +25,23 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             </div>
 
             <div>
-              <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Saldo Mensal</h3>
+              <h3 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">{gettext("Monthly Balance")}</h3>
               <div class="space-y-2">
                 <div class="flex justify-between items-center py-2 px-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                  <span class="text-xs font-medium text-green-700 dark:text-green-300">Receitas</span>
+                  <span class="text-xs font-medium text-green-700 dark:text-green-300">{gettext("Incomes")}</span>
                   <span class="text-sm font-bold text-green-600 dark:text-green-400">
                     + {@month_balance.total_incomes_all_categories |> CurrencyUtils.format_money()}
                   </span>
                 </div>
                 <div class="flex justify-between items-center py-2 px-3 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                  <span class="text-xs font-medium text-red-700 dark:text-red-300">Despesas</span>
+                  <span class="text-xs font-medium text-red-700 dark:text-red-300">{gettext("Expenses")}</span>
                   <span class="text-sm font-bold text-red-600 dark:text-red-400">
                     - {@month_balance.total_expenses |> CurrencyUtils.format_money()}
                   </span>
                 </div>
                 <div class="pt-2 border-t border-gray-200 dark:border-gray-700">
                   <div class="flex justify-between items-center">
-                    <span class="text-xs font-medium text-gray-600 dark:text-gray-400">Total</span>
+                    <span class="text-xs font-medium text-gray-600 dark:text-gray-400">{gettext("Total")}</span>
                     <span class={[
                       "text-lg font-black",
                       if(@month_balance.balance < 0,
@@ -62,13 +62,13 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="p-4 pb-2 border-b border-base-200/50">
             <div class="flex justify-between items-center">
               <h3 class="text-md w-full font-bold text-gray-800 dark:text-white">
-                Transações Recentes
+                {gettext("Recent Transactions")}
               </h3>
               <.link
                 class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 flex items-center w-full justify-end hover:gap-2"
                 navigate={~p"/ledgers/#{@ledger.id}/transactions"}
               >
-                Ver todas <.icon name="hero-arrow-right" class="w-3 h-3" />
+                {gettext("See all")} <.icon name="hero-arrow-right" class="w-3 h-3" />
               </.link>
             </div>
           </div>
@@ -114,7 +114,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="p-4 pb-2 border-b border-base-200/30">
             <div class="flex justify-between items-center">
               <h3 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                Análise Mensal
+                {gettext("Monthly Analysis")}
               </h3>
               <.form
                 id="chart_select_form"
@@ -126,7 +126,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                 <.input
                   type="select"
                   field={@form_chart[:chart_type]}
-                  options={[{"Barras", :bars}, {"Pizza", :pie}]}
+                  options={[{gettext("Bars"), :bars}, {gettext("Pie"), :pie}]}
                   class="bg-white/50 dark:bg-black/20 border-white/30 dark:border-white/10 rounded-xl text-xs font-medium focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500/50 transition-all duration-300"
                 />
               </.form>
@@ -163,7 +163,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
               <div class="w-6 h-6 rounded-full bg-gradient-to-br from-amber-500/20 to-orange-500/20 flex items-center justify-center">
                 <.icon name="hero-bell" class="w-4 h-4 text-amber-600 dark:text-amber-400" />
               </div>
-              <h3 class="text-sm font-bold text-gray-800 dark:text-white">Avisos</h3>
+              <h3 class="text-sm font-bold text-gray-800 dark:text-white">{gettext("Warnings")}</h3>
             </div>
 
             <div class="space-y-2">
@@ -211,13 +211,13 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           <div class="p-4 pb-2 border-b border-base-200/50">
             <div class="flex justify-between items-center">
               <h3 class="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent">
-                Renda Fixa
+                {gettext("Fixed Income")}
               </h3>
               <.link
                 class="text-xs font-medium text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors duration-300 flex items-center justify-end hover:gap-2"
                 navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
               >
-                Ver todos <.icon name="hero-arrow-right" class="w-3 h-3" />
+                {gettext("See all")} <.icon name="hero-arrow-right" class="w-3 h-3" />
               </.link>
             </div>
           </div>
@@ -226,7 +226,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             <div class="space-y-2">
               <div class="flex justify-between items-center">
                 <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
-                  Total Investido
+                  {gettext("Total Invested")}
                 </span>
                 <span class="text-sm font-bold text-gray-900 dark:text-white">
                   {CurrencyUtils.format_money(@total_invested)}
@@ -234,7 +234,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
               </div>
               <div class="flex justify-between items-center">
                 <span class="text-xs font-medium text-gray-600 dark:text-gray-400">
-                  Valor Atual
+                  {gettext("Current Value")}
                 </span>
                 <span class="text-sm font-bold text-green-600 dark:text-green-400">
                   {CurrencyUtils.format_money(@current_value)}
@@ -245,7 +245,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             <div class="space-y-2">
               <div class="relative bg-white/30 dark:bg-black/10 rounded-xl p-2 min-h-[150px] backdrop-blur-sm border border-white/20">
                 <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">
-                  Composição da Renda Fixa
+                  {gettext("Fixed Income Composition")}
                 </h4>
                 <div id="fixed-income-composition-chart" class="w-full h-[120px]" phx-update="ignore" />
                 <div id="fixed-income-composition-data" hidden>
@@ -253,7 +253,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                 </div>
               </div>
               <div class="relative bg-white/30 dark:bg-black/10 rounded-xl p-2 min-h-[150px] backdrop-blur-sm border border-white/20">
-                <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Patrimônio</h4>
+                <h4 class="text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">{gettext("Equity")}</h4>
                 <div id="patrimony-chart" class="w-full h-[120px]" phx-update="ignore" />
                 <div id="patrimony-data" hidden>{Jason.encode!(%{"mock" => "data"})}</div>
               </div>

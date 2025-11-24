@@ -92,14 +92,14 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
 
     case Finance.toggle_recurring_entry_status(socket.assigns.current_scope, recurring_entry) do
       {:ok, updated_entry} ->
-        send_flash(socket, :info, "Status da transação recorrente atualizado com sucesso.")
+        send_flash(socket, :info, gettext("Recurring transaction status successfully updated."))
 
         {:noreply,
          socket
          |> stream_insert(:recurring_entries, updated_entry)}
 
       {:error, _changeset} ->
-        send_flash(socket, :error, "Erro ao atualizar status da transação recorrente.")
+        send_flash(socket, :error, gettext("Error updating recurring transaction status."))
         {:noreply, socket}
     end
   end
@@ -157,7 +157,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
 
     case Finance.delete_recurring_entry(socket.assigns.current_scope, recurring_entry) do
       {:ok, _deleted} ->
-        send_flash(socket, :info, "Transação recorrente removida com sucesso.")
+        send_flash(socket, :info, gettext("Recurring transaction successfully deleted."))
 
         {:noreply,
          socket
@@ -165,7 +165,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
          |> stream_delete(:recurring_entries, recurring_entry)}
 
       {:error, changeset} ->
-        send_flash(socket, :error, "Erro ao remover transação recorrente.")
+        send_flash(socket, :error, gettext("Error deleting recurring transaction."))
         {:noreply, assign(socket, :form, to_form(changeset))}
     end
   end
@@ -186,33 +186,33 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
         <div class="flex items-center mt-2">
           <.button variant="primary" size="sm" phx-click="open_modal" phx-target={@myself}>
             <.icon name="hero-plus" class="w-4 h-4 mr-1" />
-            Nova transação recorrente
+            {gettext("New recurring transaction")}
           </.button>
         </div>
 
         <%= if @num_recurring_entries > 0 do %>
           <.table id={"recurring-entries-#{@profile.id}"} rows={@streams.recurring_entries}>
-          <:col :let={{_id, entry}} label="Descrição">
+          <:col :let={{_id, entry}} label={gettext("Description")}>
             <.text_ellipsis text={entry.description} max_width="max-w-[16rem]" />
           </:col>
-          <:col :let={{_id, entry}} label="Tipo">
-            {if entry.type == :income, do: "Receita", else: "Despesa"}
+          <:col :let={{_id, entry}} label={gettext("Type")}>
+            {if entry.type == :income, do: gettext("Income"), else: gettext("Expense")}
           </:col>
-          <:col :let={{_id, entry}} label="Categoria">
+          <:col :let={{_id, entry}} label={gettext("Category")}>
             <.text_ellipsis text={entry.category && entry.category.name} max_width="max-w-[12rem]" />
           </:col>
-          <:col :let={{_id, entry}} label="Frequência">
-            {if entry.frequency == :monthly, do: "Mensal", else: "Anual"}
+          <:col :let={{_id, entry}} label={gettext("Frequency")}>
+            {if entry.frequency == :monthly, do: gettext("Monthly"), else: gettext("Yearly")}
           </:col>
-          <:col :let={{_id, entry}} label="Período">
+          <:col :let={{_id, entry}} label={gettext("Period")}>
             <div class="flex flex-col text-xs">
-              <span>Início: {DateUtils.format_date(entry.start_date)}</span>
-              <span>Término: {DateUtils.format_date(entry.end_date)}</span>
+              <span>{gettext("Start")}: {DateUtils.format_date(entry.start_date)}</span>
+              <span>{gettext("End")}: {DateUtils.format_date(entry.end_date)}</span>
             </div>
           </:col>
-          <:col :let={{_id, entry}} label="Status">
+          <:col :let={{_id, entry}} label={gettext("Status")}>
             <span class={entry.is_active && "text-success" || "text-base-content/60"}>
-              {if entry.is_active, do: "Ativo", else: "Inativo"}
+              {if entry.is_active, do: gettext("Active"), else: gettext("Inactive")}
             </span>
           </:col>
           <:action :let={{_id, entry}}>
@@ -223,7 +223,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
               phx-click="toggle_status"
               phx-value-id={entry.id}
               phx-target={@myself}
-              title="Ativar/Inativar"
+              title={gettext("Activate/Deactivate")}
             >
               <.icon name="hero-check" class={entry.is_active && "text-success" || "text-base-content/60"} />
             </.button>
@@ -236,7 +236,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
               phx-click="edit"
               phx-value-id={entry.id}
               phx-target={@myself}
-              title="Editar"
+              title={gettext("Edit")}
             >
               <.icon name="hero-pencil" class="text-primary" />
             </.button>
@@ -249,7 +249,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
               phx-click="delete"
               phx-value-id={entry.id}
               phx-target={@myself}
-              title="Excluir"
+              title={gettext("Delete")}
             >
               <.icon name="hero-trash" class="text-error" />
             </.button>
@@ -257,7 +257,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
           </.table>
         <% else %>
           <div class="rounded-xl border border-dashed border-base-300 bg-base-100/80 p-6 text-sm text-base-content/70">
-            Nenhuma transação recorrente cadastrada para este perfil.
+            {gettext("No recurring transactions registered for this profile.")}
           </div>
         <% end %>
       </div>
@@ -269,9 +269,9 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
       >
         <:title>
           <%= if @form_action == :create do %>
-            Nova transação recorrente
+            {gettext("New recurring transaction")}
           <% else %>
-            Editar transação recorrente
+            {gettext("Edit recurring transaction")}
           <% end %>
         </:title>
 
@@ -284,32 +284,32 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
           phx-target={@myself}
         >
           <div class="grid gap-4 md:grid-cols-2">
-            <.input field={@form[:description]} type="text" label="Descrição" />
+            <.input field={@form[:description]} type="text" label={gettext("Description")} />
             <.input
               field={@form[:type]}
               type="select"
-              label="Tipo"
-              options={[{"Receita", :income}, {"Despesa", :expense}]}
+              label={gettext("Type")}
+              options={[{gettext("Income"), :income}, {gettext("Expense"), :expense}]}
             />
             <.input
               field={@form[:frequency]}
               type="select"
-              label="Frequência"
-              options={[{"Mensal", :monthly}, {"Anual", :yearly}]}
+              label={gettext("Frequency")}
+              options={[{gettext("Monthly"), :monthly}, {gettext("Yearly"), :yearly}]}
             />
-            <.input field={@form[:category_id]} type="select" label="Categoria" options={@categories} />
-            <.input field={@form[:start_date_input]} type="date" label="Data de início" />
-            <.input field={@form[:end_date_input]} type="date" label="Data de término" />
-            <.input field={@form[:amount]} type="number" label="Quantidade" step="0.01" />
-            <.input field={@form[:value]} type="number" label="Valor" step="0.01" />
+            <.input field={@form[:category_id]} type="select" label={gettext("Category")} options={@categories} />
+            <.input field={@form[:start_date_input]} type="date" label={gettext("Start date")} />
+            <.input field={@form[:end_date_input]} type="date" label={gettext("End date")} />
+            <.input field={@form[:amount]} type="number" label={gettext("Amount")} step="0.01" />
+            <.input field={@form[:value]} type="number" label={gettext("Value")} step="0.01" />
           </div>
 
           <div class="flex justify-end gap-2">
             <.button type="button" phx-click="close_modal" phx-target={@myself}>
-              Cancelar
+              {gettext("Cancel")}
             </.button>
-            <.button variant="primary" phx-disable-with="Salvando...">
-              Salvar
+            <.button variant="primary" phx-disable-with={gettext("Saving...")}>
+              {gettext("Save")}
             </.button>
           </div>
         </.form>
@@ -325,7 +325,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
            socket.assigns.ledger
          ) do
       {:ok, recurring_entry} ->
-        send_flash(socket, :info, "Transação recorrente criada com sucesso.")
+        send_flash(socket, :info, gettext("Recurring transaction successfully created."))
 
         {:noreply,
          socket
@@ -349,7 +349,7 @@ defmodule PersonalFinanceWeb.SettingsLive.RecurringEntriesPanel do
 
     case Finance.update_recurring_entry(socket.assigns.current_scope, recurring_entry, params) do
       {:ok, updated_entry} ->
-        send_flash(socket, :info, "Transação recorrente atualizada com sucesso.")
+        send_flash(socket, :info, gettext("Recurring transaction successfully updated."))
 
         {:noreply,
          socket

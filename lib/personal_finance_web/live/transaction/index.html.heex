@@ -1,19 +1,19 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <.header>
-    {@ledger.name} - Transações
+    {@ledger.name} - {gettext("Transactions")}
     <:actions>
       <div class="flex flex-col md:flex-row  gap-2">
         <.button phx-click="export_transactions" >
-          Exportar
+          {gettext("Export")}
         </.button>
         <.button phx-click="open_modal" phx-value-modal={:import_transactions}>
-          Importar
+          {gettext("Import")}
         </.button>
         <.button phx-click="open_modal" phx-value-modal={:pending_transactions}>
-          <.icon name="hero-clock" /> Transações Pendentes
+          <.icon name="hero-clock" /> {gettext("Pending Transactions")}
         </.button>
         <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_transaction}>
-          <.icon name="hero-plus" /> Adicionar Transação
+          <.icon name="hero-plus" /> {gettext("Add Transaction")}
         </.button>
       </div>
     </:actions>

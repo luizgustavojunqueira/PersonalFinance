@@ -1,9 +1,9 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <.header>
-    {@ledger.name} - Renda Fixa
+    <%= gettext("%{ledger} - Fixed Income", ledger: @ledger.name) %>
     <:actions>
       <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_fixed_income}>
-        <.icon name="hero-plus" /> Adicionar Renda Fixa
+        <.icon name="hero-plus" /> <%= gettext("Add Fixed Income") %>
       </.button>
     </:actions>
   </.header>

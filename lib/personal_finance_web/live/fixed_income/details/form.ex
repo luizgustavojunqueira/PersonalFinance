@@ -37,7 +37,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
         on_close={JS.push("close_modal")}
         class="mt-2"
       >
-        <:title>Cadastrar Transação</:title>
+        <:title>{gettext("Create transaction")}</:title>
         <.form
           for={@form}
           id="fixed-income-form"
@@ -49,41 +49,39 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
             <.input
               field={@form[:description]}
               type="text"
-              label="Descrição"
+              label={gettext("Description")}
               required
             />
 
             <.input
               field={@form[:type]}
               type="select"
-              label="Tipo"
-              options={[{"Depósito", :deposit}, {"Resgate", :withdraw}]}
+              label={gettext("Type")}
+              options={[{gettext("Deposit"), :deposit}, {gettext("Withdraw"), :withdraw}]}
             />
 
-            <div class="form-control w-full max-w-xs">
-              <.input
-                field={@form[:value]}
-                type="number"
-                label={"Valor " <>
+            <.input
+              field={@form[:value]}
+              type="number"
+              label={"Valor " <>
                   if @form[:type].value == :withdraw do
                     "(Máx. #{CurrencyUtils.format_money(@fixed_income.current_balance)})"
                   else
                     ""
                   end}
-                required
-                autocomplete="off"
-                class="input input-bordered input-primary w-full"
-              />
-            </div>
+              required
+              autocomplete="off"
+              class="input input-bordered input-primary w-full"
+            />
           </div>
 
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"
               class="btn btn-primary w-full"
-              phx-disable-with="Salvando..."
+              phx-disable-with={gettext("Saving...")}
             >
-              Salvar
+              {gettext("Save")}
             </.button>
           </div>
         </.form>

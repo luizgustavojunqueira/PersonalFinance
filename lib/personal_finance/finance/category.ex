@@ -2,6 +2,7 @@ defmodule PersonalFinance.Finance.Category do
   use Ecto.Schema
   import Ecto.Changeset
   import Ecto.Query
+  use Gettext, backend: PersonalFinanceWeb.Gettext
 
   schema "categories" do
     field :name, :string
@@ -28,18 +29,18 @@ defmodule PersonalFinance.Finance.Category do
       :color,
       :is_investment
     ])
-    |> validate_required([:name], message: "O nome é obrigatório.")
-    |> validate_required([:description], message: "A descrição é obrigatória.")
-    |> validate_required([:percentage], message: "A porcentagem é obrigatória.")
+    |> validate_required([:name], message: gettext("Name is required."))
+    |> validate_required([:description], message: gettext("Description is required."))
+    |> validate_required([:percentage], message: gettext("Percentage is required."))
     |> validate_required([:is_default])
     |> validate_length(:name,
       min: 1,
       max: 100,
-      message: "O nome deve ter entre 1 e 100 caracteres."
+      message: gettext("Name must be between 1 and 100 characters.")
     )
     |> validate_length(:description,
       max: 500,
-      message: "A descrição deve ter no máximo 500 caracteres."
+      message: gettext("Description must be at most 500 characters.")
     )
     |> validate_inclusion(:is_default, [true, false])
     |> unique_constraint(:is_default,
@@ -48,13 +49,13 @@ defmodule PersonalFinance.Finance.Category do
     )
     |> unique_constraint(:name,
       name: :categories_name_ledger_id_index,
-      message: "Já existe uma categoria com esse nome para este usuário."
+      message: gettext("A category with this name already exists for this ledger.")
     )
     |> foreign_key_constraint(:ledger_id, name: :categories_ledger_id_fkey)
     |> validate_number(:percentage,
       greater_than_or_equal_to: 0,
       less_than_or_equal_to: 100,
-      message: "A porcentagem deve ser um número entre 0 e 100."
+      message: gettext("Percentage must be between 0 and 100.")
     )
     |> validate_total_percentage()
     |> apply_fixed_category_rules(category.id != nil)
@@ -90,7 +91,7 @@ defmodule PersonalFinance.Finance.Category do
         add_error(
           changeset,
           :percentage,
-          "A soma das porcentagens de todas as categorias não pode exceder 100%."
+          gettext("The total percentage for all categories cannot exceed 100%.")
         )
       else
         changeset
@@ -103,10 +104,10 @@ defmodule PersonalFinance.Finance.Category do
   defp apply_fixed_category_rules(changeset, is_update) do
     if is_update && get_field(changeset, :is_fixed) do
       changeset
-      |> validate_fixed_field(:name, "O nome de categorias fixas não pode ser alterado.")
+      |> validate_fixed_field(:name, gettext("Fixed category names cannot be changed."))
       |> validate_fixed_field(
         :description,
-        "A descrição de categorias fixas não pode ser alterada."
+        gettext("Fixed category descriptions cannot be changed.")
       )
     else
       changeset
