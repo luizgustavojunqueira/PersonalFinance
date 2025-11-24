@@ -213,16 +213,30 @@ export const Chart = {
 
     if (option.series) {
       option.series.forEach((series) => {
-        if (series.label && series.label.color) {
+        if (series.type === "pie") {
+          series.label = Object.assign({}, series.label, { color: textColor });
+          if (series.labelLine) {
+            series.labelLine.lineStyle = Object.assign(
+              {},
+              series.labelLine.lineStyle,
+              { color: subtleText },
+            );
+          }
           return;
         }
 
-        if (series.name) {
-          if (series.name.toLowerCase().includes("meta")) {
-            series.label = Object.assign({}, series.label, { color: subtleText });
-          } else {
-            series.label = Object.assign({}, series.label, { color: "#fff" });
-          }
+        if (series.meta_key === "goal") {
+          series.label = Object.assign({}, series.label, { color: subtleText });
+          return;
+        }
+
+        if (series.meta_key === "remaining" || series.meta_key === "spent") {
+          series.label = Object.assign({}, series.label, { color: "#fff" });
+          return;
+        }
+
+        if (!series.label || !series.label.color) {
+          series.label = Object.assign({}, series.label, { color: textColor });
         }
       });
     }

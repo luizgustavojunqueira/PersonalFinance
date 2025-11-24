@@ -473,7 +473,6 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         top: "0",
         left: "left",
         textStyle: %{
-          color: "#000",
           fontSize: 18
         },
         formatter: "{name}"
@@ -492,7 +491,6 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             show: true,
             position: "outside",
             formatter: "{b}: {d}%",
-            color: "#000",
             fontSize: 14
           },
           emphasis: %{
