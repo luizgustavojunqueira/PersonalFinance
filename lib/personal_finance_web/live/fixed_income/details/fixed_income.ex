@@ -10,10 +10,10 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
     ledger = Finance.get_ledger(current_scope, params["id"])
     fixed_income = Investment.get_fixed_income(params["fixed_income_id"], ledger.id)
 
-    if ledger == nil or fixed_income == nil do
+     if ledger == nil or fixed_income == nil do
       {:ok,
        socket
-       |> put_flash(:error, "Orçamento ou Renda Fixa não encontrado.")
+       |> put_flash(:error, gettext("Ledger or fixed income not found."))
        |> push_navigate(to: ~p"/ledgers")}
     else
       socket =
@@ -25,7 +25,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
       {:ok,
        socket
        |> assign(
-         page_title: "Renda Fixa - #{fixed_income.name}",
+         page_title: gettext("Fixed Income - %{name}", name: fixed_income.name),
          ledger: ledger,
          fixed_income: fixed_income,
          open_modal: nil

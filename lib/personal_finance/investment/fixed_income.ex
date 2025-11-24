@@ -1,6 +1,7 @@
 defmodule PersonalFinance.Investment.FixedIncome do
   use Ecto.Schema
   import Ecto.Changeset
+  use Gettext, backend: PersonalFinanceWeb.Gettext
 
   schema "fixed_income" do
     field :name, :string
@@ -55,7 +56,7 @@ defmodule PersonalFinance.Investment.FixedIncome do
     |> put_change(:ledger_id, ledger_id)
     |> unique_constraint(:name,
       name: :fixed_income_name_profile_id_index,
-      message: "Você já possui um investimento com este nome"
+      message: gettext("You already have an investment with this name.")
     )
     |> set_initial_balance()
   end
@@ -84,62 +85,62 @@ defmodule PersonalFinance.Investment.FixedIncome do
 
   defp common_validations(changeset) do
     changeset
-    |> validate_required(:name, message: "O nome é obrigatório")
-    |> validate_required(:institution, message: "A instituição é obrigatória")
-    |> validate_required(:type, message: "O tipo de investimento é obrigatório")
-    |> validate_required(:remuneration_rate, message: "A taxa de remuneração é obrigatória")
-    |> validate_required(:remuneration_basis, message: "A base de remuneração é obrigatória")
-    |> validate_required(:yield_frequency, message: "A frequência de rentabilidade é obrigatória")
-    |> validate_required(:initial_investment, message: "O valor inicial é obrigatório")
-    |> validate_required(:start_date_input, message: "A data de início é obrigatória")
-    |> validate_required(:start_date, message: "A data de início é obrigatória")
-    |> validate_required(:profile_id, message: "O perfil é obrigatório")
+    |> validate_required(:name, message: gettext("Name is required."))
+    |> validate_required(:institution, message: gettext("Institution is required."))
+    |> validate_required(:type, message: gettext("Investment type is required."))
+    |> validate_required(:remuneration_rate, message: gettext("Remuneration rate is required."))
+    |> validate_required(:remuneration_basis, message: gettext("Remuneration basis is required."))
+    |> validate_required(:yield_frequency, message: gettext("Yield frequency is required."))
+    |> validate_required(:initial_investment, message: gettext("Initial investment is required."))
+    |> validate_required(:start_date_input, message: gettext("Start date is required."))
+    |> validate_required(:start_date, message: gettext("Start date is required."))
+    |> validate_required(:profile_id, message: gettext("Profile is required."))
     |> validate_inclusion(:is_tax_exempt, [true, false],
-      message: "Informe se o investimento é isento de imposto"
+      message: gettext("Please indicate whether the investment is tax exempt.")
     )
-    |> validate_inclusion(:type, [:cdb], message: "Tipo de investimento inválido")
+    |> validate_inclusion(:type, [:cdb], message: gettext("Invalid investment type."))
     |> validate_number(:remuneration_rate,
       greater_than: 0,
-      message: "A taxa de remuneração deve ser maior que zero"
+      message: gettext("Remuneration rate must be greater than zero.")
     )
     |> validate_number(:initial_investment,
       greater_than: 0,
-      message: "O valor inicial deve ser maior que zero"
+      message: gettext("Initial investment must be greater than zero.")
     )
     |> validate_number(:current_balance,
       greater_than_or_equal_to: 0,
-      message: "O saldo atual não pode ser negativo"
+      message: gettext("Current balance cannot be negative.")
     )
     |> validate_inclusion(
       :remuneration_basis,
       [:cdi, :ipca, :selic, :fixed_yearly, :fixed_monthly],
-      message: "Base de remuneração inválida"
+      message: gettext("Invalid remuneration basis.")
     )
     |> validate_inclusion(
       :yield_frequency,
       [:daily, :monthly, :quarterly, :semi_annually, :annually, :at_maturity],
-      message: "Frequência de rentabilidade inválida"
+      message: gettext("Invalid yield frequency.")
     )
     |> validate_change(:end_date, fn :end_date, end_date ->
       case get_field(changeset, :start_date) do
         nil ->
           []
 
-        start_date when is_nil(end_date) ->
+        _start_date when is_nil(end_date) ->
           []
 
         start_date ->
           if DateTime.compare(end_date, start_date) == :lt do
-            [end_date: "A data de término deve ser após a data de início"]
+            [end_date: gettext("End date must be after the start date.")]
           else
             []
           end
       end
     end)
-    |> validate_length(:name, max: 100, message: "O nome deve ter no máximo 100 caracteres")
+    |> validate_length(:name, max: 100, message: gettext("Name must be at most 100 characters."))
     |> validate_length(:institution,
       max: 100,
-      message: "A instituição deve ter no máximo 100 caracteres"
+      message: gettext("Institution must be at most 100 characters.")
     )
   end
 

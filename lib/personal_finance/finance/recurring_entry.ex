@@ -1,6 +1,7 @@
 defmodule PersonalFinance.Finance.RecurringEntry do
   use Ecto.Schema
   import Ecto.Changeset
+  use Gettext, backend: PersonalFinanceWeb.Gettext
   alias PersonalFinance.Finance.{Ledger, Category, Profile}
 
   schema "recurring_entries" do
@@ -43,18 +44,24 @@ defmodule PersonalFinance.Finance.RecurringEntry do
     |> put_change(:ledger_id, ledger_id)
     |> convert_date_to_datetime(:start_date_input, :start_date, :day_start)
     |> convert_date_to_datetime(:end_date_input, :end_date, :day_end)
-    |> validate_required(:start_date_input, message: "Data de início é obrigatória")
-    |> validate_required(:start_date, message: "Data de início é obrigatória")
-    |> validate_required(:frequency, message: "A frequência é obrigatória")
-    |> validate_inclusion(:frequency, [:monthly, :yearly], message: "Frequência inválida")
-    |> validate_required(:type, message: "O tipo é obrigatório")
-    |> validate_inclusion(:type, [:income, :expense], message: "Tipo inválido")
-    |> validate_required(:value, message: "O valor é obrigatório")
-    |> validate_number(:value, greater_than: 0, message: "O valor deve ser maior que zero")
-    |> validate_required(:amount, message: "A quantidade é obrigatória")
-    |> validate_number(:amount, greater_than: 0, message: "A quantidade deve ser maior que zero")
-    |> validate_required(:description, message: "Descrição é obrigatória")
-    |> validate_length(:description, max: 255, message: "Descrição muito longa")
+    |> validate_required(:start_date_input, message: gettext("Start date is required."))
+    |> validate_required(:start_date, message: gettext("Start date is required."))
+    |> validate_required(:frequency, message: gettext("Frequency is required."))
+    |> validate_inclusion(:frequency, [:monthly, :yearly], message: gettext("Invalid frequency."))
+    |> validate_required(:type, message: gettext("Type is required."))
+    |> validate_inclusion(:type, [:income, :expense], message: gettext("Invalid type."))
+    |> validate_required(:value, message: gettext("Value is required."))
+    |> validate_number(:value,
+      greater_than: 0,
+      message: gettext("Value must be greater than zero.")
+    )
+    |> validate_required(:amount, message: gettext("Amount is required."))
+    |> validate_number(:amount,
+      greater_than: 0,
+      message: gettext("Amount must be greater than zero.")
+    )
+    |> validate_required(:description, message: gettext("Description is required."))
+    |> validate_length(:description, max: 255, message: gettext("Description is too long."))
     |> validate_end_date_after_start_date()
   end
 
@@ -120,7 +127,7 @@ defmodule PersonalFinance.Finance.RecurringEntry do
           add_error(
             changeset,
             :end_date_input,
-            "Data de término deve ser posterior à data de início"
+            gettext("End date must be after the start date.")
           )
         else
           changeset

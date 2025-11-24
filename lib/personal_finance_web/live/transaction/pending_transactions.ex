@@ -19,7 +19,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
      |> assign(
        form: to_form(%{}, as: :months),
        pending_recurrent_transactions: pending_recurrent_transactions,
-       page_title: "Transações Pendentes"
+       page_title: gettext("Pending Transactions")
      )}
   end
 
@@ -42,7 +42,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
          |> assign(pending_recurrent_transactions: pending_recurrent_transactions)}
 
       {:error, _changeset} ->
-        send(socket.assigns.parent_pid, {:put_flash, :error, "Erro ao confirmar transação."})
+        send(socket.assigns.parent_pid, {:put_flash, :error, gettext("Error confirming transaction.")})
         {:noreply, socket}
     end
   end
@@ -71,7 +71,7 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
         show={@show}
         on_close={JS.push("close_modal")}
       >
-        <:title>Próximas Transações recorrentes</:title>
+        <:title>{gettext("Upcoming Recurring Transactions")}</:title>
 
         <div class="mb-4">
           <.form for={@form} class="mt-1" phx-change="update_months" phx-target={@myself}>
@@ -83,32 +83,32 @@ defmodule PersonalFinanceWeb.TransactionLive.PendingTransactions do
               options={1..12}
               value={@form[:months].value || 1}
               class="w-full"
-              label="Meses a exibir"
+              label={gettext("Months to display")}
             />
           </.form>
         </div>
 
         <div class="flex-grow overflow-y-auto">
           <%= if @pending_recurrent_transactions == [] do %>
-            <p class="text-gray-500">Nenhuma transação pendente.</p>
+            <p class="text-gray-500">{gettext("No pending transactions.")}</p>
           <% else %>
             <.table
               id="pending_transactions_table"
               rows={@pending_recurrent_transactions}
             >
-              <:col :let={transaction} label="Descrição">
+              <:col :let={transaction} label={gettext("Description")}>
                 {transaction.description}
               </:col>
-              <:col :let={transaction} label="Perfil">
+              <:col :let={transaction} label={gettext("Profile")}>
                 {transaction.profile.name}
               </:col>
-              <:col :let={transaction} label="Tipo">
-                {if transaction.type == :expense, do: "Despesa", else: "Receita"}
+              <:col :let={transaction} label={gettext("Type")}>
+                {if transaction.type == :expense, do: gettext("Expense"), else: gettext("Income")}
               </:col>
-              <:col :let={transaction} label="Valor">
+              <:col :let={transaction} label={gettext("Value")}>
                 {CurrencyUtils.format_money(transaction.value)}
               </:col>
-              <:col :let={transaction} label="Data Prevista">
+              <:col :let={transaction} label={gettext("Expected Date")}>
                 {DateUtils.format_date(transaction.date_expected)}
               </:col>
               <:action :let={transaction}>

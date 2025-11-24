@@ -616,7 +616,7 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
         >
           <summary class="collapse-title font-semibold flex items-center gap-2">
             <.icon name="hero-funnel" />
-            Filtros
+            <%= gettext("Filters") %>
           </summary>
           <div class="collapse-content bg-base-100 rounded-b-lg">
             <.form
@@ -642,7 +642,7 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
 
               <div class="flex flex-col gap-2 sm:flex-row sm:justify-end sm:items-center">
                 <.button type="submit" variant="primary" class="w-full sm:w-auto">
-                  <.icon name="hero-funnel" /> Aplicar Filtros
+                  <.icon name="hero-funnel" /> <%= gettext("Apply filters") %>
                 </.button>
                 <.button
                   type="button"
@@ -651,7 +651,7 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
                   phx-target={@myself}
                   class="w-full sm:w-auto"
                 >
-                  <.icon name="hero-x-mark" /> Limpar Filtros
+                  <.icon name="hero-x-mark" /> <%= gettext("Clear filters") %>
                 </.button>
               </div>
             </.form>
@@ -662,10 +662,16 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
       <%= if @total_items > 0 do %>
         <div class="flex justify-between items-center text-sm text-base-content/70 mb-2 px-1">
           <span>
-            Carregado {@current_items_count} de {@total_items}
+            <%=
+              gettext(
+                "Loaded %{current} of %{total}",
+                current: @current_items_count,
+                total: @total_items
+              )
+            %>
           </span>
           <span>
-            Página {@page}/{@total_pages}
+            <%= gettext("Page %{page}/%{total}", page: @page, total: @total_pages) %>
           </span>
         </div>
       <% end %>
@@ -693,9 +699,9 @@ defmodule PersonalFinanceWeb.Components.InfiniteScroll do
         <% else %>
           <div class="text-center py-4 text-base-content/60 text-sm">
             <%= if @current_items_count == 0 do %>
-              No items found
+              <%= gettext("No items found") %>
             <% else %>
-              All items loaded
+              <%= gettext("All items loaded") %>
             <% end %>
           </div>
         <% end %>

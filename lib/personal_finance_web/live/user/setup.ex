@@ -10,9 +10,9 @@ defmodule PersonalFinanceWeb.UserLive.Setup do
     <Layouts.app flash={@flash} current_scope={nil} show_sidebar={false}>
       <div class="mx-auto max-w-sm">
         <.header class="text-center">
-          Initial Setup
+          <%= gettext("Initial Setup") %>
           <:subtitle>
-            Create the first admin account for your Personal Finance system.
+            <%= gettext("Create the first admin account for your Personal Finance system.") %>
           </:subtitle>
         </.header>
 
@@ -20,7 +20,7 @@ defmodule PersonalFinanceWeb.UserLive.Setup do
           <.input
             field={@form[:name]}
             type="text"
-            label="Admin Name"
+            label={gettext("Admin Name")}
             autocomplete="name"
             required
             phx-mounted={JS.focus()}
@@ -28,27 +28,27 @@ defmodule PersonalFinanceWeb.UserLive.Setup do
           <.input
             field={@form[:email]}
             type="email"
-            label="Admin Email"
+            label={gettext("Admin Email")}
             autocomplete="username"
             required
           />
           <.input
             field={@form[:password]}
             type="password"
-            label="Password"
+            label={gettext("Password")}
             autocomplete="new-password"
             required
           />
           <.input
             field={@form[:password_confirmation]}
             type="password"
-            label="Confirm Password"
+            label={gettext("Confirm Password")}
             autocomplete="new-password"
             required
           />
 
-          <.button variant="primary" phx-disable-with="Creating admin..." class="w-full">
-            Create Admin Account
+          <.button variant="primary" phx-disable-with={gettext("Creating admin...")} class="w-full">
+            <%= gettext("Create Admin Account") %>
           </.button>
         </.form>
       </div>
@@ -72,7 +72,7 @@ defmodule PersonalFinanceWeb.UserLive.Setup do
       {:ok, _user} ->
         {:noreply,
          socket
-         |> put_flash(:info, "Admin account created successfully! You can now log in.")
+         |> put_flash(:info, gettext("Admin account created successfully! You can now log in."))
          |> redirect(to: ~p"/users/log-in")}
 
       {:error, %Ecto.Changeset{} = changeset} ->

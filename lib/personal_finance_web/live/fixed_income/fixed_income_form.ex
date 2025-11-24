@@ -43,7 +43,15 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
         on_close={JS.push("close_modal")}
         class="mt-2"
       >
-        <:title>{if @action == :edit, do: "Editar Renda Fixa", else: "Nova Renda Fixa"}</:title>
+        <:title>
+          <%=
+            if @action == :edit do
+              gettext("Edit Fixed Income")
+            else
+              gettext("New Fixed Income")
+            end
+          %>
+        </:title>
         <.form
           for={@form}
           id="fixed-income-form"
@@ -56,7 +64,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:name]}
                 type="text"
-                label="Nome"
+                label={gettext("Name")}
               />
             </div>
 
@@ -64,7 +72,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:institution]}
                 type="text"
-                label="Instituição"
+                label={gettext("Institution")}
               />
             </div>
 
@@ -72,7 +80,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:type]}
                 type="select"
-                label="Tipo"
+                label={gettext("Type")}
                 options={[{"CDB", :cdb}]}
                 disabled={@action == :edit}
               />
@@ -82,7 +90,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:profile_id]}
                 type="select"
-                label="Perfil"
+                label={gettext("Profile")}
                 options={@profiles}
                 disabled={@action == :edit}
               />
@@ -92,7 +100,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:remuneration_basis]}
                 type="select"
-                label="Base de Remuneração"
+                label={gettext("Remuneration basis")}
                 options={[{"CDI", :cdi}]}
                 disabled={@action == :edit}
               />
@@ -102,7 +110,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:initial_investment]}
                 type="number"
-                label="Valor (R$)"
+                label={gettext("Value (R$)")}
                 autocomplete="off"
                 disabled={@action == :edit}
               />
@@ -112,7 +120,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:remuneration_rate]}
                 type="number"
-                label="Taxa de Remuneração (%)"
+                label={gettext("Remuneration rate (%)")}
                 step="0.01"
                 min="0"
                 disabled={@action == :edit}
@@ -123,7 +131,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:start_date_input]}
                 type="date"
-                label="Data"
+                label={gettext("Date")}
                 disabled={@action == :edit}
               />
             </div>
@@ -132,14 +140,14 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:yield_frequency]}
                 type="select"
-                label="Frequência de Rentabilidade"
+                label={gettext("Yield frequency")}
                 options={[
-                  {"Diária", :daily},
-                  {"Mensal", :monthly},
-                  {"Trimestral", :quarterly},
-                  {"Semestral", :semiannual},
-                  {"Anual", :annual},
-                  {"No Vencimento", :at_maturity}
+                  {gettext("Daily"), :daily},
+                  {gettext("Monthly"), :monthly},
+                  {gettext("Quarterly"), :quarterly},
+                  {gettext("Semiannual"), :semiannual},
+                  {gettext("Annual"), :annual},
+                  {gettext("At maturity"), :at_maturity}
                 ]}
                 disabled={@action == :edit}
               />
@@ -149,7 +157,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               <.input
                 field={@form[:end_date]}
                 type="date"
-                label="Data de Vencimento"
+                label={gettext("Maturity date")}
                 disabled={@action == :edit}
               />
             </div>
@@ -159,9 +167,9 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
             <.button
               variant="custom"
               class="btn btn-primary w-full"
-              phx-disable-with="Salvando..."
+              phx-disable-with={gettext("Saving...")}
             >
-              Salvar
+              <%= gettext("Save") %>
             </.button>
           </div>
         </.form>

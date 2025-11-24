@@ -38,7 +38,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
         on_close={JS.push("close_modal", target: @close_target || @myself)}
         class="mt-2"
       >
-        <:title>{if @action == :edit, do: "Editar Categoria", else: "Nova Categoria"}</:title>
+        <:title>{if @action == :edit, do: gettext("Edit Category"), else: gettext("New Category")}</:title>
         <.form
           for={@form}
           id="category-form"
@@ -49,32 +49,32 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoryForm do
           <.input
             field={@form[:name]}
             type="text"
-            label="Nome"
+            label={gettext("Name")}
             disabled={@category != nil and @category.is_fixed}
           />
           <.input
             field={@form[:description]}
             type="text"
-            label="Descrição"
+            label={gettext("Description")}
             disabled={@category != nil and @category.is_fixed}
           />
           <.input
             field={@form[:percentage]}
             type="number"
-            label="Porcentagem"
+            label={gettext("Percentage")}
             step="0.01"
             min="0"
             max="100"
           />
-          <.input field={@form[:color]} type="color" label="Cor" />
+          <.input field={@form[:color]} type="color" label={gettext("Color")} />
 
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"
               class="btn btn-primary w-full"
-              phx-disable-with="Salvando..."
+              phx-disable-with={gettext("Saving...")}
             >
-              Salvar
+              {gettext("Save")}
             </.button>
           </div>
         </.form>

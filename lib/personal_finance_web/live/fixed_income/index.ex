@@ -12,7 +12,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
     if ledger == nil do
       {:ok,
        socket
-       |> put_flash(:error, "Orçamento não encontrado.")
+       |> put_flash(:error, gettext("Ledger not found."))
        |> push_navigate(to: ~p"/ledgers")}
     else
       socket =
@@ -27,7 +27,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
        socket
        |> stream(:fixed_income_collection, fixed_incomes)
        |> assign(
-         page_title: "Renda Fixa - #{ledger.name}",
+         page_title: "#{gettext("Fixed Income")} - #{ledger.name}",
          ledger: ledger,
          open_modal: nil,
          fixed_income: nil
@@ -55,7 +55,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
          fixed_income: fixed_income
        )}
     else
-      {:noreply, put_flash(socket, :error, "Renda Fixa não encontrada.")}
+      {:noreply, put_flash(socket, :error, gettext("Fixed income not found."))}
     end
   end
 
@@ -70,6 +70,6 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
      socket
      |> assign(open_modal: nil)
      |> stream_insert(:fixed_income_collection, fixed_income)
-     |> put_flash(:info, "Renda Fixa salva com sucesso.")}
+     |> put_flash(:info, gettext("Fixed income successfully saved."))}
   end
 end

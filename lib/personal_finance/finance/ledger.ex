@@ -1,6 +1,7 @@
 defmodule PersonalFinance.Finance.Ledger do
   use Ecto.Schema
   import Ecto.Changeset
+  use Gettext, backend: PersonalFinanceWeb.Gettext
 
   schema "ledgers" do
     field :name, :string
@@ -14,20 +15,20 @@ defmodule PersonalFinance.Finance.Ledger do
   def changeset(ledger, attrs, owner_id) do
     ledger
     |> cast(attrs, [:name, :description])
-    |> validate_required([:name], message: "O nome é obrigatório.")
+    |> validate_required([:name], message: gettext("Name is required."))
     |> validate_length(:name,
       min: 1,
       max: 100,
-      message: "O nome deve ter entre 1 e 100 caracteres."
+      message: gettext("Name must be between 1 and 100 characters.")
     )
     |> validate_length(:description,
       max: 255,
-      message: "A descrição deve ter no máximo 255 caracteres."
+      message: gettext("Description must be at most 255 characters.")
     )
     |> put_change(:owner_id, owner_id)
     |> unique_constraint(:name,
       name: :ledgers_name_owner_id_index,
-      message: "Já existe um orçamento com esse nome para este usuário."
+      message: gettext("A ledger with this name already exists for this owner.")
     )
   end
 end

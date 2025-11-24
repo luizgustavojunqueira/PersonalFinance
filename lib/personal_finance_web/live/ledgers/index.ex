@@ -14,7 +14,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
       socket
       |> stream(:ledger_collection, ledgers_with_stats)
       |> assign(
-        page_title: "Ledgers",
+        page_title: gettext("Ledgers"),
         ledger: nil,
         open_modal: nil,
         has_own_ledgers: Enum.any?(ledgers, fn l -> l.owner.id == current_scope.user.id end),
@@ -55,7 +55,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
       {:noreply,
        socket
        |> assign(ledger: nil, open_modal: nil)
-       |> put_flash(:info, "Ledger excluído com sucesso.")
+       |> put_flash(:info, gettext("Ledger deleted successfully."))
        |> stream_delete(:ledger_collection, ledger)
        |> assign(
          has_own_ledgers: Enum.any?(ledgers, fn l -> l.owner.id == current_scope.user.id end),
@@ -67,7 +67,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
       nil ->
         {:noreply,
          socket
-         |> put_flash(:error, "Ledger não encontrado.")
+         |> put_flash(:error, gettext("Ledger not found."))
          |> push_patch(to: ~p"/ledgers")}
 
       {:error, _changeset} ->
@@ -75,7 +75,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
          socket
          |> put_flash(
            :error,
-           "Erro ao excluir o ledger"
+           gettext("Error deleting ledger")
          )}
     end
   end
@@ -87,7 +87,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
 
     {:noreply,
      socket
-     |> put_flash(:info, "Ledger salvo com sucesso.")
+     |> put_flash(:info, gettext("Ledger saved successfully."))
      |> stream_insert(:ledger_collection, ledger, at: 0, replace: true)
      |> assign(
        open_modal: nil,
@@ -100,11 +100,11 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
   end
 
   defp apply_action(socket, :index, _params) do
-    assign(socket, open_modal: nil, ledger: nil, page_title: "Ledgers")
+    assign(socket, open_modal: nil, ledger: nil, page_title: gettext("Ledgers"))
   end
 
   defp apply_action(socket, :new, _params) do
-    assign(socket, open_modal: :new_ledger, ledger: nil, page_title: "Novo Ledger")
+    assign(socket, open_modal: :new_ledger, ledger: nil, page_title: gettext("New Ledger"))
   end
 
   defp apply_action(socket, action, %{"id" => id}) when action in [:edit, :delete] do
@@ -120,7 +120,7 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
 
       nil ->
         socket
-        |> put_flash(:error, "Ledger não encontrado.")
+        |> put_flash(:error, gettext("Ledger not found."))
         |> push_patch(to: ~p"/ledgers")
     end
   end
@@ -128,8 +128,8 @@ defmodule PersonalFinanceWeb.LedgersLive.Index do
   defp modal_name(:edit), do: :edit_ledger
   defp modal_name(:delete), do: :delete_ledger
 
-  defp page_title(:edit, ledger), do: "Editar Ledger - #{ledger.name}"
-  defp page_title(:delete, ledger), do: "Excluir Ledger - #{ledger.name}"
+  defp page_title(:edit, ledger), do: gettext("Edit Ledger - %{name}", name: ledger.name)
+  defp page_title(:delete, ledger), do: gettext("Delete Ledger - %{name}", name: ledger.name)
 
   defp enrich_ledger_with_stats(ledger, current_scope) do
     balance = Balance.get_balance(current_scope, ledger.id, :all, nil)

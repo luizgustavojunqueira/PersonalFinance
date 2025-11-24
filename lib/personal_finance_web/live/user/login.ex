@@ -6,10 +6,10 @@ defmodule PersonalFinanceWeb.UserLive.Login do
     <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={false}>
       <div class="mx-auto max-w-sm space-y-4">
         <.header class="text-center">
-          <p>Log in</p>
+          <p><%= gettext("Log in") %></p>
           <:subtitle>
             <%= if @current_scope do %>
-              You need to reauthenticate to perform sensitive actions on your account.
+              <%= gettext("You need to reauthenticate to perform sensitive actions on your account.") %>
             <% end %>
           </:subtitle>
         </.header>
@@ -26,24 +26,24 @@ defmodule PersonalFinanceWeb.UserLive.Login do
             readonly={!!@current_scope}
             field={f[:email]}
             type="email"
-            label="Email"
+            label={gettext("Email")}
             autocomplete="username"
             required
           />
           <.input
             field={@form[:password]}
             type="password"
-            label="Password"
+            label={gettext("Password")}
             autocomplete="current-password"
           />
           <.input
             :if={!@current_scope}
             field={f[:remember_me]}
             type="checkbox"
-            label="Keep me logged in"
+            label={gettext("Keep me logged in")}
           />
           <.button class="w-full" variant="primary">
-            Log in <span aria-hidden="true">→</span>
+            <%= gettext("Log in") %> <span aria-hidden="true">→</span>
           </.button>
         </.form>
       </div>

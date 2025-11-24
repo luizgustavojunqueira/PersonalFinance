@@ -36,7 +36,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
         on_close={JS.push("close_modal")}
         class="mt-2"
       >
-        <:title>Cadastrar Transação</:title>
+        <:title><%= gettext("Create transaction") %></:title>
         <.form
           for={@form}
           id="fixed-income-form"
@@ -48,21 +48,21 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
             <.input
               field={@form[:description]}
               type="text"
-              label="Descrição"
+              label={gettext("Description")}
               required
             />
 
             <.input
               field={@form[:type]}
               type="select"
-              label="Tipo"
-              options={[{"Depósito", :deposit}, {"Resgate", :withdraw}]}
+              label={gettext("Type")}
+              options={[{gettext("Deposit"), :deposit}, {gettext("Withdraw"), :withdraw}]}
             />
 
             <.input
               field={@form[:value]}
               type="number"
-              label="Valor (R$)"
+              label={gettext("Value (R$)")}
               required
               autocomplete="off"
             />
@@ -72,9 +72,9 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
             <.button
               variant="custom"
               class="btn btn-primary w-full"
-              phx-disable-with="Salvando..."
+              phx-disable-with={gettext("Saving...")}
             >
-              Salvar
+              {gettext("Save")}
             </.button>
           </div>
         </.form>

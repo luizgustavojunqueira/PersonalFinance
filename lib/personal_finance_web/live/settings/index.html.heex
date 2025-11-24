@@ -1,6 +1,6 @@
 <Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
   <.header>
-    {@ledger.name} - Configurações
+    {@ledger.name} - {gettext("Settings")}
   </.header>
 
   <.live_component
@@ -9,7 +9,7 @@
     tabs={[
       %{
         id: :categories,
-        label: "Categorias",
+        label: gettext("Categories"),
         icon: "hero-tag",
         component: PersonalFinanceWeb.CategoryLive.CategoriesPanel,
         component_id: @categories_panel_id,
@@ -20,7 +20,7 @@
       },
       %{
         id: :profiles,
-        label: "Perfis",
+        label: gettext("Profiles"),
         icon: "hero-users",
         component: PersonalFinanceWeb.SettingsLive.ProfilesPanel,
         component_id: @profiles_panel_id,
@@ -32,7 +32,7 @@
       },
       %{
         id: :access,
-        label: "Acesso",
+        label: gettext("Access"),
         icon: "hero-user-group",
         component: PersonalFinanceWeb.SettingsLive.AccessPanel,
         assigns: %{

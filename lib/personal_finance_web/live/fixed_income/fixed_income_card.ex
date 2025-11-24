@@ -20,7 +20,10 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
         <div class="relative flex items-start justify-between gap-4">
           <div>
             <h3 class="card-title text-lg font-semibold">
-              {@fixed_income.name} {if not @fixed_income.is_active, do: " - Inativo"}
+              {@fixed_income.name}
+              <%= if not @fixed_income.is_active do %>
+                - <%= gettext("Inactive") %>
+              <% end %>
             </h3>
             <p class="text-sm text-gray-500">{@fixed_income.institution}</p>
           </div>
@@ -40,7 +43,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
 
         <div class="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
           <div>
-            <span class="text-gray-600/70 font-medium">Tipo</span>
+            <span class="text-gray-600/70 font-medium"><%= gettext("Type") %></span>
             <div class="font-medium">
               <% type = @fixed_income.type |> Atom.to_string() |> String.upcase() %>
               <% base = @fixed_income.remuneration_basis |> Atom.to_string() |> String.upcase() %>
@@ -49,35 +52,35 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
           </div>
 
           <div>
-            <span class="text-gray-600/70 font-medium">Remuneração</span>
+            <span class="text-gray-600/70 font-medium"><%= gettext("Remuneration") %></span>
             <div class="font-medium">
               {CurrencyUtils.format_rate(@fixed_income.remuneration_rate)}
             </div>
           </div>
 
           <div>
-            <span class="text-gray-600/70 font-medium">Rentabilidade</span>
+            <span class="text-gray-600/70 font-medium"><%= gettext("Yield") %></span>
             <div class="font-medium">
               {format_frequency(@fixed_income.yield_frequency)}
             </div>
           </div>
 
           <div>
-            <span class="text-gray-600/70 font-medium">Início</span>
+            <span class="text-gray-600/70 font-medium"><%= gettext("Start") %></span>
             <div class="font-medium">{DateUtils.format_date(@fixed_income.start_date)}</div>
           </div>
 
           <div class="col-span-2 mt-2">
             <div class="grid grid-cols-2 gap-x-4 gap-y-1">
               <div>
-                <span class="text-gray-600/70 font-medium">Investimento inicial</span>
+                <span class="text-gray-600/70 font-medium"><%= gettext("Initial investment") %></span>
                 <div class="font-medium text-sm">
                   {CurrencyUtils.format_money(@fixed_income.initial_investment)}
                 </div>
               </div>
 
               <div>
-                <span class="text-gray-600/70 font-medium">Saldo atual</span>
+                <span class="text-gray-600/70 font-medium"><%= gettext("Current balance") %></span>
                 <div class="font-semibold text-sm">
                   {CurrencyUtils.format_money(@fixed_income.current_balance)}
                 </div>
@@ -90,25 +93,25 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
               <% net_yield = Decimal.sub(total_yield, total_tax_deducted) %>
 
               <div>
-                Rendimento Bruto:
+                <%= gettext("Gross yield") %>:
                 <span class={"font-medium #{if total_yield >= 0, do: "text-green-600", else: "text-red-600"} "}>
                   {CurrencyUtils.format_money(Decimal.to_float(total_yield))}
                 </span>
               </div>
               <div>
-                Imposto Deduzido:
+                <%= gettext("Tax deducted") %>:
                 <span class="font-medium text-red-600">
                   {CurrencyUtils.format_money(Decimal.to_float(total_tax_deducted))}
                 </span>
               </div>
               <div>
-                Rendimento Líquido:
+                <%= gettext("Net yield") %>:
                 <span class={"font-medium #{if net_yield >= 0, do: "text-green-600", else: "text-red-600"} "}>
                   {CurrencyUtils.format_money(Decimal.to_float(net_yield))}
                 </span>
               </div>
               <%= if total_yield == 0 and total_tax_deducted == 0 do %>
-                <div class="text-gray-400">Sem rendimento aparente</div>
+                <div class="text-gray-400"><%= gettext("No apparent yield yet") %></div>
               <% end %>
             </div>
           </div>
@@ -119,7 +122,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
             class="btn btn-secondary text-sm px-4 py-2"
             navigate={~p"/ledgers/#{@ledger.id}/fixed_income/#{@fixed_income.id}"}
           >
-            Ver
+            <%= gettext("View") %>
           </.link>
           <.button
             variant="primary"
@@ -128,7 +131,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
             phx-value-id={@fixed_income.id}
             disabled={@fixed_income.is_active == false}
           >
-            <.icon name="hero-pencil" /> Editar
+            <.icon name="hero-pencil" /> <%= gettext("Edit") %>
           </.button>
         </div>
       </div>
@@ -136,18 +139,18 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeCard do
     """
   end
 
-  defp format_frequency(nil), do: "N/A"
+  defp format_frequency(nil), do: gettext("N/A")
 
   defp format_frequency(frequency) do
     frequency
     |> case do
-      :daily -> "Diária"
-      :weekly -> "Semanal"
-      :monthly -> "Mensal"
-      :quarterly -> "Trimestral"
-      :semi_annual -> "Semestral"
-      :annual -> "Anual"
-      _ -> "N/A"
+      :daily -> gettext("Daily")
+      :weekly -> gettext("Weekly")
+      :monthly -> gettext("Monthly")
+      :quarterly -> gettext("Quarterly")
+      :semi_annual -> gettext("Semiannual")
+      :annual -> gettext("Annual")
+      _ -> gettext("N/A")
     end
   end
 end

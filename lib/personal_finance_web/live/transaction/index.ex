@@ -10,7 +10,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     if ledger == nil do
       {:ok,
        socket
-       |> put_flash(:error, "Orçamento não encontrado.")
+       |> put_flash(:error, gettext("Ledger not found."))
        |> push_navigate(to: ~p"/ledgers")}
     else
       socket =
@@ -41,7 +41,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           }
         )
 
-      {:ok, assign(socket, page_title: "Transações - #{ledger.name}", ledger: ledger)}
+      {:ok, assign(socket, page_title: "#{gettext("Transactions")} - #{ledger.name}", ledger: ledger)}
     end
   end
 
@@ -64,7 +64,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     if transaction == nil do
       {:noreply,
        socket
-       |> put_flash(:error, "Transação não encontrada.")}
+       |> put_flash(:error, gettext("Transaction not found."))}
     else
       {:noreply,
        assign(socket,
@@ -87,7 +87,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     {:noreply,
      socket
-     |> put_flash(:info, "Iniciando download...")
+     |> put_flash(:info, gettext("Starting download..."))
      |> push_event("open-url", %{url: export_url})}
   end
 
@@ -106,7 +106,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     {:noreply,
      socket
-     |> put_flash(:info, "Transação removida com sucesso.")}
+     |> put_flash(:info, gettext("Transaction successfully deleted."))}
   end
 
   @impl true
@@ -120,7 +120,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
     {:noreply,
      socket
      |> assign(open_modal: nil, transaction: nil)
-     |> put_flash(:info, "Transação salva com sucesso.")}
+     |> put_flash(:info, gettext("Transaction successfully saved."))}
   end
 
   @impl true

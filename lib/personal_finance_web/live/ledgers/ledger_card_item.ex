@@ -43,7 +43,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
                   phx-click="toggle_visibility"
                   phx-target={@myself}
                   class="btn btn-ghost btn-xs btn-circle opacity-60 hover:opacity-100 transition-opacity"
-                  title={if @show_values, do: "Ocultar valores", else: "Mostrar valores"}
+                  title={if @show_values, do: gettext("Hide values"), else: gettext("Show values")}
                 >
                   <.icon
                     name={if @show_values, do: "hero-eye", else: "hero-eye-slash"}
@@ -53,7 +53,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
               </div>
               <p class="text-xs text-base-content/50">
                 <%= if @is_owner do %>
-                  <.icon name="hero-user" class="w-3 h-3 inline" /> Proprietário
+                  <.icon name="hero-user" class="w-3 h-3 inline" /> <%= gettext("Owner") %>
                 <% else %>
                   <.icon name="hero-share" class="w-3 h-3 inline" /> {@ledger.owner.name}
                 <% end %>
@@ -70,13 +70,13 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
                 <li>
                   <.link patch={~p"/ledgers/#{@ledger.id}/edit"} class="flex items-center gap-2 hover:bg-primary/10">
                     <.icon name="hero-pencil" class="w-4 h-4" />
-                    <span>Editar</span>
+                    <span><%= gettext("Edit") %></span>
                   </.link>
                 </li>
                 <li>
                   <.link patch={~p"/ledgers/#{@ledger.id}/delete"} class="flex items-center gap-2 hover:bg-error/10 text-error">
                     <.icon name="hero-trash" class="w-4 h-4" />
-                    <span>Apagar</span>
+                    <span><%= gettext("Delete") %></span>
                   </.link>
                 </li>
               </ul>
@@ -89,7 +89,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-base-content/60 flex items-center gap-1">
                 <.icon name="hero-banknotes" class="w-3.5 h-3.5" />
-                Saldo Total
+                <%= gettext("Total Balance") %>
               </span>
               <span
                 class={[
@@ -114,7 +114,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
             <div class="flex items-center justify-between">
               <span class="text-xs font-medium text-base-content/60 flex items-center gap-1">
                 <.icon name="hero-calendar" class="w-3.5 h-3.5" />
-                Este Mês
+                <%= gettext("This Month") %>
               </span>
               <span
                 class={[
@@ -133,7 +133,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
             <div class="flex items-center justify-between pt-1 border-t border-base-300">
               <span class="text-xs font-medium text-base-content/60 flex items-center gap-1">
                 <.icon name="hero-list-bullet" class="w-3.5 h-3.5" />
-                Transações
+                <%= gettext("Transactions") %>
               </span>
               <span class="text-sm font-semibold text-base-content transition-all duration-300">
                 <%= if @show_values do %>
@@ -152,7 +152,7 @@ defmodule PersonalFinanceWeb.LedgersLive.LedgerCardItem do
           phx-value-ledger-id={@ledger.id}
           phx-target={@myself}
         >
-          Abrir Ledger
+          <%= gettext("Open Ledger") %>
           <.icon name="hero-arrow-right" class="w-4 h-4" />
         </button>
       </div>

@@ -35,7 +35,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
       >
         <:title>
           <span class="flex items-center gap-2">
-            <.icon name="hero-document-arrow-up" class="w-6 h-6" /> Importar Transações
+            <.icon name="hero-document-arrow-up" class="w-6 h-6" /> {gettext("Import Transactions")}
           </span>
         </:title>
         <div class="p-6">
@@ -49,7 +49,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
           >
             <div class="form-control">
               <label class="label">
-                <span class="label-text font-medium">Arquivo CSV</span>
+                <span class="label-text font-medium">{gettext("CSV File")}</span>
               </label>
               <label
                 for={@uploads.file.ref}
@@ -61,10 +61,10 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
                   class="w-12 h-12 mb-4 text-base-content/50"
                 />
                 <p class="text-base font-medium text-base-content">
-                  Arraste e solte seu arquivo CSV
+                  {gettext("Drag and drop your CSV file")}
                 </p>
                 <p class="text-sm text-base-content/70 mt-1">
-                  ou clique para selecionar (máximo 5MB)
+                  {gettext("or click to select (maximum 5MB)")}
                 </p>
                 <.live_file_input
                   upload={@uploads.file}
@@ -89,13 +89,13 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
                   <span>
                     <%= case err do %>
                       <% :too_large -> %>
-                        Arquivo muito grande (máximo 5MB)
+                        {gettext("File too large (maximum 5MB)")}
                       <% :not_accepted -> %>
-                        Tipo de arquivo não aceito (apenas CSV)
+                        {gettext("File type not accepted (CSV only)")}
                       <% :too_many_files -> %>
-                        Apenas um arquivo por vez
+                        {gettext("Only one file at a time")}
                       <% _ -> %>
-                        Erro no upload
+                        {gettext("Upload error")}
                     <% end %>
                   </span>
                 </div>
@@ -110,21 +110,21 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
                 class="btn btn-primary w-full"
               >
                 <%= if @importing do %>
-                  <span class="loading loading-spinner loading-sm"></span> Importando...
+                  <span class="loading loading-spinner loading-sm"></span> {gettext("Importing...")}
                 <% else %>
-                  <.icon name="hero-document-arrow-up" class="w-4 h-4" /> Importar
+                  <.icon name="hero-document-arrow-up" class="w-4 h-4" /> {gettext("Import")}
                 <% end %>
               </.button>
             </div>
           </.form>
 
           <%= if @imported_count > 0 do %>
-            <div class="divider">Transações Importadas</div>
+            <div class="divider">{gettext("Imported Transactions")}</div>
             <div class="bg-success/10 border border-success/20 rounded-lg p-4 mb-4">
               <div class="flex items-center gap-2 mb-2">
                 <.icon name="hero-check-circle" class="w-5 h-5 text-success" />
                 <span class="font-medium text-success">
-                  {@imported_count} transações importadas com sucesso!
+                  {Gettext.ngettext(PersonalFinanceWeb.Gettext, "%{count} transaction successfully imported!", "%{count} transactions successfully imported!", @imported_count, count: @imported_count)}
                 </span>
               </div>
             </div>
@@ -157,13 +157,13 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
          |> assign(:imported_transactions, transactions)
          |> assign(:imported_count, length(transactions))
          |> assign(:importing, false)
-         |> put_flash(:info, "#{length(transactions)} transações importadas com sucesso!")}
+         |> put_flash(:info, Gettext.ngettext(PersonalFinanceWeb.Gettext, "%{count} transaction successfully imported!", "%{count} transactions successfully imported!", length(transactions), count: length(transactions)))}
 
       [{:error, reason}] ->
         {:noreply,
          socket
          |> assign(:importing, false)
-         |> put_flash(:error, "Erro ao importar transações: #{inspect(reason)}")
+         |> put_flash(:error, "#{gettext("Error importing transactions")}: #{inspect(reason)}")
          |> assign(:imported_transactions, [])
          |> assign(:imported_count, 0)}
 
@@ -171,7 +171,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
         {:noreply,
          socket
          |> assign(:importing, false)
-         |> put_flash(:error, "Nenhum arquivo foi processado.")
+         |> put_flash(:error, gettext("No file was processed."))
          |> assign(:imported_transactions, [])
          |> assign(:imported_count, 0)}
 
@@ -179,7 +179,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Import do
         {:noreply,
          socket
          |> assign(:importing, false)
-         |> put_flash(:error, "Estrutura de resultado inesperada.")
+         |> put_flash(:error, gettext("Unexpected result structure."))
          |> assign(:imported_transactions, [])
          |> assign(:imported_count, 0)}
     end
