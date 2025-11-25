@@ -1,4 +1,9 @@
-<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  show_sidebar={@show_sidebar}
+  ledger={@ledger}
+>
   <div class="min-h-screen pb-12 space-y-6">
     <section class="bg-base-100/80 border border-base-300 rounded-2xl p-6 shadow-sm mt-4">
       <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -10,9 +15,9 @@
             <h1 class="text-3xl font-bold text-base-content">
               {@fixed_income.name}
             </h1>
-                        <p class="text-sm text-base-content/70">
-                          {@fixed_income.institution}
-                        </p>
+            <p class="text-sm text-base-content/70">
+              {@fixed_income.institution}
+            </p>
           </div>
         </div>
 
@@ -29,13 +34,13 @@
       </div>
     </section>
 
-  <.live_component
-    module={PersonalFinanceWeb.FixedIncomeLive.Details.Form}
-    id="fixed-income-transaction-form-modal"
-    show={@open_modal in [:new_fixed_income_transaction]}
-    ledger={@ledger}
-    fixed_income={@fixed_income}
-  />
+    <.live_component
+      module={PersonalFinanceWeb.FixedIncomeLive.Details.Form}
+      id="fixed-income-transaction-form-modal"
+      show={@open_modal in [:new_fixed_income_transaction]}
+      ledger={@ledger}
+      fixed_income={@fixed_income}
+    />
 
     <section class="bg-base-100/80 border border-base-300 rounded-2xl p-6 shadow-sm space-y-6">
       <div class="space-y-2">
@@ -63,15 +68,23 @@
             </p>
           </div>
           <div>
-            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Yield frequency")}</p>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Yield frequency")}
+            </p>
             <p class="font-semibold text-base-content">{frequency_label}</p>
           </div>
           <div>
-            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Start date")}</p>
-            <p class="font-semibold text-base-content">{PersonalFinance.Utils.DateUtils.format_date(@fixed_income.start_date)}</p>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Start date")}
+            </p>
+            <p class="font-semibold text-base-content">
+              {PersonalFinance.Utils.DateUtils.format_date(@fixed_income.start_date)}
+            </p>
           </div>
           <div>
-            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Maturity date")}</p>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Maturity date")}
+            </p>
             <p class="font-semibold text-base-content">
               <%= if @fixed_income.end_date do %>
                 {PersonalFinance.Utils.DateUtils.format_date(@fixed_income.end_date)}
@@ -84,13 +97,17 @@
 
         <div class="grid gap-4 md:grid-cols-3">
           <div class="rounded-2xl border border-base-200 p-4">
-            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Initial investment")}</p>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Initial investment")}
+            </p>
             <p class="text-2xl font-semibold text-base-content">
               {PersonalFinance.Utils.CurrencyUtils.format_money(@fixed_income.initial_investment)}
             </p>
           </div>
           <div class="rounded-2xl border border-base-200 p-4">
-            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Current balance")}</p>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Current balance")}
+            </p>
             <p class="text-2xl font-semibold text-base-content">
               {PersonalFinance.Utils.CurrencyUtils.format_money(@fixed_income.current_balance)}
             </p>
@@ -99,18 +116,23 @@
           <% total_tax_deducted = @fixed_income.total_tax_deducted || Decimal.new("0.00") %>
           <% net_yield = Decimal.sub(total_yield, total_tax_deducted) %>
           <div class="rounded-2xl border border-base-200 p-4">
-            <p class="text-xs uppercase tracking-wide text-base-content/50">{gettext("Net yield")}</p>
+            <p class="text-xs uppercase tracking-wide text-base-content/50">
+              {gettext("Net yield")}
+            </p>
             <p class={[
               "text-2xl font-semibold",
-              net_yield >= 0 && "text-success",
-              net_yield < 0 && "text-error"
+              if(net_yield >= 0, do: "text-success", else: "text-error")
             ]}>
               {PersonalFinance.Utils.CurrencyUtils.format_money(Decimal.to_float(net_yield))}
             </p>
             <p class="mt-1 text-xs text-base-content/60">
               {gettext("Gross: %{gross} · Tax: %{tax}",
-                gross: PersonalFinance.Utils.CurrencyUtils.format_money(Decimal.to_float(total_yield)),
-                tax: PersonalFinance.Utils.CurrencyUtils.format_money(Decimal.to_float(total_tax_deducted))
+                gross:
+                  PersonalFinance.Utils.CurrencyUtils.format_money(Decimal.to_float(total_yield)),
+                tax:
+                  PersonalFinance.Utils.CurrencyUtils.format_money(
+                    Decimal.to_float(total_tax_deducted)
+                  )
               )}
             </p>
           </div>

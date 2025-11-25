@@ -1,6 +1,5 @@
 defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
   alias PersonalFinance.Finance
-  alias PersonalFinance.Utils.ParseUtils
   alias PersonalFinance.Investment
   alias PersonalFinance.Investment.{FixedIncome}
 
@@ -44,13 +43,11 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
         class="mt-2"
       >
         <:title>
-          <%=
-            if @action == :edit do
-              gettext("Edit Fixed Income")
-            else
-              gettext("New Fixed Income")
-            end
-          %>
+          {if @action == :edit do
+            gettext("Edit Fixed Income")
+          else
+            gettext("New Fixed Income")
+          end}
         </:title>
         <.form
           for={@form}
@@ -169,7 +166,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
               class="btn btn-primary w-full"
               phx-disable-with={gettext("Saving...")}
             >
-              <%= gettext("Save") %>
+              {gettext("Save")}
             </.button>
           </div>
         </.form>

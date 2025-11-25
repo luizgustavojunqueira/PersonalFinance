@@ -12,10 +12,19 @@ defmodule PersonalFinanceWeb.Layouts do
 
   embed_templates "layouts/*"
 
+  attr :flash, :map, required: true
+  attr :current_scope, :any, default: nil
+  attr :show_sidebar, :boolean, default: true
+  attr :show_header, :boolean, default: true
+  attr :ledger, :any, default: nil
+  slot :inner_block, required: true
+
   def app(assigns) do
     ~H"""
     <div class="flex flex-col h-screen max-h-screen overflow-hidden">
-      <.page_header current_scope={@current_scope} class="flex-shrink-0" />
+      <%= if @show_header do %>
+        <.page_header current_scope={@current_scope} class="flex-shrink-0" />
+      <% end %>
 
       <div class="flex flex-row flex-1 min-h-0">
         <%= if @show_sidebar do %>
@@ -116,9 +125,12 @@ defmodule PersonalFinanceWeb.Layouts do
     ~H"""
     <div class="dropdown dropdown-end">
       <label tabindex="0" class="btn btn-ghost btn-circle">
-        <span class="text-2xl"><%= @current_flag %></span>
+        <span class="text-2xl">{@current_flag}</span>
       </label>
-      <ul tabindex="0" class="dropdown-content menu w-44 rounded-box bg-base-100 shadow-xl border border-base-300 p-2 z-50 mt-2">
+      <ul
+        tabindex="0"
+        class="dropdown-content menu w-44 rounded-box bg-base-100 shadow-xl border border-base-300 p-2 z-50 mt-2"
+      >
         <li>
           <a
             href="#"
