@@ -47,7 +47,10 @@ defmodule PersonalFinanceWeb.Router do
   scope "/", PersonalFinanceWeb do
     pipe_through [:browser]
 
-    live "/setup", UserLive.Setup, :new
+    live_session :setup,
+      on_mount: [{PersonalFinanceWeb.LocaleHook, :default}] do
+      live "/setup", UserLive.Setup, :new
+    end
   end
 
   scope "/admin", PersonalFinanceWeb do
@@ -102,7 +105,10 @@ defmodule PersonalFinanceWeb.Router do
     pipe_through [:browser, :redirect_if_setup_required]
 
     live_session :current_user,
-      on_mount: [{PersonalFinanceWeb.UserAuth, :mount_current_scope}] do
+      on_mount: [
+        {PersonalFinanceWeb.LocaleHook, :default},
+        {PersonalFinanceWeb.UserAuth, :mount_current_scope}
+      ] do
       live "/users/log-in", UserLive.Login, :new
     end
 

@@ -29,7 +29,8 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
          page_title: gettext("Fixed Income - %{name}", name: fixed_income.name),
          ledger: ledger,
          fixed_income: fixed_income,
-         open_modal: nil
+         open_modal: nil,
+         show_sidebar: true
        )
        |> assign_values()}
     end

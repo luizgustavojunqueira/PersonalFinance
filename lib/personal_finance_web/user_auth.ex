@@ -56,7 +56,7 @@ defmodule PersonalFinanceWeb.UserAuth do
     conn
     |> renew_session(nil)
     |> delete_resp_cookie(@remember_me_cookie)
-    |> redirect(to: ~p"/ledgers")
+    |> redirect(to: ~p"/users/log-in")
   end
 
   @doc """
