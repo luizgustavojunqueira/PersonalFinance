@@ -45,44 +45,57 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.Form do
           phx-change="validate"
           phx-target={@myself}
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <.input
-              field={@form[:description]}
-              type="text"
-              label={gettext("Description")}
-              required
-            />
+          <div class="space-y-5">
+            <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-4">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                  {gettext("Transaction details")}
+                </p>
+                <p class="text-sm text-base-content/60">
+                  {gettext("Register a movement for this fixed income.")}
+                </p>
+              </div>
 
-            <.input
-              field={@form[:type]}
-              type="select"
-              label={gettext("Type")}
-              options={[{gettext("Deposit"), :deposit}, {gettext("Withdraw"), :withdraw}]}
-            />
+              <div class="grid gap-4 sm:grid-cols-2">
+                <.input
+                  field={@form[:description]}
+                  type="text"
+                  label={gettext("Description")}
+                  required
+                />
 
-            <.input
-              field={@form[:value]}
-              type="number"
-              label={"Valor " <>
+                <.input
+                  field={@form[:type]}
+                  type="select"
+                  label={gettext("Type")}
+                  options={[{gettext("Deposit"), :deposit}, {gettext("Withdraw"), :withdraw}]}
+                />
+              </div>
+
+              <.input
+                field={@form[:value]}
+                type="number"
+                label={"Valor " <>
                   if @form[:type].value == :withdraw do
                     "(Máx. #{CurrencyUtils.format_money(@fixed_income.current_balance)})"
                   else
                     ""
                   end}
-              required
-              autocomplete="off"
-              class="input input-bordered input-primary w-full"
-            />
-          </div>
+                required
+                autocomplete="off"
+                class="input input-bordered input-primary w-full"
+              />
+            </div>
 
-          <div class="flex justify-center gap-2 mt-4">
-            <.button
-              variant="custom"
-              class="btn btn-primary w-full"
-              phx-disable-with={gettext("Saving...")}
-            >
-              {gettext("Save")}
-            </.button>
+            <div class="flex justify-end">
+              <.button
+                variant="primary"
+                class="w-full sm:w-auto"
+                phx-disable-with={gettext("Saving...")}
+              >
+                {gettext("Save")}
+              </.button>
+            </div>
           </div>
         </.form>
       </.modal>

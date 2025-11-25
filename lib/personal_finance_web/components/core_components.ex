@@ -205,6 +205,10 @@ defmodule PersonalFinanceWeb.CoreComponents do
   attr :checked, :boolean, doc: "the checked flag for checkbox inputs"
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
+  attr :option_icons, :map,
+    default: %{},
+    doc:
+      "optional map of option values to icon specs (icon name string or rendered component)"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
   attr :disabled, :boolean, default: false, doc: "the disabled flag for inputs"
 
@@ -251,31 +255,13 @@ defmodule PersonalFinanceWeb.CoreComponents do
   end
 
   def input(%{type: "select"} = assigns) do
-    ~H"""
-    <fieldset class="fieldset w-full">
-      <legend :if={@label} class="fieldset-legend">{@label}</legend>
-      <div class="flex flex-col gap-1">
-        <select
-          id={@id}
-          name={@name}
-          class={[
-            "select select-bordered w-full",
-            @errors != [] && "select-error"
-          ]}
-          disabled={@disabled}
-          multiple={@multiple}
-          {@rest}
-        >
-          <option :if={@prompt} value="">{@prompt}</option>
-          {Phoenix.HTML.Form.options_for_select(@options, @value)}
-        </select>
-        <span :if={@rest[:"data-hint"]} class="label-text-alt text-sm text-base-content/70">
-          {@rest[:"data-hint"]}
-        </span>
-      </div>
-      <.error :for={msg <- @errors} class="label text-error">{msg}</.error>
-    </fieldset>
-    """
+    assigns = assign_new(assigns, :option_icons, fn -> %{} end)
+
+    if map_size(assigns.option_icons) == 0 do
+      select_without_icons(assigns)
+    else
+      select_with_icons(assigns)
+    end
   end
 
   def input(%{type: "textarea"} = assigns) do
@@ -358,6 +344,172 @@ defmodule PersonalFinanceWeb.CoreComponents do
       <.error :for={msg <- @errors} class="label">{msg}</.error>
     </fieldset>
     """
+  end
+
+  defp select_without_icons(assigns) do
+    ~H"""
+    <fieldset class="fieldset w-full">
+      <legend :if={@label} class="fieldset-legend">{@label}</legend>
+      <div class="flex flex-col gap-1">
+        <select
+          id={@id}
+          name={@name}
+          class={[
+            "select select-bordered w-full",
+            @errors != [] && "select-error"
+          ]}
+          disabled={@disabled}
+          multiple={@multiple}
+          {@rest}
+        >
+          <option :if={@prompt} value="">{@prompt}</option>
+          {Phoenix.HTML.Form.options_for_select(@options, @value)}
+        </select>
+        <span :if={@rest[:"data-hint"]} class="label-text-alt text-sm text-base-content/70">
+          {@rest[:"data-hint"]}
+        </span>
+      </div>
+      <.error :for={msg <- @errors} class="label text-error">{msg}</.error>
+    </fieldset>
+    """
+  end
+
+  defp select_with_icons(%{multiple: true} = _assigns) do
+    raise ArgumentError, "option_icons are not supported for multiple select inputs"
+  end
+
+  defp select_with_icons(assigns) do
+    icon_options =
+      assigns.options
+      |> normalize_select_options()
+      |> Enum.map(&build_icon_option(&1, assigns.option_icons))
+      |> maybe_prepend_prompt(assigns.prompt, assigns.option_icons)
+      |> Enum.with_index()
+      |> Enum.map(fn {option, idx} ->
+        Map.put(option, :id, build_option_id(assigns, idx))
+      end)
+
+    assigns =
+      assigns
+      |> assign(:icon_options, icon_options)
+      |> assign(:current_value, normalize_select_value(assigns.value))
+
+    ~H"""
+    <fieldset class="fieldset w-full">
+      <legend :if={@label} class="fieldset-legend">{@label}</legend>
+      <div class="flex flex-col gap-2">
+        <div class="flex flex-row gap-2">
+          <label
+            :for={option <- @icon_options}
+            class="cursor-pointer"
+          >
+            <input
+              type="radio"
+              id={option.id}
+              name={@name}
+              value={option.value}
+              checked={option.value == @current_value}
+              class="peer sr-only"
+              disabled={@disabled}
+              {@rest}
+            />
+            <div class="inline-flex items-center gap-2 rounded-2xl border border-base-300 bg-base-100 px-4 py-2 text-sm font-medium text-base-content transition focus-within:ring-2 focus-within:ring-primary/40 peer-checked:border-primary peer-checked:bg-primary/10 peer-checked:text-primary">
+              <span :if={option.icon} class="flex items-center justify-center text-base-content/70">
+                <.icon :if={icon_string?(option.icon)} name={option.icon} class="size-4" />
+                <%= if icon_fun?(option.icon), do: option.icon.() %>
+                <%= if icon_renderable?(option.icon), do: option.icon %>
+              </span>
+              <span class="whitespace-nowrap">{option.label}</span>
+            </div>
+          </label>
+        </div>
+        <span :if={@rest[:"data-hint"]} class="label-text-alt text-sm text-base-content/70">
+          {@rest[:"data-hint"]}
+        </span>
+      </div>
+      <.error :for={msg <- @errors} class="label text-error">{msg}</.error>
+    </fieldset>
+    """
+  end
+
+  defp normalize_select_options(nil), do: []
+
+  defp normalize_select_options(options) do
+    Enum.map(options, fn
+      {label, value} -> {label, value}
+      value -> {value, value}
+    end)
+  end
+
+  defp build_icon_option({label, value}, icon_map) do
+    normalized_value = to_option_value(value)
+
+    %{
+      label: label,
+      value: normalized_value,
+      icon: fetch_option_icon(icon_map, value, normalized_value)
+    }
+  end
+
+  defp maybe_prepend_prompt(options, nil, _icon_map), do: options
+
+  defp maybe_prepend_prompt(options, prompt, icon_map) do
+    prompt_icon =
+      fetch_option_icon(icon_map, :prompt, "") ||
+        fetch_option_icon(icon_map, prompt, to_option_value(prompt))
+
+    [%{label: prompt, value: "", icon: prompt_icon} | options]
+  end
+
+  defp build_option_id(assigns, idx) do
+    base = assigns.id || assigns.name || "select"
+    sanitized_base =
+      base
+      |> to_string()
+      |> String.replace(~r/\s+/, "-")
+
+    "#{sanitized_base}-option-#{idx}"
+  end
+
+  defp normalize_select_value(value) do
+    value
+    |> to_option_value()
+  end
+
+  defp to_option_value(nil), do: ""
+  defp to_option_value(value) when is_binary(value), do: value
+  defp to_option_value(value) when is_atom(value), do: Atom.to_string(value)
+  defp to_option_value(value) when is_integer(value), do: Integer.to_string(value)
+  defp to_option_value(value) when is_float(value), do: :erlang.float_to_binary(value, [:compact])
+  defp to_option_value(value), do: to_string(value)
+
+  defp fetch_option_icon(icon_map, raw_value, normalized_value) do
+    icon_map[raw_value] ||
+      icon_map[normalized_value] ||
+      case safe_to_existing_atom(normalized_value) do
+        nil -> nil
+        atom_key -> icon_map[atom_key]
+      end
+  end
+
+  defp safe_to_existing_atom(value) when is_binary(value) and value != "" do
+    try do
+      String.to_existing_atom(value)
+    rescue
+      ArgumentError -> nil
+    end
+  end
+
+  defp safe_to_existing_atom(_), do: nil
+
+  defp icon_string?(icon) when is_binary(icon), do: true
+  defp icon_string?(_), do: false
+
+  defp icon_fun?(icon) when is_function(icon, 0), do: true
+  defp icon_fun?(_), do: false
+
+  defp icon_renderable?(icon) do
+    icon not in [nil, ""] and not icon_string?(icon) and not icon_fun?(icon)
   end
 
   # Helper used by inputs to generate form errors
