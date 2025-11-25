@@ -30,7 +30,8 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
          page_title: "#{gettext("Fixed Income")} - #{ledger.name}",
          ledger: ledger,
          open_modal: nil,
-         fixed_income: nil
+          fixed_income: nil,
+          has_fixed_incomes: not Enum.empty?(fixed_incomes)
        )}
     end
   end
@@ -70,6 +71,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Index do
      socket
      |> assign(open_modal: nil)
      |> stream_insert(:fixed_income_collection, fixed_income)
+     |> assign(has_fixed_incomes: true)
      |> put_flash(:info, gettext("Fixed income successfully saved."))}
   end
 end

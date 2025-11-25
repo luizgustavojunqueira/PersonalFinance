@@ -22,15 +22,15 @@
       </div>
     </section>
 
-  <.live_component
-    module={PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm}
-    id="fixed-income-form-modal"
-    show={@open_modal in [:new_fixed_income, :edit_fixed_income]}
-    action={if @open_modal == :new_fixed_income, do: :new, else: :edit}
-    ledger={@ledger}
-    fixed_income={@fixed_income}
-    current_scope={@current_scope}
-  />
+    <.live_component
+      module={PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm}
+      id="fixed-income-form-modal"
+      show={@open_modal in [:new_fixed_income, :edit_fixed_income]}
+      action={if @open_modal == :new_fixed_income, do: :new, else: :edit}
+      ledger={@ledger}
+      fixed_income={@fixed_income}
+      current_scope={@current_scope}
+    />
 
     <section class="bg-base-100/60 border border-dashed border-base-300 rounded-2xl p-4">
       <div
@@ -45,6 +45,21 @@
           ledger={@ledger}
           fixed_income={fixed_income}
         />
+      </div>
+
+      <div
+        :if={not @has_fixed_incomes}
+        class="flex flex-col items-center justify-center text-center gap-3 py-12"
+      >
+        <div class="rounded-full bg-base-200 p-4 text-base-content/60">
+          <.icon name="hero-banknotes" class="h-6 w-6" />
+        </div>
+        <p class="text-lg font-semibold text-base-content">
+          {gettext("No fixed income positions yet.")}
+        </p>
+        <p class="max-w-md text-sm text-base-content/70">
+          {gettext("Register your first product to keep track of private fixed income across ledgers.")}
+        </p>
       </div>
     </section>
   </div>
