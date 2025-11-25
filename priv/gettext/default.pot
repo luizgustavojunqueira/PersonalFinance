@@ -111,7 +111,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:48
+#: lib/personal_finance_web/live/admin/user_form_component.ex:77
 #: lib/personal_finance_web/live/user/setup.ex:92
 #, elixir-autogen, elixir-format
 msgid "Confirm Password"
@@ -137,7 +137,7 @@ msgstr ""
 msgid "Creating admin..."
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:127
+#: lib/personal_finance_web/live/admin/users.ex:102
 #: lib/personal_finance_web/live/category/categories_panel.ex:178
 #: lib/personal_finance_web/live/ledgers/index.html.heex:45
 #: lib/personal_finance_web/live/ledgers/ledger_card_item.ex:79
@@ -161,7 +161,7 @@ msgstr ""
 #: lib/personal_finance_web/live/category/categories_panel.ex:209
 #: lib/personal_finance_web/live/category/category_form.ex:58
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income_transactions.ex:55
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:51
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:62
 #: lib/personal_finance_web/live/ledgers/ledger_form.ex:100
 #: lib/personal_finance_web/live/settings/profile/profile_form.ex:53
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:195
@@ -173,7 +173,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:121
+#: lib/personal_finance_web/live/admin/users.ex:96
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:146
 #: lib/personal_finance_web/live/ledgers/ledger_card_item.ex:73
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:239
@@ -191,7 +191,8 @@ msgstr ""
 msgid "Edit Ledger - %{name}"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:31
+#: lib/personal_finance_web/live/admin/user_form_component.ex:45
+#: lib/personal_finance_web/live/admin/user_form_component.ex:60
 #: lib/personal_finance_web/live/user/login.ex:80
 #, elixir-autogen, elixir-format
 msgid "Email"
@@ -266,7 +267,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:206
 #: lib/personal_finance_web/live/category/category_form.ex:52
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:64
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:73
 #: lib/personal_finance_web/live/ledgers/ledger_form.ex:99
 #: lib/personal_finance_web/live/settings/profile/profile_form.ex:52
 #, elixir-autogen, elixir-format
@@ -300,9 +301,10 @@ msgstr ""
 msgid "Password updated successfully!"
 msgstr ""
 
+#: lib/personal_finance_web/live/admin/user_form_component.ex:100
 #: lib/personal_finance_web/live/category/category_form.ex:77
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:77
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:169
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:89
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:184
 #: lib/personal_finance_web/live/ledgers/ledger_form.ex:108
 #: lib/personal_finance_web/live/settings/profile/profile_form.ex:61
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:312
@@ -316,9 +318,10 @@ msgstr ""
 msgid "Save Password"
 msgstr ""
 
+#: lib/personal_finance_web/live/admin/user_form_component.ex:99
 #: lib/personal_finance_web/live/category/category_form.ex:75
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:75
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:167
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:87
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:182
 #: lib/personal_finance_web/live/ledgers/ledger_form.ex:106
 #: lib/personal_finance_web/live/settings/profile/profile_form.ex:59
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:311
@@ -397,7 +400,6 @@ msgid "Data Final"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income_transactions.ex:52
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:131
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:252
 #: lib/personal_finance_web/live/transaction/transactions.ex:80
 #, elixir-autogen, elixir-format
@@ -561,7 +563,7 @@ msgstr ""
 msgid "Pending Transactions"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:90
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:89
 #: lib/personal_finance_web/live/home/index.html.heex:19
 #: lib/personal_finance_web/live/transaction/pending_transactions.ex:111
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:174
@@ -627,9 +629,9 @@ msgid "Transaction successfully saved."
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:63
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:58
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:69
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:49
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:80
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:81
 #: lib/personal_finance_web/live/settings/access_panel.ex:103
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:198
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:291
@@ -758,7 +760,7 @@ msgstr ""
 msgid "Current Balance"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:184
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:188
 #, elixir-autogen, elixir-format
 msgid "Current Value"
 msgstr ""
@@ -769,7 +771,7 @@ msgstr ""
 msgid "Delete profile"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:59
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:70
 #, elixir-autogen, elixir-format
 msgid "Deposit"
 msgstr ""
@@ -799,7 +801,7 @@ msgstr ""
 msgid "End date"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:203
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:207
 #, elixir-autogen, elixir-format
 msgid "Equity"
 msgstr ""
@@ -825,22 +827,22 @@ msgid "Failed to delete profile."
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/index.ex:30
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:162
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:166
 #, elixir-autogen, elixir-format
 msgid "Fixed Income"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:194
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:198
 #, elixir-autogen, elixir-format
 msgid "Fixed Income Composition"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/index.ex:58
+#: lib/personal_finance_web/live/fixed_income/index.ex:59
 #, elixir-autogen, elixir-format
 msgid "Fixed income not found."
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/index.ex:73
+#: lib/personal_finance_web/live/fixed_income/index.ex:75
 #, elixir-autogen, elixir-format
 msgid "Fixed income successfully saved."
 msgstr ""
@@ -889,7 +891,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:51
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:161
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:143
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:121
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:205
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:298
 #, elixir-autogen, elixir-format
@@ -980,7 +982,7 @@ msgstr ""
 msgid "Profile successfully saved."
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:103
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:107
 #, elixir-autogen, elixir-format
 msgid "Recent Transactions"
 msgstr ""
@@ -1005,8 +1007,8 @@ msgstr ""
 msgid "Recurring transaction successfully updated."
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:109
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:172
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:113
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:176
 #, elixir-autogen, elixir-format
 msgid "See all"
 msgstr ""
@@ -1030,6 +1032,7 @@ msgid "Start"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:78
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:165
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:301
 #, elixir-autogen, elixir-format
 msgid "Start date"
@@ -1046,7 +1049,7 @@ msgstr ""
 msgid "Total"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:178
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:182
 #, elixir-autogen, elixir-format
 msgid "Total Invested"
 msgstr ""
@@ -1056,18 +1059,18 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:65
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:110
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:77
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:144
 #, elixir-autogen, elixir-format
 msgid "Value (R$)"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:219
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:223
 #, elixir-autogen, elixir-format
 msgid "Warnings"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:59
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:70
 #, elixir-autogen, elixir-format
 msgid "Withdraw"
 msgstr ""
@@ -1136,7 +1139,7 @@ msgstr ""
 msgid "Access"
 msgstr ""
 
-#: lib/personal_finance_web/components/core_components.ex:551
+#: lib/personal_finance_web/components/core_components.ex:703
 #, elixir-autogen, elixir-format
 msgid "Actions"
 msgstr ""
@@ -1498,13 +1501,13 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:54
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:164
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:146
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:124
 #, elixir-autogen, elixir-format
 msgid "Annual"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:55
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:147
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:125
 #, elixir-autogen, elixir-format
 msgid "At maturity"
 msgstr ""
@@ -1522,12 +1525,12 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:49
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:159
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:142
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:120
 #, elixir-autogen, elixir-format
 msgid "Daily"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:47
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:48
 #, elixir-autogen, elixir-format
 msgid "Edit Fixed Income"
 msgstr ""
@@ -1553,7 +1556,7 @@ msgstr ""
 msgid "Initial investment"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:72
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:74
 #, elixir-autogen, elixir-format
 msgid "Institution"
 msgstr ""
@@ -1564,7 +1567,7 @@ msgid "Ledger or fixed income not found."
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:86
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:157
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:172
 #, elixir-autogen, elixir-format
 msgid "Maturity date"
 msgstr ""
@@ -1583,7 +1586,7 @@ msgstr ""
 msgid "Net yield"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:49
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:50
 #, elixir-autogen, elixir-format
 msgid "New Fixed Income"
 msgstr ""
@@ -1595,7 +1598,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:52
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:162
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:144
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:122
 #, elixir-autogen, elixir-format
 msgid "Quarterly"
 msgstr ""
@@ -1605,19 +1608,19 @@ msgstr ""
 msgid "Remuneration"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:100
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:110
 #, elixir-autogen, elixir-format
 msgid "Remuneration basis"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:120
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:135
 #, elixir-autogen, elixir-format
 msgid "Remuneration rate (%)"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:53
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:163
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:145
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:123
 #, elixir-autogen, elixir-format
 msgid "Semiannual"
 msgstr ""
@@ -1639,7 +1642,7 @@ msgid "Yield"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:72
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:140
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:118
 #, elixir-autogen, elixir-format
 msgid "Yield frequency"
 msgstr ""
@@ -1735,7 +1738,7 @@ msgstr ""
 msgid "Fixed income details"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:525
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:529
 #, elixir-autogen, elixir-format
 msgid "Goal"
 msgstr ""
@@ -1760,7 +1763,7 @@ msgstr ""
 msgid "Investment summary"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:222
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:226
 #, elixir-autogen, elixir-format
 msgid "Keep an eye on budgets getting close to the limit."
 msgstr ""
@@ -1775,7 +1778,7 @@ msgstr ""
 msgid "Need help? Contact your instance administrator."
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:116
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:120
 #, elixir-autogen, elixir-format
 msgid "No recent transactions yet."
 msgstr ""
@@ -1795,7 +1798,7 @@ msgstr ""
 msgid "Reauthentication required"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:523
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:527
 #, elixir-autogen, elixir-format
 msgid "Remaining"
 msgstr ""
@@ -1805,7 +1808,7 @@ msgstr ""
 msgid "See how categories perform this month."
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:524
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:528
 #, elixir-autogen, elixir-format
 msgid "Spent"
 msgstr ""
@@ -1825,7 +1828,7 @@ msgstr ""
 msgid "These credentials unlock every ledger and profile."
 msgstr ""
 
-#: lib/personal_finance_web/live/home/ledger_summary_component.ex:165
+#: lib/personal_finance_web/live/home/ledger_summary_component.ex:169
 #, elixir-autogen, elixir-format
 msgid "Track private investments at a glance."
 msgstr ""
@@ -1845,211 +1848,241 @@ msgstr ""
 msgid "View details"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:87
+#: lib/personal_finance_web/live/admin/users.ex:62
 #, elixir-autogen, elixir-format
 msgid "%{count} person"
 msgid_plural "%{count} people"
 msgstr[0] ""
 msgstr[1] ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:19
+#: lib/personal_finance_web/live/admin/user_form_component.ex:31
 #, elixir-autogen, elixir-format
 msgid "Access level guidance"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:49
+#: lib/personal_finance_web/live/admin/users.ex:30
 #, elixir-autogen, elixir-format
 msgid "Add Teammate"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:146
-#, elixir-autogen, elixir-format
-msgid "Adjust access levels and rotate credentials without leaving this page."
-msgstr ""
-
-#: lib/personal_finance_web/live/admin/user_form_component.ex:155
+#: lib/personal_finance_web/live/admin/user_form_component.ex:188
 #, elixir-autogen, elixir-format
 msgid "Admin"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:62
+#: lib/personal_finance_web/live/admin/users.ex:43
 #, elixir-autogen, elixir-format
 msgid "Administrators"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:22
-#, elixir-autogen, elixir-format
-msgid "Admins can manage ledgers, billing and other users. Members can only reconcile data."
-msgstr ""
-
-#: lib/personal_finance_web/live/admin/users.ex:82
+#: lib/personal_finance_web/live/admin/users.ex:57
 #, elixir-autogen, elixir-format
 msgid "All collaborators currently allowed to use the platform."
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:64
+#: lib/personal_finance_web/live/admin/user_form_component.ex:93
 #, elixir-autogen, elixir-format
 msgid "Choose admin for teammates who need full control."
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:205
+#: lib/personal_finance_web/live/admin/users.ex:187
 #, elixir-autogen, elixir-format
 msgid "Delete User"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:124
+#: lib/personal_finance_web/live/admin/users.ex:99
 #, elixir-autogen, elixir-format
 msgid "Delete user"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:80
+#: lib/personal_finance_web/live/admin/users.ex:55
 #, elixir-autogen, elixir-format
 msgid "Directory"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:190
+#: lib/personal_finance_web/live/admin/users.ex:171
 #, elixir-autogen, elixir-format
 msgid "Edit User: %{name}"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:117
+#: lib/personal_finance_web/live/admin/users.ex:92
 #, elixir-autogen, elixir-format
 msgid "Edit user"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:27
+#: lib/personal_finance_web/live/admin/user_form_component.ex:41
+#: lib/personal_finance_web/live/admin/user_form_component.ex:54
 #, elixir-autogen, elixir-format
 msgid "Full name"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:146
+#: lib/personal_finance_web/live/admin/users.ex:121
 #, elixir-autogen, elixir-format
 msgid "Invite someone"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:138
+#: lib/personal_finance_web/live/admin/user_form_component.ex:171
 #, elixir-autogen, elixir-format
 msgid "Invite teammate"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:21
+#: lib/personal_finance_web/live/admin/users.ex:22
 #, elixir-autogen, elixir-format
 msgid "Invite teammates, define roles and keep your back-office tidy."
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:141
+#: lib/personal_finance_web/live/admin/users.ex:116
 #, elixir-autogen, elixir-format
 msgid "Invite your first collaborator to unlock shared bookkeeping and approvals."
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:39
-#: lib/personal_finance_web/live/admin/users.ex:112
+#: lib/personal_finance_web/live/admin/users.ex:87
 #, elixir-autogen, elixir-format
 msgid "Joined %{date}"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:72
-#, elixir-autogen, elixir-format
-msgid "Keep at least two admins to avoid accidental lockouts."
-msgstr ""
-
-#: lib/personal_finance_web/live/admin/users.ex:28
-#, elixir-autogen, elixir-format
-msgid "Last Added"
-msgstr ""
-
-#: lib/personal_finance_web/live/admin/user_form_component.ex:154
+#: lib/personal_finance_web/live/admin/user_form_component.ex:187
 #, elixir-autogen, elixir-format
 msgid "Member"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:66
+#: lib/personal_finance_web/live/admin/users.ex:47
 #, elixir-autogen, elixir-format
 msgid "Members"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:197
+#: lib/personal_finance_web/live/admin/users.ex:179
 #, elixir-autogen, elixir-format
 msgid "New User"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:34
-#, elixir-autogen, elixir-format
-msgid "Not enough data yet"
-msgstr ""
-
-#: lib/personal_finance_web/live/admin/user_form_component.ex:150
+#: lib/personal_finance_web/live/admin/user_form_component.ex:183
 #, elixir-autogen, elixir-format
 msgid "Reset password (optional)"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:59
+#: lib/personal_finance_web/live/admin/user_form_component.ex:88
 #, elixir-autogen, elixir-format
 msgid "Role"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:70
-#, elixir-autogen, elixir-format
-msgid "Security tip"
-msgstr ""
-
-#: lib/personal_finance_web/live/admin/user_form_component.ex:142
-#, elixir-autogen, elixir-format
-msgid "Send secure access so they can collaborate on reconciliations."
-msgstr ""
-
-#: lib/personal_finance_web/live/admin/users.ex:90
+#: lib/personal_finance_web/live/admin/users.ex:65
 #, elixir-autogen, elixir-format
 msgid "Sorted by most recent"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:15
+#: lib/personal_finance_web/live/admin/users.ex:16
 #, elixir-autogen, elixir-format
 msgid "Team Access"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:149
+#: lib/personal_finance_web/live/admin/user_form_component.ex:182
 #, elixir-autogen, elixir-format
 msgid "Temporary password"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:138
+#: lib/personal_finance_web/live/admin/users.ex:113
 #, elixir-autogen, elixir-format
 msgid "There are no additional users yet."
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:58
+#: lib/personal_finance_web/live/admin/users.ex:39
 #, elixir-autogen, elixir-format
 msgid "Total Users"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:139
+#: lib/personal_finance_web/live/admin/user_form_component.ex:172
 #, elixir-autogen, elixir-format
 msgid "Update permissions"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:18
-#: lib/personal_finance_web/live/admin/users.ex:211
+#: lib/personal_finance_web/live/admin/users.ex:19
+#: lib/personal_finance_web/live/admin/users.ex:193
 #, elixir-autogen, elixir-format
 msgid "User Management"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:126
+#: lib/personal_finance_web/live/admin/user_form_component.ex:159
 #, elixir-autogen, elixir-format
 msgid "User created successfully"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:223
+#: lib/personal_finance_web/live/admin/users.ex:205
 #, elixir-autogen, elixir-format
 msgid "User deleted successfully"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/user_form_component.ex:113
+#: lib/personal_finance_web/live/admin/user_form_component.ex:146
 #, elixir-autogen, elixir-format
 msgid "User updated successfully"
 msgstr ""
 
-#: lib/personal_finance_web/live/admin/users.ex:41
+#: lib/personal_finance_web/live/admin/user_form_component.ex:34
 #, elixir-autogen, elixir-format
-msgid "You are the only one here for now."
+msgid "Admins have full access to every ledger and can invite new teammates. Members manage their own ledgers and can be invited into others as collaborators."
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:157
+#, elixir-autogen, elixir-format
+msgid "Capture important dates for this position."
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:102
+#, elixir-autogen, elixir-format
+msgid "Configure remuneration and capital inputs."
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:68
+#, elixir-autogen, elixir-format
+msgid "Describe the product and assign it to a profile."
+msgstr ""
+
+#: lib/personal_finance_web/live/admin/user_form_component.ex:179
+#, elixir-autogen, elixir-format
+msgid "Existing user details are locked. Only the role can be updated from here."
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:65
+#, elixir-autogen, elixir-format
+msgid "General information"
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:99
+#, elixir-autogen, elixir-format
+msgid "Investment details"
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/index.html.heex:58
+#, elixir-autogen, elixir-format
+msgid "No fixed income positions yet."
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:54
+#, elixir-autogen, elixir-format
+msgid "Register a movement for this fixed income."
+msgstr ""
+
+#: lib/personal_finance_web/live/admin/user_form_component.ex:175
+#, elixir-autogen, elixir-format
+msgid "Register a new teammate so they can access the system."
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/index.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "Register your first product to keep track of private fixed income across ledgers."
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:154
+#, elixir-autogen, elixir-format
+msgid "Timeline"
+msgstr ""
+
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:51
+#, elixir-autogen, elixir-format
+msgid "Transaction details"
+msgstr ""
+
+#: lib/personal_finance_web/live/admin/users.ex:166
+#, elixir-autogen, elixir-format
+msgid "You cannot edit your own access level."
 msgstr ""
