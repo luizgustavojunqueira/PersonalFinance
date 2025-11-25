@@ -43,11 +43,13 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
         class="mt-2"
       >
         <:title>
-          {if @action == :edit do
-            gettext("Edit Fixed Income")
-          else
-            gettext("New Fixed Income")
-          end}
+          <%=
+            if @action == :edit do
+              gettext("Edit Fixed Income")
+            else
+              gettext("New Fixed Income")
+            end
+          %>
         </:title>
         <.form
           for={@form}
@@ -56,118 +58,132 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
           phx-change="validate"
           phx-target={@myself}
         >
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <.input
-                field={@form[:name]}
-                type="text"
-                label={gettext("Name")}
-              />
+          <div class="max-h-[70vh] overflow-y-auto pr-1 space-y-6">
+            <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-5">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                  <%= gettext("General information") %>
+                </p>
+                <p class="text-sm text-base-content/60">
+                  <%= gettext("Describe the product and assign it to a profile.") %>
+                </p>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <.input field={@form[:name]} type="text" label={gettext("Name")} />
+                <.input field={@form[:institution]} type="text" label={gettext("Institution")} />
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <.input
+                  field={@form[:type]}
+                  type="select"
+                  label={gettext("Type")}
+                  options={[{"CDB", :cdb}]}
+                  disabled={@action == :edit}
+                />
+
+                <.input
+                  field={@form[:profile_id]}
+                  type="select"
+                  label={gettext("Profile")}
+                  options={@profiles}
+                  disabled={@action == :edit}
+                />
+              </div>
             </div>
 
-            <div>
-              <.input
-                field={@form[:institution]}
-                type="text"
-                label={gettext("Institution")}
-              />
+            <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-5">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                  <%= gettext("Investment details") %>
+                </p>
+                <p class="text-sm text-base-content/60">
+                  <%= gettext("Configure remuneration and capital inputs.") %>
+                </p>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <.input
+                  field={@form[:remuneration_basis]}
+                  type="select"
+                  label={gettext("Remuneration basis")}
+                  options={[{"CDI", :cdi}]}
+                  disabled={@action == :edit}
+                />
+
+                <.input
+                  field={@form[:yield_frequency]}
+                  type="select"
+                  label={gettext("Yield frequency")}
+                  options={[
+                    {gettext("Daily"), :daily},
+                    {gettext("Monthly"), :monthly},
+                    {gettext("Quarterly"), :quarterly},
+                    {gettext("Semiannual"), :semiannual},
+                    {gettext("Annual"), :annual},
+                    {gettext("At maturity"), :at_maturity}
+                  ]}
+                  disabled={@action == :edit}
+                />
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <.input
+                  field={@form[:remuneration_rate]}
+                  type="number"
+                  label={gettext("Remuneration rate (%)")}
+                  step="0.01"
+                  min="0"
+                  disabled={@action == :edit}
+                />
+
+                <.input
+                  field={@form[:initial_investment]}
+                  type="number"
+                  label={gettext("Value (R$)")}
+                  autocomplete="off"
+                  disabled={@action == :edit}
+                />
+              </div>
             </div>
 
-            <div>
-              <.input
-                field={@form[:type]}
-                type="select"
-                label={gettext("Type")}
-                options={[{"CDB", :cdb}]}
-                disabled={@action == :edit}
-              />
+            <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-5">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                  <%= gettext("Timeline") %>
+                </p>
+                <p class="text-sm text-base-content/60">
+                  <%= gettext("Capture important dates for this position.") %>
+                </p>
+              </div>
+
+              <div class="grid gap-4 sm:grid-cols-2">
+                <.input
+                  field={@form[:start_date_input]}
+                  type="date"
+                  label={gettext("Start date")}
+                  disabled={@action == :edit}
+                />
+
+                <.input
+                  field={@form[:end_date]}
+                  type="date"
+                  label={gettext("Maturity date")}
+                  disabled={@action == :edit}
+                />
+              </div>
             </div>
 
-            <div>
-              <.input
-                field={@form[:profile_id]}
-                type="select"
-                label={gettext("Profile")}
-                options={@profiles}
-                disabled={@action == :edit}
-              />
+            <div class="flex justify-end gap-2 pb-1">
+              <.button
+                variant="primary"
+                class="w-full sm:w-auto"
+                phx-disable-with={gettext("Saving...")}
+              >
+                <%= gettext("Save") %>
+              </.button>
             </div>
-
-            <div>
-              <.input
-                field={@form[:remuneration_basis]}
-                type="select"
-                label={gettext("Remuneration basis")}
-                options={[{"CDI", :cdi}]}
-                disabled={@action == :edit}
-              />
-            </div>
-
-            <div>
-              <.input
-                field={@form[:initial_investment]}
-                type="number"
-                label={gettext("Value (R$)")}
-                autocomplete="off"
-                disabled={@action == :edit}
-              />
-            </div>
-
-            <div>
-              <.input
-                field={@form[:remuneration_rate]}
-                type="number"
-                label={gettext("Remuneration rate (%)")}
-                step="0.01"
-                min="0"
-                disabled={@action == :edit}
-              />
-            </div>
-
-            <div>
-              <.input
-                field={@form[:start_date_input]}
-                type="date"
-                label={gettext("Date")}
-                disabled={@action == :edit}
-              />
-            </div>
-
-            <div>
-              <.input
-                field={@form[:yield_frequency]}
-                type="select"
-                label={gettext("Yield frequency")}
-                options={[
-                  {gettext("Daily"), :daily},
-                  {gettext("Monthly"), :monthly},
-                  {gettext("Quarterly"), :quarterly},
-                  {gettext("Semiannual"), :semiannual},
-                  {gettext("Annual"), :annual},
-                  {gettext("At maturity"), :at_maturity}
-                ]}
-                disabled={@action == :edit}
-              />
-            </div>
-
-            <div>
-              <.input
-                field={@form[:end_date]}
-                type="date"
-                label={gettext("Maturity date")}
-                disabled={@action == :edit}
-              />
-            </div>
-          </div>
-
-          <div class="flex justify-center gap-2 mt-4">
-            <.button
-              variant="custom"
-              class="btn btn-primary w-full"
-              phx-disable-with={gettext("Saving...")}
-            >
-              {gettext("Save")}
-            </.button>
           </div>
         </.form>
       </.modal>

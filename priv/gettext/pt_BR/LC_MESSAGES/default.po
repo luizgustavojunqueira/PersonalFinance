@@ -1554,7 +1554,7 @@ msgstr "Ledger ou renda fixa não encontrado."
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:157
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Maturity date"
-msgstr "Data de início"
+msgstr "Data de término"
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:56
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:92
@@ -1595,12 +1595,12 @@ msgstr "Remuneração"
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:100
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Remuneration basis"
-msgstr "A base de remuneração é obrigatória."
+msgstr "Base de remuneração"
 
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:120
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Remuneration rate (%)"
-msgstr "A taxa de remuneração é obrigatória."
+msgstr "Taxa de remuneração (%)"
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:53
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:163
@@ -1629,7 +1629,7 @@ msgstr "Rendimento"
 #: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:140
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Yield frequency"
-msgstr "A frequência de rentabilidade é obrigatória."
+msgstr "Frequência de rentabilidade"
 
 #: lib/personal_finance_web/live/settings/index.ex:151
 #, elixir-autogen, elixir-format

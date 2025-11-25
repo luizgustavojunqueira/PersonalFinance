@@ -71,12 +71,16 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
               for={@form_chart}
               phx-change="select_chart_type"
               phx-target={@myself}
-              class="w-full md:w-48"
+              class="w-full md:w-48 mr-3"
             >
               <.input
                 type="select"
                 field={@form_chart[:chart_type]}
                 options={[{gettext("Bars"), :bars}, {gettext("Pie"), :pie}]}
+                option_icons={%{
+                  bars: "hero-chart-bar",
+                  pie: "hero-chart-pie"
+                }}
               />
             </.form>
           </div>
