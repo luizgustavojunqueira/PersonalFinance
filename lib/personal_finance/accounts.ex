@@ -112,6 +112,13 @@ defmodule PersonalFinance.Accounts do
   end
 
   @doc """
+  Returns an `%Ecto.Changeset{}` for changing only the user role.
+  """
+  def change_user_role(user, attrs \\ %{}) do
+    User.role_changeset(user, attrs)
+  end
+
+  @doc """
   Updates the user email using the given token.
 
   If the token matches, the user email is updated and the token is deleted.
@@ -253,12 +260,31 @@ defmodule PersonalFinance.Accounts do
   end
 
   @doc """
+  Admin updates an existing user's role.
+  """
+  def admin_update_user_role(%User{} = user, attrs) do
+    user
+    |> User.role_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   List all users except the current user.
   """
   def list_users_except(user_id) do
     from(u in User,
       where: u.id != ^user_id,
-      order_by: [asc: u.email]
+      order_by: [asc: u.inserted_at]
+    )
+    |> Repo.all()
+  end
+
+  @doc """
+  List all users
+  """
+  def list_users() do
+    from(u in User,
+      order_by: [asc: u.inserted_at]
     )
     |> Repo.all()
   end

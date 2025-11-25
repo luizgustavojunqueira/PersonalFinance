@@ -30,6 +30,13 @@ defmodule PersonalFinance.Accounts.User do
     |> validate_inclusion(:role, [:user, :admin], message: "Invalid role specified")
   end
 
+  def role_changeset(user, attrs) do
+    user
+    |> cast(attrs, [:role])
+    |> validate_required([:role])
+    |> validate_inclusion(:role, [:user, :admin], message: "Invalid role specified")
+  end
+
   @doc """
   A user changeset for registering or changing the email.
 
