@@ -27,11 +27,12 @@ services:
     container_name: personal_finance_app
     restart: unless-stopped
     ports:
-      - "4001:4000"
+      - "4001:4001"
     environment:
       - MIX_ENV=prod
       - PHX_HOST=${PHX_HOST}
-      - PORT=4000
+      - PHX_SERVER=true
+      - PORT=4001
       - SECRET_KEY_BASE=${SECRET_KEY_BASE}
       - DATABASE_URL=ecto://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
     depends_on:
