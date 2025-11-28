@@ -24,150 +24,31 @@ import { Socket } from "phoenix";
 import { LiveSocket } from "phoenix_live_view";
 import * as echarts from "../vendor/echarts.min.js";
 import topbar from "../vendor/topbar";
+import { Chart } from "./hooks/chart.js";
+import { FlashAutoClose } from "./hooks/flash.js";
+import { ColorPicker } from "./hooks/color_picker.js";
+import { Copy } from "./hooks/copy.js";
+import { ToggleSidebar } from "./hooks/toggle_sidebar.js";
+import { Modal } from "./hooks/modal.js";
+import { InfiniteScroll } from "./hooks/infinite_scroll.js";
 
-let Hooks = {};
-
-Hooks.Modal = {
-    mounted() {
-        const id = this.el.id;
-        this.handleEvent(`open_modal:${id}`, () => {
-            console.log(id);
-            document.getElementById(id)?.showModal();
-        });
-        this.handleEvent(`close_modal:${id}`, () => {
-            document.getElementById(id)?.close();
-        });
-    },
-
-    updated() {
-        if (!this.el.open) this.el.showModal();
-    },
-};
-
-Hooks.ToggleSidebar = {
-    mounted() {
-        const sidebar = document.getElementById("sidebar");
-
-        this.el.addEventListener("click", () => {
-            sidebar.classList.toggle("expanded");
-        });
-    },
-};
-
-Hooks.Chart = {
-    mounted() {
-        selector = "#" + this.el.id;
-        this.chart = echarts.init(this.el.querySelector(selector + "-chart"));
-        option = JSON.parse(
-            this.el.querySelector(selector + "-data").textContent,
-        );
-        this._updateChartOptions();
-        window.addEventListener("resize", () => {
-            this.chart.resize();
-        });
-    },
-
-    updated() {
-        this._updateChartOptions();
-    },
-
-    _updateChartOptions() {
-        selector = "#" + this.el.id;
-        option = JSON.parse(
-            this.el.querySelector(selector + "-data").textContent,
-        );
-
-        const restanteSeries = option.series.find((s) => s.name === "Restante");
-        if (restanteSeries && restanteSeries.label) {
-            restanteSeries.label.formatter = function (params) {
-                return params.name === "Sem Categoria"
-                    ? ""
-                    : "R$" + params.value;
-            };
-        }
-
-        const metaSeries = option.series.find((s) => s.name === "Meta");
-        if (metaSeries && metaSeries.label) {
-            metaSeries.label.formatter = function (params) {
-                return params.name === "Sem Categoria"
-                    ? ""
-                    : "R$" + params.value;
-            };
-        }
-
-        this.chart.setOption(option);
-    },
-};
-
-Hooks.Copy = {
-    mounted() {
-        let { to } = this.el.dataset;
-        this.el.addEventListener("click", (ev) => {
-            ev.preventDefault();
-            let el = document.querySelector(to);
-            if (!el) {
-                console.error(`Element not found: ${to}`);
-                return;
-            }
-            let text = el.textContent || el.innerText;
-            navigator.clipboard.writeText(text);
-        });
-    },
-};
-
-Hooks.ColorPicker = {
-    mounted() {
-        const input = this.el;
-        const colorDisplay = document.getElementById(
-            input.dataset.colorDisplayId,
-        );
-        input.addEventListener("input", (event) => {
-            colorDisplay.style.backgroundColor = event.target.value;
-        });
-    },
-};
-
-Hooks.FlashAutoClose = {
-    mounted() {
-        this.timeout = null;
-        this.scheduleClose();
-    },
-    updated() {
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-        }
-        this.scheduleClose();
-    },
-    destroyed() {
-        if (this.timeout) {
-            clearTimeout(this.timeout);
-        }
-    },
-    scheduleClose() {
-        clearTimeout(this.timeout);
-        const autoCloseTime = parseInt(this.el.dataset.autoClose);
-        if (autoCloseTime) {
-            this.timeout = setTimeout(() => {
-                const closeButton = this.el.querySelector(
-                    "button[aria-label='close']",
-                );
-                if (closeButton) {
-                    closeButton.click();
-                } else {
-                    this.el.remove();
-                }
-            }, autoCloseTime);
-        }
-    },
-};
+const hooks = {
+  Chart,
+  FlashAutoClose,
+  ColorPicker,
+  Copy,
+  ToggleSidebar,
+  Modal,
+  InfiniteScroll,
+}
 
 const csrfToken = document
-    .querySelector("meta[name='csrf-token']")
-    .getAttribute("content");
+  .querySelector("meta[name='csrf-token']")
+  .getAttribute("content");
 const liveSocket = new LiveSocket("/live", Socket, {
-    longPollFallbackMs: 2500,
-    params: { _csrf_token: csrfToken },
-    hooks: Hooks,
+  longPollFallbackMs: 2500,
+  params: { _csrf_token: csrfToken },
+  hooks: hooks,
 });
 
 // Show progress bar on live navigation and form submits
@@ -194,37 +75,37 @@ window.liveSocket = liveSocket;
 //     2. click on elements to jump to their definitions in your code editor
 //
 if (process.env.NODE_ENV === "development") {
-    window.addEventListener(
-        "phx:live_reload:attached",
-        ({ detail: reloader }) => {
-            // Enable server log streaming to client.
-            // Disable with reloader.disableServerLogs()
-            reloader.enableServerLogs();
+  window.addEventListener(
+    "phx:live_reload:attached",
+    ({ detail: reloader }) => {
+      // Enable server log streaming to client.
+      // Disable with reloader.disableServerLogs()
+      reloader.enableServerLogs();
 
-            // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
-            //
-            //   * click with "c" key pressed to open at caller location
-            //   * click with "d" key pressed to open at function component definition location
-            let keyDown;
-            window.addEventListener("keydown", (e) => (keyDown = e.key));
-            window.addEventListener("keyup", (e) => (keyDown = null));
-            window.addEventListener(
-                "click",
-                (e) => {
-                    if (keyDown === "c") {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        reloader.openEditorAtCaller(e.target);
-                    } else if (keyDown === "d") {
-                        e.preventDefault();
-                        e.stopImmediatePropagation();
-                        reloader.openEditorAtDef(e.target);
-                    }
-                },
-                true,
-            );
-
-            window.liveReloader = reloader;
+      // Open configured PLUG_EDITOR at file:line of the clicked element's HEEx component
+      //
+      //   * click with "c" key pressed to open at caller location
+      //   * click with "d" key pressed to open at function component definition location
+      let keyDown;
+      window.addEventListener("keydown", (e) => (keyDown = e.key));
+      window.addEventListener("keyup", (e) => (keyDown = null));
+      window.addEventListener(
+        "click",
+        (e) => {
+          if (keyDown === "c") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reloader.openEditorAtCaller(e.target);
+          } else if (keyDown === "d") {
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            reloader.openEditorAtDef(e.target);
+          }
         },
-    );
+        true,
+      );
+
+      window.liveReloader = reloader;
+    },
+  );
 }

@@ -1,0 +1,101 @@
+date,time,description,value,amount,category,profile,investment_type,type
+2024-01-01,08:00,Imported transaction 1,"R$ 25,75","1,00",Mercado,,,income
+2024-01-02,09:17,Imported transaction 2,"R$ 29,85","1,50",Utilidades,,Renda Fixa,expense
+2024-01-03,10:34,Imported transaction 3,"R$ 33,95","2,00",Salario,,Ações,expense
+2024-01-04,11:51,Imported transaction 4,"R$ 38,05","1,00",Lazer,,,expense
+2024-01-05,12:08,Imported transaction 5,"R$ 42,15","1,50",Viagem,,,expense
+2024-01-06,13:25,Imported transaction 6,"R$ 46,25","2,00",Mercado,,Renda Fixa,expense
+2024-01-07,14:42,Imported transaction 7,"R$ 50,35","1,00",Utilidades,,Ações,expense
+2024-01-08,15:59,Imported transaction 8,"R$ 54,45","1,50",Salario,,,income
+2024-01-09,16:16,Imported transaction 9,"R$ 58,55","2,00",Lazer,,,expense
+2024-01-10,17:33,Imported transaction 10,"R$ 25,75","1,00",Viagem,,Renda Fixa,expense
+2024-01-11,18:50,Imported transaction 11,"R$ 29,85","1,50",Mercado,,Ações,expense
+2024-01-12,19:07,Imported transaction 12,"R$ 33,95","2,00",Utilidades,,,expense
+2024-01-13,20:24,Imported transaction 13,"R$ 38,05","1,00",Salario,,,expense
+2024-01-14,21:41,Imported transaction 14,"R$ 42,15","1,50",Lazer,,Renda Fixa,expense
+2024-01-15,22:58,Imported transaction 15,"R$ 46,25","2,00",Viagem,,Ações,income
+2024-01-16,23:15,Imported transaction 16,"R$ 50,35","1,00",Mercado,,,expense
+2024-01-17,00:32,Imported transaction 17,"R$ 54,45","1,50",Utilidades,,,expense
+2024-01-18,01:49,Imported transaction 18,"R$ 58,55","2,00",Salario,,Renda Fixa,expense
+2024-01-19,02:06,Imported transaction 19,"R$ 25,75","1,00",Lazer,,Ações,expense
+2024-01-20,03:23,Imported transaction 20,"R$ 29,85","1,50",Viagem,,,expense
+2024-01-21,04:40,Imported transaction 21,"R$ 33,95","2,00",Mercado,,,expense
+2024-01-22,05:57,Imported transaction 22,"R$ 38,05","1,00",Utilidades,,Renda Fixa,income
+2024-01-23,06:14,Imported transaction 23,"R$ 42,15","1,50",Salario,,Ações,expense
+2024-01-24,07:31,Imported transaction 24,"R$ 46,25","2,00",Lazer,,,expense
+2024-01-25,08:48,Imported transaction 25,"R$ 50,35","1,00",Viagem,,,expense
+2024-01-26,09:05,Imported transaction 26,"R$ 54,45","1,50",Mercado,,Renda Fixa,expense
+2024-01-27,10:22,Imported transaction 27,"R$ 58,55","2,00",Utilidades,,Ações,expense
+2024-01-28,11:39,Imported transaction 28,"R$ 25,75","1,00",Salario,,,expense
+2024-01-29,12:56,Imported transaction 29,"R$ 29,85","1,50",Lazer,,,income
+2024-01-30,13:13,Imported transaction 30,"R$ 33,95","2,00",Viagem,,Renda Fixa,expense
+2024-01-31,14:30,Imported transaction 31,"R$ 38,05","1,00",Mercado,,Ações,expense
+2024-02-01,15:47,Imported transaction 32,"R$ 42,15","1,50",Utilidades,,,expense
+2024-02-02,16:04,Imported transaction 33,"R$ 46,25","2,00",Salario,,,expense
+2024-02-03,17:21,Imported transaction 34,"R$ 50,35","1,00",Lazer,,Renda Fixa,expense
+2024-02-04,18:38,Imported transaction 35,"R$ 54,45","1,50",Viagem,,Ações,expense
+2024-02-05,19:55,Imported transaction 36,"R$ 58,55","2,00",Mercado,,,income
+2024-02-06,20:12,Imported transaction 37,"R$ 25,75","1,00",Utilidades,,,expense
+2024-02-07,21:29,Imported transaction 38,"R$ 29,85","1,50",Salario,,Renda Fixa,expense
+2024-02-08,22:46,Imported transaction 39,"R$ 33,95","2,00",Lazer,,Ações,expense
+2024-02-09,23:03,Imported transaction 40,"R$ 38,05","1,00",Viagem,,,expense
+2024-02-10,00:20,Imported transaction 41,"R$ 42,15","1,50",Mercado,,,expense
+2024-02-11,01:37,Imported transaction 42,"R$ 46,25","2,00",Utilidades,,Renda Fixa,expense
+2024-02-12,02:54,Imported transaction 43,"R$ 50,35","1,00",Salario,,Ações,income
+2024-02-13,03:11,Imported transaction 44,"R$ 54,45","1,50",Lazer,,,expense
+2024-02-14,04:28,Imported transaction 45,"R$ 58,55","2,00",Viagem,,,expense
+2024-02-15,05:45,Imported transaction 46,"R$ 25,75","1,00",Mercado,,Renda Fixa,expense
+2024-02-16,06:02,Imported transaction 47,"R$ 29,85","1,50",Utilidades,,Ações,expense
+2024-02-17,07:19,Imported transaction 48,"R$ 33,95","2,00",Salario,,,expense
+2024-02-18,08:36,Imported transaction 49,"R$ 38,05","1,00",Lazer,,,expense
+2024-02-19,09:53,Imported transaction 50,"R$ 42,15","1,50",Viagem,,Renda Fixa,income
+2024-02-20,10:10,Imported transaction 51,"R$ 46,25","2,00",Mercado,,Ações,expense
+2024-02-21,11:27,Imported transaction 52,"R$ 50,35","1,00",Utilidades,,,expense
+2024-02-22,12:44,Imported transaction 53,"R$ 54,45","1,50",Salario,,,expense
+2024-02-23,13:01,Imported transaction 54,"R$ 58,55","2,00",Lazer,,Renda Fixa,expense
+2024-02-24,14:18,Imported transaction 55,"R$ 25,75","1,00",Viagem,,Ações,expense
+2024-02-25,15:35,Imported transaction 56,"R$ 29,85","1,50",Mercado,,,expense
+2024-02-26,16:52,Imported transaction 57,"R$ 33,95","2,00",Utilidades,,,income
+2024-02-27,17:09,Imported transaction 58,"R$ 38,05","1,00",Salario,,Renda Fixa,expense
+2024-02-28,18:26,Imported transaction 59,"R$ 42,15","1,50",Lazer,,Ações,expense
+2024-02-29,19:43,Imported transaction 60,"R$ 46,25","2,00",Viagem,,,expense
+2024-03-01,20:00,Imported transaction 61,"R$ 50,35","1,00",Mercado,,,expense
+2024-03-02,21:17,Imported transaction 62,"R$ 54,45","1,50",Utilidades,,Renda Fixa,expense
+2024-03-03,22:34,Imported transaction 63,"R$ 58,55","2,00",Salario,,Ações,expense
+2024-03-04,23:51,Imported transaction 64,"R$ 25,75","1,00",Lazer,,,income
+2024-03-05,00:08,Imported transaction 65,"R$ 29,85","1,50",Viagem,,,expense
+2024-03-06,01:25,Imported transaction 66,"R$ 33,95","2,00",Mercado,,Renda Fixa,expense
+2024-03-07,02:42,Imported transaction 67,"R$ 38,05","1,00",Utilidades,,Ações,expense
+2024-03-08,03:59,Imported transaction 68,"R$ 42,15","1,50",Salario,,,expense
+2024-03-09,04:16,Imported transaction 69,"R$ 46,25","2,00",Lazer,,,expense
+2024-03-10,05:33,Imported transaction 70,"R$ 50,35","1,00",Viagem,,Renda Fixa,expense
+2024-03-11,06:50,Imported transaction 71,"R$ 54,45","1,50",Mercado,,Ações,income
+2024-03-12,07:07,Imported transaction 72,"R$ 58,55","2,00",Utilidades,,,expense
+2024-03-13,08:24,Imported transaction 73,"R$ 25,75","1,00",Salario,,,expense
+2024-03-14,09:41,Imported transaction 74,"R$ 29,85","1,50",Lazer,,Renda Fixa,expense
+2024-03-15,10:58,Imported transaction 75,"R$ 33,95","2,00",Viagem,,Ações,expense
+2024-03-16,11:15,Imported transaction 76,"R$ 38,05","1,00",Mercado,,,expense
+2024-03-17,12:32,Imported transaction 77,"R$ 42,15","1,50",Utilidades,,,expense
+2024-03-18,13:49,Imported transaction 78,"R$ 46,25","2,00",Salario,,Renda Fixa,income
+2024-03-19,14:06,Imported transaction 79,"R$ 50,35","1,00",Lazer,,Ações,expense
+2024-03-20,15:23,Imported transaction 80,"R$ 54,45","1,50",Viagem,,,expense
+2024-03-21,16:40,Imported transaction 81,"R$ 58,55","2,00",Mercado,,,expense
+2024-03-22,17:57,Imported transaction 82,"R$ 25,75","1,00",Utilidades,,Renda Fixa,expense
+2024-03-23,18:14,Imported transaction 83,"R$ 29,85","1,50",Salario,,Ações,expense
+2024-03-24,19:31,Imported transaction 84,"R$ 33,95","2,00",Lazer,,,expense
+2024-03-25,20:48,Imported transaction 85,"R$ 38,05","1,00",Viagem,,,income
+2024-03-26,21:05,Imported transaction 86,"R$ 42,15","1,50",Mercado,,Renda Fixa,expense
+2024-03-27,22:22,Imported transaction 87,"R$ 46,25","2,00",Utilidades,,Ações,expense
+2024-03-28,23:39,Imported transaction 88,"R$ 50,35","1,00",Salario,,,expense
+2024-03-29,00:56,Imported transaction 89,"R$ 54,45","1,50",Lazer,,,expense
+2024-03-30,01:13,Imported transaction 90,"R$ 58,55","2,00",Viagem,,Renda Fixa,expense
+2024-03-31,02:30,Imported transaction 91,"R$ 25,75","1,00",Mercado,,Ações,expense
+2024-04-01,03:47,Imported transaction 92,"R$ 29,85","1,50",Utilidades,,,income
+2024-04-02,04:04,Imported transaction 93,"R$ 33,95","2,00",Salario,,,expense
+2024-04-03,05:21,Imported transaction 94,"R$ 38,05","1,00",Lazer,,Renda Fixa,expense
+2024-04-04,06:38,Imported transaction 95,"R$ 42,15","1,50",Viagem,,Ações,expense
+2024-04-05,07:55,Imported transaction 96,"R$ 46,25","2,00",Mercado,,,expense
+2024-04-06,08:12,Imported transaction 97,"R$ 50,35","1,00",Utilidades,,,expense
+2024-04-07,09:29,Imported transaction 98,"R$ 54,45","1,50",Salario,,Renda Fixa,expense
+2024-04-08,10:46,Imported transaction 99,"R$ 58,55","2,00",Lazer,,Ações,income
+2024-04-09,11:03,Imported transaction 100,"R$ 25,75","1,00",Viagem,,,expense

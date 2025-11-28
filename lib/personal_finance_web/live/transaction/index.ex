@@ -32,12 +32,12 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           transaction: nil,
           open_modal: nil,
           filter: %{
-            "category_id" => nil,
-            "profile_id" => nil,
-            "type" => nil,
-            "investment_type_id" => nil,
-            "start_date" => nil,
-            "end_date" => nil
+            category_id: nil,
+            profile_id: nil,
+            type: nil,
+            investment_type_id: nil,
+            start_date: nil,
+            end_date: nil
           }
         )
 
@@ -92,13 +92,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
   end
 
   @impl true
-  def handle_info({:apply_filter, filter}, socket) do
-    send_update(PersonalFinanceWeb.TransactionLive.Transactions,
-      id: "transactions-list",
-      action: :update,
-      filter: filter
-    )
-
+  def handle_info({:transactions_filter_changed, filter}, socket) do
     {:noreply, assign(socket, :filter, filter)}
   end
 

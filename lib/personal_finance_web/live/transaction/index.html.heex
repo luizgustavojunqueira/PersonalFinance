@@ -50,20 +50,6 @@
       show={@open_modal == :pending_transactions}
     />
 
-    <div class="mb-4">
-      <.live_component
-        module={PersonalFinanceWeb.TransactionLive.Filter}
-        id="transactions-filter"
-        ledger={@ledger}
-        filter={@filter}
-        profiles={@profiles}
-        categories={@categories}
-        investment_types={@investment_types}
-        current_scope={@current_scope}
-        parent_pid={self()}
-      />
-    </div>
-
     <.live_component
       module={PersonalFinanceWeb.TransactionLive.Transactions}
       id="transactions-list"
@@ -71,6 +57,9 @@
       filter={@filter}
       current_scope={@current_scope}
       parent_pid={self()}
+      profiles={@profiles}
+      categories={@categories}
+      investment_types={@investment_types}
     />
   </div>
 </Layouts.app>
