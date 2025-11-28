@@ -12,8 +12,6 @@ defmodule PersonalFinance.Workers.YieldsWorker do
         |> Repo.all()
         |> Enum.each(&Investment.generate_yields(&1))
 
-        :ok
-
       ledger_id ->
         case Repo.get(Ledger, ledger_id) do
           nil ->
@@ -21,7 +19,6 @@ defmodule PersonalFinance.Workers.YieldsWorker do
 
           ledger ->
             Investment.generate_yields(ledger)
-            :ok
         end
     end
   end

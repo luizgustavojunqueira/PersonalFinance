@@ -147,7 +147,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.FixedIncomeForm do
 
             <div>
               <.input
-                field={@form[:end_date]}
+                field={@form[:end_date_input]}
                 type="date"
                 label="Data de Vencimento"
                 disabled={@action == :edit}

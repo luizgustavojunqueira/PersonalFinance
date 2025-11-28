@@ -3,6 +3,7 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
 
   alias PersonalFinance.Investment
   alias PersonalFinance.Finance
+  alias PersonalFinance.Utils.CurrencyUtils
 
   @impl true
   def mount(params, _session, socket) do
@@ -29,7 +30,8 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
          ledger: ledger,
          fixed_income: fixed_income,
          open_modal: nil
-       )}
+       )
+       |> assign_values()}
     end
   end
 
@@ -53,6 +55,19 @@ defmodule PersonalFinanceWeb.FixedIncomeLive.Details.FixedIncome do
       fixed_income_transaction: fi_transaction
     )
 
-    {:noreply, socket}
+    {:noreply, socket |> assign_values() |> assign(open_modal: nil)}
+  end
+
+  def assign_values(socket) do
+    {total_invested, total_yield, total_tax, total_value} =
+      Investment.get_details(socket.assigns.fixed_income)
+
+    socket
+    |> assign(
+      total_invested: total_invested,
+      total_yield: total_yield,
+      total_tax: total_tax,
+      total_value: total_value
+    )
   end
 end
