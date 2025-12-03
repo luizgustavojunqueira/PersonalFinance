@@ -13,7 +13,7 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
     field :reference_period, :string
     field :tax, :decimal
 
-    belongs_to :profile, PersonalFinance.Accounts.Profile
+    belongs_to :profile, PersonalFinance.Finance.Profile
     belongs_to :fixed_income, PersonalFinance.Investment.FixedIncome
     belongs_to :ledger, PersonalFinance.Finance.Ledger
     belongs_to :transaction, PersonalFinance.Finance.Transaction
@@ -43,7 +43,10 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
     |> validate_inclusion(:type, [:deposit, :withdraw, :yield, :tax, :fee],
       message: gettext("Invalid transaction type.")
     )
-    |> validate_number(:value, greater_than: 0, message: gettext("Value must be greater than zero."))
+    |> validate_number(:value,
+      greater_than: 0,
+      message: gettext("Value must be greater than zero.")
+    )
     |> validate_max_withdraw()
     |> validate_length(:description,
       max: 255,
@@ -86,7 +89,7 @@ defmodule PersonalFinance.Investment.FixedIncomeTransaction do
           current_balance =
             PersonalFinance.Investment.get_fixed_income(fixed_income_id, ledger_id).current_balance
 
-          if Decimal.cmp(value, Decimal.from_float(current_balance)) == :gt do
+          if Decimal.compare(value, Decimal.from_float(current_balance)) == :gt do
             [value: gettext("Withdrawal amount cannot exceed current balance.")]
           else
             []
