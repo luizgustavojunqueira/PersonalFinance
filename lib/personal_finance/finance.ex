@@ -12,7 +12,8 @@ defmodule PersonalFinance.Finance do
     InvestmentType,
     Profile,
     Ledger,
-    RecurringEntry
+    RecurringEntry,
+    LedgerMonthNote
   }
 
   import Ecto.Query
@@ -507,6 +508,58 @@ defmodule PersonalFinance.Finance do
 
         {:ok, successful_transactions}
       end
+    end
+  end
+
+  @doc """
+  Retorna a nota mensal para um ledger em um determinado ano e mês.
+
+  Se não existir registro, retorna um struct novo não persistido com
+  `ledger_id`, `year` e `month` preenchidos e `content` nil.
+  """
+  def get_ledger_month_note(%Scope{} = _scope, %Ledger{} = ledger, year, month)
+      when is_integer(year) and is_integer(month) do
+    LedgerMonthNote
+    |> where([n], n.ledger_id == ^ledger.id and n.year == ^year and n.month == ^month)
+    |> Repo.one()
+    |> case do
+      nil -> %LedgerMonthNote{ledger_id: ledger.id, year: year, month: month, content: nil}
+      note -> note
+    end
+  end
+
+  @doc """
+  Cria ou atualiza a nota mensal de um ledger.
+
+  Espera receber um mapa com as chaves "year", "month" e "content" (strings)
+  ou equivalentes atômicas.
+  """
+  def upsert_ledger_month_note(%Scope{} = _scope, %Ledger{} = ledger, attrs) when is_map(attrs) do
+    {year, month} =
+      case {attrs["year"] || attrs[:year], attrs["month"] || attrs[:month]} do
+        {y, m} when is_binary(y) and is_binary(m) -> {String.to_integer(y), String.to_integer(m)}
+        {y, m} when is_integer(y) and is_integer(m) -> {y, m}
+        _ -> {Date.utc_today().year, Date.utc_today().month}
+      end
+
+    existing_note =
+      LedgerMonthNote
+      |> where([n], n.ledger_id == ^ledger.id and n.year == ^year and n.month == ^month)
+      |> Repo.one()
+
+    base = existing_note || %LedgerMonthNote{ledger_id: ledger.id, year: year, month: month}
+
+    attrs =
+      attrs
+      |> Map.put("year", year)
+      |> Map.put("month", month)
+      |> Map.put("ledger_id", ledger.id)
+
+    changeset = LedgerMonthNote.changeset(base, attrs)
+
+    case Repo.insert_or_update(changeset) do
+      {:ok, note} -> {:ok, note}
+      {:error, changeset} -> {:error, changeset}
     end
   end
 

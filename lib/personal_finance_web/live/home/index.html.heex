@@ -14,7 +14,19 @@
           </div>
         </div>
 
-        <div class="w-full lg:w-auto">
+        <div class="w-full lg:w-auto flex flex-col gap-3 items-stretch lg:items-end">
+          <div class="flex justify-end">
+            <.button
+              type="button"
+              variant="custom"
+              size="xs"
+              class="gap-1 btn-outline"
+              phx-click="open_month_notes"
+            >
+              <.icon name="hero-document-text" class="w-3 h-3" />
+              {gettext("Notes")}
+            </.button>
+          </div>
           <label class="text-xs font-semibold uppercase tracking-wide text-base-content/60">
             {gettext("Profile")}
           </label>
@@ -29,6 +41,48 @@
         </div>
       </div>
     </section>
+
+    <.side_modal
+      id="month-notes-side-modal"
+      show={@show_month_notes}
+      on_close={JS.push("close_month_notes")}
+      class="max-w-md"
+    >
+      <:title>{gettext("Monthly notes")}</:title>
+      <div class="flex flex-col gap-4">
+        <div class="text-xs text-base-content/70">
+          <%= if @ledger.notes do %>
+            <span class="font-medium">{gettext("Ledger notes:")}</span>
+            <div class="mt-1 whitespace-pre-wrap break-words">
+              {@ledger.notes}
+            </div>
+          <% else %>
+            <span class="italic text-base-content/40">
+              {gettext("No general notes for this ledger yet.")}
+            </span>
+          <% end %>
+        </div>
+
+        <.form for={@ledger_month_note} as={:ledger_month_note} phx-submit="save_month_note" class="flex-1 flex flex-col gap-2">
+          <label class="text-xs font-semibold uppercase tracking-wide text-base-content/60">
+            {gettext("Notes for this month (exceptions, goals, context)")}
+          </label>
+          <textarea
+            name={@ledger_month_note[:content].name}
+            id={@ledger_month_note[:content].id}
+            class="textarea textarea-bordered textarea-md w-full flex-1 min-h-40"
+            placeholder={gettext("Write your monthly notes here...")}
+          >{
+            Phoenix.HTML.Form.input_value(@ledger_month_note, :content)
+          }</textarea>
+          <div class="flex justify-end mt-2">
+            <.button variant="primary" size="sm" phx-disable-with={gettext("Saving...")}>
+              {gettext("Save monthly notes")}
+            </.button>
+          </div>
+        </.form>
+      </div>
+    </.side_modal>
 
     <.live_component
       id="ledger_summary_component"

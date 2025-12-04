@@ -306,7 +306,7 @@
 1. **Notas rápidas por ledger/perfil**  
    - Tipo: bem simples.  
    - Esforço: ~1–2 dias de trabalho leve.  
-   - Tarefas: adicionar campo `notes` em `ledger`/`profile`, mostrar/editar nos forms e nas telas principais.
+  - Tarefas: adicionar campo `notes` em `ledger`/`profile`, mostrar/editar nos forms e nas telas principais, exibir resumo em `home/index` e nas listas de perfis, e criar notas mensais por ledger (`ledger_month_notes`) com edição direta via card no dashboard.
 
 2. **Perfis com cor/ícone**  
    - Tipo: simples, focado em UX.  

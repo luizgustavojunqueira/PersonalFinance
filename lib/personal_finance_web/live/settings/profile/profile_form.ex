@@ -52,6 +52,20 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfileForm do
           <.input field={@form[:name]} type="text" label={gettext("Name")} />
           <.input field={@form[:description]} type="text" label={gettext("Description")} />
           <.input field={@form[:color]} type="color" label={gettext("Color")} />
+
+          <div class="mt-4 w-full">
+            <label class="text-sm font-medium text-base-content/80 mb-1 block">
+              {gettext("Notes (rules, focus, reminders)")}
+            </label>
+            <textarea
+              name={@form[:notes].name}
+              id={@form[:notes].id}
+              class="textarea textarea-bordered textarea-md w-full min-h-32"
+              placeholder={gettext("Write any extra context about this profile...")}
+            >{
+              Phoenix.HTML.Form.input_value(@form, :notes)
+            }</textarea>
+          </div>
           <div class="flex justify-center gap-2 mt-4">
             <.button
               variant="custom"

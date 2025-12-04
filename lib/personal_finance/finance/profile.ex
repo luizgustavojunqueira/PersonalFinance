@@ -8,6 +8,7 @@ defmodule PersonalFinance.Finance.Profile do
     field :description, :string, default: nil
     field :is_default, :boolean, default: false
     field :color, :string, default: "#000000"
+    field :notes, :string, default: nil
     belongs_to :ledger, PersonalFinance.Finance.Ledger
 
     timestamps(type: :utc_datetime)
@@ -16,7 +17,7 @@ defmodule PersonalFinance.Finance.Profile do
   @doc false
   def changeset(profile, attrs, ledger_id) do
     profile
-    |> cast(attrs, [:name, :description, :is_default, :color])
+    |> cast(attrs, [:name, :description, :is_default, :color, :notes])
     |> validate_required([:name], message: gettext("Name is required."))
     |> validate_required([:description], message: gettext("Description is required."))
     |> validate_inclusion(:is_default, [true, false],
@@ -30,6 +31,10 @@ defmodule PersonalFinance.Finance.Profile do
     |> validate_length(:description,
       max: 255,
       message: gettext("Description must be at most 255 characters.")
+    )
+    |> validate_length(:notes,
+      max: 2000,
+      message: gettext("Notes must be at most 2000 characters.")
     )
     |> unique_constraint(:name,
       name: :profiles_name_ledger_id_index,

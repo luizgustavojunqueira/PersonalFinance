@@ -185,6 +185,16 @@ defmodule PersonalFinanceWeb.SettingsLive.ProfilesPanel do
                   <p class="text-sm text-base-content/70">
                     {profile.description || gettext("No description")}
                   </p>
+                  <p class="text-xs text-base-content/60 mt-1">
+                    <%= if profile.notes do %>
+                      <span class="font-medium">{gettext("Notes:")}</span>
+                      {String.slice(profile.notes, 0, 80)}
+                    <% else %>
+                      <span class="italic text-base-content/40">
+                        {gettext("No notes for this profile")}
+                      </span>
+                    <% end %>
+                  </p>
                 </div>
               </button>
 
