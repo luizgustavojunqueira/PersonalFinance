@@ -929,7 +929,7 @@ defmodule PersonalFinanceWeb.CoreComponents do
     <div
       :if={@show}
       id={@id}
-      class="fixed inset-0 z-50 flex justify-end bg-black/60"
+      class="fixed inset-0 z-50 flex justify-end bg-black/60 mb-0"
       phx-mounted={JS.transition({"ease-out duration-200", "opacity-0", "opacity-100"}, time: 200)}
       phx-remove={JS.transition({"ease-in duration-100", "opacity-100", "opacity-0"}, time: 100)}
       {@rest}

@@ -6,6 +6,7 @@ defmodule PersonalFinance.Finance.Ledger do
   schema "ledgers" do
     field :name, :string
     field :description, :string, default: nil
+    field :notes, :string, default: nil
     belongs_to :owner, PersonalFinance.Accounts.User
 
     timestamps(type: :utc_datetime)
@@ -14,7 +15,7 @@ defmodule PersonalFinance.Finance.Ledger do
   @doc false
   def changeset(ledger, attrs, owner_id) do
     ledger
-    |> cast(attrs, [:name, :description])
+    |> cast(attrs, [:name, :description, :notes])
     |> validate_required([:name], message: gettext("Name is required."))
     |> validate_length(:name,
       min: 1,
@@ -24,6 +25,10 @@ defmodule PersonalFinance.Finance.Ledger do
     |> validate_length(:description,
       max: 255,
       message: gettext("Description must be at most 255 characters.")
+    )
+    |> validate_length(:notes,
+      max: 2000,
+      message: gettext("Notes must be at most 2000 characters.")
     )
     |> put_change(:owner_id, owner_id)
     |> unique_constraint(:name,
