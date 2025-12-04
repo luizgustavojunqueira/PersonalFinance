@@ -594,14 +594,17 @@ defmodule PersonalFinance.Investment do
       )
       |> Repo.one()
       |> case do
-        nil -> {0.0, 0.0}
-        result -> {result.total_deposited || 0.0, result.total_withdrawed || 0.0}
+        nil ->
+          {Decimal.new(0), Decimal.new(0)}
+
+        result ->
+          {result.total_deposited || Decimal.new(0), result.total_withdrawed || Decimal.new(0)}
       end
 
     %{
       total_invested:
-        Decimal.to_float(total_deposited || 0.0) -
-          Decimal.to_float(total_withdrawed || 0.0),
+        Decimal.to_float(total_deposited) -
+          Decimal.to_float(total_withdrawed),
       total_balance: total_balance
     }
   end
