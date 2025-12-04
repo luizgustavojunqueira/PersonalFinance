@@ -278,7 +278,7 @@
 ## 12. Pequenas Melhorias de Alto Impacto
 - **Preferências por Usuário**: adicionar em `accounts/user.ex` campos como `preferred_locale` e `preferred_currency`, integrando com `LocaleHook` e `CurrencyUtils` para definir idioma e moeda padrão por usuário, sem depender apenas de sessão/front.
 - **Sugestão Automática de Categoria**: ao digitar a descrição da transação, sugerir categoria com base em histórico (combinação de `description` + `category_id`), gravando pequenas regras de auto-completar para acelerar lançamentos recorrentes.
-- **Perfis com Cor e Ícone**: incluir campos como `color` e `icon` em `finance/profile.ex` para diferenciar visualmente perfis (Pessoal, Família, Empresa) em cards, filtros e gráficos.
+- **Perfis com Cor**: garantir bom uso do campo `color` em `finance/profile.ex` para diferenciar visualmente perfis (Pessoal, Família, Empresa) em cards, filtros e gráficos.
 - **Rascunho de Transação**: flag simples de "draft" em `transactions` para permitir anotar lançamentos rápidos (especialmente em mobile) e revisá-los/confirmá-los depois em um painel de pendências.
 - **Quick Actions no Dashboard**: área fixa com botões de atalho ("+ Renda Fixa", "+ Despesa recorrente", "+ Transferência"), reaproveitando os forms e LiveViews existentes para reduzir fricção no uso diário.
 - **Filtros Salvos de Transações**: permitir salvar combinações frequentes de filtros (datas, categorias, perfis, tipos) como "views" nomeadas, exibidas na UI como atalhos.
@@ -308,10 +308,10 @@
    - Esforço: ~1–2 dias de trabalho leve.  
   - Tarefas: adicionar campo `notes` em `ledger`/`profile`, mostrar/editar nos forms e nas telas principais, exibir resumo em `home/index` e nas listas de perfis, e criar notas mensais por ledger (`ledger_month_notes`) com edição direta via card no dashboard.
 
-2. **Perfis com cor/ícone**  
-   - Tipo: simples, focado em UX.  
-   - Esforço: ~2 dias.  
-   - Tarefas: campos `color`/`icon` em `finance/profile.ex`, ajustes nos cards/listas e filtros.
+2. **Perfis com cor**  
+  - Tipo: simples, focado em UX.  
+  - Esforço: ~2 dias.  
+  - Tarefas: campo `color` em `finance/profile.ex` (e usos na UI), ajustes nos cards/listas e filtros.
 
 3. **Preferências por usuário (moeda/idioma)**  
    - Tipo: simples, mexe em Accounts + Web.  

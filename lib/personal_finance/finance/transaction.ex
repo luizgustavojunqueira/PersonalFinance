@@ -10,6 +10,7 @@ defmodule PersonalFinance.Finance.Transaction do
     field :total_value, :float
     field :amount, :float
     field :description, :string
+    field :draft, :boolean, default: false
     field :date, :utc_datetime
     field :date_input, :date, virtual: true
     field :time_input, :time, virtual: true
@@ -32,6 +33,7 @@ defmodule PersonalFinance.Finance.Transaction do
       :total_value,
       :amount,
       :description,
+      :draft,
       :date_input,
       :time_input,
       :investment_type_id,

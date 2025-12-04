@@ -31,6 +31,7 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
           profiles: Enum.map(profiles, fn profile -> {profile.name, profile.id} end),
           transaction: nil,
           open_modal: nil,
+          open_draft_modal: false,
           filter: %{
             category_id: nil,
             profile_id: nil,
@@ -43,6 +44,16 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
       {:ok, assign(socket, page_title: "#{gettext("Transactions")} - #{ledger.name}", ledger: ledger)}
     end
+  end
+
+  @impl true
+  def handle_event("open_draft_modal", _params, socket) do
+    {:noreply, assign(socket, :open_draft_modal, true)}
+  end
+
+  @impl true
+  def handle_event("close_draft_modal", _params, socket) do
+    {:noreply, assign(socket, :open_draft_modal, false)}
   end
 
   @impl true
@@ -119,8 +130,14 @@ defmodule PersonalFinanceWeb.TransactionLive.Index do
 
     {:noreply,
      socket
-     |> assign(open_modal: nil, transaction: nil)
+     |> assign(open_modal: nil, transaction: nil, open_draft_modal: false)
      |> put_flash(:info, gettext("Transaction successfully saved."))}
+  end
+
+  @impl true
+  def handle_info({:open_edit_transaction, id}, socket) do
+    socket = assign(socket, open_draft_modal: false)
+    handle_event("open_edit_transaction", %{"transaction_id" => id}, socket)
   end
 
   @impl true

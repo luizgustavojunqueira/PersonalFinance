@@ -174,13 +174,17 @@ defmodule PersonalFinanceWeb.TransactionLive.Transactions do
   end
 
   defp handle_action(%{action: :saved, transaction: transaction}, socket) do
-    send_update(InfiniteScroll,
-      id: socket.assigns.scroll_id,
-      action: :insert_new_item,
-      item: transaction
-    )
+    if transaction.draft do
+      socket
+    else
+      send_update(InfiniteScroll,
+        id: socket.assigns.scroll_id,
+        action: :insert_new_item,
+        item: transaction
+      )
 
-    socket
+      socket
+    end
   end
 
   defp handle_action(%{action: :deleted, transaction: transaction}, socket) do

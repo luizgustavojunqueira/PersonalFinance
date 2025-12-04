@@ -165,6 +165,30 @@ defmodule PersonalFinance.Finance do
   end
 
   @doc """
+  Update only the draft flag of a transaction, bypassing full validation.
+  """
+  def update_transaction_draft(%Scope{} = _scope, %Transaction{} = transaction, draft_value) do
+    changeset =
+      Ecto.Changeset.change(transaction, %{
+        draft: draft_value
+      })
+
+    case Repo.update(changeset) do
+      {:ok, updated} ->
+        fully_loaded =
+          Transaction
+          |> Repo.get!(updated.id)
+          |> Repo.preload([:ledger, :category, :investment_type, :profile])
+
+        broadcast(:transaction, updated.ledger_id, {:saved, fully_loaded})
+        {:ok, fully_loaded}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
+  end
+
+  @doc """
   Retorna transação por ID.
   """
   def get_transaction(%Scope{} = scope, id, %Ledger{} = ledger) do
@@ -217,6 +241,13 @@ defmodule PersonalFinance.Finance do
       if type = filters[:type] || filters["type"],
         do: from(t in query, where: t.type == ^type),
         else: query
+
+    query =
+      case filters[:draft] || filters["draft"] do
+        true -> from(t in query, where: t.draft == true)
+        false -> from(t in query, where: t.draft == false)
+        _ -> from(t in query, where: t.draft == false)
+      end
 
     start_date = normalize_start_date(filters[:start_date] || filters["start_date"])
     end_date = normalize_end_date(filters[:end_date] || filters["end_date"])

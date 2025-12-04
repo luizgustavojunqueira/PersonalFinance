@@ -34,7 +34,7 @@ defmodule PersonalFinance.Balance do
 
     base_query =
       from(t in Transaction,
-        where: t.ledger_id == ^ledger_id and t.type == ^type,
+        where: t.ledger_id == ^ledger_id and t.type == ^type and t.draft == false,
         select: sum(t.total_value)
       )
 

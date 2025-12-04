@@ -246,6 +246,12 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
 
               <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-4">
                 <.input
+                  field={@form[:draft]}
+                  id="input-draft"
+                  type="checkbox"
+                  label={gettext("Save as draft")}
+                />
+                <.input
                   field={@form[:date_input]}
                   id="input-date"
                   type="date"

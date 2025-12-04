@@ -30,6 +30,13 @@
           >
             <.icon name="hero-clock" /> {gettext("Pending Transactions")}
           </.button>
+          <.button
+            class="flex-1 lg:flex-none btn-ghost"
+            variant="custom"
+            phx-click="open_draft_modal"
+          >
+            <.icon name="hero-pencil-square" /> {gettext("Drafts")}
+          </.button>
           <.button variant="primary" class="flex-1 lg:flex-none" phx-click="open_modal" phx-value-modal={:new_transaction}>
             <.icon name="hero-plus" /> {gettext("Add Transaction")}
           </.button>
@@ -66,6 +73,15 @@
       current_scope={@current_scope}
       parent_pid={self()}
       show={@open_modal == :pending_transactions}
+    />
+
+    <.live_component
+      module={PersonalFinanceWeb.TransactionLive.DraftTransactions}
+      id="draft-transactions-modal"
+      ledger={@ledger}
+      current_scope={@current_scope}
+      parent_pid={self()}
+      show={@open_draft_modal}
     />
 
     <.live_component
