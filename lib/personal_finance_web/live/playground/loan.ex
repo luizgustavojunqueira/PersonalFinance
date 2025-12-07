@@ -122,9 +122,9 @@ defmodule PersonalFinanceWeb.PlaygroundLive.Loan do
 
   defp clamp_extra(extra, principal) do
     cond do
-      extra < 0 -> {0.0, gettext("Extra não pode ser negativo; usando 0.")}
+      extra < 0 -> {0.0, gettext("Extra can't be negative; using 0.")}
       extra == 0 -> {0.0, nil}
-      extra > principal and principal > 0 -> {extra, gettext("Extra é maior que o saldo inicial; será limitado pela quitação antecipada.")}
+      extra > principal and principal > 0 -> {extra, gettext("Extra is greater than the initial balance; it will be limited by early payoff.")}
       true -> {extra, nil}
     end
   end
@@ -346,7 +346,7 @@ defmodule PersonalFinanceWeb.PlaygroundLive.Loan do
     <div class="flex items-center justify-between mb-2">
       <h3 class="font-semibold text-base">{@title}</h3>
       <%= if @extra > 0 do %>
-        <span class="badge badge-primary badge-sm">{gettext("Extra ativo")}</span>
+        <span class="badge badge-primary badge-sm">{gettext("Extra active")}</span>
       <% end %>
     </div>
     <% first_payment = payment_from_row(List.first(@result.schedule)) %>
@@ -430,7 +430,7 @@ defmodule PersonalFinanceWeb.PlaygroundLive.Loan do
     <div class="flex items-center justify-between mb-2">
       <h3 class="font-semibold text-base">{gettext("Comparison")}</h3>
       <%= if @extra > 0 do %>
-        <span class="badge badge-primary badge-sm">{gettext("Extra ativo")}</span>
+        <span class="badge badge-primary badge-sm">{gettext("Extra active")}</span>
       <% end %>
     </div>
 
