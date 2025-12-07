@@ -100,6 +100,7 @@ defmodule PersonalFinanceWeb.Router do
       live "/ledgers/:id/playground/contribution", PlaygroundLive.Contribution, :index
       live "/ledgers/:id/playground/loan", PlaygroundLive.Loan, :index
       live "/ledgers/:id/playground/debt_compare", PlaygroundLive.DebtCompare, :index
+      live "/ledgers/:id/playground/fi", PlaygroundLive.Fi, :index
 
       live "/ledgers/:id/settings", SettingsLive.Index, :index
     end
