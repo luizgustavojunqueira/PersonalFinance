@@ -101,6 +101,27 @@ defmodule PersonalFinanceWeb.PlaygroundLive.Index do
                 </div>
               </div>
             </div>
+
+            <.link
+              navigate={~p"/ledgers/#{@ledger.id}/playground/loan"}
+              class="card bg-base-100 border border-base-300 hover:border-primary/80 hover:shadow-md transition-colors cursor-pointer p-5 flex flex-col gap-3 rounded-2xl"
+            >
+              <div class="flex items-center justify-between gap-3">
+                <div class="flex items-center gap-2">
+                  <div class="w-10 h-10 rounded-full bg-warning/10 flex items-center justify-center text-warning">
+                    <.icon name="hero-banknotes" class="w-5 h-5" />
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-base-content">
+                      {gettext("Loan simulator (Price)")}
+                    </p>
+                    <p class="text-xs text-base-content/70">
+                      {gettext("Calculate installment, total paid and interest for a Price loan.")}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </.link>
           </.link>
         </section>
       </div>
