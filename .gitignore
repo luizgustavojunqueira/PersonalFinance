@@ -41,3 +41,5 @@ npm-debug.log
 
 test.csv
 .env
+
+.github/
