@@ -106,7 +106,7 @@ msgstr ""
 #: lib/personal_finance_web/live/category/categories_panel.ex:181
 #: lib/personal_finance_web/live/ledgers/index.html.heex:48
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:309
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:300
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:310
 #, elixir-autogen, elixir-format
 msgid "Cancel"
 msgstr ""
@@ -142,7 +142,7 @@ msgstr ""
 #: lib/personal_finance_web/live/ledgers/index.html.heex:45
 #: lib/personal_finance_web/live/ledgers/ledger_card_item.ex:79
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:252
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:291
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:301
 #: lib/personal_finance_web/live/transaction/transactions.ex:147
 #, elixir-autogen, elixir-format
 msgid "Delete"
@@ -161,11 +161,12 @@ msgstr ""
 #: lib/personal_finance_web/live/category/categories_panel.ex:209
 #: lib/personal_finance_web/live/category/category_form.ex:58
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income_transactions.ex:55
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:62
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:63
 #: lib/personal_finance_web/live/ledgers/ledger_form.ex:100
 #: lib/personal_finance_web/live/settings/profile/profile_form.ex:53
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:195
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:287
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:100
 #: lib/personal_finance_web/live/transaction/pending_transactions.ex:108
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:164
 #: lib/personal_finance_web/live/transaction/transactions.ex:87
@@ -232,6 +233,14 @@ msgstr ""
 #: lib/personal_finance_web/live/home/index.ex:13
 #: lib/personal_finance_web/live/ledgers/index.ex:64
 #: lib/personal_finance_web/live/ledgers/index.ex:119
+#: lib/personal_finance_web/live/playground/contribution.ex:16
+#: lib/personal_finance_web/live/playground/debt_compare.ex:17
+#: lib/personal_finance_web/live/playground/fi.ex:17
+#: lib/personal_finance_web/live/playground/goal.ex:16
+#: lib/personal_finance_web/live/playground/index.ex:14
+#: lib/personal_finance_web/live/playground/interest.ex:16
+#: lib/personal_finance_web/live/playground/loan.ex:16
+#: lib/personal_finance_web/live/playground/valuation.ex:17
 #: lib/personal_finance_web/live/settings/index.ex:23
 #: lib/personal_finance_web/live/transaction/index.ex:13
 #, elixir-autogen, elixir-format
@@ -267,7 +276,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/category/categories_panel.ex:206
 #: lib/personal_finance_web/live/category/category_form.ex:52
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:73
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:71
 #: lib/personal_finance_web/live/ledgers/ledger_form.ex:99
 #: lib/personal_finance_web/live/settings/profile/profile_form.ex:52
 #, elixir-autogen, elixir-format
@@ -303,12 +312,12 @@ msgstr ""
 
 #: lib/personal_finance_web/live/admin/user_form_component.ex:100
 #: lib/personal_finance_web/live/category/category_form.ex:77
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:89
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:184
-#: lib/personal_finance_web/live/ledgers/ledger_form.ex:108
-#: lib/personal_finance_web/live/settings/profile/profile_form.ex:61
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:96
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:182
+#: lib/personal_finance_web/live/ledgers/ledger_form.ex:122
+#: lib/personal_finance_web/live/settings/profile/profile_form.ex:75
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:312
-#: lib/personal_finance_web/live/transaction/transaction_form.ex:271
+#: lib/personal_finance_web/live/transaction/transaction_form.ex:277
 #, elixir-autogen, elixir-format
 msgid "Save"
 msgstr ""
@@ -320,12 +329,13 @@ msgstr ""
 
 #: lib/personal_finance_web/live/admin/user_form_component.ex:99
 #: lib/personal_finance_web/live/category/category_form.ex:75
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:87
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:182
-#: lib/personal_finance_web/live/ledgers/ledger_form.ex:106
-#: lib/personal_finance_web/live/settings/profile/profile_form.ex:59
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:94
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:180
+#: lib/personal_finance_web/live/home/index.html.heex:79
+#: lib/personal_finance_web/live/ledgers/ledger_form.ex:120
+#: lib/personal_finance_web/live/settings/profile/profile_form.ex:73
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:311
-#: lib/personal_finance_web/live/transaction/transaction_form.ex:269
+#: lib/personal_finance_web/live/transaction/transaction_form.ex:275
 #: lib/personal_finance_web/live/user/settings.ex:45
 #, elixir-autogen, elixir-format
 msgid "Saving..."
@@ -347,7 +357,7 @@ msgid "Total Balance"
 msgstr ""
 
 #: lib/personal_finance_web/live/ledgers/ledger_card_item.ex:136
-#: lib/personal_finance_web/live/transaction/index.ex:44
+#: lib/personal_finance_web/live/transaction/index.ex:45
 #: lib/personal_finance_web/live/transaction/index.html.heex:7
 #, elixir-autogen, elixir-format
 msgid "Transactions"
@@ -368,7 +378,7 @@ msgstr ""
 msgid "You need to reauthenticate to perform sensitive actions on your account."
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/index.html.heex:34
+#: lib/personal_finance_web/live/transaction/index.html.heex:41
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Add Transaction"
 msgstr ""
@@ -387,20 +397,22 @@ msgstr ""
 
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:201
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:300
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:106
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:191
 #: lib/personal_finance_web/live/transaction/transactions.ex:102
-#: lib/personal_finance_web/live/transaction/transactions.ex:243
+#: lib/personal_finance_web/live/transaction/transactions.ex:247
 #, elixir-autogen, elixir-format
 msgid "Category"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transactions.ex:271
+#: lib/personal_finance_web/live/transaction/transactions.ex:275
 #, elixir-autogen, elixir-format
 msgid "Data Final"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income_transactions.ex:52
-#: lib/personal_finance_web/live/transaction/transaction_form.ex:252
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:93
+#: lib/personal_finance_web/live/transaction/transaction_form.ex:258
 #: lib/personal_finance_web/live/transaction/transactions.ex:80
 #, elixir-autogen, elixir-format
 msgid "Date"
@@ -426,12 +438,12 @@ msgstr ""
 msgid "E.g.: 10.00"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transaction_form.ex:260
+#: lib/personal_finance_web/live/transaction/transaction_form.ex:266
 #, elixir-autogen, elixir-format
 msgid "E.g.: 14:30"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transaction_form.ex:253
+#: lib/personal_finance_web/live/transaction/transaction_form.ex:259
 #, elixir-autogen, elixir-format
 msgid "E.g.: 2023-10-01"
 msgstr ""
@@ -467,7 +479,7 @@ msgstr ""
 #: lib/personal_finance_web/live/transaction/pending_transactions.ex:115
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:181
 #: lib/personal_finance_web/live/transaction/transactions.ex:77
-#: lib/personal_finance_web/live/transaction/transactions.ex:234
+#: lib/personal_finance_web/live/transaction/transactions.ex:238
 #, elixir-autogen, elixir-format
 msgid "Expense"
 msgstr ""
@@ -514,14 +526,14 @@ msgstr ""
 #: lib/personal_finance_web/live/transaction/pending_transactions.ex:115
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:181
 #: lib/personal_finance_web/live/transaction/transactions.ex:77
-#: lib/personal_finance_web/live/transaction/transactions.ex:234
+#: lib/personal_finance_web/live/transaction/transactions.ex:238
 #, elixir-autogen, elixir-format
 msgid "Income"
 msgstr ""
 
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:218
 #: lib/personal_finance_web/live/transaction/transactions.ex:114
-#: lib/personal_finance_web/live/transaction/transactions.ex:253
+#: lib/personal_finance_web/live/transaction/transactions.ex:257
 #, elixir-autogen, elixir-format
 msgid "Investment Type"
 msgstr ""
@@ -563,82 +575,86 @@ msgstr ""
 msgid "Pending Transactions"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:89
-#: lib/personal_finance_web/live/home/index.html.heex:19
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:87
+#: lib/personal_finance_web/live/home/index.html.heex:31
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:103
 #: lib/personal_finance_web/live/transaction/pending_transactions.ex:111
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:174
 #: lib/personal_finance_web/live/transaction/transactions.ex:90
-#: lib/personal_finance_web/live/transaction/transactions.ex:223
+#: lib/personal_finance_web/live/transaction/transactions.ex:227
 #, elixir-autogen, elixir-format
 msgid "Profile"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transactions.ex:245
+#: lib/personal_finance_web/live/transaction/transactions.ex:249
 #, elixir-autogen, elixir-format
 msgid "Select a category"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transactions.ex:225
+#: lib/personal_finance_web/live/transaction/transactions.ex:229
 #, elixir-autogen, elixir-format
 msgid "Select a profile"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transactions.ex:235
+#: lib/personal_finance_web/live/transaction/transactions.ex:239
 #, elixir-autogen, elixir-format
 msgid "Select a type"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transactions.ex:255
+#: lib/personal_finance_web/live/transaction/transactions.ex:259
 #, elixir-autogen, elixir-format
 msgid "Select an investment type"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transactions.ex:263
+#: lib/personal_finance_web/live/transaction/transactions.ex:267
 #, elixir-autogen, elixir-format
 msgid "Start Date"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/index.ex:90
+#: lib/personal_finance_web/live/transaction/index.ex:101
 #, elixir-autogen, elixir-format
 msgid "Starting download..."
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/transaction_form.ex:259
+#: lib/personal_finance_web/live/playground/valuation.ex:210
+#: lib/personal_finance_web/live/playground/valuation.ex:316
+#: lib/personal_finance_web/live/transaction/transaction_form.ex:265
 #, elixir-autogen, elixir-format
 msgid "Time"
 msgstr ""
 
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:109
 #: lib/personal_finance_web/live/transaction/transactions.ex:128
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Total Value"
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/index.ex:67
+#: lib/personal_finance_web/live/transaction/index.ex:78
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Transaction not found."
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/index.ex:109
+#: lib/personal_finance_web/live/transaction/index.ex:120
 #, elixir-autogen, elixir-format
 msgid "Transaction successfully deleted."
 msgstr ""
 
-#: lib/personal_finance_web/live/transaction/index.ex:123
+#: lib/personal_finance_web/live/transaction/index.ex:134
 #, elixir-autogen, elixir-format
 msgid "Transaction successfully saved."
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:63
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:69
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:70
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:49
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:81
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:79
 #: lib/personal_finance_web/live/settings/access_panel.ex:103
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:198
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:291
 #: lib/personal_finance_web/live/transaction/pending_transactions.ex:114
 #: lib/personal_finance_web/live/transaction/transaction_form.ex:180
 #: lib/personal_finance_web/live/transaction/transactions.ex:69
-#: lib/personal_finance_web/live/transaction/transactions.ex:233
+#: lib/personal_finance_web/live/transaction/transactions.ex:237
 #, elixir-autogen, elixir-format
 msgid "Type"
 msgstr ""
@@ -701,12 +717,12 @@ msgstr ""
 msgid "All eligible users are already part of this ledger."
 msgstr ""
 
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:281
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:291
 #, elixir-autogen, elixir-format
 msgid "All recurring transactions associated with this profile will be permanently deleted."
 msgstr ""
 
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:278
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:288
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Are you sure you want to delete the profile \"%{name}\"?"
 msgstr ""
@@ -765,13 +781,13 @@ msgstr ""
 msgid "Current Value"
 msgstr ""
 
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:233
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:275
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:243
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:285
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Delete profile"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:70
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:71
 #, elixir-autogen, elixir-format
 msgid "Deposit"
 msgstr ""
@@ -781,7 +797,7 @@ msgstr ""
 msgid "Edit Profile"
 msgstr ""
 
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:220
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:230
 #, elixir-autogen, elixir-format
 msgid "Edit profile"
 msgstr ""
@@ -858,7 +874,7 @@ msgstr ""
 msgid "Gross Value"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/index.ex:30
+#: lib/personal_finance_web/live/home/index.ex:36
 #, elixir-autogen, elixir-format
 msgid "Home"
 msgstr ""
@@ -891,7 +907,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:51
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:161
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:121
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:119
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:205
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:298
 #, elixir-autogen, elixir-format
@@ -954,6 +970,7 @@ msgstr ""
 msgid "Page not found."
 msgstr ""
 
+#: lib/personal_finance_web/live/playground/loan.ex:536
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:207
 #, elixir-autogen, elixir-format
 msgid "Period"
@@ -1032,7 +1049,7 @@ msgid "Start"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:78
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:165
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:163
 #: lib/personal_finance_web/live/settings/profile/recurring_entries_panel.ex:301
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Start date"
@@ -1043,7 +1060,7 @@ msgstr ""
 msgid "Status"
 msgstr ""
 
-#: lib/personal_finance_web/live/home/index.html.heex:26
+#: lib/personal_finance_web/live/home/index.html.heex:38
 #: lib/personal_finance_web/live/home/ledger_summary_component.ex:54
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Total"
@@ -1059,8 +1076,8 @@ msgstr ""
 msgid "User"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:77
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:144
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:142
+#: lib/personal_finance_web/live/playground/valuation.ex:317
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Value (R$)"
 msgstr ""
@@ -1070,7 +1087,7 @@ msgstr ""
 msgid "Warnings"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:70
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:71
 #, elixir-autogen, elixir-format
 msgid "Withdraw"
 msgstr ""
@@ -1118,17 +1135,17 @@ msgstr ""
 msgid "A category with this name already exists for this ledger."
 msgstr ""
 
-#: lib/personal_finance/finance/profile.ex:41
+#: lib/personal_finance/finance/profile.ex:46
 #, elixir-autogen, elixir-format
 msgid "A default profile already exists for this ledger."
 msgstr ""
 
-#: lib/personal_finance/finance/ledger.ex:31
+#: lib/personal_finance/finance/ledger.ex:36
 #, elixir-autogen, elixir-format
 msgid "A ledger with this name already exists for this owner."
 msgstr ""
 
-#: lib/personal_finance/finance/profile.ex:36
+#: lib/personal_finance/finance/profile.ex:41
 #, elixir-autogen, elixir-format
 msgid "A profile with this name already exists for this ledger."
 msgstr ""
@@ -1155,13 +1172,13 @@ msgid "All items loaded"
 msgstr ""
 
 #: lib/personal_finance/finance/recurring_entry.ex:58
-#: lib/personal_finance/finance/transaction.ex:45
+#: lib/personal_finance/finance/transaction.ex:47
 #, elixir-autogen, elixir-format
 msgid "Amount is required."
 msgstr ""
 
 #: lib/personal_finance/finance/recurring_entry.ex:61
-#: lib/personal_finance/finance/transaction.ex:56
+#: lib/personal_finance/finance/transaction.ex:58
 #, elixir-autogen, elixir-format
 msgid "Amount must be greater than zero."
 msgstr ""
@@ -1193,13 +1210,13 @@ msgstr ""
 msgid "Clear filters"
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:112
+#: lib/personal_finance/investment/fixed_income.ex:114
 #, elixir-autogen, elixir-format
 msgid "Current balance cannot be negative."
 msgstr ""
 
-#: lib/personal_finance/finance/transaction.ex:52
-#: lib/personal_finance/finance/transaction.ex:53
+#: lib/personal_finance/finance/transaction.ex:54
+#: lib/personal_finance/finance/transaction.ex:55
 #, elixir-autogen, elixir-format
 msgid "Date is required."
 msgstr ""
@@ -1210,9 +1227,9 @@ msgid "Delete Category"
 msgstr ""
 
 #: lib/personal_finance/finance/category.ex:33
-#: lib/personal_finance/finance/profile.ex:21
+#: lib/personal_finance/finance/profile.ex:22
 #: lib/personal_finance/finance/recurring_entry.ex:63
-#: lib/personal_finance/finance/transaction.ex:46
+#: lib/personal_finance/finance/transaction.ex:48
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Description is required."
 msgstr ""
@@ -1222,10 +1239,10 @@ msgstr ""
 msgid "Description is too long."
 msgstr ""
 
-#: lib/personal_finance/finance/ledger.ex:26
-#: lib/personal_finance/finance/profile.ex:32
-#: lib/personal_finance/finance/transaction.ex:49
-#: lib/personal_finance/investment/fixed_income_transaction.ex:50
+#: lib/personal_finance/finance/ledger.ex:27
+#: lib/personal_finance/finance/profile.ex:33
+#: lib/personal_finance/finance/transaction.ex:51
+#: lib/personal_finance/investment/fixed_income_transaction.ex:53
 #, elixir-autogen, elixir-format
 msgid "Description must be at most 255 characters."
 msgstr ""
@@ -1236,7 +1253,7 @@ msgid "Description must be at most 500 characters."
 msgstr ""
 
 #: lib/personal_finance/finance/recurring_entry.ex:130
-#: lib/personal_finance/investment/fixed_income.ex:134
+#: lib/personal_finance/investment/fixed_income.ex:136
 #, elixir-autogen, elixir-format
 msgid "End date must be after the start date."
 msgstr ""
@@ -1261,22 +1278,22 @@ msgstr ""
 msgid "Frequency is required."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:94
+#: lib/personal_finance/investment/fixed_income.ex:96
 #, elixir-autogen, elixir-format
 msgid "Initial investment is required."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:108
+#: lib/personal_finance/investment/fixed_income.ex:110
 #, elixir-autogen, elixir-format
 msgid "Initial investment must be greater than zero."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:89
+#: lib/personal_finance/investment/fixed_income.ex:91
 #, elixir-autogen, elixir-format
 msgid "Institution is required."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:143
+#: lib/personal_finance/investment/fixed_income.ex:145
 #, elixir-autogen, elixir-format
 msgid "Institution must be at most 100 characters."
 msgstr ""
@@ -1286,17 +1303,17 @@ msgstr ""
 msgid "Invalid frequency."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:101
+#: lib/personal_finance/investment/fixed_income.ex:103
 #, elixir-autogen, elixir-format
 msgid "Invalid investment type."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:117
+#: lib/personal_finance/investment/fixed_income.ex:119
 #, elixir-autogen, elixir-format
 msgid "Invalid remuneration basis."
 msgstr ""
 
-#: lib/personal_finance/finance/transaction.ex:43
+#: lib/personal_finance/finance/transaction.ex:45
 #: lib/personal_finance/investment/fixed_income_transaction.ex:44
 #, elixir-autogen, elixir-format
 msgid "Invalid transaction type."
@@ -1312,12 +1329,12 @@ msgstr ""
 msgid "Invalid value for percentage."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:122
+#: lib/personal_finance/investment/fixed_income.ex:124
 #, elixir-autogen, elixir-format
 msgid "Invalid yield frequency."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:90
+#: lib/personal_finance/investment/fixed_income.ex:92
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Investment type is required."
 msgstr ""
@@ -1333,21 +1350,21 @@ msgid "Locked"
 msgstr ""
 
 #: lib/personal_finance/finance/category.ex:32
-#: lib/personal_finance/finance/ledger.ex:18
-#: lib/personal_finance/finance/profile.ex:20
-#: lib/personal_finance/investment/fixed_income.ex:88
+#: lib/personal_finance/finance/ledger.ex:19
+#: lib/personal_finance/finance/profile.ex:21
+#: lib/personal_finance/investment/fixed_income.ex:90
 #, elixir-autogen, elixir-format
 msgid "Name is required."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:140
+#: lib/personal_finance/investment/fixed_income.ex:142
 #, elixir-autogen, elixir-format
 msgid "Name must be at most 100 characters."
 msgstr ""
 
 #: lib/personal_finance/finance/category.ex:39
-#: lib/personal_finance/finance/ledger.ex:22
-#: lib/personal_finance/finance/profile.ex:28
+#: lib/personal_finance/finance/ledger.ex:23
+#: lib/personal_finance/finance/profile.ex:29
 #, elixir-autogen, elixir-format
 msgid "Name must be between 1 and 100 characters."
 msgstr ""
@@ -1377,12 +1394,12 @@ msgstr ""
 msgid "Percentage must be between 0 and 100."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:99
+#: lib/personal_finance/investment/fixed_income.ex:101
 #, elixir-autogen, elixir-format
 msgid "Please indicate whether the investment is tax exempt."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:97
+#: lib/personal_finance/investment/fixed_income.ex:99
 #, elixir-autogen, elixir-format
 msgid "Profile is required."
 msgstr ""
@@ -1393,35 +1410,35 @@ msgstr ""
 msgid "Profiles"
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:92
+#: lib/personal_finance/investment/fixed_income.ex:94
 #, elixir-autogen, elixir-format
 msgid "Remuneration basis is required."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:91
+#: lib/personal_finance/investment/fixed_income.ex:93
 #, elixir-autogen, elixir-format
 msgid "Remuneration rate is required."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:104
+#: lib/personal_finance/investment/fixed_income.ex:106
 #, elixir-autogen, elixir-format
 msgid "Remuneration rate must be greater than zero."
 msgstr ""
 
-#: lib/personal_finance/finance/transaction.ex:57
+#: lib/personal_finance/finance/transaction.ex:59
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Select a category."
 msgstr ""
 
-#: lib/personal_finance/finance/transaction.ex:58
+#: lib/personal_finance/finance/transaction.ex:60
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Select a profile."
 msgstr ""
 
 #: lib/personal_finance/finance/recurring_entry.ex:47
 #: lib/personal_finance/finance/recurring_entry.ex:48
-#: lib/personal_finance/investment/fixed_income.ex:95
-#: lib/personal_finance/investment/fixed_income.ex:96
+#: lib/personal_finance/investment/fixed_income.ex:97
+#: lib/personal_finance/investment/fixed_income.ex:98
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Start date is required."
 msgstr ""
@@ -1431,18 +1448,19 @@ msgstr ""
 msgid "The total percentage for all categories cannot exceed 100%."
 msgstr ""
 
+#: lib/personal_finance/finance/ledger_month_note.ex:21
 #: lib/personal_finance/investment/fixed_income_transaction.ex:41
-#: lib/personal_finance/investment/fixed_income_transaction.ex:71
+#: lib/personal_finance/investment/fixed_income_transaction.ex:74
 #, elixir-autogen, elixir-format
 msgid "This field is required."
 msgstr ""
 
-#: lib/personal_finance/finance/transaction.ex:54
+#: lib/personal_finance/finance/transaction.ex:56
 #, elixir-autogen, elixir-format
 msgid "Time is required."
 msgstr ""
 
-#: lib/personal_finance/finance/transaction.ex:44
+#: lib/personal_finance/finance/transaction.ex:46
 #, elixir-autogen, elixir-format
 msgid "Transaction value is required."
 msgstr ""
@@ -1463,28 +1481,28 @@ msgid "Value is required."
 msgstr ""
 
 #: lib/personal_finance/finance/recurring_entry.ex:56
-#: lib/personal_finance/finance/transaction.ex:55
-#: lib/personal_finance/investment/fixed_income_transaction.ex:46
+#: lib/personal_finance/finance/transaction.ex:57
+#: lib/personal_finance/investment/fixed_income_transaction.ex:48
 #, elixir-autogen, elixir-format
 msgid "Value must be greater than zero."
 msgstr ""
 
-#: lib/personal_finance/finance/profile.ex:23
+#: lib/personal_finance/finance/profile.ex:24
 #, elixir-autogen, elixir-format
 msgid "Value must be true or false."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income_transaction.ex:90
+#: lib/personal_finance/investment/fixed_income_transaction.ex:93
 #, elixir-autogen, elixir-format
 msgid "Withdrawal amount cannot exceed current balance."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:93
+#: lib/personal_finance/investment/fixed_income.ex:95
 #, elixir-autogen, elixir-format
 msgid "Yield frequency is required."
 msgstr ""
 
-#: lib/personal_finance/investment/fixed_income.ex:59
+#: lib/personal_finance/investment/fixed_income.ex:61
 #, elixir-autogen, elixir-format
 msgid "You already have an investment with this name."
 msgstr ""
@@ -1501,18 +1519,18 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:54
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:164
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:124
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:122
 #, elixir-autogen, elixir-format
 msgid "Annual"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:55
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:125
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:123
 #, elixir-autogen, elixir-format
 msgid "At maturity"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:39
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:40
 #, elixir-autogen, elixir-format
 msgid "Create transaction"
 msgstr ""
@@ -1525,17 +1543,17 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:49
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:159
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:120
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:118
 #, elixir-autogen, elixir-format
 msgid "Daily"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:48
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:47
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Edit Fixed Income"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/fixed_income.ex:28
+#: lib/personal_finance_web/live/fixed_income/details/fixed_income.ex:29
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Fixed Income - %{name}"
 msgstr ""
@@ -1556,18 +1574,18 @@ msgstr ""
 msgid "Initial investment"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:74
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:72
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Institution"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/fixed_income.ex:16
+#: lib/personal_finance_web/live/fixed_income/details/fixed_income.ex:17
 #, elixir-autogen, elixir-format
 msgid "Ledger or fixed income not found."
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:86
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:172
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:170
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Maturity date"
 msgstr ""
@@ -1576,6 +1594,7 @@ msgstr ""
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:92
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:154
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:165
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:97
 #, elixir-autogen, elixir-format
 msgid "N/A"
 msgstr ""
@@ -1586,7 +1605,7 @@ msgstr ""
 msgid "Net yield"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:50
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:49
 #, elixir-autogen, elixir-format
 msgid "New Fixed Income"
 msgstr ""
@@ -1598,7 +1617,7 @@ msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:52
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:162
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:122
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:120
 #, elixir-autogen, elixir-format
 msgid "Quarterly"
 msgstr ""
@@ -1608,19 +1627,19 @@ msgstr ""
 msgid "Remuneration"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:110
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:108
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Remuneration basis"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:135
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:133
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Remuneration rate (%)"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:53
 #: lib/personal_finance_web/live/fixed_income/fixed_income_card.ex:163
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:123
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:121
 #, elixir-autogen, elixir-format
 msgid "Semiannual"
 msgstr ""
@@ -1642,7 +1661,7 @@ msgid "Yield"
 msgstr ""
 
 #: lib/personal_finance_web/live/fixed_income/details/fixed_income.html.heex:72
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:118
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:116
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Yield frequency"
 msgstr ""
@@ -1662,7 +1681,7 @@ msgstr ""
 msgid "Classify your expenses and control allocation caps."
 msgstr ""
 
-#: lib/personal_finance_web/live/settings/profiles_panel.ex:205
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:215
 #, elixir-autogen, elixir-format
 msgid "Expand profile"
 msgstr ""
@@ -2022,17 +2041,17 @@ msgstr ""
 msgid "Admins have full access to every ledger and can invite new teammates. Members manage their own ledgers and can be invited into others as collaborators."
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:157
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:155
 #, elixir-autogen, elixir-format
 msgid "Capture important dates for this position."
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:102
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:100
 #, elixir-autogen, elixir-format
 msgid "Configure remuneration and capital inputs."
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:68
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:66
 #, elixir-autogen, elixir-format
 msgid "Describe the product and assign it to a profile."
 msgstr ""
@@ -2042,12 +2061,12 @@ msgstr ""
 msgid "Existing user details are locked. Only the role can be updated from here."
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:65
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:63
 #, elixir-autogen, elixir-format
 msgid "General information"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:99
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:97
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Investment details"
 msgstr ""
@@ -2057,7 +2076,7 @@ msgstr ""
 msgid "No fixed income positions yet."
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:54
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:55
 #, elixir-autogen, elixir-format
 msgid "Register a movement for this fixed income."
 msgstr ""
@@ -2072,12 +2091,12 @@ msgstr ""
 msgid "Register your first product to keep track of private fixed income across ledgers."
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:154
+#: lib/personal_finance_web/live/fixed_income/fixed_income_form.ex:152
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Timeline"
 msgstr ""
 
-#: lib/personal_finance_web/live/fixed_income/details/form.ex:51
+#: lib/personal_finance_web/live/fixed_income/details/form.ex:52
 #, elixir-autogen, elixir-format, fuzzy
 msgid "Transaction details"
 msgstr ""
@@ -2085,4 +2104,959 @@ msgstr ""
 #: lib/personal_finance_web/live/admin/users.ex:166
 #, elixir-autogen, elixir-format
 msgid "You cannot edit your own access level."
+msgstr ""
+
+#: lib/personal_finance/finance/ledger_month_note.ex:37
+#, elixir-autogen, elixir-format
+msgid "A note for this month already exists for this ledger."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:259
+#, elixir-autogen, elixir-format
+msgid "Accumulation factor (FV = PV x factor)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:539
+#, elixir-autogen, elixir-format
+msgid "Amortization"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:301
+#: lib/personal_finance_web/live/playground/loan.ex:327
+#, elixir-autogen, elixir-format
+msgid "Amortization schedule (Price)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:313
+#: lib/personal_finance_web/live/playground/loan.ex:328
+#, elixir-autogen, elixir-format
+msgid "Amortization schedule (SAC)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:224
+#, elixir-autogen, elixir-format
+msgid "Applied every month after the regular payment."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:151
+#: lib/personal_finance_web/live/playground/debt_compare.ex:148
+#: lib/personal_finance_web/live/playground/fi.ex:145
+#: lib/personal_finance_web/live/playground/goal.ex:146
+#: lib/personal_finance_web/live/playground/interest.ex:110
+#: lib/personal_finance_web/live/playground/loan.ex:181
+#: lib/personal_finance_web/live/playground/valuation.ex:145
+#, elixir-autogen, elixir-format
+msgid "Back to tools"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:540
+#, elixir-autogen, elixir-format
+msgid "Balance"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:236
+#, elixir-autogen, elixir-format
+msgid "Bars show total balance; line shows interest per period."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:218
+#, elixir-autogen, elixir-format
+msgid "Best option"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:134
+#, elixir-autogen, elixir-format
+msgid "Calculate how much a single amount is worth today or in the future, given a rate and time."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:134
+#, elixir-autogen, elixir-format
+msgid "Calculate how much wealth you need to live off passive income and when you'll reach FI."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:140
+#: lib/personal_finance_web/live/playground/index.ex:120
+#, elixir-autogen, elixir-format
+msgid "Calculate how much you need to contribute monthly to reach your goal."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:141
+#, elixir-autogen, elixir-format
+msgid "Calculate installment, total paid and interest for a loan."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/goal.ex:135
+#, elixir-autogen, elixir-format
+msgid "Calculate the rate of return you need to reach your financial goal."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:99
+#, elixir-autogen, elixir-format
+msgid "Calculate the required rate of return to reach your financial goal."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:183
+#, elixir-autogen, elixir-format
+msgid "Calculate wealth needed for FI and time to reach it."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:285
+#, elixir-autogen, elixir-format
+msgid "Choose Price, SAC or compare both side by side"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:278
+#, elixir-autogen, elixir-format
+msgid "Compare"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:170
+#, elixir-autogen, elixir-format
+msgid "Compare Price and SAC: see first/last installment, totals and full amortization tables for each method."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:282
+#, elixir-autogen, elixir-format
+msgid "Compare financing with and without investing the cash."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:162
+#, elixir-autogen, elixir-format
+msgid "Compare financing with installments vs paying upfront with discount."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:131
+#, elixir-autogen, elixir-format
+msgid "Compare financing with installments while investing your cash versus paying upfront with a discount."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:431
+#, elixir-autogen, elixir-format
+msgid "Comparison"
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:132
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Confirm"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:22
+#: lib/personal_finance_web/live/playground/contribution.ex:137
+#: lib/personal_finance_web/live/playground/index.ex:117
+#, elixir-autogen, elixir-format
+msgid "Contribution calculator"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:273
+#, elixir-autogen, elixir-format
+msgid "Current Progress"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:186
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Current wealth"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:183
+#, elixir-autogen, elixir-format
+msgid "Defines how much wealth you need. Classic: 4% (need 25x annual expenses). Lower rate = more wealth needed, safer."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:159
+#, elixir-autogen, elixir-format
+msgid "Desired monthly expenses"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:265
+#, elixir-autogen, elixir-format
+msgid "Discount amount"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:261
+#, elixir-autogen, elixir-format
+msgid "Discount factor (PV = FV / factor)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:78
+#, elixir-autogen, elixir-format
+msgid "Discount or compound a single cash flow with rate conversion."
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:79
+#, elixir-autogen, elixir-format
+msgid "Draft Transactions"
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/index.html.heex:38
+#, elixir-autogen, elixir-format
+msgid "Drafts"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:162
+#, elixir-autogen, elixir-format
+msgid "Duration"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:295
+#, elixir-autogen, elixir-format
+msgid "Earnings from returns"
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:38
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Error confirming draft."
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:57
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Error deleting draft."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:234
+#, elixir-autogen, elixir-format
+msgid "Evolution over time"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:227
+#, elixir-autogen, elixir-format
+msgid "Expected monthly return on your investments"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:222
+#, elixir-autogen, elixir-format
+msgid "Expected return (% per month)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:199
+#, elixir-autogen, elixir-format
+msgid "Expected return rate (%)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:349
+#: lib/personal_finance_web/live/playground/loan.ex:433
+#, elixir-autogen, elixir-format
+msgid "Extra active"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:398
+#, elixir-autogen, elixir-format
+msgid "Extra amortization"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:211
+#, elixir-autogen, elixir-format
+msgid "Extra amortization (monthly, optional)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:125
+#, elixir-autogen, elixir-format
+msgid "Extra can't be negative; using 0."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:127
+#, elixir-autogen, elixir-format
+msgid "Extra is greater than the initial balance; it will be limited by early payoff."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:244
+#, elixir-autogen, elixir-format
+msgid "FI Target"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:253
+#, elixir-autogen, elixir-format
+msgid "Factor"
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.ex:112
+#, elixir-autogen, elixir-format
+msgid "Failed to save monthly note."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:287
+#: lib/personal_finance_web/live/playground/interest.ex:213
+#, elixir-autogen, elixir-format
+msgid "Final balance"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:221
+#: lib/personal_finance_web/live/playground/debt_compare.ex:239
+#, elixir-autogen, elixir-format
+msgid "Finance and invest"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:23
+#: lib/personal_finance_web/live/playground/debt_compare.ex:128
+#: lib/personal_finance_web/live/playground/index.ex:159
+#, elixir-autogen, elixir-format
+msgid "Finance or pay upfront?"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:23
+#: lib/personal_finance_web/live/playground/fi.ex:131
+#: lib/personal_finance_web/live/playground/index.ex:180
+#, elixir-autogen, elixir-format
+msgid "Financial Independence (FI)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:33
+#, elixir-autogen, elixir-format
+msgid "Financial math tools"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:165
+#, elixir-autogen, elixir-format
+msgid "Find future value (grow a present amount)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:164
+#, elixir-autogen, elixir-format
+msgid "Find present value (discount a future amount)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:174
+#, elixir-autogen, elixir-format
+msgid "Future amount (target)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:239
+#, elixir-autogen, elixir-format
+msgid "Future value"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:231
+#, elixir-autogen, elixir-format
+msgid "Horizon"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:172
+#, elixir-autogen, elixir-format
+msgid "How much you want to spend per month living off investments"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:216
+#, elixir-autogen, elixir-format
+msgid "How much you'll invest every month"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:271
+#, elixir-autogen, elixir-format
+msgid "How the amount evolves with this rate and time"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:267
+#, elixir-autogen, elixir-format
+msgid "In the time horizon set"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:181
+#: lib/personal_finance_web/live/playground/goal.ex:176
+#: lib/personal_finance_web/live/playground/interest.ex:124
+#, elixir-autogen, elixir-format
+msgid "Initial amount"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:357
+#: lib/personal_finance_web/live/playground/loan.ex:440
+#, elixir-autogen, elixir-format
+msgid "Installment"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:198
+#, elixir-autogen, elixir-format
+msgid "Installment interest (% per month)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:538
+#, elixir-autogen, elixir-format
+msgid "Interest"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:225
+#, elixir-autogen, elixir-format
+msgid "Interest earned"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:142
+#: lib/personal_finance_web/live/playground/loan.ex:233
+#, elixir-autogen, elixir-format
+msgid "Interest rate (%)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:504
+#: lib/personal_finance_web/live/playground/loan.ex:509
+#, elixir-autogen, elixir-format
+msgid "Interest saved"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:54
+#: lib/personal_finance_web/live/playground/interest.ex:22
+#: lib/personal_finance_web/live/playground/interest.ex:96
+#, elixir-autogen, elixir-format
+msgid "Interest simulator"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:248
+#, elixir-autogen, elixir-format
+msgid "Investment balance after all installments"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:207
+#, elixir-autogen, elixir-format
+msgid "Investment return (% per month)"
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.html.heex:55
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Ledger notes:"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:237
+#, elixir-autogen, elixir-format
+msgid "Limit calculation to this many years (default: 50)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:195
+#, elixir-autogen, elixir-format
+msgid "Loan amount"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:138
+#: lib/personal_finance_web/live/playground/loan.ex:22
+#: lib/personal_finance_web/live/playground/loan.ex:167
+#, elixir-autogen, elixir-format
+msgid "Loan simulator"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:232
+#, elixir-autogen, elixir-format
+msgid "Maximum time horizon (years)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:273
+#, elixir-autogen, elixir-format
+msgid "Method"
+msgstr ""
+
+#: lib/personal_finance/finance/ledger_month_note.ex:24
+#, elixir-autogen, elixir-format
+msgid "Month must be between 1 and 12."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:280
+#, elixir-autogen, elixir-format
+msgid "Monthly balance evolution (financing)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:203
+#: lib/personal_finance_web/live/playground/goal.ex:192
+#, elixir-autogen, elixir-format
+msgid "Monthly contribution"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:180
+#, elixir-autogen, elixir-format
+msgid "Monthly contribution (optional)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:244
+#, elixir-autogen, elixir-format
+msgid "Monthly installment"
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.ex:106
+#, elixir-autogen, elixir-format
+msgid "Monthly note saved."
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.html.heex:51
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Monthly notes"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:377
+#: lib/personal_finance_web/live/playground/loan.ex:472
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Months"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:409
+#: lib/personal_finance_web/live/playground/loan.ex:503
+#: lib/personal_finance_web/live/playground/loan.ex:508
+#, elixir-autogen, elixir-format
+msgid "Months saved"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:271
+#, elixir-autogen, elixir-format
+msgid "Net cost"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:251
+#, elixir-autogen, elixir-format
+msgid "Net cost (paid - remaining)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:227
+#, elixir-autogen, elixir-format
+msgid "Net cost difference"
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:89
+#, elixir-autogen, elixir-format
+msgid "No draft transactions."
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.html.heex:61
+#, elixir-autogen, elixir-format
+msgid "No general notes for this ledger yet."
+msgstr ""
+
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:194
+#, elixir-autogen, elixir-format
+msgid "No notes for this profile"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:404
+#, elixir-autogen, elixir-format
+msgid "Not applied"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:264
+#, elixir-autogen, elixir-format
+msgid "Not reached"
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.html.heex:27
+#, elixir-autogen, elixir-format
+msgid "Notes"
+msgstr ""
+
+#: lib/personal_finance_web/live/ledgers/ledger_form.ex:104
+#, elixir-autogen, elixir-format
+msgid "Notes (context, goals, reminders)"
+msgstr ""
+
+#: lib/personal_finance_web/live/settings/profile/profile_form.ex:58
+#, elixir-autogen, elixir-format
+msgid "Notes (rules, focus, reminders)"
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.html.heex:68
+#, elixir-autogen, elixir-format
+msgid "Notes for this month (exceptions, goals, context)"
+msgstr ""
+
+#: lib/personal_finance/finance/ledger.ex:31
+#: lib/personal_finance/finance/profile.ex:37
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Notes must be at most 2000 characters."
+msgstr ""
+
+#: lib/personal_finance/finance/ledger_month_note.ex:33
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Notes must be at most 4000 characters."
+msgstr ""
+
+#: lib/personal_finance_web/live/settings/profiles_panel.ex:190
+#, elixir-autogen, elixir-format
+msgid "Notes:"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:189
+#, elixir-autogen, elixir-format
+msgid "Number of installments (months)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:222
+#: lib/personal_finance_web/live/playground/debt_compare.ex:259
+#, elixir-autogen, elixir-format
+msgid "Pay upfront"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:537
+#, elixir-autogen, elixir-format
+msgid "Payment"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:133
+#: lib/personal_finance_web/live/playground/debt_compare.ex:124
+#: lib/personal_finance_web/live/playground/fi.ex:127
+#: lib/personal_finance_web/live/playground/goal.ex:128
+#: lib/personal_finance_web/live/playground/interest.ex:92
+#: lib/personal_finance_web/live/playground/loan.ex:163
+#: lib/personal_finance_web/live/playground/valuation.ex:127
+#, elixir-autogen, elixir-format
+msgid "Playground"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:172
+#, elixir-autogen, elixir-format
+msgid "Present amount (today)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:232
+#, elixir-autogen, elixir-format
+msgid "Present value"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:23
+#: lib/personal_finance_web/live/playground/valuation.ex:131
+#, elixir-autogen, elixir-format
+msgid "Present/Future Value"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:75
+#, elixir-autogen, elixir-format
+msgid "Present/Future value"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:276
+#: lib/personal_finance_web/live/playground/loan.ex:298
+#, elixir-autogen, elixir-format
+msgid "Price"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:284
+#, elixir-autogen, elixir-format
+msgid "Projected Wealth"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:162
+#, elixir-autogen, elixir-format
+msgid "Purchase price"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:190
+#, elixir-autogen, elixir-format
+msgid "Rate (%)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/goal.ex:22
+#: lib/personal_finance_web/live/playground/goal.ex:132
+#: lib/personal_finance_web/live/playground/index.ex:96
+#, elixir-autogen, elixir-format
+msgid "Rate calculator"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:208
+#: lib/personal_finance_web/live/playground/interest.ex:151
+#: lib/personal_finance_web/live/playground/loan.ex:242
+#: lib/personal_finance_web/live/playground/valuation.ex:199
+#, elixir-autogen, elixir-format
+msgid "Rate period"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/goal.ex:245
+#, elixir-autogen, elixir-format
+msgid "Required annual rate"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:241
+#, elixir-autogen, elixir-format
+msgid "Required monthly contribution"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/goal.ex:233
+#, elixir-autogen, elixir-format
+msgid "Required monthly rate"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:277
+#: lib/personal_finance_web/live/playground/loan.ex:310
+#, elixir-autogen, elixir-format
+msgid "SAC"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:178
+#, elixir-autogen, elixir-format
+msgid "Safe withdrawal rate (% per year)"
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/transaction_form.ex:252
+#, elixir-autogen, elixir-format
+msgid "Save as draft"
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.html.heex:80
+#, elixir-autogen, elixir-format
+msgid "Save monthly notes"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:391
+#, elixir-autogen, elixir-format
+msgid "Saved vs no extra"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:57
+#, elixir-autogen, elixir-format
+msgid "Simple and compound interest with optional monthly contributions."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:99
+#, elixir-autogen, elixir-format
+msgid "Simulate how your investment evolves over time with simple or compound interest, monthly contributions and different time units."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/index.ex:36
+#, elixir-autogen, elixir-format
+msgid "Simulate investments, debts and financial plans for this ledger."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:252
+#: lib/personal_finance_web/live/playground/goal.ex:257
+#, elixir-autogen, elixir-format
+msgid "Summary"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:165
+#: lib/personal_finance_web/live/playground/goal.ex:160
+#, elixir-autogen, elixir-format
+msgid "Target amount"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:253
+#, elixir-autogen, elixir-format
+msgid "Term"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:223
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Tie"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:219
+#: lib/personal_finance_web/live/playground/goal.ex:210
+#, elixir-autogen, elixir-format
+msgid "Time period"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:254
+#, elixir-autogen, elixir-format
+msgid "Time to FI"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:255
+#: lib/personal_finance_web/live/playground/goal.ex:260
+#, elixir-autogen, elixir-format
+msgid "To reach"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:291
+#, elixir-autogen, elixir-format
+msgid "Total contributed"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:246
+#, elixir-autogen, elixir-format
+msgid "Total growth / discount"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:384
+#: lib/personal_finance_web/live/playground/loan.ex:478
+#, elixir-autogen, elixir-format
+msgid "Total interest"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:219
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Total invested"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:370
+#: lib/personal_finance_web/live/playground/loan.ex:459
+#, elixir-autogen, elixir-format, fuzzy
+msgid "Total paid"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:246
+#, elixir-autogen, elixir-format
+msgid "Total paid in installments"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:199
+#, elixir-autogen, elixir-format
+msgid "Total wealth you have today (cash + investments)"
+msgstr ""
+
+#: lib/personal_finance_web/live/transaction/draft_transactions.ex:80
+#, elixir-autogen, elixir-format
+msgid "Transactions saved as draft (not in balance)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:228
+#: lib/personal_finance_web/live/playground/goal.ex:219
+#: lib/personal_finance_web/live/playground/interest.ex:171
+#: lib/personal_finance_web/live/playground/loan.ex:262
+#: lib/personal_finance_web/live/playground/valuation.ex:219
+#, elixir-autogen, elixir-format
+msgid "Unit"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:268
+#, elixir-autogen, elixir-format
+msgid "Upfront cost (after discount)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:180
+#, elixir-autogen, elixir-format
+msgid "Upfront discount (%) (optional)"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/interest.ex:204
+#, elixir-autogen, elixir-format
+msgid "Use simple interest instead of compound"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:136
+#, elixir-autogen, elixir-format
+msgid "Usually paying upfront is better, unless the financing rate is very low or your investment return is very high."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:269
+#, elixir-autogen, elixir-format
+msgid "Value over time"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:303
+#, elixir-autogen, elixir-format
+msgid "Wealth Evolution"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:249
+#, elixir-autogen, elixir-format
+msgid "Wealth needed for"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/valuation.ex:161
+#, elixir-autogen, elixir-format
+msgid "What do you want to find?"
+msgstr ""
+
+#: lib/personal_finance_web/live/ledgers/ledger_form.ex:110
+#, elixir-autogen, elixir-format
+msgid "Write any extra context about this ledger..."
+msgstr ""
+
+#: lib/personal_finance_web/live/settings/profile/profile_form.ex:64
+#, elixir-autogen, elixir-format
+msgid "Write any extra context about this profile..."
+msgstr ""
+
+#: lib/personal_finance_web/live/home/index.html.heex:74
+#, elixir-autogen, elixir-format
+msgid "Write your monthly notes here..."
+msgstr ""
+
+#: lib/personal_finance/finance/ledger_month_note.ex:29
+#, elixir-autogen, elixir-format
+msgid "Year must be between 1900 and 3000."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:240
+#, elixir-autogen, elixir-format
+msgid "You have the money: finance and invest it, paying installments from returns."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/debt_compare.ex:260
+#, elixir-autogen, elixir-format
+msgid "You have the money: pay upfront and get the discount."
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:260
+#, elixir-autogen, elixir-format
+msgid "You'll reach FI!"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/fi.ex:305
+#, elixir-autogen, elixir-format
+msgid "Your path to financial independence"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/goal.ex:265
+#, elixir-autogen, elixir-format
+msgid "and contributing"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:260
+#, elixir-autogen, elixir-format
+msgid "and expecting an average return of"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:256
+#: lib/personal_finance_web/live/playground/goal.ex:261
+#, elixir-autogen, elixir-format
+msgid "in"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/loan.ex:402
+#, elixir-autogen, elixir-format, fuzzy
+msgid "month"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:231
+#: lib/personal_finance_web/live/playground/contribution.ex:256
+#: lib/personal_finance_web/live/playground/debt_compare.ex:231
+#: lib/personal_finance_web/live/playground/fi.ex:323
+#: lib/personal_finance_web/live/playground/fi.ex:329
+#: lib/personal_finance_web/live/playground/goal.ex:222
+#: lib/personal_finance_web/live/playground/goal.ex:261
+#: lib/personal_finance_web/live/playground/interest.ex:174
+#: lib/personal_finance_web/live/playground/loan.ex:265
+#: lib/personal_finance_web/live/playground/valuation.ex:222
+#, elixir-autogen, elixir-format
+msgid "months"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:211
+#: lib/personal_finance_web/live/playground/contribution.ex:247
+#: lib/personal_finance_web/live/playground/contribution.ex:260
+#: lib/personal_finance_web/live/playground/contribution.ex:263
+#: lib/personal_finance_web/live/playground/goal.ex:239
+#: lib/personal_finance_web/live/playground/goal.ex:265
+#: lib/personal_finance_web/live/playground/interest.ex:154
+#: lib/personal_finance_web/live/playground/loan.ex:245
+#: lib/personal_finance_web/live/playground/valuation.ex:202
+#, elixir-autogen, elixir-format
+msgid "per month"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:212
+#: lib/personal_finance_web/live/playground/contribution.ex:260
+#: lib/personal_finance_web/live/playground/goal.ex:251
+#: lib/personal_finance_web/live/playground/goal.ex:268
+#: lib/personal_finance_web/live/playground/interest.ex:155
+#: lib/personal_finance_web/live/playground/loan.ex:246
+#: lib/personal_finance_web/live/playground/valuation.ex:203
+#, elixir-autogen, elixir-format
+msgid "per year"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:259
+#: lib/personal_finance_web/live/playground/goal.ex:264
+#, elixir-autogen, elixir-format
+msgid "starting with"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:232
+#: lib/personal_finance_web/live/playground/contribution.ex:256
+#: lib/personal_finance_web/live/playground/fi.ex:329
+#: lib/personal_finance_web/live/playground/fi.ex:331
+#: lib/personal_finance_web/live/playground/goal.ex:223
+#: lib/personal_finance_web/live/playground/goal.ex:261
+#: lib/personal_finance_web/live/playground/interest.ex:175
+#: lib/personal_finance_web/live/playground/loan.ex:266
+#: lib/personal_finance_web/live/playground/valuation.ex:223
+#, elixir-autogen, elixir-format
+msgid "years"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/goal.ex:268
+#, elixir-autogen, elixir-format
+msgid "you need an average return of"
+msgstr ""
+
+#: lib/personal_finance_web/live/playground/contribution.ex:263
+#, elixir-autogen, elixir-format
+msgid "you need to contribute"
 msgstr ""
