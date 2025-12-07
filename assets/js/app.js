@@ -31,6 +31,7 @@ import { ToggleSidebar } from "./hooks/toggle_sidebar.js";
 import { Modal } from "./hooks/modal.js";
 import { InfiniteScroll } from "./hooks/infinite_scroll.js";
 import { RangeField } from "./hooks/range_field.js";
+import { MoneyInput } from "./hooks/money_input.js";
 
 const hooks = {
   Chart,
@@ -41,6 +42,7 @@ const hooks = {
   Modal,
   InfiniteScroll,
   RangeField,
+  MoneyInput,
 }
 
 const csrfToken = document

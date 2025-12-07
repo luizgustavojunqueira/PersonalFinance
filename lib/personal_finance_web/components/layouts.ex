@@ -204,6 +204,15 @@ defmodule PersonalFinanceWeb.Layouts do
               <span class="sidebar-text hidden md:inline">Renda Fixa</span>
             </.link>
           </li>
+          <li class=" mb-4 ">
+            <.link
+              navigate={~p"/ledgers/#{@ledger.id}/playground"}
+              class="flex items-center gap-2 sidebar-link"
+            >
+              <.icon name="hero-calculator" class="size-6" />
+              <span class="sidebar-text hidden md:inline">Playground</span>
+            </.link>
+          </li>
           <%= if @ledger.owner_id == @current_scope.user.id do %>
             <li class=" mb-4 ">
               <.link
