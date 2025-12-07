@@ -30,6 +30,7 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
       |> maybe_set_current_datetime(assigns.action)
 
     investment_category = Finance.get_investment_category(current_scope, ledger.id)
+    default_category = Finance.get_default_category(current_scope, ledger.id)
 
     socket =
       socket
@@ -37,7 +38,9 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
       |> assign(
         form: to_form(changeset, as: :transaction),
         selected_category_id: assigns.transaction && assigns.transaction.category_id,
-        investment_category_id: if(investment_category, do: investment_category.id, else: nil)
+        investment_category_id: if(investment_category, do: investment_category.id, else: nil),
+        default_category_id: if(default_category, do: default_category.id, else: nil),
+        manual_category?: false
       )
 
     {:ok, socket}
@@ -71,11 +74,45 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
     end
   end
 
-  # Para outros casos, não faz nada
   defp maybe_set_current_datetime(changeset, _), do: changeset
 
+  defp maybe_apply_suggestion(
+         params,
+         nil,
+         _transaction_params,
+         _default_category_id,
+         _manual_category?
+       ),
+       do: params
+
+  defp maybe_apply_suggestion(
+         params,
+         suggestion,
+         transaction_params,
+         default_category_id,
+         manual_category?
+       ) do
+    description = Map.get(transaction_params, "description") || ""
+    current_category_param = Map.get(transaction_params, "category_id")
+
+    cond do
+      String.length(String.trim(description)) < 3 -> params
+      manual_category? -> params
+      current_category_param in [nil, "", []] -> Map.put(params, "category_id", suggestion.category_id)
+      default_category_id && to_string(current_category_param) == to_string(default_category_id) ->
+        Map.put(params, "category_id", suggestion.category_id)
+      true -> Map.put(params, "category_id", suggestion.category_id)
+    end
+  end
+
+  defp category_changed?(%{"_target" => targets}) when is_list(targets) do
+    Enum.any?(targets, &String.ends_with?(&1, "[category_id]") )
+  end
+
+  defp category_changed?(_), do: false
+
   @impl true
-  def handle_event("validate", %{"transaction" => transaction_params}, socket) do
+  def handle_event("validate", %{"transaction" => transaction_params} = payload, socket) do
     value = Map.get(transaction_params, "value") |> ParseUtils.parse_float()
     amount = Map.get(transaction_params, "amount") |> ParseUtils.parse_float()
     total_value = value * amount
@@ -83,8 +120,25 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
     params =
       Map.put(transaction_params, "total_value", total_value)
 
+    suggestion =
+      Finance.get_category_suggestion(
+        socket.assigns.current_scope,
+        socket.assigns.ledger,
+        Map.get(transaction_params, "description")
+      )
+
+    manual_category? = socket.assigns.manual_category? || category_changed?(payload)
+
+    params = maybe_apply_suggestion(
+      params,
+      suggestion,
+      transaction_params,
+      socket.assigns.default_category_id,
+      manual_category?
+    )
+
     new_selected_category_id =
-      Map.get(transaction_params, "category_id") || socket.assigns.selected_category_id
+      Map.get(params, "category_id") || socket.assigns.selected_category_id
 
     changeset =
       Finance.change_transaction(
@@ -98,16 +152,37 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
     {:noreply,
      assign(socket,
        form: to_form(changeset, as: :transaction),
-       selected_category_id: new_selected_category_id
+       selected_category_id: new_selected_category_id,
+       manual_category?: manual_category?
      )}
   end
 
   @impl true
-  def handle_event("save", %{"transaction" => transaction_params}, socket) do
+  def handle_event("save", %{"transaction" => transaction_params} = payload, socket) do
     value = Map.get(transaction_params, "value") |> ParseUtils.parse_float()
     amount = Map.get(transaction_params, "amount") |> ParseUtils.parse_float()
     total_value = value * amount
     params = Map.put(transaction_params, "total_value", total_value)
+
+    suggestion =
+      Finance.get_category_suggestion(
+        socket.assigns.current_scope,
+        socket.assigns.ledger,
+        Map.get(transaction_params, "description")
+      )
+
+    manual_category? = socket.assigns.manual_category? || category_changed?(payload)
+
+    params = maybe_apply_suggestion(
+      params,
+      suggestion,
+      transaction_params,
+      socket.assigns.default_category_id,
+      manual_category?
+    )
+
+    new_selected_category_id =
+      Map.get(params, "category_id") || socket.assigns.selected_category_id
 
     action = socket.assigns.action
 
@@ -117,7 +192,12 @@ defmodule PersonalFinanceWeb.TransactionLive.TransactionForm do
         {:noreply, assign(socket, show: false)}
 
       {:error, changeset} ->
-        {:noreply, assign(socket, form: to_form(changeset, as: :transaction))}
+        {:noreply,
+         assign(socket,
+           form: to_form(changeset, as: :transaction),
+           selected_category_id: new_selected_category_id,
+           manual_category?: manual_category?
+         )}
     end
   end
 

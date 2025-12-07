@@ -9,6 +9,7 @@ defmodule PersonalFinance.Finance do
   alias PersonalFinance.Finance.{
     Transaction,
     Category,
+    CategorySuggestion,
     InvestmentType,
     Profile,
     Ledger,
@@ -55,6 +56,15 @@ defmodule PersonalFinance.Finance do
     Category
     |> Repo.get(id)
     |> Repo.preload(:ledger)
+  end
+
+  @doc """
+  Retorna a categoria padrão de um ledger.
+  """
+  def get_default_category(%Scope{} = _scope, ledger_id) do
+    Category
+    |> where([c], c.is_default == true and c.ledger_id == ^ledger_id)
+    |> Repo.one()
   end
 
   @doc """
@@ -370,6 +380,8 @@ defmodule PersonalFinance.Finance do
           new_transaction
           |> Repo.preload([:category, :investment_type, :profile])
 
+        maybe_record_category_suggestion(new_transaction, ledger)
+
         broadcast(:transaction, ledger.id, {:saved, new_transaction})
         {:ok, new_transaction}
 
@@ -377,6 +389,84 @@ defmodule PersonalFinance.Finance do
         {:error, changeset}
     end
   end
+
+  @doc """
+  Incrementa ou cria uma sugestão de categoria baseada na descrição.
+  """
+  def record_category_suggestion(%Scope{} = _scope, %Ledger{} = ledger, description, category_id) do
+    normalized_description = normalize_description(description)
+    normalized_category_id = ParseUtils.parse_id(category_id)
+
+    cond do
+      normalized_description == "" -> :ok
+      is_nil(normalized_category_id) -> :ok
+      true ->
+        %CategorySuggestion{}
+        |> CategorySuggestion.changeset(%{
+          normalized_description: normalized_description,
+          ledger_id: ledger.id,
+          category_id: normalized_category_id,
+          count: 1
+        })
+        |> Repo.insert(
+          on_conflict: [inc: [count: 1]],
+          conflict_target: [:ledger_id, :normalized_description, :category_id]
+        )
+        |> case do
+          {:ok, _} -> :ok
+          {:error, _} -> :ok
+        end
+    end
+  end
+
+  @doc """
+  Busca a categoria mais frequente para uma descrição normalizada de um ledger.
+  """
+  def get_category_suggestion(%Scope{} = _scope, %Ledger{} = ledger, description) do
+    normalized_description = normalize_description(description)
+
+    if normalized_description == "" do
+      nil
+    else
+      CategorySuggestion
+      |> where([cs], cs.ledger_id == ^ledger.id)
+      |> where([cs], ilike(cs.normalized_description, ^"#{normalized_description}%"))
+      |> order_by([
+        cs],
+        desc: fragment("CASE WHEN ? = ? THEN 1 ELSE 0 END", cs.normalized_description, ^normalized_description),
+        desc: cs.count
+      )
+      |> limit(1)
+      |> Repo.one()
+      |> case do
+        nil -> nil
+        suggestion -> Repo.preload(suggestion, :category)
+      end
+    end
+  end
+
+  defp maybe_record_category_suggestion(%Transaction{draft: true}, _ledger), do: :ok
+
+  defp maybe_record_category_suggestion(
+         %Transaction{description: description, category_id: category_id},
+         %Ledger{} = ledger
+       ) do
+    record_category_suggestion(%Scope{}, ledger, description, category_id)
+  end
+
+  defp maybe_record_category_suggestion(_, _), do: :ok
+
+  defp normalize_description(nil), do: ""
+
+  defp normalize_description(description) when is_binary(description) do
+    description
+    |> String.downcase()
+    |> String.trim()
+    |> String.replace(~r/\s+/, " ")
+    |> String.slice(0, 255)
+  end
+
+  defp normalize_description(_), do: ""
 
   @doc """
   Export a list of transactions to CSV format.
@@ -608,6 +698,11 @@ defmodule PersonalFinance.Finance do
           Transaction
           |> Repo.get!(updated_transaction.id)
           |> Repo.preload([:category, :investment_type, :profile])
+
+        maybe_record_category_suggestion(
+          fully_loaded_transaction,
+          transaction.ledger || %Ledger{id: transaction.ledger_id}
+        )
 
         broadcast(:transaction, updated_transaction.ledger_id, {:saved, fully_loaded_transaction})
 
