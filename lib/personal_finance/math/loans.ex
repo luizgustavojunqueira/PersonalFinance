@@ -11,7 +11,8 @@ defmodule PersonalFinance.Math.Loans do
           required(:rate) => number(),
           required(:rate_period) => rate_period(),
           required(:duration) => pos_integer(),
-          required(:duration_unit) => duration_unit()
+          required(:duration_unit) => duration_unit(),
+          optional(:extra) => number()
         }
 
   @type schedule_row :: %{
@@ -22,13 +23,14 @@ defmodule PersonalFinance.Math.Loans do
           balance: float()
         }
 
-  @spec price_amortization(price_params()) :: %{payment: float(), total_paid: float(), total_interest: float(), schedule: [schedule_row()]} | nil
+  @spec price_amortization(price_params()) :: %{payment: float(), total_paid: float(), total_interest: float(), schedule: [schedule_row()], months_used: pos_integer()} | nil
   def price_amortization(params) do
     principal = to_float(params.principal)
     rate = to_float(params.rate) / 100.0
     rate_period = params.rate_period || :month
     duration = to_int(params.duration)
     duration_unit = params.duration_unit || :month
+    extra = to_float(params[:extra] || 0)
 
     total_months =
       case {duration_unit, duration} do
@@ -51,25 +53,27 @@ defmodule PersonalFinance.Math.Loans do
       true ->
         payment = price_payment(principal, monthly_rate, total_months)
 
-        {schedule, total_interest} = build_schedule(principal, monthly_rate, total_months, payment)
-        total_paid = payment * total_months
+        {schedule, total_interest, months_used} = build_schedule(principal, monthly_rate, total_months, payment, extra)
+        total_paid = Enum.reduce(schedule, 0.0, fn row, acc -> acc + row.payment end)
 
         %{
           payment: payment,
           total_paid: total_paid,
           total_interest: total_interest,
-          schedule: schedule
+          schedule: schedule,
+          months_used: months_used
         }
     end
   end
 
-  @spec sac_amortization(price_params()) :: %{payment: float(), total_paid: float(), total_interest: float(), schedule: [schedule_row()]} | nil
+  @spec sac_amortization(price_params()) :: %{payment: float(), total_paid: float(), total_interest: float(), schedule: [schedule_row()], months_used: pos_integer()} | nil
   def sac_amortization(params) do
     principal = to_float(params.principal)
     rate = to_float(params.rate) / 100.0
     rate_period = params.rate_period || :month
     duration = to_int(params.duration)
     duration_unit = params.duration_unit || :month
+    extra = to_float(params[:extra] || 0)
 
     total_months =
       case {duration_unit, duration} do
@@ -92,7 +96,7 @@ defmodule PersonalFinance.Math.Loans do
       true ->
         amortization = principal / total_months
 
-        {schedule, total_interest} = build_sac_schedule(principal, monthly_rate, total_months, amortization)
+        {schedule, total_interest, months_used} = build_sac_schedule(principal, monthly_rate, total_months, amortization, extra)
         payments = Enum.map(schedule, & &1.payment)
         total_paid = Enum.sum(payments)
 
@@ -102,7 +106,8 @@ defmodule PersonalFinance.Math.Loans do
           payment: first_payment,
           total_paid: total_paid,
           total_interest: total_interest,
-          schedule: schedule
+          schedule: schedule,
+          months_used: months_used
         }
     end
   end
@@ -118,47 +123,69 @@ defmodule PersonalFinance.Math.Loans do
     end
   end
 
-  defp build_schedule(principal, monthly_rate, months, payment) do
-    Enum.map_reduce(1..months, {principal, 0.0}, fn period, {balance, acc_interest} ->
-      interest = balance * monthly_rate
-      amortization = payment - interest
-      new_balance = max(balance - amortization, 0.0)
-      total_interest = acc_interest + interest
+  defp build_schedule(principal, monthly_rate, months, payment, extra) do
+    1..months
+    |> Enum.reduce_while({[], principal, 0.0}, fn period, {rows, balance, acc_interest} ->
+      if balance <= 0.0 do
+        {:halt, {rows, balance, acc_interest}}
+      else
+        interest = balance * monthly_rate
+        regular_amortization = payment - interest
+        total_amortization = min(balance, regular_amortization + extra)
+        new_balance = balance - total_amortization
+        total_interest = acc_interest + interest
 
-      row = %{
-        period: period,
-        payment: payment,
-        interest: interest,
-        amortization: amortization,
-        balance: new_balance
-      }
+        row = %{
+          period: period,
+          payment: interest + total_amortization,
+          interest: interest,
+          amortization: total_amortization,
+          balance: max(new_balance, 0.0)
+        }
 
-      {row, {new_balance, total_interest}}
+        if new_balance <= 0.0 do
+          {:halt, {[row | rows], row.balance, total_interest}}
+        else
+          {:cont, {[row | rows], new_balance, total_interest}}
+        end
+      end
     end)
-    |> then(fn {rows, {_final_balance, total_interest}} ->
-      {rows, total_interest}
+    |> then(fn {rows, _balance, total_interest} ->
+      rows = Enum.reverse(rows)
+      {rows, total_interest, length(rows)}
     end)
   end
 
-  defp build_sac_schedule(principal, monthly_rate, months, amortization) do
-    Enum.map_reduce(1..months, {principal, 0.0}, fn period, {balance, acc_interest} ->
-      interest = balance * monthly_rate
-      payment = amortization + interest
-      new_balance = max(balance - amortization, 0.0)
-      total_interest = acc_interest + interest
+  defp build_sac_schedule(principal, monthly_rate, months, amortization, extra) do
+    1..months
+    |> Enum.reduce_while({[], principal, 0.0}, fn period, {rows, balance, acc_interest} ->
+      if balance <= 0.0 do
+        {:halt, {rows, balance, acc_interest}}
+      else
+        interest = balance * monthly_rate
+        total_amortization = min(balance, amortization + extra)
+        payment = interest + total_amortization
+        new_balance = balance - total_amortization
+        total_interest = acc_interest + interest
 
-      row = %{
-        period: period,
-        payment: payment,
-        interest: interest,
-        amortization: amortization,
-        balance: new_balance
-      }
+        row = %{
+          period: period,
+          payment: payment,
+          interest: interest,
+          amortization: total_amortization,
+          balance: max(new_balance, 0.0)
+        }
 
-      {row, {new_balance, total_interest}}
+        if new_balance <= 0.0 do
+          {:halt, {[row | rows], row.balance, total_interest}}
+        else
+          {:cont, {[row | rows], new_balance, total_interest}}
+        end
+      end
     end)
-    |> then(fn {rows, {_final_balance, total_interest}} ->
-      {rows, total_interest}
+    |> then(fn {rows, _balance, total_interest} ->
+      rows = Enum.reverse(rows)
+      {rows, total_interest, length(rows)}
     end)
   end
 
