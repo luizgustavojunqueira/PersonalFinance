@@ -1,0 +1,461 @@
+date,time,description,value,amount,category,profile,investment_type,type
+2025-01-01,00:01,Rendimento de investimentos,"R$ 87,52","1,00",Sem categoria,,Ações,income
+2025-01-01,15:03,Certificação,"R$ 48,70","1,00",Conhecimento,,,expense
+2025-01-01,08:42,Aposentadoria,"R$ 58,08","1,00",Metas,,,expense
+2025-01-02,19:59,Livro técnico,"R$ 68,42","1,00",Conhecimento,,,expense
+2025-01-03,21:23,Games,"R$ 68,37","1,00",Prazeres,,,expense
+2025-01-03,11:46,Restaurante,"R$ 62,12","1,00",Prazeres,,,expense
+2025-01-04,17:12,Farmácia,"R$ 44,48","1,00",Despesas,,,expense
+2025-01-05,09:00,Salário mensal,"R$ 4340,12","1,00",Sem categoria,,,income
+2025-01-05,19:37,Reserva de emergência,"R$ 19,47","1,00",Metas,,,expense
+2025-01-05,15:50,Cinema,"R$ 30,41","1,00",Prazeres,,,expense
+2025-01-07,11:16,Reserva de emergência,"R$ 69,61","1,00",Metas,,,expense
+2025-01-08,08:28,Reserva de emergência,"R$ 77,78","1,00",Metas,,,expense
+2025-01-08,13:09,Viagem dos sonhos,"R$ 31,36","1,00",Metas,,,expense
+2025-01-09,11:48,Certificação,"R$ 24,92","1,00",Conhecimento,,,expense
+2025-01-10,19:53,Aposentadoria,"R$ 59,23","1,00",Metas,,,expense
+2025-01-11,14:37,Reserva de emergência,"R$ 35,14","1,00",Metas,,,expense
+2025-01-12,16:35,Conta de luz,"R$ 66,66","1,00",Despesas,,,expense
+2025-01-15,14:30,Aplicação em investimento,"R$ 368,99","1,00",Investimento,,Renda Fixa,expense
+2025-01-16,08:49,Restaurante,"R$ 40,81","1,00",Prazeres,,,expense
+2025-01-16,14:47,Livros,"R$ 28,95","1,00",Prazeres,,,expense
+2025-01-17,22:03,Livro técnico,"R$ 69,38","1,00",Conhecimento,,,expense
+2025-01-18,15:34,Livros,"R$ 17,01","1,00",Prazeres,,,expense
+2025-01-19,22:44,Livro técnico,"R$ 54,06","1,00",Conhecimento,,,expense
+2025-01-19,20:01,Workshop,"R$ 38,98","1,00",Conhecimento,,,expense
+2025-01-21,22:01,Cinema,"R$ 18,18","1,00",Prazeres,,,expense
+2025-01-21,19:53,Conta de luz,"R$ 35,45","1,00",Despesas,,,expense
+2025-01-23,18:53,Farmácia,"R$ 65,74","1,00",Despesas,,,expense
+2025-01-23,14:25,Mercado,"R$ 63,15","1,00",Despesas,,,expense
+2025-01-24,18:55,Livro técnico,"R$ 30,64","1,00",Conhecimento,,,expense
+2025-01-24,17:20,Mercado,"R$ 58,52","1,00",Despesas,,,expense
+2025-01-24,21:05,Workshop,"R$ 35,55","1,00",Conhecimento,,,expense
+2025-01-25,14:55,Viagem dos sonhos,"R$ 44,82","1,00",Metas,,,expense
+2025-01-25,14:17,Mercado,"R$ 78,76","1,00",Despesas,,,expense
+2025-01-28,17:41,Streaming,"R$ 30,81","1,00",Prazeres,,,expense
+2025-01-28,20:05,Conta de luz,"R$ 36,05","1,00",Despesas,,,expense
+2025-01-29,10:49,Cinema,"R$ 61,93","1,00",Prazeres,,,expense
+2025-01-30,21:56,Certificação,"R$ 33,90","1,00",Conhecimento,,,expense
+2025-01-31,08:22,Uber,"R$ 65,89","1,00",Despesas,,,expense
+2025-01-31,11:53,Combustível,"R$ 71,74","1,00",Despesas,,,expense
+2025-02-01,00:01,Rendimento de investimentos,"R$ 83,61","1,00",Sem categoria,,Ações,income
+2025-02-01,08:10,Games,"R$ 52,84","1,00",Prazeres,,,expense
+2025-02-03,22:45,Viagem dos sonhos,"R$ 34,26","1,00",Metas,,,expense
+2025-02-03,08:43,Aposentadoria,"R$ 70,31","1,00",Metas,,,expense
+2025-02-05,09:00,Salário mensal,"R$ 4316,65","1,00",Sem categoria,,,income
+2025-02-05,22:57,Certificação,"R$ 26,69","1,00",Conhecimento,,,expense
+2025-02-10,20:28,Reserva de emergência,"R$ 56,11","1,00",Metas,,,expense
+2025-02-10,21:15,Reserva de emergência,"R$ 70,40","1,00",Metas,,,expense
+2025-02-11,14:14,Farmácia,"R$ 32,70","1,00",Despesas,,,expense
+2025-02-11,15:01,Certificação,"R$ 51,47","1,00",Conhecimento,,,expense
+2025-02-12,08:53,Restaurante,"R$ 58,59","1,00",Prazeres,,,expense
+2025-02-14,09:24,Conta de luz,"R$ 52,67","1,00",Despesas,,,expense
+2025-02-14,14:49,Livros,"R$ 66,03","1,00",Prazeres,,,expense
+2025-02-15,20:34,Combustível,"R$ 68,85","1,00",Despesas,,,expense
+2025-02-15,14:30,Aplicação em investimento,"R$ 348,42","1,00",Investimento,,Ações,expense
+2025-02-16,21:45,Cinema,"R$ 63,29","1,00",Prazeres,,,expense
+2025-02-16,15:37,Combustível,"R$ 74,80","1,00",Despesas,,,expense
+2025-02-18,16:22,Uber,"R$ 33,84","1,00",Despesas,,,expense
+2025-02-18,13:52,Conta de luz,"R$ 37,11","1,00",Despesas,,,expense
+2025-02-19,13:19,Workshop,"R$ 61,05","1,00",Conhecimento,,,expense
+2025-02-19,15:34,Certificação,"R$ 33,60","1,00",Conhecimento,,,expense
+2025-02-20,10:23,Aposentadoria,"R$ 33,81","1,00",Metas,,,expense
+2025-02-20,16:03,Mercado,"R$ 75,37","1,00",Despesas,,,expense
+2025-02-21,12:08,Workshop,"R$ 28,40","1,00",Conhecimento,,,expense
+2025-02-23,15:15,Mercado,"R$ 50,55","1,00",Despesas,,,expense
+2025-02-23,11:37,Restaurante,"R$ 30,69","1,00",Prazeres,,,expense
+2025-02-24,14:22,Certificação,"R$ 63,37","1,00",Conhecimento,,,expense
+2025-02-24,21:07,Reserva de emergência,"R$ 59,61","1,00",Metas,,,expense
+2025-02-24,18:31,Reserva de emergência,"R$ 56,11","1,00",Metas,,,expense
+2025-02-25,09:56,Livros,"R$ 39,92","1,00",Prazeres,,,expense
+2025-02-25,17:39,Curso online,"R$ 55,17","1,00",Conhecimento,,,expense
+2025-02-26,18:58,Restaurante,"R$ 56,08","1,00",Prazeres,,,expense
+2025-02-26,19:35,Livros,"R$ 63,00","1,00",Prazeres,,,expense
+2025-02-27,18:33,Reserva de emergência,"R$ 54,65","1,00",Metas,,,expense
+2025-03-01,00:01,Rendimento de investimentos,"R$ 70,41","1,00",Sem categoria,,Tesouro Direto,income
+2025-03-03,09:04,Certificação,"R$ 16,23","1,00",Conhecimento,,,expense
+2025-03-03,17:11,Certificação,"R$ 67,24","1,00",Conhecimento,,,expense
+2025-03-03,12:26,Certificação,"R$ 35,48","1,00",Conhecimento,,,expense
+2025-03-05,09:00,Salário mensal,"R$ 4190,09","1,00",Sem categoria,,,income
+2025-03-05,12:12,Cinema,"R$ 29,21","1,00",Prazeres,,,expense
+2025-03-05,14:09,Uber,"R$ 56,74","1,00",Despesas,,,expense
+2025-03-06,22:05,Workshop,"R$ 44,52","1,00",Conhecimento,,,expense
+2025-03-06,14:04,Livros,"R$ 66,09","1,00",Prazeres,,,expense
+2025-03-06,12:53,Cinema,"R$ 57,99","1,00",Prazeres,,,expense
+2025-03-07,08:34,Streaming,"R$ 43,88","1,00",Prazeres,,,expense
+2025-03-07,12:23,Uber,"R$ 77,63","1,00",Despesas,,,expense
+2025-03-09,18:03,Aposentadoria,"R$ 19,79","1,00",Metas,,,expense
+2025-03-10,11:51,Livro técnico,"R$ 59,92","1,00",Conhecimento,,,expense
+2025-03-11,20:41,Restaurante,"R$ 44,45","1,00",Prazeres,,,expense
+2025-03-12,20:35,Uber,"R$ 30,46","1,00",Despesas,,,expense
+2025-03-13,14:43,Games,"R$ 70,94","1,00",Prazeres,,,expense
+2025-03-13,17:20,Combustível,"R$ 31,40","1,00",Despesas,,,expense
+2025-03-15,13:17,Curso online,"R$ 63,47","1,00",Conhecimento,,,expense
+2025-03-15,20:57,Viagem dos sonhos,"R$ 52,78","1,00",Metas,,,expense
+2025-03-15,21:14,Reserva de emergência,"R$ 47,78","1,00",Metas,,,expense
+2025-03-15,14:30,Aplicação em investimento,"R$ 486,63","1,00",Investimento,,Tesouro Direto,expense
+2025-03-16,09:01,Aposentadoria,"R$ 45,50","1,00",Metas,,,expense
+2025-03-17,11:24,Reserva de emergência,"R$ 78,57","1,00",Metas,,,expense
+2025-03-17,08:09,Farmácia,"R$ 77,44","1,00",Despesas,,,expense
+2025-03-18,19:14,Conta de luz,"R$ 58,28","1,00",Despesas,,,expense
+2025-03-21,21:52,Certificação,"R$ 16,64","1,00",Conhecimento,,,expense
+2025-03-21,15:33,Cinema,"R$ 19,29","1,00",Prazeres,,,expense
+2025-03-21,12:15,Aposentadoria,"R$ 40,22","1,00",Metas,,,expense
+2025-03-22,13:09,Mercado,"R$ 61,47","1,00",Despesas,,,expense
+2025-03-22,18:40,Reserva de emergência,"R$ 32,16","1,00",Metas,,,expense
+2025-03-23,16:21,Certificação,"R$ 37,86","1,00",Conhecimento,,,expense
+2025-03-24,13:57,Livro técnico,"R$ 70,99","1,00",Conhecimento,,,expense
+2025-03-24,08:17,Cinema,"R$ 29,29","1,00",Prazeres,,,expense
+2025-03-25,16:24,Viagem dos sonhos,"R$ 24,54","1,00",Metas,,,expense
+2025-03-27,21:50,Uber,"R$ 16,25","1,00",Despesas,,,expense
+2025-03-27,08:48,Certificação,"R$ 18,48","1,00",Conhecimento,,,expense
+2025-03-28,09:20,Farmácia,"R$ 42,60","1,00",Despesas,,,expense
+2025-03-28,15:00,Curso online,"R$ 41,74","1,00",Conhecimento,,,expense
+2025-03-29,15:59,Reserva de emergência,"R$ 48,87","1,00",Metas,,,expense
+2025-03-29,16:37,Restaurante,"R$ 22,32","1,00",Prazeres,,,expense
+2025-04-01,00:01,Rendimento de investimentos,"R$ 134,81","1,00",Sem categoria,,Ações,income
+2025-04-02,12:09,Combustível,"R$ 57,10","1,00",Despesas,,,expense
+2025-04-03,22:06,Streaming,"R$ 33,25","1,00",Prazeres,,,expense
+2025-04-03,21:37,Livro técnico,"R$ 79,35","1,00",Conhecimento,,,expense
+2025-04-03,21:10,Curso online,"R$ 15,31","1,00",Conhecimento,,,expense
+2025-04-04,12:19,Uber,"R$ 22,95","1,00",Despesas,,,expense
+2025-04-05,09:00,Salário mensal,"R$ 4460,56","1,00",Sem categoria,,,income
+2025-04-05,21:18,Games,"R$ 71,77","1,00",Prazeres,,,expense
+2025-04-06,10:00,Mercado,"R$ 22,27","1,00",Despesas,,,expense
+2025-04-07,13:16,Livro técnico,"R$ 25,62","1,00",Conhecimento,,,expense
+2025-04-07,11:27,Games,"R$ 76,44","1,00",Prazeres,,,expense
+2025-04-09,16:13,Reserva de emergência,"R$ 31,26","1,00",Metas,,,expense
+2025-04-10,17:37,Combustível,"R$ 36,39","1,00",Despesas,,,expense
+2025-04-11,13:24,Mercado,"R$ 28,16","1,00",Despesas,,,expense
+2025-04-11,20:39,Conta de luz,"R$ 18,42","1,00",Despesas,,,expense
+2025-04-13,10:22,Uber,"R$ 43,02","1,00",Despesas,,,expense
+2025-04-15,11:46,Curso online,"R$ 49,48","1,00",Conhecimento,,,expense
+2025-04-15,22:51,Mercado,"R$ 47,95","1,00",Despesas,,,expense
+2025-04-15,22:48,Conta de luz,"R$ 22,78","1,00",Despesas,,,expense
+2025-04-15,14:30,Aplicação em investimento,"R$ 442,61","1,00",Investimento,,Ações,expense
+2025-04-17,14:51,Restaurante,"R$ 53,10","1,00",Prazeres,,,expense
+2025-04-17,14:00,Combustível,"R$ 33,55","1,00",Despesas,,,expense
+2025-04-20,16:18,Workshop,"R$ 59,01","1,00",Conhecimento,,,expense
+2025-04-22,11:15,Workshop,"R$ 59,20","1,00",Conhecimento,,,expense
+2025-04-22,15:40,Combustível,"R$ 41,59","1,00",Despesas,,,expense
+2025-04-23,08:54,Cinema,"R$ 22,46","1,00",Prazeres,,,expense
+2025-04-24,11:40,Restaurante,"R$ 26,04","1,00",Prazeres,,,expense
+2025-04-24,20:48,Combustível,"R$ 78,52","1,00",Despesas,,,expense
+2025-04-27,21:10,Aposentadoria,"R$ 65,83","1,00",Metas,,,expense
+2025-04-29,21:13,Streaming,"R$ 41,87","1,00",Prazeres,,,expense
+2025-04-29,11:54,Mercado,"R$ 57,02","1,00",Despesas,,,expense
+2025-05-01,00:01,Rendimento de investimentos,"R$ 120,71","1,00",Sem categoria,,Renda Fixa,income
+2025-05-01,15:36,Livro técnico,"R$ 41,37","1,00",Conhecimento,,,expense
+2025-05-01,18:41,Livro técnico,"R$ 32,20","1,00",Conhecimento,,,expense
+2025-05-02,14:11,Farmácia,"R$ 25,87","1,00",Despesas,,,expense
+2025-05-02,08:00,Reserva de emergência,"R$ 64,63","1,00",Metas,,,expense
+2025-05-03,15:30,Curso online,"R$ 70,50","1,00",Conhecimento,,,expense
+2025-05-03,09:43,Viagem dos sonhos,"R$ 33,43","1,00",Metas,,,expense
+2025-05-03,19:26,Reserva de emergência,"R$ 19,01","1,00",Metas,,,expense
+2025-05-05,09:00,Salário mensal,"R$ 3889,03","1,00",Sem categoria,,,income
+2025-05-06,14:52,Aposentadoria,"R$ 27,28","1,00",Metas,,,expense
+2025-05-06,12:49,Livro técnico,"R$ 70,30","1,00",Conhecimento,,,expense
+2025-05-07,10:24,Farmácia,"R$ 48,07","1,00",Despesas,,,expense
+2025-05-08,21:43,Livro técnico,"R$ 50,19","1,00",Conhecimento,,,expense
+2025-05-09,22:20,Reserva de emergência,"R$ 39,44","1,00",Metas,,,expense
+2025-05-09,11:48,Aposentadoria,"R$ 58,02","1,00",Metas,,,expense
+2025-05-11,10:02,Games,"R$ 53,30","1,00",Prazeres,,,expense
+2025-05-12,16:51,Viagem dos sonhos,"R$ 15,42","1,00",Metas,,,expense
+2025-05-12,19:41,Farmácia,"R$ 28,66","1,00",Despesas,,,expense
+2025-05-12,12:44,Conta de luz,"R$ 78,99","1,00",Despesas,,,expense
+2025-05-13,14:54,Farmácia,"R$ 34,93","1,00",Despesas,,,expense
+2025-05-14,09:27,Reserva de emergência,"R$ 20,09","1,00",Metas,,,expense
+2025-05-14,22:14,Uber,"R$ 61,84","1,00",Despesas,,,expense
+2025-05-15,13:35,Viagem dos sonhos,"R$ 38,93","1,00",Metas,,,expense
+2025-05-15,21:49,Livro técnico,"R$ 69,85","1,00",Conhecimento,,,expense
+2025-05-15,17:47,Workshop,"R$ 56,89","1,00",Conhecimento,,,expense
+2025-05-15,14:30,Aplicação em investimento,"R$ 440,86","1,00",Investimento,,Renda Fixa,expense
+2025-05-16,13:06,Livro técnico,"R$ 67,00","1,00",Conhecimento,,,expense
+2025-05-16,22:12,Livros,"R$ 59,21","1,00",Prazeres,,,expense
+2025-05-17,09:47,Combustível,"R$ 43,11","1,00",Despesas,,,expense
+2025-05-18,11:23,Aposentadoria,"R$ 23,83","1,00",Metas,,,expense
+2025-05-19,12:11,Farmácia,"R$ 23,23","1,00",Despesas,,,expense
+2025-05-19,16:20,Restaurante,"R$ 78,36","1,00",Prazeres,,,expense
+2025-05-20,09:40,Livro técnico,"R$ 32,13","1,00",Conhecimento,,,expense
+2025-05-21,19:02,Curso online,"R$ 65,06","1,00",Conhecimento,,,expense
+2025-05-21,10:41,Conta de luz,"R$ 64,77","1,00",Despesas,,,expense
+2025-05-24,21:27,Livro técnico,"R$ 63,76","1,00",Conhecimento,,,expense
+2025-05-24,09:51,Streaming,"R$ 26,88","1,00",Prazeres,,,expense
+2025-05-24,12:35,Uber,"R$ 21,87","1,00",Despesas,,,expense
+2025-05-27,09:52,Workshop,"R$ 45,47","1,00",Conhecimento,,,expense
+2025-05-28,14:09,Reserva de emergência,"R$ 32,70","1,00",Metas,,,expense
+2025-05-29,14:57,Reserva de emergência,"R$ 43,80","1,00",Metas,,,expense
+2025-05-29,11:34,Livros,"R$ 74,40","1,00",Prazeres,,,expense
+2025-05-30,21:50,Certificação,"R$ 31,11","1,00",Conhecimento,,,expense
+2025-05-31,16:25,Reserva de emergência,"R$ 28,57","1,00",Metas,,,expense
+2025-05-31,17:11,Uber,"R$ 59,87","1,00",Despesas,,,expense
+2025-06-01,00:01,Rendimento de investimentos,"R$ 151,27","1,00",Sem categoria,,Renda Fixa,income
+2025-06-02,16:16,Uber,"R$ 32,75","1,00",Despesas,,,expense
+2025-06-03,19:47,Livros,"R$ 69,43","1,00",Prazeres,,,expense
+2025-06-04,19:32,Farmácia,"R$ 17,22","1,00",Despesas,,,expense
+2025-06-04,11:56,Workshop,"R$ 67,06","1,00",Conhecimento,,,expense
+2025-06-05,09:00,Salário mensal,"R$ 4411,36","1,00",Sem categoria,,,income
+2025-06-05,20:47,Workshop,"R$ 19,92","1,00",Conhecimento,,,expense
+2025-06-05,16:17,Workshop,"R$ 71,56","1,00",Conhecimento,,,expense
+2025-06-09,11:58,Cinema,"R$ 71,72","1,00",Prazeres,,,expense
+2025-06-09,22:11,Cinema,"R$ 37,51","1,00",Prazeres,,,expense
+2025-06-09,11:39,Workshop,"R$ 56,75","1,00",Conhecimento,,,expense
+2025-06-10,15:43,Games,"R$ 18,24","1,00",Prazeres,,,expense
+2025-06-11,14:16,Viagem dos sonhos,"R$ 45,75","1,00",Metas,,,expense
+2025-06-11,22:11,Aposentadoria,"R$ 23,05","1,00",Metas,,,expense
+2025-06-15,21:41,Reserva de emergência,"R$ 39,85","1,00",Metas,,,expense
+2025-06-15,20:40,Streaming,"R$ 48,83","1,00",Prazeres,,,expense
+2025-06-15,11:25,Aposentadoria,"R$ 45,84","1,00",Metas,,,expense
+2025-06-15,14:30,Aplicação em investimento,"R$ 362,35","1,00",Investimento,,Renda Fixa,expense
+2025-06-16,18:05,Viagem dos sonhos,"R$ 69,01","1,00",Metas,,,expense
+2025-06-16,10:02,Viagem dos sonhos,"R$ 50,61","1,00",Metas,,,expense
+2025-06-17,15:42,Conta de luz,"R$ 71,06","1,00",Despesas,,,expense
+2025-06-17,12:44,Livro técnico,"R$ 57,41","1,00",Conhecimento,,,expense
+2025-06-18,21:21,Reserva de emergência,"R$ 76,73","1,00",Metas,,,expense
+2025-06-18,20:03,Conta de luz,"R$ 47,62","1,00",Despesas,,,expense
+2025-06-19,16:08,Curso online,"R$ 52,02","1,00",Conhecimento,,,expense
+2025-06-19,12:40,Cinema,"R$ 32,06","1,00",Prazeres,,,expense
+2025-06-20,14:43,Certificação,"R$ 78,88","1,00",Conhecimento,,,expense
+2025-06-20,08:07,Certificação,"R$ 30,84","1,00",Conhecimento,,,expense
+2025-06-21,08:18,Farmácia,"R$ 33,59","1,00",Despesas,,,expense
+2025-06-21,20:46,Restaurante,"R$ 63,73","1,00",Prazeres,,,expense
+2025-06-22,21:21,Livro técnico,"R$ 47,77","1,00",Conhecimento,,,expense
+2025-06-22,20:33,Restaurante,"R$ 66,61","1,00",Prazeres,,,expense
+2025-06-23,22:43,Farmácia,"R$ 36,22","1,00",Despesas,,,expense
+2025-06-24,14:50,Livros,"R$ 39,06","1,00",Prazeres,,,expense
+2025-06-27,12:56,Streaming,"R$ 57,72","1,00",Prazeres,,,expense
+2025-06-27,17:31,Cinema,"R$ 66,89","1,00",Prazeres,,,expense
+2025-06-27,20:56,Aposentadoria,"R$ 48,45","1,00",Metas,,,expense
+2025-06-29,13:58,Conta de luz,"R$ 78,12","1,00",Despesas,,,expense
+2025-07-01,00:01,Rendimento de investimentos,"R$ 98,62","1,00",Sem categoria,,Tesouro Direto,income
+2025-07-02,13:32,Combustível,"R$ 33,88","1,00",Despesas,,,expense
+2025-07-02,19:49,Reserva de emergência,"R$ 29,52","1,00",Metas,,,expense
+2025-07-03,11:03,Streaming,"R$ 65,50","1,00",Prazeres,,,expense
+2025-07-03,08:39,Cinema,"R$ 46,99","1,00",Prazeres,,,expense
+2025-07-04,18:30,Restaurante,"R$ 32,76","1,00",Prazeres,,,expense
+2025-07-05,09:00,Salário mensal,"R$ 4488,61","1,00",Sem categoria,,,income
+2025-07-06,09:38,Reserva de emergência,"R$ 75,08","1,00",Metas,,,expense
+2025-07-06,14:21,Certificação,"R$ 70,72","1,00",Conhecimento,,,expense
+2025-07-07,14:59,Conta de luz,"R$ 33,91","1,00",Despesas,,,expense
+2025-07-07,11:52,Workshop,"R$ 22,70","1,00",Conhecimento,,,expense
+2025-07-08,22:25,Livro técnico,"R$ 15,95","1,00",Conhecimento,,,expense
+2025-07-08,10:41,Games,"R$ 26,56","1,00",Prazeres,,,expense
+2025-07-09,17:34,Certificação,"R$ 41,75","1,00",Conhecimento,,,expense
+2025-07-09,20:02,Streaming,"R$ 65,86","1,00",Prazeres,,,expense
+2025-07-12,10:08,Curso online,"R$ 78,88","1,00",Conhecimento,,,expense
+2025-07-13,19:54,Combustível,"R$ 73,86","1,00",Despesas,,,expense
+2025-07-14,22:40,Livro técnico,"R$ 65,11","1,00",Conhecimento,,,expense
+2025-07-15,18:51,Livro técnico,"R$ 78,67","1,00",Conhecimento,,,expense
+2025-07-15,09:47,Curso online,"R$ 62,51","1,00",Conhecimento,,,expense
+2025-07-15,14:30,Aplicação em investimento,"R$ 336,65","1,00",Investimento,,Tesouro Direto,expense
+2025-07-16,17:49,Combustível,"R$ 49,68","1,00",Despesas,,,expense
+2025-07-16,10:27,Workshop,"R$ 66,09","1,00",Conhecimento,,,expense
+2025-07-19,08:10,Restaurante,"R$ 66,02","1,00",Prazeres,,,expense
+2025-07-20,17:15,Farmácia,"R$ 38,74","1,00",Despesas,,,expense
+2025-07-21,09:51,Restaurante,"R$ 30,29","1,00",Prazeres,,,expense
+2025-07-21,15:31,Livros,"R$ 64,30","1,00",Prazeres,,,expense
+2025-07-21,21:32,Curso online,"R$ 68,24","1,00",Conhecimento,,,expense
+2025-07-22,12:54,Restaurante,"R$ 75,95","1,00",Prazeres,,,expense
+2025-07-22,22:34,Viagem dos sonhos,"R$ 78,54","1,00",Metas,,,expense
+2025-07-24,14:07,Conta de luz,"R$ 36,78","1,00",Despesas,,,expense
+2025-07-25,18:31,Cinema,"R$ 71,88","1,00",Prazeres,,,expense
+2025-07-26,17:06,Livros,"R$ 39,64","1,00",Prazeres,,,expense
+2025-07-26,16:00,Curso online,"R$ 55,86","1,00",Conhecimento,,,expense
+2025-07-27,10:35,Reserva de emergência,"R$ 35,56","1,00",Metas,,,expense
+2025-07-27,09:34,Reserva de emergência,"R$ 16,38","1,00",Metas,,,expense
+2025-07-27,14:07,Workshop,"R$ 20,04","1,00",Conhecimento,,,expense
+2025-07-28,13:27,Conta de luz,"R$ 20,67","1,00",Despesas,,,expense
+2025-07-28,17:53,Restaurante,"R$ 18,56","1,00",Prazeres,,,expense
+2025-07-29,10:07,Viagem dos sonhos,"R$ 46,01","1,00",Metas,,,expense
+2025-07-30,17:58,Viagem dos sonhos,"R$ 44,76","1,00",Metas,,,expense
+2025-07-31,09:34,Cinema,"R$ 36,85","1,00",Prazeres,,,expense
+2025-08-01,00:01,Rendimento de investimentos,"R$ 189,57","1,00",Sem categoria,,Ações,income
+2025-08-01,14:50,Curso online,"R$ 49,33","1,00",Conhecimento,,,expense
+2025-08-04,21:15,Curso online,"R$ 45,93","1,00",Conhecimento,,,expense
+2025-08-04,08:02,Restaurante,"R$ 51,97","1,00",Prazeres,,,expense
+2025-08-05,09:00,Salário mensal,"R$ 3938,68","1,00",Sem categoria,,,income
+2025-08-05,15:38,Mercado,"R$ 23,01","1,00",Despesas,,,expense
+2025-08-06,17:17,Livro técnico,"R$ 16,37","1,00",Conhecimento,,,expense
+2025-08-07,11:56,Restaurante,"R$ 19,13","1,00",Prazeres,,,expense
+2025-08-07,13:41,Certificação,"R$ 75,05","1,00",Conhecimento,,,expense
+2025-08-08,13:52,Streaming,"R$ 79,73","1,00",Prazeres,,,expense
+2025-08-09,18:13,Livros,"R$ 37,05","1,00",Prazeres,,,expense
+2025-08-11,08:16,Conta de luz,"R$ 42,86","1,00",Despesas,,,expense
+2025-08-11,18:44,Cinema,"R$ 22,26","1,00",Prazeres,,,expense
+2025-08-12,19:05,Mercado,"R$ 34,73","1,00",Despesas,,,expense
+2025-08-13,16:16,Combustível,"R$ 50,98","1,00",Despesas,,,expense
+2025-08-13,22:02,Certificação,"R$ 73,48","1,00",Conhecimento,,,expense
+2025-08-14,21:17,Combustível,"R$ 43,19","1,00",Despesas,,,expense
+2025-08-14,17:35,Workshop,"R$ 73,16","1,00",Conhecimento,,,expense
+2025-08-15,20:44,Certificação,"R$ 35,91","1,00",Conhecimento,,,expense
+2025-08-15,12:26,Restaurante,"R$ 50,39","1,00",Prazeres,,,expense
+2025-08-15,21:58,Certificação,"R$ 78,58","1,00",Conhecimento,,,expense
+2025-08-15,14:30,Aplicação em investimento,"R$ 306,90","1,00",Investimento,,Renda Fixa,expense
+2025-08-16,17:10,Certificação,"R$ 72,25","1,00",Conhecimento,,,expense
+2025-08-18,21:29,Farmácia,"R$ 46,54","1,00",Despesas,,,expense
+2025-08-19,19:55,Aposentadoria,"R$ 30,55","1,00",Metas,,,expense
+2025-08-19,19:27,Certificação,"R$ 67,38","1,00",Conhecimento,,,expense
+2025-08-21,22:13,Livro técnico,"R$ 33,58","1,00",Conhecimento,,,expense
+2025-08-22,21:37,Farmácia,"R$ 43,73","1,00",Despesas,,,expense
+2025-08-22,22:30,Reserva de emergência,"R$ 61,57","1,00",Metas,,,expense
+2025-08-24,22:08,Aposentadoria,"R$ 65,63","1,00",Metas,,,expense
+2025-08-24,12:49,Livro técnico,"R$ 24,67","1,00",Conhecimento,,,expense
+2025-08-28,08:05,Games,"R$ 42,74","1,00",Prazeres,,,expense
+2025-08-29,22:07,Restaurante,"R$ 42,76","1,00",Prazeres,,,expense
+2025-08-31,18:04,Conta de luz,"R$ 77,24","1,00",Despesas,,,expense
+2025-09-01,00:01,Rendimento de investimentos,"R$ 110,30","1,00",Sem categoria,,Tesouro Direto,income
+2025-09-01,21:54,Livro técnico,"R$ 68,77","1,00",Conhecimento,,,expense
+2025-09-03,10:45,Reserva de emergência,"R$ 19,17","1,00",Metas,,,expense
+2025-09-03,16:47,Reserva de emergência,"R$ 78,85","1,00",Metas,,,expense
+2025-09-03,09:29,Certificação,"R$ 57,29","1,00",Conhecimento,,,expense
+2025-09-04,14:39,Conta de luz,"R$ 38,13","1,00",Despesas,,,expense
+2025-09-04,17:31,Livros,"R$ 66,88","1,00",Prazeres,,,expense
+2025-09-05,09:00,Salário mensal,"R$ 4450,59","1,00",Sem categoria,,,income
+2025-09-05,21:23,Livro técnico,"R$ 65,93","1,00",Conhecimento,,,expense
+2025-09-05,19:15,Combustível,"R$ 62,49","1,00",Despesas,,,expense
+2025-09-06,09:01,Livro técnico,"R$ 21,80","1,00",Conhecimento,,,expense
+2025-09-06,21:37,Aposentadoria,"R$ 68,70","1,00",Metas,,,expense
+2025-09-08,09:37,Combustível,"R$ 79,54","1,00",Despesas,,,expense
+2025-09-08,08:09,Aposentadoria,"R$ 46,41","1,00",Metas,,,expense
+2025-09-09,15:58,Livros,"R$ 34,49","1,00",Prazeres,,,expense
+2025-09-09,13:05,Games,"R$ 66,17","1,00",Prazeres,,,expense
+2025-09-09,11:11,Uber,"R$ 45,63","1,00",Despesas,,,expense
+2025-09-11,18:24,Streaming,"R$ 49,68","1,00",Prazeres,,,expense
+2025-09-11,08:39,Combustível,"R$ 28,41","1,00",Despesas,,,expense
+2025-09-12,12:57,Viagem dos sonhos,"R$ 19,22","1,00",Metas,,,expense
+2025-09-13,21:49,Livros,"R$ 15,40","1,00",Prazeres,,,expense
+2025-09-13,12:48,Restaurante,"R$ 62,11","1,00",Prazeres,,,expense
+2025-09-14,08:29,Farmácia,"R$ 76,70","1,00",Despesas,,,expense
+2025-09-14,22:59,Farmácia,"R$ 67,71","1,00",Despesas,,,expense
+2025-09-15,14:30,Aplicação em investimento,"R$ 515,16","1,00",Investimento,,Tesouro Direto,expense
+2025-09-16,12:52,Viagem dos sonhos,"R$ 55,64","1,00",Metas,,,expense
+2025-09-17,11:06,Streaming,"R$ 37,97","1,00",Prazeres,,,expense
+2025-09-17,16:28,Farmácia,"R$ 26,59","1,00",Despesas,,,expense
+2025-09-18,13:10,Livro técnico,"R$ 75,20","1,00",Conhecimento,,,expense
+2025-09-18,11:14,Aposentadoria,"R$ 51,55","1,00",Metas,,,expense
+2025-09-18,15:23,Certificação,"R$ 49,94","1,00",Conhecimento,,,expense
+2025-09-19,10:27,Cinema,"R$ 65,65","1,00",Prazeres,,,expense
+2025-09-20,20:41,Cinema,"R$ 22,45","1,00",Prazeres,,,expense
+2025-09-20,17:38,Mercado,"R$ 40,90","1,00",Despesas,,,expense
+2025-09-22,22:26,Reserva de emergência,"R$ 35,22","1,00",Metas,,,expense
+2025-09-23,12:48,Mercado,"R$ 58,10","1,00",Despesas,,,expense
+2025-09-24,11:14,Restaurante,"R$ 59,48","1,00",Prazeres,,,expense
+2025-09-24,21:04,Viagem dos sonhos,"R$ 51,22","1,00",Metas,,,expense
+2025-09-25,15:48,Certificação,"R$ 18,38","1,00",Conhecimento,,,expense
+2025-09-25,09:20,Conta de luz,"R$ 18,48","1,00",Despesas,,,expense
+2025-09-26,14:28,Uber,"R$ 41,90","1,00",Despesas,,,expense
+2025-09-26,10:44,Mercado,"R$ 63,62","1,00",Despesas,,,expense
+2025-09-27,13:23,Livros,"R$ 69,58","1,00",Prazeres,,,expense
+2025-09-27,16:12,Aposentadoria,"R$ 70,19","1,00",Metas,,,expense
+2025-09-27,12:24,Certificação,"R$ 27,69","1,00",Conhecimento,,,expense
+2025-09-28,17:39,Mercado,"R$ 62,33","1,00",Despesas,,,expense
+2025-10-01,00:01,Rendimento de investimentos,"R$ 53,50","1,00",Sem categoria,,Ações,income
+2025-10-01,15:46,Aposentadoria,"R$ 66,40","1,00",Metas,,,expense
+2025-10-02,16:41,Aposentadoria,"R$ 72,63","1,00",Metas,,,expense
+2025-10-02,11:57,Workshop,"R$ 51,92","1,00",Conhecimento,,,expense
+2025-10-03,20:55,Curso online,"R$ 70,15","1,00",Conhecimento,,,expense
+2025-10-03,22:20,Viagem dos sonhos,"R$ 23,39","1,00",Metas,,,expense
+2025-10-03,09:08,Streaming,"R$ 51,57","1,00",Prazeres,,,expense
+2025-10-04,15:54,Farmácia,"R$ 62,59","1,00",Despesas,,,expense
+2025-10-05,09:00,Salário mensal,"R$ 4492,66","1,00",Sem categoria,,,income
+2025-10-05,19:02,Uber,"R$ 34,42","1,00",Despesas,,,expense
+2025-10-05,14:19,Certificação,"R$ 55,59","1,00",Conhecimento,,,expense
+2025-10-06,21:57,Certificação,"R$ 23,56","1,00",Conhecimento,,,expense
+2025-10-06,17:42,Livro técnico,"R$ 39,40","1,00",Conhecimento,,,expense
+2025-10-09,08:56,Workshop,"R$ 47,70","1,00",Conhecimento,,,expense
+2025-10-09,16:31,Certificação,"R$ 56,48","1,00",Conhecimento,,,expense
+2025-10-10,21:11,Aposentadoria,"R$ 58,86","1,00",Metas,,,expense
+2025-10-10,11:08,Mercado,"R$ 39,29","1,00",Despesas,,,expense
+2025-10-11,13:46,Livro técnico,"R$ 31,72","1,00",Conhecimento,,,expense
+2025-10-11,11:47,Combustível,"R$ 27,17","1,00",Despesas,,,expense
+2025-10-12,21:40,Livro técnico,"R$ 76,83","1,00",Conhecimento,,,expense
+2025-10-12,17:36,Combustível,"R$ 21,65","1,00",Despesas,,,expense
+2025-10-13,16:05,Conta de luz,"R$ 30,84","1,00",Despesas,,,expense
+2025-10-15,14:30,Aplicação em investimento,"R$ 583,90","1,00",Investimento,,Ações,expense
+2025-10-16,22:15,Livros,"R$ 74,66","1,00",Prazeres,,,expense
+2025-10-17,15:17,Workshop,"R$ 74,33","1,00",Conhecimento,,,expense
+2025-10-19,14:26,Mercado,"R$ 55,92","1,00",Despesas,,,expense
+2025-10-19,11:39,Streaming,"R$ 16,94","1,00",Prazeres,,,expense
+2025-10-20,22:44,Aposentadoria,"R$ 55,89","1,00",Metas,,,expense
+2025-10-20,14:42,Combustível,"R$ 64,65","1,00",Despesas,,,expense
+2025-10-21,12:25,Aposentadoria,"R$ 17,89","1,00",Metas,,,expense
+2025-10-22,21:20,Combustível,"R$ 35,04","1,00",Despesas,,,expense
+2025-10-22,10:11,Livros,"R$ 58,59","1,00",Prazeres,,,expense
+2025-10-24,17:36,Certificação,"R$ 66,83","1,00",Conhecimento,,,expense
+2025-10-24,14:31,Streaming,"R$ 42,51","1,00",Prazeres,,,expense
+2025-10-24,20:34,Certificação,"R$ 75,14","1,00",Conhecimento,,,expense
+2025-10-25,08:24,Workshop,"R$ 37,45","1,00",Conhecimento,,,expense
+2025-10-25,08:26,Uber,"R$ 73,88","1,00",Despesas,,,expense
+2025-10-26,11:38,Cinema,"R$ 45,98","1,00",Prazeres,,,expense
+2025-10-31,12:08,Certificação,"R$ 17,35","1,00",Conhecimento,,,expense
+2025-10-31,21:48,Conta de luz,"R$ 66,60","1,00",Despesas,,,expense
+2025-11-01,00:01,Rendimento de investimentos,"R$ 115,28","1,00",Sem categoria,,Tesouro Direto,income
+2025-11-01,21:16,Aposentadoria,"R$ 54,30","1,00",Metas,,,expense
+2025-11-01,16:09,Reserva de emergência,"R$ 63,39","1,00",Metas,,,expense
+2025-11-02,15:23,Viagem dos sonhos,"R$ 77,51","1,00",Metas,,,expense
+2025-11-03,12:02,Reserva de emergência,"R$ 50,74","1,00",Metas,,,expense
+2025-11-05,09:00,Salário mensal,"R$ 4080,49","1,00",Sem categoria,,,income
+2025-11-05,18:33,Reserva de emergência,"R$ 73,95","1,00",Metas,,,expense
+2025-11-05,16:26,Streaming,"R$ 20,09","1,00",Prazeres,,,expense
+2025-11-07,11:04,Games,"R$ 58,45","1,00",Prazeres,,,expense
+2025-11-07,11:32,Combustível,"R$ 74,88","1,00",Despesas,,,expense
+2025-11-08,11:39,Reserva de emergência,"R$ 30,59","1,00",Metas,,,expense
+2025-11-08,08:30,Workshop,"R$ 65,41","1,00",Conhecimento,,,expense
+2025-11-11,14:03,Livro técnico,"R$ 15,98","1,00",Conhecimento,,,expense
+2025-11-11,14:02,Aposentadoria,"R$ 27,82","1,00",Metas,,,expense
+2025-11-12,21:37,Streaming,"R$ 29,12","1,00",Prazeres,,,expense
+2025-11-12,10:24,Restaurante,"R$ 32,13","1,00",Prazeres,,,expense
+2025-11-12,22:02,Streaming,"R$ 76,33","1,00",Prazeres,,,expense
+2025-11-13,14:15,Viagem dos sonhos,"R$ 79,14","1,00",Metas,,,expense
+2025-11-13,08:17,Farmácia,"R$ 78,88","1,00",Despesas,,,expense
+2025-11-15,14:30,Aplicação em investimento,"R$ 484,00","1,00",Investimento,,Ações,expense
+2025-11-16,22:29,Streaming,"R$ 27,56","1,00",Prazeres,,,expense
+2025-11-16,20:49,Reserva de emergência,"R$ 67,67","1,00",Metas,,,expense
+2025-11-18,08:57,Certificação,"R$ 59,02","1,00",Conhecimento,,,expense
+2025-11-19,12:11,Combustível,"R$ 37,17","1,00",Despesas,,,expense
+2025-11-19,12:32,Workshop,"R$ 68,83","1,00",Conhecimento,,,expense
+2025-11-20,19:28,Certificação,"R$ 24,36","1,00",Conhecimento,,,expense
+2025-11-20,16:47,Farmácia,"R$ 18,92","1,00",Despesas,,,expense
+2025-11-21,19:07,Aposentadoria,"R$ 43,68","1,00",Metas,,,expense
+2025-11-21,21:28,Restaurante,"R$ 51,21","1,00",Prazeres,,,expense
+2025-11-22,20:04,Uber,"R$ 72,14","1,00",Despesas,,,expense
+2025-11-22,12:11,Conta de luz,"R$ 71,73","1,00",Despesas,,,expense
+2025-11-23,21:54,Curso online,"R$ 39,92","1,00",Conhecimento,,,expense
+2025-11-24,22:46,Conta de luz,"R$ 19,21","1,00",Despesas,,,expense
+2025-11-24,08:21,Viagem dos sonhos,"R$ 51,73","1,00",Metas,,,expense
+2025-11-27,08:33,Viagem dos sonhos,"R$ 43,23","1,00",Metas,,,expense
+2025-11-28,20:38,Reserva de emergência,"R$ 60,50","1,00",Metas,,,expense
+2025-11-29,14:34,Combustível,"R$ 24,57","1,00",Despesas,,,expense
+2025-11-29,10:28,Viagem dos sonhos,"R$ 55,26","1,00",Metas,,,expense
+2025-12-01,00:01,Rendimento de investimentos,"R$ 161,33","1,00",Sem categoria,,Ações,income
+2025-12-01,12:29,Combustível,"R$ 45,60","1,00",Despesas,,,expense
+2025-12-02,08:54,Curso online,"R$ 51,98","1,00",Conhecimento,,,expense
+2025-12-05,09:00,Salário mensal,"R$ 4466,52","1,00",Sem categoria,,,income
+2025-12-05,19:37,Conta de luz,"R$ 67,83","1,00",Despesas,,,expense
+2025-12-05,13:32,Workshop,"R$ 41,90","1,00",Conhecimento,,,expense
+2025-12-09,17:41,Combustível,"R$ 50,84","1,00",Despesas,,,expense
+2025-12-11,19:41,Uber,"R$ 17,61","1,00",Despesas,,,expense
+2025-12-11,20:18,Workshop,"R$ 78,01","1,00",Conhecimento,,,expense
+2025-12-15,09:17,Viagem dos sonhos,"R$ 48,10","1,00",Metas,,,expense
+2025-12-15,15:36,Viagem dos sonhos,"R$ 47,67","1,00",Metas,,,expense
+2025-12-15,14:30,Aplicação em investimento,"R$ 503,37","1,00",Investimento,,Tesouro Direto,expense
+2025-12-17,14:01,Streaming,"R$ 51,90","1,00",Prazeres,,,expense
+2025-12-17,13:00,Streaming,"R$ 40,07","1,00",Prazeres,,,expense
+2025-12-18,20:46,Mercado,"R$ 57,74","1,00",Despesas,,,expense
+2025-12-19,16:34,Livro técnico,"R$ 48,63","1,00",Conhecimento,,,expense
+2025-12-19,17:33,Livros,"R$ 62,97","1,00",Prazeres,,,expense
+2025-12-20,12:26,Reserva de emergência,"R$ 72,63","1,00",Metas,,,expense
+2025-12-21,13:30,Reserva de emergência,"R$ 70,95","1,00",Metas,,,expense
+2025-12-21,14:04,Viagem dos sonhos,"R$ 53,86","1,00",Metas,,,expense
+2025-12-21,17:29,Curso online,"R$ 27,38","1,00",Conhecimento,,,expense
+2025-12-22,13:33,Livro técnico,"R$ 68,47","1,00",Conhecimento,,,expense
+2025-12-23,10:52,Reserva de emergência,"R$ 15,82","1,00",Metas,,,expense
+2025-12-23,20:43,Workshop,"R$ 39,67","1,00",Conhecimento,,,expense
+2025-12-26,15:00,Conta de luz,"R$ 36,87","1,00",Despesas,,,expense
+2025-12-27,16:11,Workshop,"R$ 27,25","1,00",Conhecimento,,,expense
+2025-12-27,09:07,Workshop,"R$ 67,78","1,00",Conhecimento,,,expense
+2025-12-27,10:43,Livro técnico,"R$ 45,16","1,00",Conhecimento,,,expense
+2025-12-28,20:06,Certificação,"R$ 35,22","1,00",Conhecimento,,,expense
+2025-12-28,20:33,Aposentadoria,"R$ 48,86","1,00",Metas,,,expense
+2025-12-30,15:26,Workshop,"R$ 27,85","1,00",Conhecimento,,,expense
+2025-12-31,10:34,Reserva de emergência,"R$ 50,32","1,00",Metas,,,expense
