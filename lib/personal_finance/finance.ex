@@ -19,6 +19,8 @@ defmodule PersonalFinance.Finance do
 
   import Ecto.Query
 
+  @history_default_months 12
+
   @doc """
   Retorna tipos de investimento.
   """
@@ -630,6 +632,161 @@ defmodule PersonalFinance.Finance do
         {:ok, successful_transactions}
       end
     end
+  end
+
+  # Histórico mensal (consultas diretas)
+  def history_monthly_summary(%Scope{} = _scope, %Ledger{} = ledger, opts \\ %{}) do
+    {start_dt, end_dt} = month_range_bounds(opts)
+
+    monthly_rows =
+      Transaction
+      |> where([t], t.ledger_id == ^ledger.id and t.draft == false)
+      |> where([t], t.date >= ^start_dt and t.date <= ^end_dt)
+      |> select([t], %{
+        year: fragment("EXTRACT(YEAR FROM ?)::int", t.date),
+        month: fragment("EXTRACT(MONTH FROM ?)::int", t.date),
+        income: fragment("SUM(CASE WHEN ? = 'income' THEN ? ELSE 0 END)", t.type, t.total_value),
+        expense: fragment("SUM(CASE WHEN ? = 'expense' THEN ? ELSE 0 END)", t.type, t.total_value)
+      })
+      |> group_by([t], fragment("EXTRACT(YEAR FROM ?)::int", t.date))
+      |> group_by([t], fragment("EXTRACT(MONTH FROM ?)::int", t.date))
+      |> order_by([t], [asc: fragment("EXTRACT(YEAR FROM ?)::int", t.date), asc: fragment("EXTRACT(MONTH FROM ?)::int", t.date)])
+      |> Repo.all()
+      |> Enum.map(fn row ->
+        net = (row.income || 0) - (row.expense || 0)
+
+        %{year: row.year, month: row.month, income: row.income || 0, expense: row.expense || 0, net: net}
+      end)
+      |> Enum.sort_by(fn r -> {r.year, r.month} end)
+
+    {with_closing, _} =
+      Enum.map_reduce(monthly_rows, 0, fn row, acc ->
+        closing = acc + row.net
+        {Map.put(row, :closing_balance, closing), closing}
+      end)
+
+    with_closing
+  end
+
+  def history_category_breakdown(%Scope{} = _scope, %Ledger{} = ledger, opts \\ %{}) do
+    {start_dt, end_dt} = month_range_bounds(opts)
+
+    Transaction
+    |> where([t], t.ledger_id == ^ledger.id and t.draft == false and t.type == ^:expense)
+    |> where([t], t.date >= ^start_dt and t.date <= ^end_dt)
+    |> join(:left, [t], c in assoc(t, :category))
+    |> select([t, c], %{
+      year: fragment("EXTRACT(YEAR FROM ?)::int", t.date),
+      month: fragment("EXTRACT(MONTH FROM ?)::int", t.date),
+      category_id: c.id,
+      category_name: c.name,
+      category_color: c.color,
+      total: sum(t.total_value)
+    })
+    |> group_by([t, c], fragment("EXTRACT(YEAR FROM ?)::int", t.date))
+    |> group_by([t, c], fragment("EXTRACT(MONTH FROM ?)::int", t.date))
+    |> group_by([t, c], [c.id, c.name, c.color])
+    |> order_by([t], [asc: fragment("EXTRACT(YEAR FROM ?)::int", t.date), asc: fragment("EXTRACT(MONTH FROM ?)::int", t.date)])
+    |> Repo.all()
+  end
+
+  def history_income_breakdown(%Scope{} = _scope, %Ledger{} = ledger, opts \\ %{}) do
+    {start_dt, end_dt} = month_range_bounds(opts)
+
+    Transaction
+    |> where([t], t.ledger_id == ^ledger.id and t.draft == false and t.type == ^:income)
+    |> where([t], t.date >= ^start_dt and t.date <= ^end_dt)
+    |> join(:left, [t], c in assoc(t, :category))
+    |> select([t, c], %{
+      year: fragment("EXTRACT(YEAR FROM ?)::int", t.date),
+      month: fragment("EXTRACT(MONTH FROM ?)::int", t.date),
+      category_id: c.id,
+      category_name: c.name,
+      category_color: c.color,
+      total: sum(t.total_value)
+    })
+    |> group_by([t, c], fragment("EXTRACT(YEAR FROM ?)::int", t.date))
+    |> group_by([t, c], fragment("EXTRACT(MONTH FROM ?)::int", t.date))
+    |> group_by([t, c], [c.id, c.name, c.color])
+    |> order_by([t], [asc: fragment("EXTRACT(YEAR FROM ?)::int", t.date), asc: fragment("EXTRACT(MONTH FROM ?)::int", t.date)])
+    |> Repo.all()
+  end
+
+  def history_fixed_income_flows(%Scope{} = _scope, %Ledger{} = ledger, opts \\ %{}) do
+    {start_dt, end_dt} = month_range_bounds(opts)
+
+    Transaction
+    |> where([t], t.ledger_id == ^ledger.id and t.draft == false)
+    |> where([t], t.date >= ^start_dt and t.date <= ^end_dt)
+    |> join(:left, [t], c in assoc(t, :category))
+    |> join(:left, [t], it in assoc(t, :investment_type))
+    |> where([t, c, it], (it.name == ^"Renda Fixa") or (not is_nil(c.id) and c.is_investment == true))
+    |> select([t, _c, _it], %{
+      year: fragment("EXTRACT(YEAR FROM ?)::int", t.date),
+      month: fragment("EXTRACT(MONTH FROM ?)::int", t.date),
+      inflow: fragment("SUM(CASE WHEN ? = 'income' THEN ? ELSE 0 END)", t.type, t.total_value),
+      outflow: fragment("SUM(CASE WHEN ? = 'expense' THEN ? ELSE 0 END)", t.type, t.total_value)
+    })
+    |> group_by([t], fragment("EXTRACT(YEAR FROM ?)::int", t.date))
+    |> group_by([t], fragment("EXTRACT(MONTH FROM ?)::int", t.date))
+    |> order_by([t], [asc: fragment("EXTRACT(YEAR FROM ?)::int", t.date), asc: fragment("EXTRACT(MONTH FROM ?)::int", t.date)])
+    |> Repo.all()
+    |> Enum.map(fn row ->
+      inflow = row.inflow || 0
+      outflow = row.outflow || 0
+      %{year: row.year, month: row.month, inflow: inflow, outflow: outflow, net: inflow - outflow}
+    end)
+  end
+
+  defp month_range_bounds(opts) do
+    today = Date.utc_today()
+
+    start_month_value = Map.get(opts, :start_month) || Map.get(opts, "start_month")
+    {start_year, start_month} =
+      start_month_value
+      |> parse_year_month_or_default(today, -(@history_default_months - 1))
+
+    end_month_value = Map.get(opts, :end_month) || Map.get(opts, "end_month")
+    {end_year, end_month} =
+      end_month_value
+      |> parse_year_month_or_default(today, 0)
+
+    start_dt = month_start_datetime(start_year, start_month)
+    end_dt = month_end_datetime(end_year, end_month)
+
+    {start_dt, end_dt}
+  end
+
+  defp parse_year_month_or_default(nil, %Date{} = today, delta_months) do
+    shift_month(today.year, today.month, delta_months)
+  end
+
+  defp parse_year_month_or_default(value, %Date{} = _today, _delta_months) when is_binary(value) do
+    case String.split(value, "-") do
+      [year, month] -> {String.to_integer(year), String.to_integer(month)}
+      _ -> raise ArgumentError, "Invalid month format, expected YYYY-MM"
+    end
+  end
+
+  defp parse_year_month_or_default({year, month}, _today, _delta_months), do: {year, month}
+
+  defp month_start_datetime(year, month) do
+    date = Date.new!(year, month, 1)
+    DateTime.new!(date, ~T[00:00:00], "Etc/UTC")
+  end
+
+  defp month_end_datetime(year, month) do
+    date = Date.new!(year, month, 1)
+    last_day = Date.days_in_month(date)
+    end_date = %Date{date | day: last_day}
+    DateTime.new!(end_date, ~T[23:59:59], "Etc/UTC")
+  end
+
+  defp shift_month(year, month, delta) do
+    total = (year * 12 + month - 1) + delta
+    new_year = div(total, 12)
+    new_month = rem(total, 12) + 1
+    {new_year, new_month}
   end
 
   @doc """

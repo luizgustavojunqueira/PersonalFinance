@@ -197,6 +197,15 @@ defmodule PersonalFinanceWeb.Layouts do
           </li>
           <li class=" mb-4 ">
             <.link
+              navigate={~p"/ledgers/#{@ledger.id}/history"}
+              class="flex items-center gap-2 sidebar-link"
+            >
+              <.icon name="hero-chart-bar" class="size-6" />
+              <span class="sidebar-text hidden md:inline">Análise Histórica</span>
+            </.link>
+          </li>
+          <li class=" mb-4 ">
+            <.link
               navigate={~p"/ledgers/#{@ledger.id}/fixed_income"}
               class="flex items-center gap-2 sidebar-link"
             >

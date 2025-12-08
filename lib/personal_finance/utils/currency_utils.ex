@@ -1,8 +1,10 @@
 defmodule PersonalFinance.Utils.CurrencyUtils do
   def format_money(nil), do: "R$ 0,00"
+  def format_money(%Decimal{} = d), do: d |> Decimal.to_float() |> format_money()
 
-  def format_money(value) when is_float(value) or is_integer(value) do
-    formatted_value = :erlang.float_to_binary(value, decimals: 2)
+  def format_money(value) when is_number(value) do
+    float_value = value * 1.0
+    formatted_value = :erlang.float_to_binary(float_value, decimals: 2)
 
     parts = String.split(formatted_value, ".")
 
@@ -12,7 +14,6 @@ defmodule PersonalFinance.Utils.CurrencyUtils do
       |> String.replace(~r/(?<=\d)(?=(\d{3})+(?!\d))/, ",")
 
     decimal_part = if length(parts) > 1, do: "." <> List.last(parts), else: ".00"
-    "#{integer_part}#{decimal_part}"
 
     "R$ #{integer_part}#{decimal_part}"
   end
