@@ -258,10 +258,10 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp chart_monthly_option(rows) do
     labels = Enum.map(rows, &month_label/1)
-    incomes = Enum.map(rows, &Parse.parse_float(&1.income))
-    expenses = Enum.map(rows, &(-Parse.parse_float(&1.expense)))
-    net = Enum.map(rows, &Parse.parse_float(&1.net))
-    closing = Enum.map(rows, &Parse.parse_float(&1.closing_balance))
+    incomes = Enum.map(rows, &chart_value(&1.income))
+    expenses = Enum.map(rows, &(-chart_value(&1.expense)))
+    net = Enum.map(rows, &chart_value(&1.net))
+    closing = Enum.map(rows, &chart_value(&1.closing_balance))
 
     %{
       tooltip: %{trigger: "axis"},
@@ -297,8 +297,8 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp chart_category_option(rows, _type) do
     labels = Enum.map(rows, & &1.name)
-    currents = Enum.map(rows, &Parse.parse_float(&1.total))
-    prevs = Enum.map(rows, &Parse.parse_float(&1.prev_total))
+    currents = Enum.map(rows, &chart_value(&1.total))
+    prevs = Enum.map(rows, &chart_value(&1.prev_total))
 
     %{
       tooltip: %{trigger: "axis", axisPointer: %{type: "shadow"}},
@@ -317,10 +317,10 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp chart_fixed_income_option(rows) do
     labels = Enum.map(rows, &month_label/1)
-    inflows = Enum.map(rows, &Parse.parse_float(&1.inflow))
-    outflows = Enum.map(rows, &Parse.parse_float(&1.outflow))
-    net = Enum.map(rows, &Parse.parse_float(&1.net))
-    cumulative = Enum.map(rows, &Parse.parse_float(&1.cumulative))
+    inflows = Enum.map(rows, &chart_value(&1.inflow))
+    outflows = Enum.map(rows, &chart_value(&1.outflow))
+    net = Enum.map(rows, &chart_value(&1.net))
+    cumulative = Enum.map(rows, &chart_value(&1.cumulative))
 
     %{
       tooltip: %{trigger: "axis"},
@@ -342,6 +342,12 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp month_label(%{year: y, month: m}) do
     :io_lib.format("~2..0B/~4..0B", [m, y]) |> IO.iodata_to_binary()
+  end
+
+  defp chart_value(val) do
+    val
+    |> Parse.parse_float()
+    |> Float.round(2)
   end
 
   defp net_trend(_latest, nil), do: nil

@@ -52,7 +52,7 @@ defmodule PersonalFinanceWeb.Components.CategoryPieChart do
         color = Map.get(cat, :category_color) || Map.get(cat, :color) || Map.get(cat, "category_color") || Map.get(cat, "color")
 
         %{
-          value: Parse.parse_float(cat.total),
+          value: chart_value(cat.total),
           name: name,
           itemStyle: %{color: color}
         }
@@ -90,6 +90,12 @@ defmodule PersonalFinanceWeb.Components.CategoryPieChart do
         }
       ]
     }
+  end
+
+  defp chart_value(val) do
+    val
+    |> Parse.parse_float()
+    |> Float.round(2)
   end
 
 end
