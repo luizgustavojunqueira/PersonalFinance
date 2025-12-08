@@ -92,4 +92,11 @@ defmodule PersonalFinance.Utils.DateUtils do
     local_dt = to_local_time_with_date(dt)
     {NaiveDateTime.to_date(local_dt), NaiveDateTime.to_time(local_dt)}
   end
+
+  def shift_month(year, month, delta) when is_integer(year) and is_integer(month) and is_integer(delta) do
+    total = year * 12 + month - 1 + delta
+    new_year = div(total, 12)
+    new_month = rem(total, 12) + 1
+    {new_year, new_month}
+  end
 end

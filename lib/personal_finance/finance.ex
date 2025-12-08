@@ -758,7 +758,7 @@ defmodule PersonalFinance.Finance do
   end
 
   defp parse_year_month_or_default(nil, %Date{} = today, delta_months) do
-    shift_month(today.year, today.month, delta_months)
+    DateUtils.shift_month(today.year, today.month, delta_months)
   end
 
   defp parse_year_month_or_default(value, %Date{} = _today, _delta_months) when is_binary(value) do
@@ -780,13 +780,6 @@ defmodule PersonalFinance.Finance do
     last_day = Date.days_in_month(date)
     end_date = %Date{date | day: last_day}
     DateTime.new!(end_date, ~T[23:59:59], "Etc/UTC")
-  end
-
-  defp shift_month(year, month, delta) do
-    total = (year * 12 + month - 1) + delta
-    new_year = div(total, 12)
-    new_month = rem(total, 12) + 1
-    {new_year, new_month}
   end
 
   @doc """

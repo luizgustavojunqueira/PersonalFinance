@@ -2,6 +2,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
   use PersonalFinanceWeb, :live_component
 
   alias PersonalFinance.Finance
+  alias PersonalFinance.Utils.CurrencyUtils, as: Currency
   alias Phoenix.LiveView.JS
 
   @impl true
@@ -220,7 +221,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
               <%= if slider_disabled?(category) do %>
                 <div class="flex items-center gap-4 text-sm">
                   <span class="font-semibold tabular-nums w-16 text-right">
-                    {format_percentage(category.percentage)}
+                    {Currency.format_percentage(category.percentage)}
                   </span>
                   <span class="text-xs uppercase tracking-wide text-base-content/50">
                     {gettext("Locked")}
@@ -234,7 +235,7 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
                 >
                   <input type="hidden" name="category_id" value={category.id} />
                   <span class="text-sm font-semibold tabular-nums w-16 text-right">
-                    {format_percentage(category.percentage)}
+                    {Currency.format_percentage(category.percentage)}
                   </span>
                   <div class="slider-shell relative">
                     <input
@@ -356,16 +357,5 @@ defmodule PersonalFinanceWeb.CategoryLive.CategoriesPanel do
     progress = slider_progress(category)
 
     "--slider-progress: #{progress}%; --slider-primary: var(--color-primary); --slider-track: #ffffff;"
-  end
-
-  defp format_percentage(nil), do: "0.00%"
-
-  defp format_percentage(value) do
-    formatted =
-      value
-      |> Float.round(2)
-      |> :erlang.float_to_binary(decimals: 2)
-
-    formatted <> "%"
   end
 end

@@ -44,4 +44,16 @@ defmodule PersonalFinance.Utils.CurrencyUtils do
     |> Decimal.new()
     |> format_rate()
   end
+
+  def format_percentage(nil), do: "-"
+  def format_percentage(%Decimal{} = d), do: d |> Decimal.to_float() |> format_percentage()
+
+  def format_percentage(value) when is_number(value) do
+    value
+    |> Float.round(2)
+    |> :erlang.float_to_binary(decimals: 2)
+    |> Kernel.<>("%")
+  end
+
+  def format_percentage(_), do: "-"
 end

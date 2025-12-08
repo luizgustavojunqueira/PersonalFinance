@@ -2,6 +2,8 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
   use PersonalFinanceWeb, :live_view
 
   alias PersonalFinance.Finance
+  alias PersonalFinance.Utils.CurrencyUtils, as: Currency
+  alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Utils.ParseUtils, as: Parse
   import PersonalFinanceWeb.Components.CategoryPieChart
 
@@ -52,7 +54,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   @impl true
   def handle_event("prev_month", _, socket) do
-    {year, month} = shift_month(socket.assigns.selected_year, socket.assigns.selected_month, -1)
+    {year, month} = DateUtils.shift_month(socket.assigns.selected_year, socket.assigns.selected_month, -1)
 
     {:noreply,
      socket
@@ -62,7 +64,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   @impl true
   def handle_event("next_month", _, socket) do
-    {year, month} = shift_month(socket.assigns.selected_year, socket.assigns.selected_month, 1)
+    {year, month} = DateUtils.shift_month(socket.assigns.selected_year, socket.assigns.selected_month, 1)
 
     {:noreply,
      socket
@@ -159,7 +161,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
     current_month = List.first(monthly_data)
 
-    {prev_year, prev_month} = shift_month(year, month, -1)
+    {prev_year, prev_month} = DateUtils.shift_month(year, month, -1)
     prev_month_str = "#{prev_year}-#{String.pad_leading("#{prev_month}", 2, "0")}"
     prev_filters = %{start_month: prev_month_str, end_month: prev_month_str}
 
@@ -190,7 +192,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp default_filters do
     today = Date.utc_today()
-    {start_year, start_month} = shift_month(today.year, today.month, -11)
+    {start_year, start_month} = DateUtils.shift_month(today.year, today.month, -11)
 
     %{
       start_month: format_month_param(start_year, start_month),
@@ -200,13 +202,6 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp format_month_param(year, month) do
     :io_lib.format("~4..0B-~2..0B", [year, month]) |> IO.iodata_to_binary()
-  end
-
-  defp shift_month(year, month, delta) do
-    total = year * 12 + month - 1 + delta
-    new_year = div(total, 12)
-    new_month = rem(total, 12) + 1
-    {new_year, new_month}
   end
 
   defp build_category_compare(nil, _prev_month, _categories), do: []
@@ -439,12 +434,12 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
     <div class="grid gap-4 md:grid-cols-4">
       <.summary_card
         title={gettext("Last month net")}
-        value={format_money(assigns[:latest_month] && @latest_month.net)}
+        value={Currency.format_money(assigns[:latest_month] && @latest_month.net)}
         detail={trend_text(net_trend(assigns[:latest_month], assigns[:prev_month]))}
       />
       <.summary_card
         title={gettext("Last month income")}
-        value={format_money(assigns[:latest_month] && @latest_month.income)}
+        value={Currency.format_money(assigns[:latest_month] && @latest_month.income)}
         detail={
           trend_text(
             value_diff(
@@ -456,7 +451,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
       />
       <.summary_card
         title={gettext("Last month expenses")}
-        value={format_money(assigns[:latest_month] && @latest_month.expense)}
+        value={Currency.format_money(assigns[:latest_month] && @latest_month.expense)}
         detail={
           trend_text(
             value_diff(
@@ -468,7 +463,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
       />
       <.summary_card
         title={gettext("Closing balance")}
-        value={format_money(assigns[:latest_month] && @latest_month.closing_balance)}
+        value={Currency.format_money(assigns[:latest_month] && @latest_month.closing_balance)}
         detail={trend_text(closing_trend(assigns[:latest_month], assigns[:prev_month]))}
       />
     </div>
@@ -565,14 +560,14 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
           <div class="grid gap-4 md:grid-cols-4">
             <.summary_card
               title={gettext("Net")}
-              value={format_money(@current_month_data.net)}
+              value={Currency.format_money(@current_month_data.net)}
               detail={
                 trend_text(net_trend(assigns[:current_month_data], assigns[:previous_month_data]))
               }
             />
             <.summary_card
               title={gettext("Income")}
-              value={format_money(@current_month_data.income)}
+              value={Currency.format_money(@current_month_data.income)}
               detail={
                 trend_text(
                   value_diff(
@@ -584,7 +579,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
             />
             <.summary_card
               title={gettext("Expenses")}
-              value={format_money(@current_month_data.expense)}
+              value={Currency.format_money(@current_month_data.expense)}
               detail={
                 trend_text(
                   value_diff(
@@ -596,7 +591,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
             />
             <.summary_card
               title={gettext("Closing balance")}
-              value={format_money(@current_month_data.closing_balance)}
+              value={Currency.format_money(@current_month_data.closing_balance)}
               detail={
                 trend_text(closing_trend(assigns[:current_month_data], assigns[:previous_month_data]))
               }
@@ -650,7 +645,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
                         {cat.category_name}
                       </div>
                     </td>
-                    <td class="text-right font-semibold">{format_money(cat.total)}</td>
+                    <td class="text-right font-semibold">{Currency.format_money(cat.total)}</td>
                   </tr>
                 <% end %>
               </tbody>
@@ -685,7 +680,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
                         {cat.category_name}
                       </div>
                     </td>
-                    <td class="text-right font-semibold">{format_money(cat.total)}</td>
+                    <td class="text-right font-semibold">{Currency.format_money(cat.total)}</td>
                   </tr>
                 <% end %>
               </tbody>
@@ -732,22 +727,10 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp trend_text(nil), do: "-"
   defp trend_text(value) when is_number(value) and value == 0, do: gettext("No change")
-  defp trend_text(value) when is_number(value) and value > 0, do: "+" <> format_money(value)
-  defp trend_text(value) when is_number(value), do: format_money(value)
+  defp trend_text(value) when is_number(value) and value > 0, do: "+" <> Currency.format_money(value)
+  defp trend_text(value) when is_number(value), do: Currency.format_money(value)
 
   defp value_diff(nil, _prev), do: nil
   defp value_diff(_current, nil), do: nil
   defp value_diff(current, prev), do: current - prev
-
-  defp format_money(nil), do: "-"
-
-  defp format_money(value) do
-    PersonalFinance.Utils.CurrencyUtils.format_money(value)
-  end
-
-  defp format_percent(nil), do: "-"
-
-  defp format_percent(value) do
-    :io_lib.format("~.1f%%", [value]) |> IO.iodata_to_binary()
-  end
 end
