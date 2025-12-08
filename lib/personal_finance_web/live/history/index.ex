@@ -2,6 +2,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
   use PersonalFinanceWeb, :live_view
 
   alias PersonalFinance.Finance
+  import PersonalFinanceWeb.Components.CategoryPieChart
 
   @impl true
   def mount(params, _session, socket) do
@@ -170,17 +171,12 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
     previous_month = List.first(prev_monthly_data)
 
-    month_expense_pie = chart_category_pie(expense_data)
-    month_income_pie = chart_category_pie(income_data)
-
     socket
     |> assign(
       current_month_data: current_month,
       previous_month_data: previous_month,
       month_expense_data: expense_data,
-      month_income_data: income_data,
-      month_expense_pie: month_expense_pie,
-      month_income_pie: month_income_pie
+      month_income_data: income_data
     )
   end
 
@@ -352,52 +348,6 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
   defp to_float(%Decimal{} = d), do: Decimal.to_float(d)
   defp to_float(value) when is_float(value), do: value
   defp to_float(value) when is_integer(value), do: value * 1.0
-
-  defp chart_category_pie([]), do: %{}
-
-  defp chart_category_pie(categories) do
-    data =
-      Enum.map(categories, fn cat ->
-        %{
-          value: to_float(cat.total),
-          name: cat.category_name,
-          itemStyle: %{color: cat.category_color}
-        }
-      end)
-
-    %{
-      tooltip: %{trigger: "item", formatter: "{b}: {c} ({d}%)"},
-      legend: %{
-        orient: "vertical",
-        left: "left",
-        data: Enum.map(categories, & &1.category_name)
-      },
-      series: [
-        %{
-          type: "pie",
-          radius: ["40%", "70%"],
-          avoidLabelOverlap: false,
-          itemStyle: %{
-            borderRadius: 10,
-            borderColor: "#fff",
-            borderWidth: 2
-          },
-          label: %{
-            show: true,
-            formatter: "{b}: {d}%"
-          },
-          emphasis: %{
-            label: %{
-              show: true,
-              fontSize: 16,
-              fontWeight: "bold"
-            }
-          },
-          data: data
-        }
-      ]
-    }
-  end
 
   defp month_label(%{year: y, month: m}) do
     :io_lib.format("~2..0B/~4..0B", [m, y]) |> IO.iodata_to_binary()
@@ -664,36 +614,18 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
       </div>
 
       <div class="grid gap-4 md:grid-cols-2">
-        <%= if assigns[:month_income_data] && assigns[:month_income_data] != [] do %>
-          <div class="rounded-2xl border border-base-300 bg-base-100/80 p-6 shadow-sm">
-            <h3 class="text-lg font-semibold text-base-content mb-4">
-              {gettext("Income by category")}
-            </h3>
-            <div class="rounded-xl bg-base-200/60 p-4 mb-4">
-              <div id="month-income-pie" phx-hook="Chart" class="h-80 w-full">
-                <div id="month-income-pie-chart" class="w-full h-80" phx-update="ignore" />
-                <div id="month-income-pie-data" hidden>
-                  {Jason.encode!(assigns[:month_income_pie] || %{})}
-                </div>
-              </div>
-            </div>
-          </div>
-        <% end %>
-        <%= if assigns[:month_expense_data] && assigns[:month_expense_data] != [] do %>
-          <div class="rounded-2xl border border-base-300 bg-base-100/80 p-6 shadow-sm">
-            <h3 class="text-lg font-semibold text-base-content mb-4">
-              {gettext("Expenses by category")}
-            </h3>
-            <div class="rounded-xl bg-base-200/60 p-4 mb-4">
-              <div id="month-expense-pie" phx-hook="Chart" class="h-80 w-full">
-                <div id="month-expense-pie-chart" class="w-full h-80" phx-update="ignore" />
-                <div id="month-expense-pie-data" hidden>
-                  {Jason.encode!(assigns[:month_expense_pie] || %{})}
-                </div>
-              </div>
-            </div>
-          </div>
-        <% end %>
+        <.category_pie_chart
+          id="month-income-pie"
+          title={gettext("Income by category")}
+          categories={assigns[:month_income_data] || []}
+          empty_message={gettext("No income data for this month")}
+        />
+        <.category_pie_chart
+          id="month-expense-pie"
+          title={gettext("Expenses by category")}
+          categories={assigns[:month_expense_data] || []}
+          empty_message={gettext("No expense data for this month")}
+        />
       </div>
 
       <%= if assigns[:month_income_data] && assigns[:month_income_data] != [] do %>

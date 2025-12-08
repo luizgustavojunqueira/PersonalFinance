@@ -5,6 +5,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Utils.CurrencyUtils
   alias PersonalFinance.Balance
+  import PersonalFinanceWeb.Components.CategoryPieChart
 
   @impl true
   def render(assigns) do
@@ -85,19 +86,22 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
             </.form>
           </div>
           <div class="p-5">
-            <div class="rounded-2xl bg-base-200/60 p-4 min-h-[320px]">
-              <%= if @chart_type == :pie do %>
-                <div id="pie" phx-hook="Chart" class="h-full">
-                  <div id="pie-chart" class="w-full h-[320px]" phx-update="ignore" />
-                  <div id="pie-data" hidden>{Jason.encode!(@chart_option)}</div>
-                </div>
-              <% else %>
+            <%= if @chart_type == :pie do %>
+              <.category_pie_chart
+                id="dashboard-pie"
+                title={gettext("Expenses by category")}
+                categories={@formatted_categories || []}
+                empty_message={gettext("No expense data")}
+                class="border-0"
+              />
+            <% else %>
+              <div class="rounded-2xl bg-base-200/60 p-4 min-h-[320px]">
                 <div id="bar" phx-hook="Chart" class="h-full">
                   <div id="bar-chart" class="w-full h-[320px]" phx-update="ignore" />
                   <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
                 </div>
-              <% end %>
-            </div>
+              </div>
+            <% end %>
           </div>
         </div>
 
@@ -338,12 +342,13 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
     transactions = socket.assigns.transactions || []
     monthly_income = socket.assigns.monthly_incomes || 0
 
-    chart_data =
-      categories
-      |> format_categories(transactions, monthly_income)
-      |> get_chart_data(chart_type)
+    formatted_categories = format_categories(categories, transactions, monthly_income)
 
-    assign(socket, chart_option: chart_data)
+    chart_data = get_chart_data(formatted_categories, chart_type)
+
+    socket
+    |> assign(chart_option: chart_data)
+    |> assign(formatted_categories: formatted_categories)
   end
 
   defp assign_messages(socket) do
