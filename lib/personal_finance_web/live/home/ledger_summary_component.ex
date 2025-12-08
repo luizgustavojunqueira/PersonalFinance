@@ -5,6 +5,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
   alias PersonalFinance.Utils.DateUtils
   alias PersonalFinance.Utils.CurrencyUtils
   alias PersonalFinance.Balance
+  alias PersonalFinance.Goals
   import PersonalFinanceWeb.Components.CategoryPieChart
 
   @impl true
@@ -167,6 +168,100 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         </div>
       </section>
 
+      <%= if !Enum.empty?(@priority_goals) do %>
+        <section class="rounded-2xl border border-base-200 bg-base-100/80 shadow-sm p-5">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+                {gettext("Goals")}
+              </p>
+              <p class="text-sm text-base-content/70">
+                {gettext("Track your savings.")}
+              </p>
+            </div>
+            <.link
+              class="text-xs font-medium text-primary hover:underline"
+              navigate={~p"/ledgers/#{@ledger.id}/goals"}
+            >
+              {gettext("See all")}
+            </.link>
+          </div>
+
+          <div class="flex gap-4 overflow-x-auto pb-2">
+            <div
+              :for={goal <- @priority_goals}
+              class="flex-shrink-0 w-80 rounded-xl border border-base-200 bg-base-200/50 p-4"
+            >
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center gap-2">
+                  <div
+                    class="w-3 h-3 rounded-full"
+                    style={"background-color: #{goal.color}"}
+                  />
+                  <h4 class="text-sm font-semibold text-base-content">
+                    <.text_ellipsis text={goal.name} max_width="max-w-[10rem]" />
+                  </h4>
+                </div>
+              </div>
+
+              <div class="space-y-2 mb-3">
+                <div class="flex justify-between text-xs text-base-content/70">
+                  <span>{gettext("Progress")}</span>
+                  <span class="font-semibold">{goal.progress_percent}%</span>
+                </div>
+                <div class="w-full bg-base-300 rounded-full h-2">
+                  <div
+                    class="h-2 rounded-full transition-all duration-300"
+                    style={"width: #{goal.progress_percent}%; background-color: #{goal.color}"}
+                  />
+                </div>
+              </div>
+
+              <div class="space-y-1.5">
+                <div class="flex justify-between text-xs">
+                  <span class="text-base-content/60">{gettext("Current")}</span>
+                  <span class="font-medium text-base-content">
+                    {CurrencyUtils.format_money(Decimal.to_float(goal.current_total))}
+                  </span>
+                </div>
+                <div class="flex justify-between text-xs">
+                  <span class="text-base-content/60">{gettext("Target")}</span>
+                  <span class="font-medium text-base-content">
+                    {CurrencyUtils.format_money(Decimal.to_float(goal.target_amount))}
+                  </span>
+                </div>
+                <%= if goal.forecast_date do %>
+                  <div class="flex justify-between text-xs">
+                    <span class="text-base-content/60">{gettext("Forecast")}</span>
+                    <span class={[
+                      "font-medium",
+                      if(goal.will_meet_goal, do: "text-success", else: "text-warning")
+                    ]}>
+                      {DateUtils.format_date(goal.forecast_date)}
+                    </span>
+                  </div>
+                <% end %>
+                <%= if goal.days_remaining do %>
+                  <div class="flex justify-between text-xs">
+                    <span class="text-base-content/60">{gettext("Days left")}</span>
+                    <span class={[
+                      "font-medium",
+                      cond do
+                        goal.days_remaining < 0 -> "text-error"
+                        goal.days_remaining < 30 -> "text-warning"
+                        true -> "text-base-content"
+                      end
+                    ]}>
+                      {if goal.days_remaining < 0, do: "#{gettext("Overdue")} #{abs(goal.days_remaining)}d", else: "#{goal.days_remaining}d"}
+                    </span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </section>
+      <% end %>
+
       <section class="grid gap-6 lg:grid-cols-3">
         <div class="rounded-2xl border border-base-200 bg-base-100/80 shadow-sm p-5">
           <div class="flex items-center justify-between mb-4">
@@ -280,7 +375,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
      |> assign(
        chart_type: chart_type,
        form_chart: to_form(%{"chart_type" => chart_type}),
-       recent_transactions: []
+       recent_transactions: [],
+       priority_goals: []
      )}
   end
 
@@ -294,6 +390,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
      |> assign(:recent_transactions, recent_transactions)
      |> assign_balance()
      |> assign_investment_data()
+     |> assign_goals_data()
      |> assign_chart_data()
      |> assign_messages()}
   end
@@ -339,6 +436,61 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       total_invested: investment_data.total_invested,
       current_value: investment_data.total_balance
     )
+  end
+
+  defp assign_goals_data(socket) do
+    current_scope = socket.assigns.current_scope
+    ledger = socket.assigns.ledger
+
+    goals =
+      Goals.list_goals(current_scope, ledger.id, preload: [:fixed_incomes, :profile])
+      |> Enum.map(fn goal ->
+        forecast = Goals.forecast(goal, ledger.id)
+
+        current_total =
+          goal.fixed_incomes
+          |> Enum.map(&Decimal.from_float(&1.current_balance))
+          |> Enum.reduce(Decimal.new("0"), &Decimal.add/2)
+
+        progress_percent =
+          if Decimal.compare(goal.target_amount, Decimal.new("0")) == :gt do
+            current_total
+            |> Decimal.div(goal.target_amount)
+            |> Decimal.mult(Decimal.new("100"))
+            |> Decimal.round(1)
+            |> Decimal.to_float()
+            |> min(100.0)
+          else
+            0.0
+          end
+
+        days_remaining =
+          case {forecast.forecast_date, goal.target_date} do
+            {%Date{} = _f_date, %Date{} = t_date} -> Date.diff(t_date, Date.utc_today())
+            _ -> nil
+          end
+
+        will_meet_goal =
+          case {forecast.forecast_date, goal.target_date} do
+            {%Date{} = f_date, %Date{} = t_date} -> Date.compare(f_date, t_date) != :gt
+            _ -> false
+          end
+
+        %{
+          id: goal.id,
+          name: goal.name,
+          color: goal.color,
+          target_amount: goal.target_amount,
+          current_total: current_total,
+          progress_percent: progress_percent,
+          days_remaining: days_remaining,
+          forecast_date: forecast.forecast_date,
+          will_meet_goal: will_meet_goal
+        }
+      end)
+      |> Enum.sort_by(fn g -> 100.0 - g.progress_percent end)
+
+    assign(socket, priority_goals: goals)
   end
 
   defp assign_chart_data(socket) do
@@ -475,62 +627,6 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
     else
       text
     end
-  end
-
-  defp get_chart_data(categories_data, :pie) do
-    option = %{
-      tooltip: %{
-        trigger: "item",
-        formatter: "{b}: {c} ({d}%)"
-      },
-      legend: %{
-        top: "0",
-        left: "left",
-        textStyle: %{
-          fontSize: 18
-        },
-        formatter: "{name}"
-      },
-      series: [
-        %{
-          name: "Categoria",
-          type: "pie",
-          radius: ["20%", "50%"],
-          itemStyle: %{
-            borderRadius: 10,
-            borderColor: "#fff",
-            borderWidth: 1
-          },
-          label: %{
-            show: true,
-            position: "outside",
-            formatter: "{b}: {d}%",
-            fontSize: 14
-          },
-          emphasis: %{
-            label: %{
-              show: false
-            }
-          },
-          labelLine: %{
-            show: false
-          },
-          data:
-            Enum.map(categories_data, fn category ->
-              %{
-                name: truncate_text(category.name, 12),
-                value: category.total,
-                originalName: category.name,
-                itemStyle: %{
-                  color: category.color
-                }
-              }
-            end)
-        }
-      ]
-    }
-
-    option
   end
 
   defp get_chart_data(categories_data, :bars) do
@@ -735,4 +831,8 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
       ]
     }
   end
+
+    defp get_chart_data(_categories_data, _type) do
+      %{ }
+    end
 end

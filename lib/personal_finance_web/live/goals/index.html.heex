@@ -155,8 +155,8 @@
           </div>
 
           <div class="grid gap-4 sm:grid-cols-2">
-            <div class="space-y-1" id="goal-target-amount-input" phx-update="ignore">
-              <label class="text-sm font-medium" for="goal_target_amount_input">{gettext("Target amount (R$)")}</label>
+            <fieldset class="fieldset w-full" id="goal-target-amount-input" phx-update="ignore">
+              <legend class="fieldset-legend">{gettext("Target amount (R$)")}</legend>
               <input
                 id="goal_target_amount_input"
                 type="text"
@@ -169,13 +169,13 @@
                 name="goal[target_amount]"
                 value={@form[:target_amount].value}
               />
-            </div>
+            </fieldset>
 
             <.input
               field={@form[:profile_id]}
               type="select"
               label={gettext("Profile")}
-              options={[{gettext("None"), nil} | Enum.map(@profiles, &{&1.name, &1.id})]}
+              options={Enum.map(@profiles, &{&1.name, &1.id})}
             />
           </div>
 
