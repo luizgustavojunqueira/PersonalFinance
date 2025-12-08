@@ -410,7 +410,7 @@ Considerando 3–4 horas por dia útil + 6–7h em fins de semana, algo como 20�
   - Itens 7–10: sugestão de categoria, limites mensais + % usado, histórico de categorias e snapshots mensais básicos.
 
 - **Mês 5–6**  
-  - Itens 11–14: Import Wizard v1, event log leve, checklist mensal e modo foco.  
+  - Itens 11–14: Import Wizard v1, event log leve, checklist mensal, modo foco e adicionar grafico de porcentagens na tela de configuração de categoria. 
   - Se sobrar tempo/ânimo, começar 15 (visualização de ações) ou 17 (Goals vinculados a FI).
 
 Itens 16–19 podem ser encaixados conforme motivação e necessidade real, sem pressão — o importante é manter o sistema saudável e útil pra você no dia a dia.
