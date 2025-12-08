@@ -12,6 +12,22 @@ defmodule PersonalFinance.Utils.ParseUtils do
 
   def parse_float(_), do: 0.0
 
+  # Parses monetary strings handling both "1.234,56" and "1234.56".
+  def parse_float_locale(val) when is_binary(val) do
+    trimmed = String.trim(val)
+
+    if String.contains?(trimmed, ",") do
+      trimmed
+      |> String.replace(".", "")
+      |> String.replace(",", ".")
+      |> parse_float()
+    else
+      parse_float(trimmed)
+    end
+  end
+
+  def parse_float_locale(val), do: parse_float(val)
+
   def parse_int(nil), do: 0
   def parse_int(val) when is_integer(val), do: val
   def parse_int(val) when is_float(val), do: trunc(val)
@@ -62,12 +78,31 @@ defmodule PersonalFinance.Utils.ParseUtils do
   def format_float_for_input(other), do: other
 
   def parse_date(date) when is_binary(date) do
-    [day, month, year] = String.split(date, "/")
-    Date.from_iso8601!("#{year}-#{month}-#{day}")
+    date
+    |> String.split(~r{[-/]})
+    |> case do
+      [day, month, year] -> Date.from_iso8601!("#{year}-#{month}-#{day}")
+      _ -> raise(ArgumentError, "Invalid date format: #{inspect(date)}")
+    end
   end
 
   def parse_date(%Date{} = date), do: date
   def parse_date(value), do: raise(ArgumentError, "Invalid date format: #{inspect(value)}")
+
+  # Safe parse that returns {:ok, date} | :error without raising.
+  def parse_date_safe(nil), do: :error
+
+  def parse_date_safe(date) when is_binary(date) do
+    date
+    |> String.split(~r{[-/]})
+    |> case do
+      [day, month, year] -> Date.from_iso8601("#{year}-#{month}-#{day}")
+      _ -> :error
+    end
+  end
+
+  def parse_date_safe(%Date{} = date), do: {:ok, date}
+  def parse_date_safe(_), do: :error
 
   def parse_datetime(nil), do: nil
   def parse_datetime(""), do: nil

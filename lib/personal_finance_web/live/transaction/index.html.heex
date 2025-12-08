@@ -14,14 +14,12 @@
             <.icon name="hero-arrow-down-tray" class="w-4 h-4" />
             {gettext("Export")}
           </.button>
-          <.button
-            variant="custom"
-            class="flex-1 lg:flex-none btn-outline"
-            phx-click="open_modal"
-            phx-value-modal={:import_transactions}
+          <.link
+            class="flex-1 lg:flex-none btn btn-outline"
+            navigate={~p"/ledgers/#{@ledger.id}/transactions/import_wizard"}
           >
-            <.icon name="hero-arrow-up-tray" class="w-4 h-4" /> {gettext("Import")}
-          </.button>
+            <.icon name="hero-wrench-screwdriver" class="w-4 h-4" /> {gettext("Import wizard")}
+          </.link>
           <.button
             class="flex-1 lg:flex-none btn-ghost"
             variant="custom"
@@ -56,14 +54,6 @@
       profiles={@profiles}
       categories={@categories}
       investment_types={@investment_types}
-    />
-
-    <.live_component
-      module={PersonalFinanceWeb.TransactionLive.Import}
-      id="import-transactions-modal"
-      show={@open_modal == :import_transactions}
-      ledger={@ledger}
-      current_scope={@current_scope}
     />
 
     <.live_component

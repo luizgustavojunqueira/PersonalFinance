@@ -6,16 +6,14 @@ defmodule PersonalFinance.Utils.CurrencyUtils do
     float_value = value * 1.0
     formatted_value = :erlang.float_to_binary(float_value, decimals: 2)
 
-    parts = String.split(formatted_value, ".")
+    [integer_part, decimal_part] =
+      case String.split(formatted_value, ".") do
+        [int, dec] -> [int, dec]
+        [int] -> [int, "00"]
+      end
 
-    integer_part =
-      parts
-      |> List.first()
-      |> String.replace(~r/(?<=\d)(?=(\d{3})+(?!\d))/, ",")
-
-    decimal_part = if length(parts) > 1, do: "." <> List.last(parts), else: ".00"
-
-    "R$ #{integer_part}#{decimal_part}"
+    integer_part_br = String.replace(integer_part, ~r/(?<=\d)(?=(\d{3})+(?!\d))/, ".")
+    "R$ #{integer_part_br},#{decimal_part}"
   end
 
   def format_amount(nil), do: "R$ 0,00"
