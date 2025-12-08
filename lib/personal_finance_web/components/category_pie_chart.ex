@@ -1,6 +1,8 @@
 defmodule PersonalFinanceWeb.Components.CategoryPieChart do
   use Phoenix.Component
 
+  alias PersonalFinance.Utils.ParseUtils, as: Parse
+
   @doc """
   Renders a category pie chart component.
 
@@ -50,7 +52,7 @@ defmodule PersonalFinanceWeb.Components.CategoryPieChart do
         color = Map.get(cat, :category_color) || Map.get(cat, :color) || Map.get(cat, "category_color") || Map.get(cat, "color")
 
         %{
-          value: to_float(cat.total),
+          value: Parse.parse_float(cat.total),
           name: name,
           itemStyle: %{color: color}
         }
@@ -90,8 +92,4 @@ defmodule PersonalFinanceWeb.Components.CategoryPieChart do
     }
   end
 
-  defp to_float(nil), do: 0.0
-  defp to_float(%Decimal{} = d), do: Decimal.to_float(d)
-  defp to_float(value) when is_float(value), do: value
-  defp to_float(value) when is_integer(value), do: value * 1.0
 end

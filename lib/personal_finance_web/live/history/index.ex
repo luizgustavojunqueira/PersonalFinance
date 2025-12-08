@@ -2,6 +2,7 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
   use PersonalFinanceWeb, :live_view
 
   alias PersonalFinance.Finance
+  alias PersonalFinance.Utils.ParseUtils, as: Parse
   import PersonalFinanceWeb.Components.CategoryPieChart
 
   @impl true
@@ -262,10 +263,10 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp chart_monthly_option(rows) do
     labels = Enum.map(rows, &month_label/1)
-    incomes = Enum.map(rows, &to_float(&1.income))
-    expenses = Enum.map(rows, &(-to_float(&1.expense)))
-    net = Enum.map(rows, &to_float(&1.net))
-    closing = Enum.map(rows, &to_float(&1.closing_balance))
+    incomes = Enum.map(rows, &Parse.parse_float(&1.income))
+    expenses = Enum.map(rows, &(-Parse.parse_float(&1.expense)))
+    net = Enum.map(rows, &Parse.parse_float(&1.net))
+    closing = Enum.map(rows, &Parse.parse_float(&1.closing_balance))
 
     %{
       tooltip: %{trigger: "axis"},
@@ -301,8 +302,8 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp chart_category_option(rows, _type) do
     labels = Enum.map(rows, & &1.name)
-    currents = Enum.map(rows, &to_float(&1.total))
-    prevs = Enum.map(rows, &to_float(&1.prev_total))
+    currents = Enum.map(rows, &Parse.parse_float(&1.total))
+    prevs = Enum.map(rows, &Parse.parse_float(&1.prev_total))
 
     %{
       tooltip: %{trigger: "axis", axisPointer: %{type: "shadow"}},
@@ -321,10 +322,10 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
 
   defp chart_fixed_income_option(rows) do
     labels = Enum.map(rows, &month_label/1)
-    inflows = Enum.map(rows, &to_float(&1.inflow))
-    outflows = Enum.map(rows, &to_float(&1.outflow))
-    net = Enum.map(rows, &to_float(&1.net))
-    cumulative = Enum.map(rows, &to_float(&1.cumulative))
+    inflows = Enum.map(rows, &Parse.parse_float(&1.inflow))
+    outflows = Enum.map(rows, &Parse.parse_float(&1.outflow))
+    net = Enum.map(rows, &Parse.parse_float(&1.net))
+    cumulative = Enum.map(rows, &Parse.parse_float(&1.cumulative))
 
     %{
       tooltip: %{trigger: "axis"},
@@ -343,11 +344,6 @@ defmodule PersonalFinanceWeb.HistoryLive.Index do
       ]
     }
   end
-
-  defp to_float(nil), do: 0.0
-  defp to_float(%Decimal{} = d), do: Decimal.to_float(d)
-  defp to_float(value) when is_float(value), do: value
-  defp to_float(value) when is_integer(value), do: value * 1.0
 
   defp month_label(%{year: y, month: m}) do
     :io_lib.format("~2..0B/~4..0B", [m, y]) |> IO.iodata_to_binary()

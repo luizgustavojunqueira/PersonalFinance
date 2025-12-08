@@ -1,6 +1,7 @@
 defmodule PersonalFinance.Utils.ParseUtils do
   def parse_float(val) when is_float(val), do: val
   def parse_float(val) when is_integer(val), do: val * 1.0
+  def parse_float(%Decimal{} = val), do: Decimal.to_float(val)
 
   def parse_float(val) when is_binary(val) do
     case Float.parse(val) do
@@ -10,6 +11,19 @@ defmodule PersonalFinance.Utils.ParseUtils do
   end
 
   def parse_float(_), do: 0.0
+
+  def parse_int(nil), do: 0
+  def parse_int(val) when is_integer(val), do: val
+  def parse_int(val) when is_float(val), do: trunc(val)
+
+  def parse_int(val) when is_binary(val) do
+    case Integer.parse(val) do
+      {number, _} -> number
+      :error -> 0
+    end
+  end
+
+  def parse_int(_), do: 0
 
   def parse_id(""), do: nil
   def parse_id(nil), do: nil

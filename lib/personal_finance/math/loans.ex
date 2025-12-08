@@ -3,6 +3,8 @@ defmodule PersonalFinance.Math.Loans do
   Financing and loan helpers (Price system).
   """
 
+  alias PersonalFinance.Utils.ParseUtils, as: Parse
+
   @type rate_period :: :month | :year
   @type duration_unit :: :month | :year
 
@@ -25,12 +27,12 @@ defmodule PersonalFinance.Math.Loans do
 
   @spec price_amortization(price_params()) :: %{payment: float(), total_paid: float(), total_interest: float(), schedule: [schedule_row()], months_used: pos_integer()} | nil
   def price_amortization(params) do
-    principal = to_float(params.principal)
-    rate = to_float(params.rate) / 100.0
+    principal = Parse.parse_float(params.principal)
+    rate = Parse.parse_float(params.rate) / 100.0
     rate_period = params.rate_period || :month
-    duration = to_int(params.duration)
+    duration = Parse.parse_int(params.duration)
     duration_unit = params.duration_unit || :month
-    extra = to_float(params[:extra] || 0)
+    extra = Parse.parse_float(params[:extra] || 0)
 
     total_months =
       case {duration_unit, duration} do
@@ -68,12 +70,12 @@ defmodule PersonalFinance.Math.Loans do
 
   @spec sac_amortization(price_params()) :: %{payment: float(), total_paid: float(), total_interest: float(), schedule: [schedule_row()], months_used: pos_integer()} | nil
   def sac_amortization(params) do
-    principal = to_float(params.principal)
-    rate = to_float(params.rate) / 100.0
+    principal = Parse.parse_float(params.principal)
+    rate = Parse.parse_float(params.rate) / 100.0
     rate_period = params.rate_period || :month
-    duration = to_int(params.duration)
+    duration = Parse.parse_int(params.duration)
     duration_unit = params.duration_unit || :month
-    extra = to_float(params[:extra] || 0)
+    extra = Parse.parse_float(params[:extra] || 0)
 
     total_months =
       case {duration_unit, duration} do
@@ -189,26 +191,4 @@ defmodule PersonalFinance.Math.Loans do
     end)
   end
 
-  defp to_float(nil), do: 0.0
-  defp to_float(v) when is_integer(v), do: v * 1.0
-  defp to_float(v) when is_float(v), do: v
-
-  defp to_float(v) when is_binary(v) do
-    case Float.parse(v) do
-      {num, _} -> num
-      :error -> 0.0
-    end
-  end
-
-  defp to_int(nil), do: 0
-  defp to_int(v) when is_integer(v), do: v
-
-  defp to_int(v) when is_binary(v) do
-    case Integer.parse(v) do
-      {num, _} -> num
-      :error -> 0
-    end
-  end
-
-  defp to_int(v) when is_float(v), do: trunc(v)
 end

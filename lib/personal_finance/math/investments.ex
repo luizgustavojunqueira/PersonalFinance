@@ -3,6 +3,8 @@ defmodule PersonalFinance.Math.Investments do
   Pure calculation helpers for investment simulations (interest, contributions, etc).
   """
 
+  alias PersonalFinance.Utils.ParseUtils, as: Parse
+
   @type rate_period :: :month | :year
   @type duration_unit :: :month | :year
 
@@ -33,12 +35,12 @@ defmodule PersonalFinance.Math.Investments do
 
   @spec simulate(simulation_params()) :: simulation_result()
   def simulate(params) do
-    principal = to_float(params.principal)
-    rate = to_float(params.rate) / 100.0
+    principal = Parse.parse_float(params.principal)
+    rate = Parse.parse_float(params.rate) / 100.0
     rate_period = params.rate_period || :month
-    duration = to_int(params.duration)
+    duration = Parse.parse_int(params.duration)
     duration_unit = params.duration_unit || :month
-    monthly_contribution = to_float(params[:monthly_contribution] || 0)
+    monthly_contribution = Parse.parse_float(params[:monthly_contribution] || 0)
     simple_interest? = params[:simple_interest] || false
 
     total_months =
@@ -155,29 +157,6 @@ defmodule PersonalFinance.Math.Investments do
     {new_balance, new_invested, new_total_interest}
   end
 
-  defp to_float(nil), do: 0.0
-  defp to_float(v) when is_integer(v), do: v * 1.0
-  defp to_float(v) when is_float(v), do: v
-
-  defp to_float(v) when is_binary(v) do
-    case Float.parse(v) do
-      {num, _} -> num
-      :error -> 0.0
-    end
-  end
-
-  defp to_int(nil), do: 0
-  defp to_int(v) when is_integer(v), do: v
-
-  defp to_int(v) when is_binary(v) do
-    case Integer.parse(v) do
-      {num, _} -> num
-      :error -> 0
-    end
-  end
-
-  defp to_int(v) when is_float(v), do: trunc(v)
-
   @doc """
   Goal seeker: calculates the required rate of return to reach a target.
 
@@ -191,10 +170,10 @@ defmodule PersonalFinance.Math.Investments do
           required(:duration_unit) => duration_unit()
         }) :: %{monthly_rate: float(), annual_rate: float()} | nil
   def calculate_required_rate(params) do
-    target = to_float(params.target)
-    principal = to_float(params.principal)
-    monthly_contribution = to_float(params.monthly_contribution)
-    duration = to_int(params.duration)
+    target = Parse.parse_float(params.target)
+    principal = Parse.parse_float(params.principal)
+    monthly_contribution = Parse.parse_float(params.monthly_contribution)
+    duration = Parse.parse_int(params.duration)
     duration_unit = params.duration_unit || :month
 
     total_months =
@@ -320,11 +299,11 @@ defmodule PersonalFinance.Math.Investments do
           required(:duration_unit) => duration_unit()
         }) :: float() | nil
   def calculate_required_contribution(params) do
-    target = to_float(params.target)
-    principal = to_float(params.principal)
-    rate = to_float(params.rate) / 100.0
+    target = Parse.parse_float(params.target)
+    principal = Parse.parse_float(params.principal)
+    rate = Parse.parse_float(params.rate) / 100.0
     rate_period = params.rate_period || :month
-    duration = to_int(params.duration)
+    duration = Parse.parse_int(params.duration)
     duration_unit = params.duration_unit || :month
 
     total_months =

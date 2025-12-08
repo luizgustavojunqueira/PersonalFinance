@@ -3,6 +3,8 @@ defmodule PersonalFinance.Math.Retirement do
   Financial Independence and Retirement projection calculations.
   """
 
+  alias PersonalFinance.Utils.ParseUtils, as: Parse
+
   @type fi_params :: %{
           required(:monthly_expenses) => number(),
           required(:withdrawal_rate) => number(),
@@ -69,11 +71,11 @@ defmodule PersonalFinance.Math.Retirement do
   """
   @spec calculate_fi(fi_params()) :: fi_result() | nil
   def calculate_fi(params) do
-    monthly_expenses = to_float(params.monthly_expenses)
-    withdrawal_rate = to_float(params.withdrawal_rate) / 100.0
-    current_wealth = to_float(params.current_wealth)
-    monthly_contribution = to_float(params.monthly_contribution)
-    monthly_return = to_float(params.return_rate) / 100.0
+    monthly_expenses = Parse.parse_float(params.monthly_expenses)
+    withdrawal_rate = Parse.parse_float(params.withdrawal_rate) / 100.0
+    current_wealth = Parse.parse_float(params.current_wealth)
+    monthly_contribution = Parse.parse_float(params.monthly_contribution)
+    monthly_return = Parse.parse_float(params.return_rate) / 100.0
     max_years = params[:max_years] || 50
 
     if monthly_expenses <= 0 or withdrawal_rate <= 0 or monthly_contribution < 0 or monthly_return < 0 do
@@ -131,11 +133,11 @@ defmodule PersonalFinance.Math.Retirement do
   """
   @spec calculate_retirement(retirement_params()) :: retirement_result() | nil
   def calculate_retirement(params) do
-    years_to_retirement = to_int(params.years_to_retirement)
-    current_wealth = to_float(params.current_wealth)
-    monthly_contribution = to_float(params.monthly_contribution)
-    monthly_accumulation_rate = to_float(params.accumulation_rate) / 100.0
-    monthly_retirement_rate = to_float(params.retirement_rate) / 100.0
+    years_to_retirement = Parse.parse_int(params.years_to_retirement)
+    current_wealth = Parse.parse_float(params.current_wealth)
+    monthly_contribution = Parse.parse_float(params.monthly_contribution)
+    monthly_accumulation_rate = Parse.parse_float(params.accumulation_rate) / 100.0
+    monthly_retirement_rate = Parse.parse_float(params.retirement_rate) / 100.0
     strategy = params.strategy || :perpetual
     lifespan_years = params[:lifespan_years] || 30
 
@@ -295,26 +297,4 @@ defmodule PersonalFinance.Math.Retirement do
 
   defp calculate_pmt(_present_value, _rate, _periods), do: 0.0
 
-  defp to_float(nil), do: 0.0
-  defp to_float(v) when is_integer(v), do: v * 1.0
-  defp to_float(v) when is_float(v), do: v
-
-  defp to_float(v) when is_binary(v) do
-    case Float.parse(v) do
-      {num, _} -> num
-      :error -> 0.0
-    end
-  end
-
-  defp to_int(nil), do: 0
-  defp to_int(v) when is_integer(v), do: v
-
-  defp to_int(v) when is_binary(v) do
-    case Integer.parse(v) do
-      {num, _} -> num
-      :error -> 0
-    end
-  end
-
-  defp to_int(v) when is_float(v), do: trunc(v)
 end

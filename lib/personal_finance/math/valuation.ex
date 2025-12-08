@@ -3,6 +3,8 @@ defmodule PersonalFinance.Math.Valuation do
   Present/Future value calculations for single cash flows.
   """
 
+  alias PersonalFinance.Utils.ParseUtils, as: Parse
+
   @type rate_period :: :month | :year
   @type duration_unit :: :month | :year
 
@@ -28,10 +30,10 @@ defmodule PersonalFinance.Math.Valuation do
   @spec calculate(params()) :: result() | nil
   def calculate(params) do
     mode = params.mode || :pv
-    amount = to_float(params.amount)
-    rate = to_float(params.rate) / 100.0
+    amount = Parse.parse_float(params.amount)
+    rate = Parse.parse_float(params.rate) / 100.0
     rate_period = params.rate_period || :month
-    duration = to_int(params.duration)
+    duration = Parse.parse_int(params.duration)
     duration_unit = params.duration_unit || :month
 
     total_months = to_months(duration, duration_unit)
@@ -95,26 +97,4 @@ defmodule PersonalFinance.Math.Valuation do
   defp to_months(duration, :year), do: max(duration, 0) * 12
   defp to_months(duration, :month), do: max(duration, 0)
 
-  defp to_float(nil), do: 0.0
-  defp to_float(v) when is_integer(v), do: v * 1.0
-  defp to_float(v) when is_float(v), do: v
-
-  defp to_float(v) when is_binary(v) do
-    case Float.parse(v) do
-      {num, _} -> num
-      :error -> 0.0
-    end
-  end
-
-  defp to_int(nil), do: 0
-  defp to_int(v) when is_integer(v), do: v
-
-  defp to_int(v) when is_binary(v) do
-    case Integer.parse(v) do
-      {num, _} -> num
-      :error -> 0
-    end
-  end
-
-  defp to_int(v) when is_float(v), do: trunc(v)
 end

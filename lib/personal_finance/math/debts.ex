@@ -3,6 +3,8 @@ defmodule PersonalFinance.Math.Debts do
   Debt payoff vs. invest comparison helpers.
   """
 
+  alias PersonalFinance.Utils.ParseUtils, as: Parse
+
   @type comparison_params :: %{
           required(:price) => number(),
           optional(:discount_pct) => number(),
@@ -43,11 +45,11 @@ defmodule PersonalFinance.Math.Debts do
 
   @spec compare(comparison_params()) :: result() | nil
   def compare(params) do
-    price = to_float(params.price)
-    discount_pct = max(to_float(params[:discount_pct] || 0.0), 0.0)
-    installments = to_int(params.installments)
-    finance_rate = to_float(params.finance_rate) / 100.0
-    invest_rate = to_float(params.invest_rate) / 100.0
+    price = Parse.parse_float(params.price)
+    discount_pct = max(Parse.parse_float(params[:discount_pct] || 0.0), 0.0)
+    installments = Parse.parse_int(params.installments)
+    finance_rate = Parse.parse_float(params.finance_rate) / 100.0
+    invest_rate = Parse.parse_float(params.invest_rate) / 100.0
 
     if price <= 0 or installments <= 0 or finance_rate < 0 or invest_rate < 0 do
       nil
@@ -134,27 +136,4 @@ defmodule PersonalFinance.Math.Debts do
     factor = :math.pow(1.0 + rate, installments)
     principal * (rate * factor) / (factor - 1.0)
   end
-
-  defp to_float(nil), do: 0.0
-  defp to_float(v) when is_integer(v), do: v * 1.0
-  defp to_float(v) when is_float(v), do: v
-
-  defp to_float(v) when is_binary(v) do
-    case Float.parse(v) do
-      {num, _} -> num
-      :error -> 0.0
-    end
-  end
-
-  defp to_int(nil), do: 0
-  defp to_int(v) when is_integer(v), do: v
-
-  defp to_int(v) when is_binary(v) do
-    case Integer.parse(v) do
-      {num, _} -> num
-      :error -> 0
-    end
-  end
-
-  defp to_int(v) when is_float(v), do: trunc(v)
 end
