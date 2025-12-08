@@ -21,7 +21,6 @@ defmodule PersonalFinance.Repo.Migrations.CreateGoals do
     create table(:goal_fixed_incomes) do
       add :goal_id, references(:goals, on_delete: :delete_all), null: false
       add :fixed_income_id, references(:fixed_income, on_delete: :delete_all), null: false
-      add :allocation_percent, :float
 
       timestamps(type: :utc_datetime)
     end
