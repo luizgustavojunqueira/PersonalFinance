@@ -1,0 +1,226 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} show_sidebar={true} ledger={@ledger}>
+  <div class="min-h-screen pb-12 space-y-6">
+    <section class="bg-base-100/80 border border-base-300 rounded-2xl p-6 shadow-sm mt-4">
+      <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+            {gettext("Goals")}
+          </p>
+          <div class="space-y-1">
+            <h1 class="text-3xl font-bold text-base-content">{@ledger.name}</h1>
+            <p class="text-sm text-base-content/70">
+              {gettext("Define targets and link fixed income to reach them")}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+          <.button variant="primary" phx-click="open_modal" phx-value-modal={:new_goal}>
+            <.icon name="hero-flag" class="w-4 h-4" />
+            {gettext("New goal")}
+          </.button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-base-100/60 border border-dashed border-base-300 rounded-2xl p-4">
+      <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3" id="goals">
+        <div
+          :for={goal <- @goals}
+          class="rounded-2xl border border-base-300 bg-base-100/90 p-5 shadow-sm flex flex-col gap-4"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <div class="h-3 w-3 rounded-full" style={"background-color: #{goal.color || "#2563eb"};"}></div>
+                <p class="text-xs uppercase tracking-wide text-primary/70">{gettext("Goal")}</p>
+              </div>
+              <h3 class="text-xl font-semibold text-base-content">{goal.name}</h3>
+              <p :if={goal.profile} class="text-xs inline-flex items-center gap-2 rounded-full border border-base-300 px-2 py-1">
+                <span class="h-2.5 w-2.5 rounded-full" style={"background-color: #{goal.profile.color};"}></span>
+                {goal.profile.name}
+              </p>
+              <p :if={goal.description} class="text-sm text-base-content/70">{goal.description}</p>
+            </div>
+            <div class="flex gap-2">
+              <.button size="sm" variant="custom" class="btn-ghost" phx-click="edit_goal" phx-value-id={goal.id}>
+                <.icon name="hero-pencil" />
+              </.button>
+              <.button size="sm" variant="custom" class="btn-ghost" phx-click="delete_goal" phx-value-id={goal.id}>
+                <.icon name="hero-trash" />
+              </.button>
+            </div>
+          </div>
+
+          <% forecast = PersonalFinance.Goals.forecast(goal, @ledger.id) %>
+          <% target_amount = goal.target_amount || Decimal.new("0") %>
+          <% current_total = forecast.current_total || Decimal.new("0") %>
+          <% progress =
+            case Decimal.compare(target_amount, 0) do
+              :gt ->
+                Decimal.div(current_total, target_amount)
+                |> Decimal.mult(100)
+                |> Decimal.to_float()
+                |> max(0.0)
+                |> min(100.0)
+              _ -> 0.0
+            end %>
+
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-sm">
+              <span class="text-base-content/70">{gettext("Progress")}</span>
+              <span class="font-semibold">{CurrencyUtils.format_percentage(progress)}</span>
+            </div>
+            <div class="w-full h-3 rounded-full bg-base-200 overflow-hidden">
+              <div
+                class="h-full bg-primary transition-all"
+                style={"width: #{progress}%"}
+              ></div>
+            </div>
+            <div class="flex justify-between text-sm text-base-content/70">
+              <span>{gettext("Current")}: {CurrencyUtils.format_money(forecast.current_total)}</span>
+              <span>{gettext("Target")}: {CurrencyUtils.format_money(target_amount)}</span>
+            </div>
+          </div>
+
+          <div class="rounded-xl bg-base-200/70 p-3 text-sm space-y-2">
+            <div class="flex items-center justify-between">
+              <span class="text-base-content/70">{gettext("Remaining")}</span>
+              <span class="font-semibold">{CurrencyUtils.format_money(forecast.remaining)}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-base-content/70">{gettext("Avg daily yield")}</span>
+              <span class="font-semibold">{CurrencyUtils.format_money(forecast.average_daily_yield)}</span>
+            </div>
+            <div class="flex items-center justify-between">
+              <span class="text-base-content/70">{gettext("Forecast date")}</span>
+              <span class="font-semibold">
+                <%= if forecast.forecast_date do %>
+                  {Date.to_string(forecast.forecast_date)}
+                <% else %>
+                  -
+                <% end %>
+              </span>
+            </div>
+          </div>
+
+          <p class="text-xs text-base-content/60">
+            {gettext("Linked fixed incomes")}: {length(goal.fixed_incomes || [])}
+          </p>
+        </div>
+      </div>
+
+      <div :if={@goals == []} class="flex flex-col items-center justify-center text-center gap-3 py-12">
+        <div class="rounded-full bg-base-200 p-4 text-base-content/60">
+          <.icon name="hero-flag" class="h-6 w-6" />
+        </div>
+        <p class="text-lg font-semibold text-base-content">
+          {gettext("No goals yet.")}
+        </p>
+        <p class="max-w-md text-sm text-base-content/70">
+          {gettext("Create a goal and link your fixed income products to project when you'll reach it.")}
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <.modal :if={@open_modal in [:new_goal, :edit_goal]} id="goal-modal" show={true} on_close={JS.push("close_modal")}> 
+    <:title>
+      {if @open_modal == :edit_goal, do: gettext("Edit goal"), else: gettext("New goal")}
+    </:title>
+    <.form for={@form} id="goal-form" phx-submit="save" phx-change="validate">
+      <div class="max-h-[70vh] overflow-y-auto pr-1 space-y-5">
+        <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-4">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">{gettext("Goal")}</p>
+              <p class="text-sm text-base-content/60">{gettext("Name, color and description")}</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <.input field={@form[:color]} type="color" label={gettext("Color")} value={@form[:color].value || "#2563eb"} class="w-20" />
+            </div>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <.input field={@form[:name]} type="text" label={gettext("Name")} />
+            <.input field={@form[:target_date]} type="date" label={gettext("Target date")} />
+          </div>
+          <.input field={@form[:description]} type="text" label={gettext("Description")} />
+        </div>
+
+        <div class="rounded-2xl border border-base-300 bg-base-100/80 p-5 space-y-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">{gettext("Targets")}</p>
+            <p class="text-sm text-base-content/60">{gettext("Define amount, profile and allocations")}</p>
+          </div>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <div class="space-y-1" id="goal-target-amount-input" phx-update="ignore">
+              <label class="text-sm font-medium" for="goal_target_amount_input">{gettext("Target amount (R$)")}</label>
+              <input
+                id="goal_target_amount_input"
+                type="text"
+                class="input input-bordered w-full"
+                phx-hook="MoneyInput"
+                data-hidden-name="goal[target_amount]"
+              />
+              <input
+                type="hidden"
+                name="goal[target_amount]"
+                value={@form[:target_amount].value}
+              />
+            </div>
+
+            <.input
+              field={@form[:profile_id]}
+              type="select"
+              label={gettext("Profile")}
+              options={[{gettext("None"), nil} | Enum.map(@profiles, &{&1.name, &1.id})]}
+            />
+          </div>
+
+          <div class="space-y-2">
+            <p class="text-xs font-semibold uppercase tracking-wide text-primary/70">
+              {gettext("Fixed incomes")}
+            </p>
+            <div class="w-full rounded-xl border border-base-300 bg-base-100/80 shadow-sm">
+              <div class="p-3 border-b border-base-200">
+                <p class="text-sm font-medium">{gettext("Select fixed incomes")}</p>
+              </div>
+              <div class="p-3 space-y-2 max-h-64 overflow-y-auto">
+                <%= if Enum.empty?(@available_fixed_income_ids) and Enum.empty?(@selected_fixed_income_ids) do %>
+                  <p class="text-sm text-base-content/60">{gettext("No available fixed incomes to link.")}</p>
+                <% else %>
+                  <div
+                    :for={fi <- @fixed_incomes}
+                    :if={fi.id in @available_fixed_income_ids or fi.id in @selected_fixed_income_ids}
+                    class="flex items-center gap-2 rounded-lg border border-base-200 bg-base-200/60 px-3 py-2 hover:border-primary/50 cursor-pointer"
+                    phx-click="toggle_fi_selection"
+                    phx-value-id={fi.id}
+                  >
+                    <input
+                      type="checkbox"
+                      name="goal[fixed_income_ids][]"
+                      value={fi.id}
+                      checked={fi.id in @selected_fixed_income_ids}
+                      class="pointer-events-none"
+                    />
+                    <span class="text-sm font-medium">{fi.name}</span>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+            <p class="text-xs text-base-content/60">
+              {gettext("A fixed income can belong to only one goal at a time.")}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-1">
+          <.button variant="custom" class="btn-ghost" phx-click={JS.push("close_modal")}>{gettext("Cancel")}</.button>
+          <.button variant="primary" phx-disable-with={gettext("Saving...")}>{gettext("Save")}</.button>
+        </div>
+      </div>
+    </.form>
+  </.modal>
+</Layouts.app>

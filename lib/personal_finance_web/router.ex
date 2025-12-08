@@ -93,6 +93,7 @@ defmodule PersonalFinanceWeb.Router do
       live "/ledgers/:id/transactions", TransactionLive.Index, :index
       live "/ledgers/:id/transactions/import_wizard", TransactionLive.ImportWizard, :index
       live "/ledgers/:id/history", HistoryLive.Index, :index
+      live "/ledgers/:id/goals", GoalsLive.Index, :index
       live "/ledgers/:id/fixed_income", FixedIncomeLive.Index, :index
       live "/ledgers/:id/fixed_income/:fixed_income_id", FixedIncomeLive.Details.FixedIncome
 

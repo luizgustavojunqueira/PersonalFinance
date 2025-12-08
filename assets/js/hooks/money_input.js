@@ -1,6 +1,11 @@
 export const MoneyInput = {
   mounted() {
     this.setupInput();
+    this.handleEvent("seed-money-input", ({ id, value }) => {
+      if (this.el.id === id) {
+        this.el.value = value;
+      }
+    });
   },
 
   updated() {
