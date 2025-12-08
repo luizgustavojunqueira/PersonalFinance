@@ -95,10 +95,15 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
                 class="border-0"
               />
             <% else %>
-              <div class="rounded-2xl bg-base-200/60 p-4 min-h-[320px]">
-                <div id="bar" phx-hook="Chart" class="h-full">
-                  <div id="bar-chart" class="w-full h-[320px]" phx-update="ignore" />
-                  <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
+              <div class="rounded-2xl border border-base-100 bg-base-100/80 p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-base-content mb-4">
+                  {gettext("Category Budget Tracking")}
+                </h3>
+                <div class="rounded-xl bg-base-200/60 p-4">
+                  <div id="bar" phx-hook="Chart" class="h-80 w-full">
+                    <div id="bar-chart" class="w-full h-80" phx-update="ignore" />
+                    <div id="bar-data" hidden>{Jason.encode!(@chart_option)}</div>
+                  </div>
                 </div>
               </div>
             <% end %>
@@ -540,7 +545,7 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         if item.remaining < 0 do
           %{
             value: item.remaining,
-            itemStyle: %{color: "#F44336"}
+            itemStyle: %{color: "#ef4444"}
           }
         else
           item.remaining
@@ -556,33 +561,39 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
         axisPointer: %{
           type: "shadow"
         },
-        backgroundColor: nil,
-        borderColor: nil,
+        backgroundColor: "rgba(255, 255, 255, 0.95)",
+        borderColor: "#e5e7eb",
         borderWidth: 1,
+        borderRadius: 8,
+        padding: 12,
         textStyle: %{
-          color: nil,
-          fontSize: 13
+          color: "#374151",
+          fontSize: 13,
+          fontFamily: "system-ui, -apple-system, sans-serif"
         },
         formatter:
-          "{b0}<br/><span style='color:#9E9E9E'>●</span> #{goal_label}: R${c2}<br/><span style='color:#FF9800'>●</span> #{spent_label}: R${c1}<br/><span style='color:#4CAF50'>●</span> #{remaining_label}: R${c0}"
+          "{b0}<br/><span style='display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#9ca3af;'></span> #{goal_label}: R${c2}<br/><span style='display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#f59e0b;'></span> #{spent_label}: R${c1}<br/><span style='display:inline-block;margin-right:4px;border-radius:10px;width:10px;height:10px;background-color:#10b981;'></span> #{remaining_label}: R${c0}"
       },
       legend: %{
-        top: 10,
+        top: 5,
         left: "center",
         data: [remaining_label, spent_label, goal_label],
         textStyle: %{
-          color: nil,
-          fontSize: 14,
-          fontWeight: "500"
+          color: "#6b7280",
+          fontSize: 13,
+          fontWeight: "500",
+          fontFamily: "system-ui, -apple-system, sans-serif"
         },
-        itemGap: 30,
+        itemGap: 24,
+        itemWidth: 14,
+        itemHeight: 14,
         icon: "roundRect"
       },
       grid: %{
-        left: "5%",
-        right: "12%",
+        left: "3%",
+        right: "8%",
         top: "15%",
-        bottom: "8%",
+        bottom: "5%",
         containLabel: true
       },
       xAxis: [
@@ -590,20 +601,17 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           type: "value",
           axisLabel: %{
             formatter: "R$ {value}",
-            color: "#666",
+            color: "#9ca3af",
             fontSize: 11,
-            fontFamily: "Arial, sans-serif"
+            fontFamily: "system-ui, -apple-system, sans-serif"
           },
           axisLine: %{
-            show: true,
-            lineStyle: %{
-              color: "#ddd"
-            }
+            show: false
           },
           splitLine: %{
             show: true,
             lineStyle: %{
-              color: "#f0f0f0",
+              color: "#f3f4f6",
               type: "solid",
               width: 1
             }
@@ -621,18 +629,15 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           },
           data: truncated_names,
           axisLabel: %{
-            color: "#333",
+            color: "#4b5563",
             fontSize: 13,
             fontWeight: "500",
             interval: 0,
-            margin: 12,
-            fontFamily: "Arial, sans-serif"
+            margin: 10,
+            fontFamily: "system-ui, -apple-system, sans-serif"
           },
           axisLine: %{
-            show: true,
-            lineStyle: %{
-              color: "#ddd"
-            }
+            show: false
           },
           splitLine: %{
             show: false
@@ -645,25 +650,26 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           meta_key: "remaining",
           type: "bar",
           stack: "total_sum",
-          barWidth: "50%",
+          barWidth: "55%",
           itemStyle: %{
-            color: "#4CAF50",
-            borderRadius: [3, 3, 3, 3]
+            color: "#10b981",
+            borderRadius: [0, 4, 4, 0]
           },
           label: %{
             show: true,
             position: "insideRight",
             formatter: "R${c}",
             color: "#fff",
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: "600",
-            textShadowBlur: 2,
-            textShadowColor: "rgba(0, 0, 0, 0.3)"
+            fontFamily: "system-ui, -apple-system, sans-serif"
           },
           emphasis: %{
             focus: "series",
             itemStyle: %{
-              color: "#45a049"
+              color: "#059669",
+              shadowBlur: 10,
+              shadowColor: "rgba(16, 185, 129, 0.3)"
             }
           },
           data: remaining_values
@@ -674,23 +680,24 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           type: "bar",
           stack: "total_sum",
           itemStyle: %{
-            color: "#FF9800",
-            borderRadius: [3, 3, 3, 3]
+            color: "#f59e0b",
+            borderRadius: [4, 0, 0, 4]
           },
           label: %{
             show: true,
             position: "insideLeft",
             formatter: "R${c}",
             color: "#fff",
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: "600",
-            textShadowBlur: 2,
-            textShadowColor: "rgba(0, 0, 0, 0.3)"
+            fontFamily: "system-ui, -apple-system, sans-serif"
           },
           emphasis: %{
             focus: "series",
             itemStyle: %{
-              color: "#f57c00"
+              color: "#d97706",
+              shadowBlur: 10,
+              shadowColor: "rgba(245, 158, 11, 0.3)"
             }
           },
           data: total_values
@@ -699,26 +706,27 @@ defmodule PersonalFinanceWeb.HomeLive.LedgerSummaryComponent do
           name: goal_label,
           meta_key: "goal",
           type: "bar",
-          barWidth: "35%",
+          barWidth: "40%",
           itemStyle: %{
-            color: "#9E9E9E",
-            borderColor: "#9E9E9E",
-            borderRadius: 3
+            color: "#9ca3af",
+            borderRadius: 4
           },
           label: %{
             show: true,
             position: "right",
             formatter: "R${c}",
             fontSize: 11,
-            color: "#666",
+            color: "#6b7280",
             fontWeight: "500",
+            fontFamily: "system-ui, -apple-system, sans-serif",
             offset: [5, 0]
           },
           emphasis: %{
             focus: "series",
             itemStyle: %{
-              borderColor: "#757575",
-              borderWidth: 3
+              color: "#6b7280",
+              shadowBlur: 8,
+              shadowColor: "rgba(156, 163, 175, 0.3)"
             }
           },
           z: -1,
